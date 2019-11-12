@@ -5,5 +5,6 @@ public class DMSServer
 	{
 		System.out.println("Dormitory Management System Server.");
 		System.out.println("20161185 지명근 git연동 성공");
+		System.out.println("안녕하세요 박동현입니다.");
 	}
 }
