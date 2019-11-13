@@ -1,15 +1,15 @@
 package classes;
-//»ıÈ°°ü Á¤º¸
+//ìƒí™œê´€ ì •ë³´
 public class Dormitory
 {
-	private String dormitoryName;			//»ıÈ°°ü¸í
-	private char gender;					//¼ºº°...½ÅÆò°üÀº?
-	private int semesterCode;				//ÇĞ±âÄÚµå
-	private int capacity;					//¼ö¿ëÀÎ¿ø
-	private boolean isMealDuty;				//½Ä»çÀÇ¹«			½Ä»ç°¡ ÀÇ¹«ÀÌ¸é true, ÀÇ¹«°¡ ¾Æ´Ï¸é false
-	private int mealCost5;					//5ÀÏÄ¡ ½Äºñ, ¹ø¿ª ¸øÇØ¼­ ÀÓ½Ã·Î mealCost5·Î ÇØµÒ.
-	private int mealCost7;					//7ÀÏÄ¡ ½Äºñ, ¹ø¿ª ¸øÇØ¼­ ÀÓ½Ã·Î mealCost7·Î ÇØµÒ.
-	private String boardingFees;			//±â¼÷»çºñ
+	private String dormitoryName;			//ìƒí™œê´€ëª…
+	private char gender;					//ì„±ë³„...ì‹ í‰ê´€ì€?
+	private int semesterCode;				//í•™ê¸°ì½”ë“œ
+	private int capacity;					//ìˆ˜ìš©ì¸ì›
+	private boolean isMealDuty;				//ì‹ì‚¬ì˜ë¬´			ì‹ì‚¬ê°€ ì˜ë¬´ì´ë©´ true, ì˜ë¬´ê°€ ì•„ë‹ˆë©´ false
+	private int mealCost5;					//5ì¼ì¹˜ ì‹ë¹„, ë²ˆì—­ ëª»í•´ì„œ ì„ì‹œë¡œ mealCost5ë¡œ í•´ë‘ .
+	private int mealCost7;					//7ì¼ì¹˜ ì‹ë¹„, ë²ˆì—­ ëª»í•´ì„œ ì„ì‹œë¡œ mealCost7ë¡œ í•´ë‘ .
+	private String boardingFees;			//ê¸°ìˆ™ì‚¬ë¹„
 	
 	public String getDormitoryName()
 	{

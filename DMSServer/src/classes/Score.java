@@ -1,12 +1,12 @@
 package classes;
-//¼ºÀû
+//ì„±ì 
 public class Score
 {
-	private String subjectName;		//±³°ú¸ñ¸í
-	private int semesterCode;		//ÇĞ±â ÄÚµå
-	private int credit;				//ÇĞÁ¡ (ÀÌ¼ö ´ÜÀ§)
-	private char grade;				//¼ºÀû µî±Ş(A+, A, B+, B, ...)
-	private String studentId;		//ÇĞ»ıÀÇ ÇĞ¹ø(¿Ü·¡Å°)
+	private String subjectName;		//êµê³¼ëª©ëª…
+	private int semesterCode;		//í•™ê¸° ì½”ë“œ
+	private int credit;				//í•™ì  (ì´ìˆ˜ ë‹¨ìœ„)
+	private char grade;				//ì„±ì  ë“±ê¸‰(A+, A, B+, B, ...)
+	private String studentId;		//í•™ìƒì˜ í•™ë²ˆ(ì™¸ë˜í‚¤)
 	
 	public String getSubjectName()
 	{

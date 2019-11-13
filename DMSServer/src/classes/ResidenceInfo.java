@@ -2,14 +2,14 @@ package classes;
 
 import java.util.Date;
 
-//°ÅÁÖ Á¤º¸
+//ê±°ì£¼ ì •ë³´
 public class ResidenceInfo
 {
-	private String studentId;			//ÇĞ»ıÀÇ ÇĞ¹ø(¿Ü·¡Å°)
-	private int roomId;					//¹æÀÇ °íÀ¯ ¾ÆÀÌµğ(¿Ü·¡Å°)
-	private int semesterCode;			//ÇĞ±âÄÚµå
-	private char seat;					//ÀÚ¸®
-	private Date checkout;				//Åğ»ç ¿¹Á¤ÀÏ
+	private String studentId;			//í•™ìƒì˜ í•™ë²ˆ(ì™¸ë˜í‚¤)
+	private int roomId;					//ë°©ì˜ ê³ ìœ  ì•„ì´ë””(ì™¸ë˜í‚¤)
+	private int semesterCode;			//í•™ê¸°ì½”ë“œ
+	private char seat;					//ìë¦¬
+	private Date checkout;				//í‡´ì‚¬ ì˜ˆì •ì¼
 	
 	public String getStudentId()
 	{

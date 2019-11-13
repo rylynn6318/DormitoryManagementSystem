@@ -1,10 +1,10 @@
 package classes;
-//°èÁ¤
+//ê³„ì •
 public class Account
 {
-	private String accountId;					//¾ÆÀÌµğ, ÇĞ»ıÀº ÇĞ¹øÀÌ µé¾î°¡°Ô µÇ°í, ¼±»ı´Ô/°ü¸®ÀÚ´Â ¹®ÀÚ¿­ÀÌ µé¾î°¥ ¼ö ÀÖÀ½.
-	private String password;			//ºñ¹Ğ¹øÈ£
-	private int type;					//Å¸ÀÔ , ÇĞ»ı 0, °ü¸®ÀÚ 1, ¼±»ı´Ô 2 ÀÌ·±½ÄÀ¸·Î µé¾î°¡°Ô µÉ °ÍÀÓ.
+	private String accountId;					//ì•„ì´ë””, í•™ìƒì€ í•™ë²ˆì´ ë“¤ì–´ê°€ê²Œ ë˜ê³ , ì„ ìƒë‹˜/ê´€ë¦¬ìëŠ” ë¬¸ìì—´ì´ ë“¤ì–´ê°ˆ ìˆ˜ ìˆìŒ.
+	private String password;			//ë¹„ë°€ë²ˆí˜¸
+	private int type;					//íƒ€ì… , í•™ìƒ 0, ê´€ë¦¬ì 1, ì„ ìƒë‹˜ 2 ì´ëŸ°ì‹ìœ¼ë¡œ ë“¤ì–´ê°€ê²Œ ë  ê²ƒì„.
 	
 	public String getAccountId()
 	{

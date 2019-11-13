@@ -1,14 +1,14 @@
 package classes;
 import java.util.Date;
 
-//½ºÄÉÁì
+//ìŠ¤ì¼€ì¥´
 public class Schedule
 {
-	private String scheduleId;			//½ºÄÉÁì °íÀ¯ ¾ÆÀÌµğ
-	private Date startDate;				//½ÃÀÛÀÏ
-	private Date endDate;				//Á¾·áÀÏ
-	private String description;			//ºñ°í, ¼³¸í
-	private int code;					//½ºÄÉÁì ÇÒÀÏ ÄÚµå(¿Ü·¡Å°)
+	private String scheduleId;			//ìŠ¤ì¼€ì¥´ ê³ ìœ  ì•„ì´ë””
+	private Date startDate;				//ì‹œì‘ì¼
+	private Date endDate;				//ì¢…ë£Œì¼
+	private String description;			//ë¹„ê³ , ì„¤ëª…
+	private int code;					//ìŠ¤ì¼€ì¥´ í• ì¼ ì½”ë“œ(ì™¸ë˜í‚¤)
 	
 	public String getScheduleId()
 	{

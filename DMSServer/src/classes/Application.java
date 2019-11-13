@@ -1,17 +1,17 @@
 package classes;
-//½ÅÃ»
+//ì‹ ì²­
 public class Application
 {
-	private int applicationId;		//°íÀ¯ ¾ÆÀÌµğ
-	private String studentId;		//ÇĞ»ı ÇĞ¹ø(¿Ü·¡Å°)
-	private int choice;				//Áö¸Á
-	private int mealType;			//¸îÀÏ½Ä				0ÀÌ¸é ¾ÈÇÔ, 5ÀÌ¸é 5ÀÏ½Ä, 7ÀÌ¸é 7ÀÏ½Ä
-	private boolean isPaid;			//³³ºÎ¿©ºÎ
-	private boolean isPassed;		//ÇÕ°İ¿©ºÎ	
-	private boolean isLastPassed;	//°á°ú, ÃÖÁ¾ÇÕ°İ¿©ºÎ
-	private String dormitoryName;	//»ıÈ°°ü¸í(¿Ü·¡Å°)
-	private char gender;			//¼ºº°(¿Ü·¡Å°)
-	private int semesterCode;		//ÇĞ±âÄÚµå(¿Ü·¡Å°)
+	private int applicationId;		//ê³ ìœ  ì•„ì´ë””
+	private String studentId;		//í•™ìƒ í•™ë²ˆ(ì™¸ë˜í‚¤)
+	private int choice;				//ì§€ë§
+	private int mealType;			//ëª‡ì¼ì‹				0ì´ë©´ ì•ˆí•¨, 5ì´ë©´ 5ì¼ì‹, 7ì´ë©´ 7ì¼ì‹
+	private boolean isPaid;			//ë‚©ë¶€ì—¬ë¶€
+	private boolean isPassed;		//í•©ê²©ì—¬ë¶€	
+	private boolean isLastPassed;	//ê²°ê³¼, ìµœì¢…í•©ê²©ì—¬ë¶€
+	private String dormitoryName;	//ìƒí™œê´€ëª…(ì™¸ë˜í‚¤)
+	private char gender;			//ì„±ë³„(ì™¸ë˜í‚¤)
+	private int semesterCode;		//í•™ê¸°ì½”ë“œ(ì™¸ë˜í‚¤)
 	
 	public int getApplicationId()
 	{

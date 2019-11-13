@@ -1,19 +1,19 @@
 package classes;
-//ÇĞ»ı
+//í•™ìƒ
 public class Student
 {
-	private String studentId;					//ÇĞ¹ø
-	private String name;						//¼º¸í
-	private char gender;						//¼ºº°
-	private String departmentId;				//ÇĞ°úÄÚµå
-	private String departmentName;				//ÇĞ°ú¸í
-	private int year;							//ÇĞ³â
-	private String rrn;							//ÁÖ¹Îµî·Ï¹øÈ£(resident registration number)
-	private String contact;						//ÇĞ»ıÀüÈ­¹øÈ£
-	private String parentZipCode;				//º¸È£ÀÚ ¿ìÆí¹øÈ£
-	private String parentAddress;				//º¸È£ÀÚÁÖ¼Ò
-	private String medicalCertificatePath;		//(°áÇÙ)Áø´Ü¼­ °æ·Î
-	private boolean medicalCertificateCheck;	//(°áÇÙ)Áø´Ü¼­ È®ÀÎ¿©ºÎ
+	private String studentId;					//í•™ë²ˆ
+	private String name;						//ì„±ëª…
+	private char gender;						//ì„±ë³„
+	private String departmentId;				//í•™ê³¼ì½”ë“œ
+	private String departmentName;				//í•™ê³¼ëª…
+	private int year;							//í•™ë…„
+	private String rrn;							//ì£¼ë¯¼ë“±ë¡ë²ˆí˜¸(resident registration number)
+	private String contact;						//í•™ìƒì „í™”ë²ˆí˜¸
+	private String parentZipCode;				//ë³´í˜¸ì ìš°í¸ë²ˆí˜¸
+	private String parentAddress;				//ë³´í˜¸ìì£¼ì†Œ
+	private String medicalCertificatePath;		//(ê²°í•µ)ì§„ë‹¨ì„œ ê²½ë¡œ
+	private boolean medicalCertificateCheck;	//(ê²°í•µ)ì§„ë‹¨ì„œ í™•ì¸ì—¬ë¶€
 	
 	public String getStudentId()
 	{
