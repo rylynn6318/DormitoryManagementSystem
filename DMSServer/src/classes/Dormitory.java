@@ -3,7 +3,7 @@ package classes;
 public class Dormitory
 {
 	private String dormitoryName;			//생활관명
-	private char gender;					//성별...신평관은?
+	private char gender;					//성별
 	private int semesterCode;				//학기코드
 	private int capacity;					//수용인원
 	private boolean isMealDuty;				//식사의무			식사가 의무이면 true, 의무가 아니면 false
