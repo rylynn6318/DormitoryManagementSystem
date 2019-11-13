@@ -1,13 +1,13 @@
 package classes;
-//È£½ÇÁ¤º¸
+//í˜¸ì‹¤ì •ë³´
 public class Room
 {
-	private int roomId;					//¹æÀÇ °íÀ¯ ¾ÆÀÌµğ
-	private String number;				//È£½Ç ¹øÈ£, ¸îÈ£½Ç
-	private int capacity;				//¸îÀÎ½Ç
-	private String dormitoryName;		//»ıÈ°°ü¸í(¿Ü·¡Å°)
-	private char gender;				//¼ºº°(¿Ü·¡Å°)
-	private int semesterCode;			//ÇĞ±âÄÚµå(¿Ü·¡Å°)
+	private int roomId;					//ë°©ì˜ ê³ ìœ  ì•„ì´ë””
+	private String number;				//í˜¸ì‹¤ ë²ˆí˜¸, ëª‡í˜¸ì‹¤
+	private int capacity;				//ëª‡ì¸ì‹¤
+	private String dormitoryName;		//ìƒí™œê´€ëª…(ì™¸ë˜í‚¤)
+	private char gender;				//ì„±ë³„(ì™¸ë˜í‚¤)
+	private int semesterCode;			//í•™ê¸°ì½”ë“œ(ì™¸ë˜í‚¤)
 	
 	public int getRoomId()
 	{
