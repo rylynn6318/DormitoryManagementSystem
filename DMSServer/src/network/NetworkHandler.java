@@ -18,5 +18,8 @@ package network;
 
 public class NetworkHandler
 {
-
+	public void prepareShutdown()
+	{
+		
+	}
 }

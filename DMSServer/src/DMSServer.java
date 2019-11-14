@@ -34,20 +34,45 @@ public class DMSServer
 			{
 			case RUN:
 				//쓰레드를 만들어 서버 작업을 수행한다.
+				run();
 				break;
+				
 			case DEBUG:
 				//디버그 모드로 서버 작업을 수행한다.
 				//디버깅하기 편하게 쓰레드를 안만들고 메인쓰레드에서 하게끔?
+				debug();
 				break;
+				
 			case SHUTDOWN:
 				//소켓을 끊고, DB를 중지하고, 배치 알고리즘을 돌리는 중에도 안전하게 끌 수 있게 해야한다.
+				shutdown();
 				break;
+				
 			default:
 				System.out.println("ERROR) 잘못된 입력입니다.");
 				break;
+				
 			}
 		}
 		
 		System.out.println("서버를 종료합니다.");
+	}
+	
+	private static void run()
+	{
+		
+	}
+	
+	private static void debug()
+	{
+		
+	}
+	
+	private static void shutdown()
+	{
+		//IOHandler, DatabaseHandler, NetworkHandler 등 핸들러들에게서
+		//prepareShutdown이라는 메소드를 호출한다.
+		//각 핸들러들은 종료할 준비를 마친다.
+		//해당 작업이 완료되면 종료되게끔.
 	}
 }

@@ -4,5 +4,8 @@ package database;
 
 public class DatabaseHandler
 {
-
+	public void prepareShutdown()
+	{
+		
+	}
 }

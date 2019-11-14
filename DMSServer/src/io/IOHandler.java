@@ -2,6 +2,7 @@ package io;
 
 import java.util.Scanner;
 
+
 //IO 패키지의 필요성
 //서버 콘솔에서의 입출력을 담당할 클래스가 필요,
 //클라이언트에게 파일을 송/수신 할 때 이를 수행하는 기능이 필요.
@@ -52,5 +53,10 @@ public class IOHandler
 		Scanner scn = new Scanner(System.in);
 		String output = scn.nextLine();
 		return output;
+	}
+	
+	public void prepareShutdown()
+	{
+		
 	}
 }
