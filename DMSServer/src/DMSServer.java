@@ -1,3 +1,5 @@
+import io.*;
+
 //기숙사 관리 시스템(Dormitory Management System)
 
 //기능
@@ -20,5 +22,32 @@ public class DMSServer
 	public static void main(String[] args)
 	{
 		System.out.println("기숙사 관리 시스템 서버입니다.");
+		
+		IOHandler ioh = new IOHandler();
+		MenuType userInput = null;
+		while(userInput != MenuType.SHUTDOWN)
+		{
+			ioh.showMenu();
+			userInput = ioh.getMenu();
+			
+			switch(userInput)
+			{
+			case RUN:
+				//쓰레드를 만들어 서버 작업을 수행한다.
+				break;
+			case DEBUG:
+				//디버그 모드로 서버 작업을 수행한다.
+				//디버깅하기 편하게 쓰레드를 안만들고 메인쓰레드에서 하게끔?
+				break;
+			case SHUTDOWN:
+				//소켓을 끊고, DB를 중지하고, 배치 알고리즘을 돌리는 중에도 안전하게 끌 수 있게 해야한다.
+				break;
+			default:
+				System.out.println("ERROR) 잘못된 입력입니다.");
+				break;
+			}
+		}
+		
+		System.out.println("서버를 종료합니다.");
 	}
 }
