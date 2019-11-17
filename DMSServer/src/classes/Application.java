@@ -1,6 +1,6 @@
 package classes;
 //신청
-public class Application
+public class Application implements Comparable<Application>
 {
 	private int applicationId;		//고유 아이디
 	private String studentId;		//학생 학번(외래키)
@@ -12,6 +12,7 @@ public class Application
 	private String dormitoryName;	//생활관명(외래키)
 	private char gender;			//성별(외래키)
 	private int semesterCode;		//학기코드(외래키)
+	private double score;			//평균점수 + 가산점
 	
 	public int getApplicationId()
 	{
@@ -102,5 +103,16 @@ public class Application
 	{
 		this.semesterCode = semesterCode;
 	}
+	public double getScore()
+	{
+		return score;
+	}
 	
+	@Override
+	public int compareTo(Application a) {
+		if(this.score > a.getScore())
+			return -1;
+		else
+			return 1;
+	}
 }
