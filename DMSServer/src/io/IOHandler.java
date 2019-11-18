@@ -9,9 +9,14 @@ import java.util.Scanner;
 //예를들어 결핵진단서의 경우 클라이언트로부터 다운받으면, 경로를 지정해 저장해주는 클래스가 필요하다.
 //DB에는 파일을 다운로드한 경로를 저장하도록 한다.
 
+//싱글톤 패턴 사용하였음.
+//IOHandler를 쓸 때는 IOHandler ioh = new IOHandler()가 아닌
+//IOHandler.getInstance().메소드 이런식으로 사용할 것.
+//그리고 타 클래스에서 System.out.println대신 IOHandler.getInstance().printMsg(MsgType, 메소드명, 메시지)를 사용할 것.
+//ex) IOHandler.getInstance().printMsg(MsgType.GENERAL, "메소드1", "메시지1");
+
 public class IOHandler
 {
-	//싱글톤 패턴 사용
 	private static IOHandler _instance;
 	private boolean debugMode = false;
 	

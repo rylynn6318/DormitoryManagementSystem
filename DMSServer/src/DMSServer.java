@@ -67,6 +67,7 @@ public class DMSServer
 		if(testDBHandler.connectionTest())
 		{
 			IOHandler.getInstnace().printMsg(MsgType.GENERAL, "run", "연결 성공!");
+			//testDBHandler.tempTest();
 		}
 		else
 		{
