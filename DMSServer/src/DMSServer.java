@@ -55,7 +55,7 @@ public class DMSServer
 			}
 		}
 		
-		System.out.println("서버를 종료합니다.");
+		System.out.println("11서버를 종료합니다.");
 	}
 	
 	private static void run()
