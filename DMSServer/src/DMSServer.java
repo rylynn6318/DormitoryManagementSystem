@@ -60,7 +60,7 @@ public class DMSServer
 	
 	private static void run()
 	{
-		
+		System.out.println("하이");
 	}
 	
 	private static void debug()
