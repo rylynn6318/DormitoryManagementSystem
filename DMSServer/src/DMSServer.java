@@ -1,3 +1,4 @@
+import database.DatabaseHandler;
 import io.*;
 
 //기숙사 관리 시스템(Dormitory Management System)
@@ -55,17 +56,19 @@ public class DMSServer
 			}
 		}
 		
-		System.out.println("11서버를 종료합니다.");
+		System.out.println("서버를 종료합니다.");
 	}
 	
 	private static void run()
 	{
-		System.out.println("하이");
+		System.out.println("서버를 실행합니다.");
+		DatabaseHandler testDBHandler = new DatabaseHandler();
+		testDBHandler.testConnect();
 	}
 	
 	private static void debug()
 	{
-		
+		System.out.println("디버그모드로 서버를 실행합니다.");
 	}
 	
 	private static void shutdown()
