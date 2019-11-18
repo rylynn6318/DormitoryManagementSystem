@@ -24,12 +24,11 @@ public class DMSServer
 	{
 		System.out.println("기숙사 관리 시스템 서버입니다.");
 		
-		IOHandler ioh = new IOHandler();
 		MenuType userInput = null;
 		while(userInput != MenuType.SHUTDOWN)
 		{
-			ioh.showMenu();
-			userInput = ioh.getMenu();
+			IOHandler.getInstnace().showMenu();
+			userInput = IOHandler.getInstnace().getMenu();
 			
 			switch(userInput)
 			{
@@ -50,25 +49,46 @@ public class DMSServer
 				break;
 				
 			default:
-				System.out.println("ERROR) 잘못된 입력입니다.");
+				IOHandler.getInstnace().printMsg(MsgType.ERROR, "main", "잘못된 입력입니다.");
 				break;
 				
 			}
 		}
 		
-		System.out.println("서버를 종료합니다.");
+		//서버 종료
 	}
 	
 	private static void run()
 	{
-		System.out.println("서버를 실행합니다.");
+		IOHandler.getInstnace().printMsg(MsgType.GENERAL, "shutdown", "서버를 실행합니다.");
 		DatabaseHandler testDBHandler = new DatabaseHandler();
-		testDBHandler.testConnect();
+		IOHandler.getInstnace().setDebugMode(false);						//디버그모드 해제
+		
+		if(testDBHandler.connectionTest())
+		{
+			IOHandler.getInstnace().printMsg(MsgType.GENERAL, "run", "연결 성공!");
+		}
+		else
+		{
+			IOHandler.getInstnace().printMsg(MsgType.GENERAL, "run", "연결 실패!");
+		}
 	}
 	
+	//디버그모드로 실행했을 때만 MsgType이 DEBUG인 메시지가 printMsg로 호출 시 표시된다. 
 	private static void debug()
 	{
-		System.out.println("디버그모드로 서버를 실행합니다.");
+		IOHandler.getInstnace().printMsg(MsgType.GENERAL, "shutdown", "디버그모드로 서버를 실행합니다.");
+		DatabaseHandler testDBHandler = new DatabaseHandler();
+		IOHandler.getInstnace().setDebugMode(true);						//디버그모드로 설정
+		
+		if(testDBHandler.connectionTest())
+		{
+			IOHandler.getInstnace().printMsg(MsgType.DEBUG, "debug", "연결 성공!");
+		}
+		else
+		{
+			IOHandler.getInstnace().printMsg(MsgType.DEBUG, "debug", "연결 실패!");
+		}
 	}
 	
 	private static void shutdown()
@@ -77,5 +97,7 @@ public class DMSServer
 		//prepareShutdown이라는 메소드를 호출한다.
 		//각 핸들러들은 종료할 준비를 마친다.
 		//해당 작업이 완료되면 종료되게끔.
+		
+		IOHandler.getInstnace().printMsg(MsgType.GENERAL, "shutdown", "서버를 종료합니다.");
 	}
 }

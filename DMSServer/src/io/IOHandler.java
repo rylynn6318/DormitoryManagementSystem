@@ -11,6 +11,19 @@ import java.util.Scanner;
 
 public class IOHandler
 {
+	//싱글톤 패턴 사용
+	private static IOHandler _instance;
+	private boolean debugMode = false;
+	
+	public static IOHandler getInstnace()
+	{
+		if(_instance == null)
+			_instance = new IOHandler();
+		return _instance;
+	}
+	
+	//----------------------메뉴 관련----------------------//
+	
 	public void showMenu()
 	{
 		System.out.println("");
@@ -31,7 +44,7 @@ public class IOHandler
 		}
 		catch(Exception e)
 		{
-			System.out.println("ERROR) 숫자를 입력해주세요.");
+			//printMsg(MsgType.DEBUG, "getMenu", "숫자를 입력해주세요.");
 		}
 		
 		switch(userInput)
@@ -54,6 +67,53 @@ public class IOHandler
 		String output = scn.nextLine();
 		return output;
 	}
+	
+	//----------------------디버깅 관련----------------------//
+	
+	public void setDebugMode(boolean debugMode)
+	{
+		this.debugMode = debugMode;
+	}
+	
+	public boolean isDebugMode()
+	{
+		return this.debugMode;
+	}
+	
+	//메시지를 출력한다. 디버그모드가 아닌경우 디버그 타입의 메시지는 출력하지 않는다.
+	public void printMsg(MsgType type, String methodName, String msg)
+	{
+		if(debugMode)
+		{
+			System.out.println(getMsgType(type) + methodName + " : " + msg);
+		}
+		else
+		{
+			if(!type.equals(MsgType.DEBUG))
+				System.out.println(getMsgType(type) + methodName + " : " + msg);
+		}
+		
+	}
+	
+	private String getMsgType(MsgType type)
+	{
+		switch(type)
+		{
+		case GENERAL:
+			return "[일반] ";
+		case CAUTION:
+			return "[경고] ";
+		case ERROR:
+			return "[오류] ";
+		case DEBUG:
+			return "[디버그] ";
+		default:
+			return "[알수없음] ";
+		}
+	}
+	
+	
+	//----------------------기타----------------------//
 	
 	public void prepareShutdown()
 	{

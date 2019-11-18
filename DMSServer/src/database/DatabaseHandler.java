@@ -1,6 +1,9 @@
 package database;
 
-import java.sql.*;		//사용을 위해 프로젝트명-우클릭-properties-Java Build Path-Libraries-Add External JARS로 추가해줘야됨.
+import java.sql.*;		//사용을 위해 프로젝트명-우클릭-properties-Java Build Path-Libraries-Add External JARS에서 mysql-connector-java-8.0.18.jar추가해줘야됨.
+
+import io.IOHandler;
+import io.MsgType;
 
 //데이터베이스에 관한 작업들을 총괄하는 클래스
 
@@ -10,10 +13,64 @@ public class DatabaseHandler
 	private final String DB_URL = "jdbc:mysql://192.168.0.23:3306"; 		//접속할 DB 서버, 아이피와 포트만 적으면 안될수도 있음. 그러면 앞에 jdbc:mysql://를 추가하도록.
 	private final String USER_NAME = "guest1"; 								//DB에 접속할 사용자 이름을 상수로 정의
 	private final String PASSWORD = "1234"; 								//사용자의 비밀번호를 상수로 정의
+	private final String DB_NAME = "mydb";
 	
-	//데이터베이스 핸들러 생성자
+	//데이터베이스 접속 테스트 메소드
+	public boolean connectionTest()
+	{
+		boolean isSuccess = false;
+		Connection tmpConn = null;
+		Statement state = null;
+		
+		try
+		{
+			//이해하기 어려운 부분, 드라이버 경로를 전달하는데, 해당 클래스(드라이버)가 없으면 예외발생시킴. 성공하면 DriverManager에 해당 드라이거 등록되어 DB사용 가능해짐. 이것을 Reflection이라 한다.
+			Class.forName(JDBC_DRIVER);
+			DriverManager.setLoginTimeout(10);									//타임아웃 10초 센다
+			tmpConn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);	//각 정보를 전달하여 접속한 정보를 conn에 저장한다. 연결 실패시 SQLException 발생함.
+																				//여기서 timezone 문제가 뜬다면 mysql 서버 타임존 설정이 안된것. https://offbyone.tistory.com/318 참조할것.
+			state = tmpConn.createStatement();									//SQL문을 실행하기 위해 conn 연결정보를 state로 생성해야된다. 생성 성공 시 Statement의 executeQuery 메소드로 SQL문 실행 가능.
+			
+			//연결 종료
+			state.close();
+			tmpConn.close();
+			isSuccess = true;
+		}
+		catch(Exception e)
+		{
+			//예외 발생 시 처리부분
+			IOHandler.getInstnace().printMsg(MsgType.ERROR, "connectionTest", e.getMessage());
+		}
+		finally
+		{
+			try
+			{
+				if(state != null)
+					state.close();
+			}
+			catch(SQLException ex1)
+			{
+				//state를 close 하는데 실패.
+				IOHandler.getInstnace().printMsg(MsgType.ERROR, "connectionTest", ex1.getMessage());
+			}
+			
+			try
+			{
+				if(tmpConn != null)
+					tmpConn.close();
+			}
+			catch(SQLException ex2)
+			{
+				//conn을 close하는데 실패
+				IOHandler.getInstnace().printMsg(MsgType.ERROR, "connectionTest", ex2.getMessage());
+			}
+		}
+		return isSuccess;
+	}
+	
+	//데이터베이스 테스트 연결 메소드, 타 개발자의 이해를 위해 임시로 넣어둔거임. 
 	//참고 : http://blog.naver.com/PostView.nhn?blogId=lghlove0509&logNo=221031017994&parentCategoryNo=&categoryNo=38&viewDate=&isShowPopularPosts=true&from=search
-	public void testConnect()
+	public void tempTest()
 	{
 		Connection conn = null;
 		Statement state = null;
@@ -27,7 +84,7 @@ public class DatabaseHandler
 			state = conn.createStatement();											//SQL문을 실행하기 위해 conn 연결정보를 state로 생성해야된다. 생성 성공 시 Statement의 executeQuery 메소드로 SQL문 실행 가능.
 			
 			//SQL 구문 작성. 현재 구문은 mydb에서 학생 테이블 모두 선택하는 것.
-			String sql = "SELECT * FROM mydb.학생";
+			String sql = "SELECT * FROM " + DB_NAME + ".학생";
 			ResultSet rs = state.executeQuery(sql);									//결과값을 담을 ResultSet 객체 생성.
 			
 			//반환값이 없을때까지 한 줄씩 읽는다.
@@ -59,7 +116,7 @@ public class DatabaseHandler
 		catch(Exception e)
 		{
 			//예외 발생 시 처리부분
-			System.out.println("예외 발생) DatabaseHandler : " + e.getMessage());
+			System.out.println("[DatabaseHandler] connectionTest : " + e.getMessage());
 		}
 		finally
 		{
@@ -86,7 +143,7 @@ public class DatabaseHandler
 			}
 		}
 		
-		System.out.println("DatabaseHandler 클래스 종료됨.");
+		System.out.println("테스트커넥트 종료됨.");
 	}
 
 	public void prepareShutdown()
