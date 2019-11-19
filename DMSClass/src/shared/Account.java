@@ -1,4 +1,4 @@
-
+package shared;
 //계정
 public class Account
 {

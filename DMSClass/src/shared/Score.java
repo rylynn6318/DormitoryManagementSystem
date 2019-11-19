@@ -1,4 +1,4 @@
-
+package shared;
 //성적
 public class Score
 {

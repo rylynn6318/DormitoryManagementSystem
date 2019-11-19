@@ -1,4 +1,4 @@
-
+package shared;
 //신청
 public class Application implements Comparable<Application>
 {

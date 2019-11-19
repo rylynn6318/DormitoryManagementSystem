@@ -1,4 +1,4 @@
-
+package shared;
 //호실정보
 public class Room
 {
