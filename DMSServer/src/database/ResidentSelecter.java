@@ -1,7 +1,7 @@
 package database;
 
 import java.util.TreeSet;
-import classes.Application;
+import shared.Application;
 
 public class ResidentSelecter 
 {
