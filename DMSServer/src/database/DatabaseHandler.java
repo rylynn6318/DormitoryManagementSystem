@@ -94,7 +94,7 @@ public class DatabaseHandler
 			conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		//각 정보를 전달하여 접속한 정보를 conn에 저장한다. 연결 실패시 SQLException 발생함.
 																					//여기서 timezone 문제가 뜬다면 mysql 서버 타임존 설정이 안된것. https://offbyone.tistory.com/318 참조할것.
 			state = conn.createStatement();											//SQL문을 실행하기 위해 conn 연결정보를 state로 생성해야된다. 생성 성공 시 Statement의 executeQuery 메소드로 SQL문 실행 가능.
-			
+			System.out.println(DB_URL);
 			//SQL 구문 작성. 현재 구문은 mydb에서 학생 테이블 모두 선택하는 것.
 			String sql = "SELECT * FROM " + DB_NAME + ".학생";
 			System.out.println(sql);
