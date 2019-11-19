@@ -64,15 +64,17 @@ public class DMSServer
 		DatabaseHandler testDBHandler = new DatabaseHandler();
 		IOHandler.getInstnace().setDebugMode(false);						//디버그모드 해제
 		
-		if(testDBHandler.connectionTest())
-		{
-			IOHandler.getInstnace().printMsg(MsgType.GENERAL, "run", "연결 성공!");
-			//testDBHandler.tempTest();
-		}
-		else
-		{
-			IOHandler.getInstnace().printMsg(MsgType.GENERAL, "run", "연결 실패!");
-		}
+		testDBHandler.tempTest();
+		
+//		if(testDBHandler.connectionTest())
+//		{
+//			IOHandler.getInstnace().printMsg(MsgType.GENERAL, "run", "연결 성공!");
+//			
+//		}
+//		else
+//		{
+//			IOHandler.getInstnace().printMsg(MsgType.GENERAL, "run", "연결 실패!");
+//		}
 	}
 	
 	//디버그모드로 실행했을 때만 MsgType이 DEBUG인 메시지가 printMsg로 호출 시 표시된다. 
