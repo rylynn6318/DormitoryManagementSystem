@@ -8,6 +8,7 @@ public class Student
 	private String departmentId;				//학과코드
 	private String departmentName;				//학과명
 	private int year;							//학년
+	private double avrScore;					//직전 2학기 평균 학점
 	private String rrn;							//주민등록번호(resident registration number)
 	private String contact;						//학생전화번호
 	private String parentZipCode;				//보호자 우편번호
@@ -15,11 +16,10 @@ public class Student
 	private String medicalCertificatePath;		//(결핵)진단서 경로
 	private boolean medicalCertificateCheck;	//(결핵)진단서 확인여부
 	
-	public double getAvrScore(Score[] myScore) // (등급 환산 점수 * 이수 단위) 모두 합한 것 / 총 이수 단위 = 평균 학점
+	public void setAvrScore(Score[] myScore) // (등급 환산 점수 * 이수 단위) 모두 합한 것 / 총 이수 단위 = 평균 학점
 	{
 		double sumOfTakenCredit = 0;
 		double sumOfTakenGrade = 0;
-		double avrGrade = 0;
 		String tempGrade;
 		for(int i = 0; i < myScore.length; i++)
 		{
@@ -56,9 +56,12 @@ public class Student
 			}
 		}
 		
-		avrGrade = Math.round((sumOfTakenGrade / sumOfTakenCredit) * 100) / 100; // 소수점 셋째 자리수에서 반올림 ex)4.1666 -> 416.6 -> 417 -> 4.17
-		
-		return avrGrade;
+		avrScore = sumOfTakenGrade / sumOfTakenCredit;
+	}
+	
+	public double getAvrScore()
+	{
+		return Math.round(avrScore * 100) / 100;	// 소수점 셋째 자리수에서 반올림 ex)4.1666 -> 416.6 -> 417 -> 4.17
 	}
 	
 	public String getStudentId()

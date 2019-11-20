@@ -14,6 +14,8 @@ public class Application implements Comparable<Application>
 	private int semesterCode;		//학기코드(외래키)
 	private double score;			//평균점수 + 가산점
 	
+	
+	
 	public int getApplicationId()
 	{
 		return applicationId;
