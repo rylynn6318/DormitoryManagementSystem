@@ -15,6 +15,52 @@ public class Student
 	private String medicalCertificatePath;		//(결핵)진단서 경로
 	private boolean medicalCertificateCheck;	//(결핵)진단서 확인여부
 	
+	public double getAvrScore(Score[] myScore) // (등급 환산 점수 * 이수 단위) 모두 합한 것 / 총 이수 단위 = 평균 학점
+	{
+		double sumOfTakenCredit = 0;
+		double sumOfTakenGrade = 0;
+		double avrGrade = 0;
+		String tempGrade;
+		for(int i = 0; i < myScore.length; i++)
+		{
+			sumOfTakenCredit += myScore[i].getCredit();
+			
+			tempGrade = String.valueOf(myScore[i].getGrade());	//Score의 grade가 char형 배열이라 switch에 넣기 위해 string으로 변환함
+			switch(tempGrade) {
+			case "A+":
+				sumOfTakenGrade += 4.5 * myScore[i].getCredit();
+				break;
+			case "A":
+				sumOfTakenGrade += 4 * myScore[i].getCredit();
+				break;
+			case "B+":
+				sumOfTakenGrade += 3.5 * myScore[i].getCredit();
+				break;
+			case "B":
+				sumOfTakenGrade += 3 * myScore[i].getCredit();
+				break;
+			case "C+":
+				sumOfTakenGrade += 2.5 * myScore[i].getCredit();
+				break;
+			case "C":
+				sumOfTakenGrade += 2 * myScore[i].getCredit();
+				break;
+			case "D+":
+				sumOfTakenGrade += 1.5 * myScore[i].getCredit();
+				break;
+			case "D":
+				sumOfTakenGrade += 1 * myScore[i].getCredit();
+				break;
+			case "F":
+				break;
+			}
+		}
+		
+		avrGrade = Math.round((sumOfTakenGrade / sumOfTakenCredit) * 100) / 100; // 소수점 셋째 자리수에서 반올림 ex)4.1666 -> 416.6 -> 417 -> 4.17
+		
+		return avrGrade;
+	}
+	
 	public String getStudentId()
 	{
 		return studentId;
