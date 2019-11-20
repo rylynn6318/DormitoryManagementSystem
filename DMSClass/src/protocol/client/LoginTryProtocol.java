@@ -1,5 +1,6 @@
 package protocol.client;
-import protocol.IProtocol;
+import protocol.AbstractProtocol;
+import protocol.IProtocolable;
 
 // LoginProtocol
 //  클라이언트가 서버의 로그인을 할때 쓰는 프로토콜.
@@ -9,10 +10,21 @@ import protocol.IProtocol;
 // ├───────┼───────────────┤  LEN_PROTOCOL_TYPE
 // │ 1~21  │ Login Id      │
 // ├───────┼───────────────┤  LEN_LOGIN_ID
-// │ 1~21  │ Login PW      │
+// │ 22~40 │ Login PW      │
 // └───────┴───────────────┘ 최종 길이
 //							  LEN_PROTOCOL_TYPE + LEN_LOGIN_ID + LEN_LOGIN_PASSWORD
 
-public class LoginProtocol implements IProtocol{
+public class LoginTryProtocol extends AbstractProtocol {
+
+    LoginTryProtocol(byte[] packet) {
+        super(packet);
+        // TODO Auto-generated constructor stub
+    }
+
+    @Override
+    public IProtocolable toObject() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

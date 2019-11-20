@@ -1,9 +1,9 @@
 package protocol;
 
-public abstract class AbstractProtocol{
+public abstract class AbstractProtocol {
     private byte[] packet;
 
-    AbstractProtocol(byte[] packet){
+    protected AbstractProtocol(byte[] packet) {
         this.packet = packet;
     }
 

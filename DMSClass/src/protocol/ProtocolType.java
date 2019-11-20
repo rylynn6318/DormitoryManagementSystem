@@ -10,15 +10,13 @@ public enum ProtocolType{
 			case 1:
 				return EXIT;
 			case 2:
-				return LOGIN_REQUEST_ID;
+				return LOGIN_TRY;
 			case 3:
-				return LOGIN_REQUEST_PW;
-			case 4:
-				return LOGIN_RESPONSE_ID;
-			case 5:
-				return LOGIN_RESPONSE_PW;
-			case 6:
 				return LOGIN_RESULT;
+			case 4:
+				return FILE_UPLOAD;
+			case 5:
+				return FILE_DOWNLOAD;
 		}
 		return null;
 	}
