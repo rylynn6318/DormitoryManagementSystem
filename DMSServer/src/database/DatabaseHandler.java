@@ -16,7 +16,7 @@ public class DatabaseHandler
 	private final String PORT = "3306";
 	private final String DB_NAME = "Prototype";													//DB이름
 	private final String USER_NAME = "admin"; 													//DB에 접속할 사용자 이름을 상수로 정의
-	private final String PASSWORD = "xhdwprhk1!"; 												//사용자의 비밀번호를 상수로 정의
+	private final String PASSWORD = "En2i3oHKLGh9UlnbYFP1"; 									//사용자의 비밀번호를 상수로 정의
 	private final String DB_URL = 
 					"jdbc:" + 
 					DRIVER_NAME + "://" + 
@@ -94,30 +94,27 @@ public class DatabaseHandler
 			conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		//각 정보를 전달하여 접속한 정보를 conn에 저장한다. 연결 실패시 SQLException 발생함.
 																					//여기서 timezone 문제가 뜬다면 mysql 서버 타임존 설정이 안된것. https://offbyone.tistory.com/318 참조할것.
 			state = conn.createStatement();											//SQL문을 실행하기 위해 conn 연결정보를 state로 생성해야된다. 생성 성공 시 Statement의 executeQuery 메소드로 SQL문 실행 가능.
-			System.out.println(DB_URL);
 			//SQL 구문 작성. 현재 구문은 mydb에서 학생 테이블 모두 선택하는 것.
 			String sql = "SELECT * FROM " + DB_NAME + ".학생";
-			System.out.println(sql);
 			ResultSet rs = state.executeQuery(sql);									//결과값을 담을 ResultSet 객체 생성.
 			
 			//반환값이 없을때까지 한 줄씩 읽는다.
 			while(rs.next())
 			{
 				String studentId  = rs.getString("ID");
-//				String name = rs.getString("성명"); 
-//				String gender = rs.getString("성별");
-//				String departmentName = rs.getString("학과명");
-//				String year = rs.getString("학년");
-//				String rrn = rs.getString("주민등록번호");
-//				String contact = rs.getString("학생전화번호");
-//				String parentZipCode = rs.getString("보호자우편번호");
-//				String parentAddress = rs.getString("보호자주소");
-//				String medicalCertificatePath = rs.getString("결핵진단서_경로");
-//				String medicalCertificateCheck = rs.getString("결핵진단서_확인여부");
-//				
-//				System.out.println(studentId + ", " + name + ", " + gender + ", " + departmentName + ", " + year + ", " + rrn + ", " + contact + ", " + parentZipCode
-//						 + ", " + parentAddress + ", " + medicalCertificatePath + ", " + medicalCertificateCheck);
-				System.out.println(studentId);
+				String name = rs.getString("성명"); 
+				String gender = rs.getString("성별");
+				String departmentName = rs.getString("학과명");
+				String year = rs.getString("학년");
+				String rrn = rs.getString("주민등록번호");
+				String contact = rs.getString("학생전화번호");
+				String parentZipCode = rs.getString("보호자우편번호");
+				String parentAddress = rs.getString("보호자주소");
+				String medicalCertificatePath = rs.getString("결핵진단서_경로");
+				String medicalCertificateCheck = rs.getString("결핵진단서_확인여부");
+				
+				System.out.println(studentId + ", " + name + ", " + gender + ", " + departmentName + ", " + year + ", " + rrn + ", " + contact + ", " + parentZipCode
+						 + ", " + parentAddress + ", " + medicalCertificatePath + ", " + medicalCertificateCheck);
 			}
 			
 			//사용이 끝난 객체들은 close 해준다.
