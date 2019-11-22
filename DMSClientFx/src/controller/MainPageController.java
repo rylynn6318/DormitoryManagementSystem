@@ -4,12 +4,14 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 
 public class MainPageController implements Initializable 
 {
@@ -18,8 +20,11 @@ public class MainPageController implements Initializable
     private ListView<String> SideListView;
 
     @FXML
-    private AnchorPane SubAnchorPane;
-
+    private TabPane MainTabPane;
+    
+    ObservableList<UpperTab> tabs;
+    
+    
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
@@ -28,6 +33,7 @@ public class MainPageController implements Initializable
 		//observableArrayList형태로 메뉴 배열로 관리 가능.
 		//private ListView<String> SideListView; 의 <> 타입을 클래스로 사용할 수 있을듯.
 		SideListView.setItems(FXCollections.observableArrayList());
+		
 		SideListView.getItems().add("생활관 입사 신청");
 		SideListView.getItems().add("생활관 호실 확인");
 		SideListView.getItems().add("생활관 신청확인");
@@ -45,10 +51,19 @@ public class MainPageController implements Initializable
 		        {
 		        	String currentItemSelected = SideListView.getSelectionModel().getSelectedItem();
 		        	//필요한 메소드 호출
-		        	System.out.println(currentItemSelected);
+		        	UpperTab curTab = new UpperTab(currentItemSelected);
+		        	MainTabPane.getTabs().add(curTab);
+		        	//tabs.add(curTab);
 		        }
 		    }
 		});
 	}
+}
 
+class UpperTab extends Tab
+{
+	public UpperTab(String text)
+	{
+		super(text);
+	}
 }
