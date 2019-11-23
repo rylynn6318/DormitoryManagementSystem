@@ -14,14 +14,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="SubmitApplicationTab" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SubmitApplicationTabControlelr">
+<VBox fx:id="SubmitApplicationTab" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SubmitApplicationTabControlelr">
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
    <children>
       <Label text="생활관 입사 신청">
          <font>
-            <Font name="System Bold" size="35.0" />
+            <Font name="System Bold" size="30.0" />
          </font>
          <VBox.margin>
             <Insets />
@@ -53,10 +53,10 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="1" GridPane.rowIndex="1" />
-            <Label text="2" GridPane.rowIndex="2" />
-            <Label text="3" GridPane.rowIndex="3" />
-            <Label text="4" GridPane.rowIndex="4" />
+            <Label text="1년 입사" GridPane.rowIndex="1" />
+            <Label text="1" GridPane.rowIndex="2" />
+            <Label text="2" GridPane.rowIndex="3" />
+            <Label text="3" GridPane.rowIndex="4" />
             <Label text="지망">
                <font>
                   <Font name="System Bold" size="15.0" />
@@ -91,7 +91,7 @@
             <ComboBox prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <ComboBox prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             <ComboBox prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <Label text="n원" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <Label text="N/A" GridPane.columnIndex="5" GridPane.rowIndex="1" />
             <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <ComboBox prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <ComboBox prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
@@ -104,9 +104,9 @@
             <ComboBox prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
             <ComboBox prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
             <ComboBox prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-            <Label text="n원" GridPane.columnIndex="5" GridPane.rowIndex="2" />
-            <Label text="n원" GridPane.columnIndex="5" GridPane.rowIndex="3" />
-            <Label text="n원" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+            <Label text="N/A" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+            <Label text="N/A" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+            <Label text="N/A" GridPane.columnIndex="5" GridPane.rowIndex="4" />
          </children>
          <VBox.margin>
             <Insets bottom="10.0" top="10.0" />
@@ -141,12 +141,19 @@
             <Insets bottom="10.0" />
          </opaqueInsets>
       </GridPane>
-      <Label text="안내사항">
-         <font>
-            <Font name="System Bold" size="13.0" />
-         </font>
-      </Label>
-      <TextArea maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="80.0" prefWidth="200.0">
+      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+         <children>
+            <Label text="안내사항">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+               <HBox.margin>
+                  <Insets top="5.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
+      <TextArea editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="160.0" prefWidth="200.0" wrapText="true">
          <VBox.margin>
             <Insets top="5.0" />
          </VBox.margin>
