@@ -107,21 +107,7 @@ public class LoginPageController
     private  void moveToMain()
     {
     	try
-    	{
-    		//-------------아래 방법은 새 Scene을 열고 Login Scene을 닫는 방법---------------//
-    		
-//    		//메인페이지 열기
-//    		Stage primaryStage = new Stage();
-//            Parent root = FXMLLoader.load(getClass().getResource("/application/MainPage.fxml"));
-//            Scene scene = new Scene(root);
-//            //scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-//            primaryStage.setScene(scene);
-//            primaryStage.show();
-//    		
-//            //현재 페이지 닫기
-//    	    Stage curStage = (Stage)LoginBtn.getScene().getWindow(); // 현재 윈도우 가져오기
-//    	    curStage.close();
-    	    
+    	{   
     	    //-------------아래 방법은 Scene을 교체하는 방법---------------//
     		
     		//메인페이지 열기

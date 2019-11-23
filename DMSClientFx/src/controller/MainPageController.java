@@ -64,9 +64,9 @@ public class MainPageController implements Initializable
 		
 		//테스트용 네비게이션 탭 객체 추가
 		NavigationTab tab1 = new NavigationTab("생활관 입사 신청", TabType.SubmitApplication);
-		NavigationTab tab3 = new NavigationTab("생활관 신청 확인", TabType.CheckApplication);
+		NavigationTab tab3 = new NavigationTab("생활관 신청 조회", TabType.CheckApplication);
 		NavigationTab tab4 = new NavigationTab("생활관 고지서 출력", TabType.CheckBill);
-		NavigationTab tab2 = new NavigationTab("생활관 호실 확인", TabType.CheckRoom);
+		NavigationTab tab2 = new NavigationTab("생활관 호실 조회", TabType.CheckRoom);
 		NavigationTab tab5 = new NavigationTab("결핵진단서 제출", TabType.CheckDocument);
 		NavigationTab tab6 = new NavigationTab("결핵진단서 조회", TabType.SubmitDocument);
 		
@@ -91,8 +91,9 @@ public class MainPageController implements Initializable
 		        	//탭에 맞는 UI 불러오기
 		        	try
 					{
-						VBox a = FXMLLoader.load(getClass().getResource("/page/CheckApplicationTab.fxml"));
-						currentItemSelected.setContent(a);
+		        		String res = currentItemSelected.getTabtype().getResource();
+						Parent root = FXMLLoader.load(getClass().getResource(res));
+						currentItemSelected.setContent(root);
 					} 
 		        	catch (IOException e)
 					{
@@ -119,16 +120,6 @@ class NavigationTab extends Tab
 		this.tabtype = tabType;
 	}
 
-//	public String getTitle()
-//	{
-//		return title;
-//	}
-//
-//	public void setTitle(String title)
-//	{
-//		this.title = title;
-//	}
-
 	public TabType getTabtype()
 	{
 		return tabtype;
@@ -145,6 +136,27 @@ enum TabType
 	private TabType(int value)
 	{
 		this.value = value;
+	}
+	
+	public String getResource()
+	{
+		switch(value)
+		{
+		case 0:
+			return "/page/SubmitApplicationTab.fxml";
+		case 1:
+			return "/page/CheckApplicationTab.fxml";
+		case 2:
+			return "/page/CheckBillTab.fxml";
+		case 3:
+			return "/page/CheckRoomTab.fxml";
+		case 4:
+			return "/page/SubmitDocumentTab.fxml";
+		case 5:
+			return "/page/CheckDocumentTab.fxml";
+		default:
+			return null;
+		}
 	}
 }
 
