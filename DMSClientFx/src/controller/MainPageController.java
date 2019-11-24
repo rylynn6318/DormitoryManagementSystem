@@ -70,12 +70,26 @@ public class MainPageController implements Initializable
 		NavigationTab tab5 = new NavigationTab("서류 제출", TabType.SubmitDocument);
 		NavigationTab tab6 = new NavigationTab("서류 조회", TabType.CheckDocument);
 		
+		NavigationTab tab7 = new NavigationTab("선발 일정 조회 및 관리", TabType.ScheduleManage);
+		NavigationTab tab8 = new NavigationTab("생활관 조회 및 관리", TabType.DormitoryManage);
+		NavigationTab tab9 = new NavigationTab("입사 선발자 조회 및 관리", TabType.SelecteesManage);
+		NavigationTab tab10 = new NavigationTab("입사자 조회 및 관리", TabType.BoarderManage);
+		NavigationTab tab11 = new NavigationTab("납부 여부 조회 및 관리", TabType.PaymentManage);
+		NavigationTab tab12 = new NavigationTab("서류 조회 및 제출", TabType.DocumentManage);
+		
 		NavigationListView.getItems().add(tab1);
 		NavigationListView.getItems().add(tab2);
 		NavigationListView.getItems().add(tab3);
 		NavigationListView.getItems().add(tab4);
 		NavigationListView.getItems().add(tab5);
 		NavigationListView.getItems().add(tab6);
+		
+		NavigationListView.getItems().add(tab7);
+		NavigationListView.getItems().add(tab8);
+		NavigationListView.getItems().add(tab9);
+		NavigationListView.getItems().add(tab10);
+		NavigationListView.getItems().add(tab11);
+		NavigationListView.getItems().add(tab12);
 		
 		//리스트뷰 더블클릭 이벤트 처리. 메뉴타입이 클래스로 바뀌면 String을 클래스명으로 바꾸셈.
 		NavigationListView.setOnMouseClicked(new EventHandler<MouseEvent>() 
@@ -141,17 +155,29 @@ class NavigationTab extends Tab
 			return "/page/SubmitDocumentTab.fxml";
 		case CheckDocument:
 			return "/page/CheckDocumentTab.fxml";
+		case ScheduleManage:
+			return "/page/ScheduleManageTab.fxml";
+		case DormitoryManage:
+			return "/page/DormitoryManageTab.fxml";
+		case SelecteesManage:
+			return "/page/SelecteesManageTab.fxml";
+		case BoarderManage:
+			return "/page/BoarderManageTab.fxml";
+		case PaymentManage:
+			return "/page/PaymentManageTab.fxml";
+		case DocumentManage:
+			return "/page/DocumentManageTab.fxml";
 		default:
 			return null;
 		}
 	}
-
-	
 }
-
+// application layer protocol 에서 big file send 할때 tcp에서 잘라주는데 buffer 크기 고려해서 우리가 짤라줘야하나
+// 
 enum TabType
 {
-	SubmitApplication(0), CheckApplication(1), CheckBill(2), CheckRoom(3), SubmitDocument(4), CheckDocument(5);
+	SubmitApplication(0), CheckApplication(1), CheckBill(2), CheckRoom(3), SubmitDocument(4), CheckDocument(5),
+	ScheduleManage(6), DormitoryManage(7), SelecteesManage(8), BoarderManage(9), PaymentManage(10), DocumentManage(11);
 	
 	private final int value;
 	private TabType(int value)
