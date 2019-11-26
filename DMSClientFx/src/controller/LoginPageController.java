@@ -80,7 +80,13 @@ public class LoginPageController
     	if(inputUserId.equals("stu") && inputUserPw.equals("pass"))
     	{
     		//로그인 성공
-    		showAlert("로그인 성공");
+    		showAlert("학생 로그인 성공");
+    		moveToMain();
+    		return true;
+    	}
+    	else if(inputUserId.equals("admin") && inputUserPw.equals("pass"))
+    	{
+    		showAlert("관리자 로그인 성공");
     		moveToMain();
     		return true;
     	}

@@ -38,31 +38,12 @@ public class MainPageController implements Initializable
 		
 		//네비게이션 탭 초기화
 		initializeNavigationTabs();
-		
-		
 	}
 	
-	private void initializeNavigationTabs()
+	
+	//테스트용 학생용 네비게이션 탭 객체 추가
+	private void addStudentNavigationTabs()
 	{
-		//디버깅용 네비게이션 탭 객체 설정
-		NavigationListView.setCellFactory(param -> new ListCell<NavigationTab>() 
-		{
-		    @Override
-		    protected void updateItem(NavigationTab item, boolean empty) {
-		        super.updateItem(item, empty);
-
-		        if (empty || item == null || item.getText() == null) 
-		        {
-		            setText(null);
-		        } 
-		        else 
-		        {
-		            setText(item.getText());
-		        }
-		    }
-		});
-		
-		//테스트용 네비게이션 탭 객체 추가
 		NavigationTab tab1 = new NavigationTab("생활관 입사 신청", TabType.SubmitApplication);
 		NavigationTab tab2 = new NavigationTab("생활관 신청 조회", TabType.CheckApplication);
 		NavigationTab tab3 = new NavigationTab("생활관 고지서 조회", TabType.CheckBill);
@@ -70,6 +51,17 @@ public class MainPageController implements Initializable
 		NavigationTab tab5 = new NavigationTab("서류 제출", TabType.SubmitDocument);
 		NavigationTab tab6 = new NavigationTab("서류 조회", TabType.CheckDocument);
 		
+		NavigationListView.getItems().add(tab1);
+		NavigationListView.getItems().add(tab2);
+		NavigationListView.getItems().add(tab3);
+		NavigationListView.getItems().add(tab4);
+		NavigationListView.getItems().add(tab5);
+		NavigationListView.getItems().add(tab6);
+	}
+	
+	//테스트용 관리자용 네비게이션 탭 객체 추가
+	private void addAdminNavigationTabs()
+	{
 		NavigationTab tab7 = new NavigationTab("선발 일정 조회 및 관리", TabType.ScheduleManage);
 		NavigationTab tab8 = new NavigationTab("생활관 조회 및 관리", TabType.DormitoryManage);
 		NavigationTab tab9 = new NavigationTab("입사 선발자 조회 및 관리", TabType.SelecteesManage);
@@ -77,21 +69,36 @@ public class MainPageController implements Initializable
 		NavigationTab tab11 = new NavigationTab("납부 여부 조회 및 관리", TabType.PaymentManage);
 		NavigationTab tab12 = new NavigationTab("서류 조회 및 제출", TabType.DocumentManage);
 		
-		NavigationListView.getItems().add(tab1);
-		NavigationListView.getItems().add(tab2);
-		NavigationListView.getItems().add(tab3);
-		NavigationListView.getItems().add(tab4);
-		NavigationListView.getItems().add(tab5);
-		NavigationListView.getItems().add(tab6);
-		
 		NavigationListView.getItems().add(tab7);
 		NavigationListView.getItems().add(tab8);
 		NavigationListView.getItems().add(tab9);
 		NavigationListView.getItems().add(tab10);
 		NavigationListView.getItems().add(tab11);
 		NavigationListView.getItems().add(tab12);
+	}
+	
+	private void initializeNavigationTabs()
+	{
+		//네비게이션 탭(좌측 탭) 객체 설정
+		NavigationListView.setCellFactory(param -> new ListCell<NavigationTab>() 
+		{
+		    @Override
+		    protected void updateItem(NavigationTab tab, boolean empty) {
+		        super.updateItem(tab, empty);
+
+		        if (empty || tab == null || tab.getText() == null) 
+		        {
+		            setText(null);
+		        } 
+		        else 
+		        {
+		        	//네비게이션 탭 이름 설정
+		            setText(tab.getText());
+		        }
+		    }
+		});
 		
-		//리스트뷰 더블클릭 이벤트 처리. 메뉴타입이 클래스로 바뀌면 String을 클래스명으로 바꾸셈.
+		//네비게이션 탭 더블클릭 이벤트 처리.
 		NavigationListView.setOnMouseClicked(new EventHandler<MouseEvent>() 
 		{
 		    @Override
@@ -99,8 +106,12 @@ public class MainPageController implements Initializable
 		    {
 		        if (click.getClickCount() == 2) 
 		        {
-		        	//이번에 선택된 아이템을 찾는다.
+		        	//네비게이션탭에서 이번에 선택된 아이템을 찾는다.
 		        	NavigationTab currentItemSelected = NavigationListView.getSelectionModel().getSelectedItem();
+		        	
+		        	//선택된 탭을 오른쪽 MainTabPane에 추가
+		        	MainTabPane.getTabs().add(currentItemSelected);
+		        	MainTabPane.getSelectionModel().select(currentItemSelected);			//새로생긴 페이지를 선택한다(MainTabPane에서 Select)
 		        	
 		        	//탭에 맞는 UI 불러오기
 		        	try
@@ -114,13 +125,12 @@ public class MainPageController implements Initializable
 		        		System.out.println(e.getMessage());
 					}
 		        	
-		        	//TabPane에 선택된 탭 추가하기. 추가하기전에 이미 MainTabPane에 기존 탭이 존재하는지 체크해야됨.
-		        	MainTabPane.getTabs().add(currentItemSelected);
-		        	NavigationListView.getSelectionModel().select(currentItemSelected);
-
 		        }
 		    }
 		});
+		
+		addStudentNavigationTabs();
+		addAdminNavigationTabs();
 	}
 }
 
