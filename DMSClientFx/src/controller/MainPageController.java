@@ -110,8 +110,12 @@ public class MainPageController implements Initializable
 		        	//네비게이션탭에서 이번에 선택된 아이템을 찾는다.
 		        	NavigationTab currentItemSelected = NavigationListView.getSelectionModel().getSelectedItem();
 		        	
-		        	//선택된 탭을 오른쪽 MainTabPane에 추가
-		        	MainTabPane.getTabs().add(currentItemSelected);
+		        	//탭이 열려있지 않다면 탭을 만든다.
+		        	if(!MainTabPane.getTabs().contains(currentItemSelected))
+		        	{
+//		        		선택된 탭을 오른쪽 MainTabPane에 추가
+			        	MainTabPane.getTabs().add(currentItemSelected);	
+		        	}
 		        	MainTabPane.getSelectionModel().select(currentItemSelected);			//새로생긴 페이지를 선택한다(MainTabPane에서 Select)
 		        	
 		        	//탭에 맞는 UI 불러오기
