@@ -153,7 +153,7 @@
             </Label>
          </children>
       </HBox>
-      <TextArea editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="160.0" prefWidth="200.0" wrapText="true" VBox.vgrow="ALWAYS">
+      <TextArea editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" wrapText="true" VBox.vgrow="ALWAYS">
          <VBox.margin>
             <Insets top="5.0" />
          </VBox.margin>
