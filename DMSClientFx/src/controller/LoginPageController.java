@@ -13,7 +13,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-public class LoginPageController 
+public class LoginPageController
 {
 	@FXML
     private TextField IDField;
@@ -132,7 +132,6 @@ public class LoginPageController
     		Stage primaryStage = (Stage)LoginBtn.getScene().getWindow(); // 기본 스테이지 가져오기
             Parent root = FXMLLoader.load(getClass().getResource("/page/MainPage.fxml"));
             Scene scene = new Scene(root);
-            //scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
     	    

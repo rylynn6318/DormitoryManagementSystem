@@ -12,17 +12,17 @@
 
 <VBox fx:id="CheckApplicationTab" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CheckApplicationTabController">
    <children>
-      <Label text="생활관 신청 조회">
+      <Label text="생활관 신청 조회" VBox.vgrow="NEVER">
          <font>
             <Font name="System Bold" size="30.0" />
          </font>
       </Label>
-      <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0">
+      <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0" VBox.vgrow="NEVER">
          <children>
             <Button mnemonicParsing="false" text="조회" />
          </children>
       </HBox>
-      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="100.0">
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
          <children>
             <Label text="생활관 입사지원 내역(1년)">
                <font>
@@ -97,7 +97,7 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <TextArea prefHeight="200.0" prefWidth="200.0" />
+            <TextArea prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
    </children>

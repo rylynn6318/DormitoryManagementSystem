@@ -18,7 +18,6 @@ public class DMSClientFx extends Application
 			Parent root = FXMLLoader.load(getClass().getResource("/page/LoginPage.fxml"));
 			Scene scene = new Scene(root);
 			primaryStage.setTitle("DMS Client Fx");
-			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		}

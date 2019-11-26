@@ -16,7 +16,7 @@ public class SubmitApplicationTabControlelr implements Initializable
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
-		System.out.println("신청 페이지 생성됨");
+		System.out.println("생활관 입사 신청 새로고침됨");
 		
 	}
 

@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import application.UserInfo;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -14,6 +15,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
@@ -21,6 +25,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class MainPageController implements Initializable 
 {
@@ -31,6 +36,12 @@ public class MainPageController implements Initializable
     @FXML
     private TabPane MainTabPane;
     
+    @FXML
+    private Button logoutBtn;
+    
+    @FXML
+    private Label UserInfoLabel;
+    
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
@@ -39,7 +50,32 @@ public class MainPageController implements Initializable
 		
 		//네비게이션 탭 초기화
 		initializeNavigationTabs();
+		
+		//환영합니다 + ID 문구 설정
+		initializeWelcomeLabel();
+		
+		//샌즈 추가
+		addWelcomeTab();
 	}
+	
+	@FXML
+    void On_LogoutBtn_Clicked(ActionEvent event) 
+	{
+		//TODO : 로그아웃. 코드 임시로 추가함.
+		System.out.println("로그아웃 버튼 클릭됨");
+		try
+		{
+			Stage primaryStage = (Stage)logoutBtn.getScene().getWindow(); // 기본 스테이지 가져오기
+			Parent root = FXMLLoader.load(getClass().getResource("/page/LoginPage.fxml"));
+			Scene scene = new Scene(root);
+	        primaryStage.setScene(scene);
+	        primaryStage.show();
+		}
+		catch (IOException e)
+		{
+			System.out.println(e.getMessage());
+		}
+    }
 	
 	
 	//테스트용 학생용 네비게이션 탭 객체 추가
@@ -110,25 +146,31 @@ public class MainPageController implements Initializable
 		        	//네비게이션탭에서 이번에 선택된 아이템을 찾는다.
 		        	NavigationTab currentItemSelected = NavigationListView.getSelectionModel().getSelectedItem();
 		        	
-		        	//탭이 열려있지 않다면 탭을 만든다.
-		        	if(!MainTabPane.getTabs().contains(currentItemSelected))
+		        	if(currentItemSelected != null)
 		        	{
-//		        		선택된 탭을 오른쪽 MainTabPane에 추가
-			        	MainTabPane.getTabs().add(currentItemSelected);	
+		        		//탭이 열려있지 않다면 탭을 만든다.
+			        	if(!MainTabPane.getTabs().contains(currentItemSelected))
+			        	{
+			        		//선택된 탭을 오른쪽 MainTabPane에 추가
+				        	MainTabPane.getTabs().add(currentItemSelected);
+			        	}
+			        	MainTabPane.getSelectionModel().select(currentItemSelected);			//열린 페이지를 선택한다(MainTabPane에서 Select)
+			        	
+			        	//탭에 맞는 UI 불러오기
+			        	//이거 근데 페이지 이미 열려있을때도 새로 로드하게되는거같음.
+			        	try
+						{
+			        		String res = currentItemSelected.getResource();
+							Parent root = FXMLLoader.load(getClass().getResource(res));
+							currentItemSelected.setContent(root);
+						} 
+			        	catch (IOException e)
+						{
+			        		System.out.println(e.getMessage());
+						}
 		        	}
-		        	MainTabPane.getSelectionModel().select(currentItemSelected);			//새로생긴 페이지를 선택한다(MainTabPane에서 Select)
 		        	
-		        	//탭에 맞는 UI 불러오기
-		        	try
-					{
-		        		String res = currentItemSelected.getResource();
-						Parent root = FXMLLoader.load(getClass().getResource(res));
-						currentItemSelected.setContent(root);
-					} 
-		        	catch (IOException e)
-					{
-		        		System.out.println(e.getMessage());
-					}
+		        	
 		        	
 		        }
 		    }
@@ -144,6 +186,38 @@ public class MainPageController implements Initializable
 		else if(UserInfo.getInstance().getType() == 1)
 		{
 			addAdminNavigationTabs();	
+		}
+	}
+	
+	private void initializeWelcomeLabel()
+	{
+		if(UserInfo.getInstance().getType() == 0)
+		{
+			UserInfoLabel.setText("환영합니다! 학생 " + UserInfo.getInstance().getAccountId() + " 님!");
+		}
+		else if(UserInfo.getInstance().getType() == 1)
+		{
+			UserInfoLabel.setText("환영합니다! 관리자 " + UserInfo.getInstance().getAccountId() + " 님!");	
+		}
+	}
+	
+	private void addWelcomeTab()
+	{
+		//선택된 탭을 오른쪽 MainTabPane에 추가
+		Tab welcomeTab = new Tab("환영합니다!");
+    	MainTabPane.getTabs().add(welcomeTab);
+	
+    	MainTabPane.getSelectionModel().select(welcomeTab);	
+    	
+    	try
+		{
+    		String res = "/page/WelcomeTab.fxml";
+			Parent root = FXMLLoader.load(getClass().getResource(res));
+			welcomeTab.setContent(root);
+		} 
+    	catch (IOException e)
+		{
+    		System.out.println(e.getMessage());
 		}
 	}
 }

@@ -26,10 +26,10 @@
             </Label>
          </children>
          <VBox.margin>
-            <Insets />
+            <Insets bottom="30.0" />
          </VBox.margin>
       </HBox>
-      <GridPane alignment="CENTER" hgap="10.0" style="-fx-border-color: black; -fx-border-width: 2;" vgap="10.0">
+      <GridPane alignment="CENTER" hgap="10.0" style="-fx-border-color: gray; -fx-border-width: 2;" vgap="10.0">
         <columnConstraints>
           <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

@@ -15,8 +15,7 @@ public class CheckApplicationTabController implements Initializable
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
-		// TODO Auto-generated method stub
-		System.out.println("신청 확인 페이지 생성됨");
+		System.out.println("생활관 신청 조회 새로고침됨");
 		
 	}
 
