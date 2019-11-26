@@ -1,5 +1,6 @@
 package controller;
 
+import application.UserInfo;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -81,12 +82,14 @@ public class LoginPageController
     	{
     		//로그인 성공
     		showAlert("학생 로그인 성공");
+    		setUserInfo(inputUserId, inputUserPw, 0);			//TODO : 나중에 사용자 타입을 Enum으로 고쳐서 통일할것.
     		moveToMain();
     		return true;
     	}
     	else if(inputUserId.equals("admin") && inputUserPw.equals("pass"))
     	{
     		showAlert("관리자 로그인 성공");
+    		setUserInfo(inputUserId, inputUserPw, 1);			//TODO : 나중에 사용자 타입을 Enum으로 고쳐서 통일할것.
     		moveToMain();
     		return true;
     	}
@@ -97,6 +100,15 @@ public class LoginPageController
     		IDField.requestFocus();
     		return false;
     	}
+    }
+    
+    //UserInfo 싱글톤 설정
+    private void setUserInfo(String id, String pw, int type)
+    {
+    	UserInfo.getInstance().setAccountId(id);
+    	UserInfo.getInstance().setPassword(pw);
+    	System.out.println("DEBUG : setUserInfo에서 Type이 " + type + "으로 설정됨");
+    	UserInfo.getInstance().setType(type);
     }
     
     //경고창 띄우는 메소드

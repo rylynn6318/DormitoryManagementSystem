@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import application.UserInfo;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -129,8 +130,17 @@ public class MainPageController implements Initializable
 		    }
 		});
 		
-		addStudentNavigationTabs();
-		addAdminNavigationTabs();
+		//사용자 타입에 따른 메뉴 설정
+		//TODO : 나중에 ENUM타입으로 switch문으로 고쳐라.
+		System.out.println("DEBUG : UserInfo.getInstance().getType()이 " + UserInfo.getInstance().getType() + "으로 설정됨");
+		if(UserInfo.getInstance().getType() == 0)
+		{
+			addStudentNavigationTabs();
+		}
+		else if(UserInfo.getInstance().getType() == 1)
+		{
+			addAdminNavigationTabs();	
+		}
 	}
 }
 
