@@ -37,7 +37,6 @@
       </HBox>
       <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="130.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
         <columns>
-          <TableColumn prefWidth="75.0" text="ID" />
             <TableColumn prefWidth="75.0" text="학번" />
           <TableColumn prefWidth="75.0" text="서류유형" />
             <TableColumn prefWidth="75.0" text="제출일" />
@@ -139,6 +138,8 @@
         <columnConstraints>
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
@@ -147,13 +148,17 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <TextField prefWidth="236.0" promptText="ID를 입력해주세요." GridPane.rowIndex="1" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Button mnemonicParsing="false" text="UPDATE" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <Label text="유효여부" GridPane.columnIndex="2" />
-            <Label text="ID" />
-            <Label text="진단일" GridPane.columnIndex="1" />
-            <DatePicker GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField prefWidth="236.0" promptText="학번을 입력해주세요." GridPane.rowIndex="1" />
+            <ComboBox prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" text="UPDATE" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <Label text="유효여부" GridPane.columnIndex="4" />
+            <Label text="학번" />
+            <Label text="진단일" GridPane.columnIndex="3" />
+            <DatePicker GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Label text="서류유형" GridPane.columnIndex="1" />
+            <Label text="제출일" GridPane.columnIndex="2" />
+            <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <DatePicker GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>
