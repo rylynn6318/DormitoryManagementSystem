@@ -16,4 +16,8 @@ import protocol.AbstractProtocol;
 
 public class LoginProtocol extends AbstractProtocol {
 
+    protected LoginProtocol(byte[] packet) {
+        super(packet);
+    }
+
 }
