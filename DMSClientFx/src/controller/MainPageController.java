@@ -219,6 +219,16 @@ public class MainPageController implements Initializable
 	}
 }
 
+class NavigationBarClickEventHanlder implements EventHandler<MouseEvent>
+{
+	@Override
+	public void handle(MouseEvent event)
+	{
+		// TODO 네비게이션 바에서 이벤트 핸들러를 별개로 구성할거면 여기에다 코드를 넣어라.
+		
+	}
+}
+
 class NavigationTab extends Tab
 {
 	private TabType tabtype;
@@ -239,36 +249,35 @@ class NavigationTab extends Tab
 		switch(tabtype)
 		{
 		case SubmitApplication:
-			return "/page/SubmitApplicationTab.fxml";
+			return "/page/student/SubmitApplicationTab.fxml";
 		case CheckApplication:
-			return "/page/CheckApplicationTab.fxml";
+			return "/page/student/CheckApplicationTab.fxml";
 		case CheckBill:
-			return "/page/CheckBillTab.fxml";
+			return "/page/student/CheckBillTab.fxml";
 		case CheckRoom:
-			return "/page/CheckRoomTab.fxml";
+			return "/page/student/CheckRoomTab.fxml";
 		case SubmitDocument:
-			return "/page/SubmitDocumentTab.fxml";
+			return "/page/student/SubmitDocumentTab.fxml";
 		case CheckDocument:
-			return "/page/CheckDocumentTab.fxml";
+			return "/page/student/CheckDocumentTab.fxml";
 		case ScheduleManage:
-			return "/page/ScheduleManageTab.fxml";
+			return "/page/administrator/ScheduleManageTab.fxml";
 		case DormitoryManage:
-			return "/page/DormitoryManageTab.fxml";
+			return "/page/administrator/DormitoryManageTab.fxml";
 		case SelecteesManage:
-			return "/page/SelecteesManageTab.fxml";
+			return "/page/administrator/SelecteesManageTab.fxml";
 		case BoarderManage:
-			return "/page/BoarderManageTab.fxml";
+			return "/page/administrator/BoarderManageTab.fxml";
 		case PaymentManage:
-			return "/page/PaymentManageTab.fxml";
+			return "/page/administrator/PaymentManageTab.fxml";
 		case DocumentManage:
-			return "/page/DocumentManageTab.fxml";
+			return "/page/administrator/DocumentManageTab.fxml";
 		default:
 			return null;
 		}
 	}
 }
-// application layer protocol 에서 big file send 할때 tcp에서 잘라주는데 buffer 크기 고려해서 우리가 짤라줘야하나
-// 
+
 enum TabType
 {
 	SubmitApplication(0), CheckApplication(1), CheckBill(2), CheckRoom(3), SubmitDocument(4), CheckDocument(5),
@@ -278,15 +287,5 @@ enum TabType
 	private TabType(int value)
 	{
 		this.value = value;
-	}
-}
-
-class NavigationBarClickEventHanlder implements EventHandler<MouseEvent>
-{
-	@Override
-	public void handle(MouseEvent event)
-	{
-		// TODO 네비게이션 바에서 이벤트 핸들러를 별개로 구성할거면 여기에다 코드를 넣어라.
-		
 	}
 }
