@@ -18,12 +18,12 @@ abstract class AbstractHeader {
         this.type = type;
         this.direction = direction;
         this.code = code;
-	}
+    }
 
-    static AbstractHeader create(byte[] packet){
-        if(packet.length < 5)
-            return null;    // 먼가 짧은게 들어왔다!!
-        
+    static AbstractHeader create(byte[] packet) {
+        if (packet.length < 5)
+            return null; // 먼가 짧은게 들어왔다!!
+
         // 아래는 공통적으로 쓰이는 헤더 부분
         ByteBuffer bb = ByteBuffer.allocate(2);
         bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -31,28 +31,29 @@ abstract class AbstractHeader {
         bb.put(packet[1]);
         short length = bb.getShort();
         // 자바는 byte[]의 길이를 바로 알아낼수 있어서 여기서 한번 더 체크해봄
-        if(length != packet.length)
-            return null;    // 먼가 이상하다!
+        if (length != packet.length)
+            return null; // 먼가 이상하다!
         byte type = packet[2];
         byte direction = packet[3];
         byte code = packet[4];
 
-        switch(ProtocolType.getType(packet[2])){
-            case UNDEFINED:
-                // 이 경우로 프로토콜이 생성되는 경우는 없음!
-                break;
-            case LOGIN:
-                return new LoginProtocolHeader(length, type, direction, code);
-            case FILE:
-                return new FileProtocolHeader(length, type, direction, code);
-            case EVENT:
-                return new EventProtocolHeader(length, type, direction, code);
-            default:
-                // 이 경우로 프로토콜이 생성되면 안됨!
-                break;
+        switch (ProtocolType.getType(packet[2])) {
+        case UNDEFINED:
+            // 이 경우로 프로토콜이 생성되는 경우는 없음!
+            break;
+        case LOGIN:
+            return new LoginProtocolHeader(length, type, direction, code);
+        case FILE:
+            return new FileProtocolHeader(length, type, direction, code);
+        case EVENT:
+            return new EventProtocolHeader(length, type, direction, code);
+        default:
+            // 이 경우로 프로토콜이 생성되면 안됨!
+            break;
         }
 
-        // 먼가 문제 생겨서 switch 내에서 return 안되면 null 리턴 == 예외다! 따라서 null 체크 하셈ㅋ or 예외 던지게 코드 수정
+        // 먼가 문제 생겨서 switch 내에서 return 안되면 null 리턴 == 예외다! 따라서 null 체크 하셈ㅋ or 예외 던지게 코드
+        // 수정
         return null;
     }
 
