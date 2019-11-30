@@ -28,7 +28,7 @@
       </HBox>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="조회">
+            <Button fx:id="check_button" mnemonicParsing="false" onAction="#on_check_button_actioned" text="조회">
                <tooltip>
                   <Tooltip text="이번학기에 제출한 서류를 조회합니다." />
                </tooltip></Button>
@@ -48,11 +48,11 @@
         </rowConstraints>
          <children>
             <Label text="제출서류구분" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="1" />
+            <ComboBox fx:id="document_type_combobox" prefWidth="150.0" GridPane.columnIndex="1" />
             <Label text="제출일시" GridPane.columnIndex="2" />
-            <Label text="N/A" GridPane.columnIndex="3" />
+            <Label fx:id="submit_date_label" text="N/A" GridPane.columnIndex="3" />
             <Label text="진단일시" GridPane.columnIndex="4" />
-            <Label text="N/A" GridPane.columnIndex="5" />
+            <Label fx:id="diagnosis_date_label" text="N/A" GridPane.columnIndex="5" />
          </children>
          <VBox.margin>
             <Insets bottom="10.0" top="10.0" />
@@ -64,12 +64,12 @@
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin></Label>
-            <Label text="N/A" />
+            <Label fx:id="file_directory_label" text="N/A" />
          </children>
       </HBox>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="다운로드">
+            <Button fx:id="download_button" mnemonicParsing="false" onAction="#on_download_button_actioned" text="다운로드">
                <tooltip>
                   <Tooltip text="선택된 서류를 다운로드합니다." />
                </tooltip></Button>

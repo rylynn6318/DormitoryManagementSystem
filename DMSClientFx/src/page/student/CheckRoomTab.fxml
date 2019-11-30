@@ -25,7 +25,7 @@
       </HBox>
       <HBox alignment="TOP_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="조회">
+            <Button fx:id="check_button" mnemonicParsing="false" onAction="#on_check_button_actioned" text="조회">
                <tooltip>
                   <Tooltip text="신청테이블, 배정내역을 조회합니다." />
                </tooltip></Button>
@@ -60,17 +60,17 @@
          </VBox.margin>
          <children>
             <Label text="선발결과" />
-            <Label text="N/A" GridPane.columnIndex="1" />
+            <Label fx:id="select_result_label" text="N/A" GridPane.columnIndex="1" />
             <Label text="납부여부" GridPane.columnIndex="2" />
-            <Label text="N/A" GridPane.columnIndex="3" />
+            <Label fx:id="isPaid_label" text="N/A" GridPane.columnIndex="3" />
             <Label text="식비구분" GridPane.rowIndex="1" />
-            <Label text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="mealType_label" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="생활관" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Label text="N/A" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Label fx:id="dorm_label" text="N/A" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             <Label text="호실유형" GridPane.rowIndex="2" />
-            <Label text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label fx:id="roomType_label" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="호실 / 침대번호" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <Label text="N/A" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Label fx:id="roomAndBed_label" text="N/A" GridPane.columnIndex="3" GridPane.rowIndex="2" />
          </children>
       </GridPane>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
@@ -85,7 +85,7 @@
             <Insets top="10.0" />
          </VBox.margin>
       </HBox>
-      <TextArea editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" wrapText="true" VBox.vgrow="ALWAYS" />
+      <TextArea fx:id="info_textarea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" wrapText="true" VBox.vgrow="ALWAYS" />
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

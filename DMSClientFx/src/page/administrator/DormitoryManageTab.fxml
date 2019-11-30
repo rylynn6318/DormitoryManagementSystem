@@ -31,13 +31,13 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </VBox.margin>
          <children>
-            <Button mnemonicParsing="false" text="조회">
+            <Button fx:id="check_button" mnemonicParsing="false" onAction="#on_check_button_actioned" text="조회">
                <tooltip>
                   <Tooltip text="생활관정보 테이블을 조회합니다." />
                </tooltip></Button>
          </children>
       </HBox>
-      <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+      <TableView fx:id="check_dormitory_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
         <columns>
           <TableColumn prefWidth="75.0" text="생활관명" />
           <TableColumn prefWidth="75.0" text="성별" />
@@ -57,7 +57,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </VBox.margin>
          <children>
-            <Button mnemonicParsing="false" text="삭제">
+            <Button fx:id="delete_button" mnemonicParsing="false" onAction="#on_delete_button_actioned" text="삭제">
                <tooltip>
                   <Tooltip text="해당 정보가 일치하는 행을 생활관정보 테이블에서 삭제합니다." />
                </tooltip></Button>
@@ -77,14 +77,14 @@
             <Label text="생활관명" />
             <Label text="성별" GridPane.columnIndex="1" />
             <Label text="학기" GridPane.columnIndex="2" />
-            <TextField GridPane.rowIndex="1" />
+            <TextField fx:id="delete_dormName_textfield" GridPane.rowIndex="1" />
             <ComboBox fx:id="delete_gender_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="delete_semester_textfield" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="등록">
+            <Button fx:id="insert_button" mnemonicParsing="false" onAction="#on_insert_button_actioned" text="등록">
                <tooltip>
                   <Tooltip text="해당 정보들로 생활관정보 테이블에 INSERT합니다." />
                </tooltip></Button>
@@ -117,14 +117,14 @@
             <Label text="5일식 식비" GridPane.columnIndex="5" />
             <Label text="7일식 식비" GridPane.columnIndex="6" />
             <Label text="기숙사비" GridPane.columnIndex="7" />
-            <TextField GridPane.rowIndex="1" />
-            <ComboBox fx:id="enroll_gender_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="5" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="6" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="7" GridPane.rowIndex="1" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_dormName_textfield" GridPane.rowIndex="1" />
+            <ComboBox fx:id="insert_gender_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_semester_textfield" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_capacity_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_mealCost5_textfield" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_mealCost7_textfield" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_boradingFees_textfield" GridPane.columnIndex="7" GridPane.rowIndex="1" />
+            <ComboBox fx:id="insert_mealDuty_combobox" prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>

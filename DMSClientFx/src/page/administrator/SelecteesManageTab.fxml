@@ -45,7 +45,7 @@
             </Label>
          </center>
          <left>
-            <Button mnemonicParsing="false" text="입사자 선발" BorderPane.alignment="CENTER">
+            <Button fx:id="selection_button" mnemonicParsing="false" onAction="#on_selection_button_actioned" text="입사자 선발" BorderPane.alignment="CENTER">
                <tooltip>
                   <Tooltip text="ex) 100명을 뽑아야하면 100명까지 합격여부 Y로 수정" />
                </tooltip></Button>
@@ -53,7 +53,7 @@
       </BorderPane>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="조회">
+            <Button fx:id="check_application_button" mnemonicParsing="false" onAction="#on_check_application_button_actioned" text="조회">
                <tooltip>
                   <Tooltip text="신청 테이블을 조회합니다." />
                </tooltip></Button>
@@ -62,7 +62,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </VBox.margin>
       </HBox>
-      <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+      <TableView fx:id="check_application_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn prefWidth="75.0" text="학번" />
             <TableColumn prefWidth="75.0" text="생활관명" />
@@ -81,7 +81,7 @@
       </TableView>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="삭제">
+            <Button fx:id="delete_button" mnemonicParsing="false" onAction="#on_delete_button_clicked" text="삭제">
                <tooltip>
                   <Tooltip text="대상을 신청 테이블에서 삭제합니다." />
                </tooltip></Button>
@@ -104,14 +104,14 @@
          </rowConstraints>
          <children>
             <Label text="지망" GridPane.columnIndex="4" />
-            <TextField GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <TextField fx:id="delete_choice_textfield" GridPane.columnIndex="4" GridPane.rowIndex="1" />
             <Label text="학번" />
             <Label text="생활관명" GridPane.columnIndex="1" />
             <Label text="성별" GridPane.columnIndex="2" />
             <Label text="학기" GridPane.columnIndex="3" />
-            <TextField GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <TextField fx:id="delete_id_textfield" GridPane.rowIndex="1" />
+            <TextField fx:id="delete_dormName_textfield" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="delete_semester_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             <ComboBox fx:id="delete_gender_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
       </GridPane>

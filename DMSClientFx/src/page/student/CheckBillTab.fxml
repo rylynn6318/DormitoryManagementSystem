@@ -21,11 +21,11 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
          <children>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="다운로드">
+            <Button fx:id="check_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#on_check_button_actioned" text="조회">
                <tooltip>
-                  <Tooltip text="은행, 계좌, 금액이 명시된 고지서를 다운로드합니다." />
+                  <Tooltip text="은행, 계좌, 금액이 명시된 고지서를 조회합니다." />
                </tooltip></Button>
-            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="※ 생활관 합격 내역을 확인 후 다운로드를 눌러주세요." textFill="RED" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="※ 생활관 합격 내역을 확인 후 조회를 눌러주세요." textFill="RED" />
          </children>
          <VBox.margin>
             <Insets top="50.0" />

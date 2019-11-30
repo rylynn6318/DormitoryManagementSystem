@@ -55,8 +55,8 @@ public class MainPageController implements Initializable
 		//환영합니다 + ID 문구 설정
 		initializeWelcomeLabel();
 		
-		//샌즈 추가
-		addWelcomeTab();
+		//환영합니다 페이지 추가
+		//addWelcomeTab();
 	}
 	
 	@FXML

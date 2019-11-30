@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="SubmitApplicationTab" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.student.SubmitApplicationTabController">
+<VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.student.SubmitApplicationTabController">
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
@@ -30,11 +30,11 @@
       </Label>
       <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0" spacing="30.0" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="신청">
+            <Button fx:id="application_button" mnemonicParsing="false" onAction="#on_application_button_actioned" text="신청">
                <tooltip>
                   <Tooltip text="해당 값들로 입사신청을 합니다." />
                </tooltip></Button>
-            <Button mnemonicParsing="false" text="취소">
+            <Button fx:id="cancel_button" mnemonicParsing="false" onAction="#on_cancel_button_actioned" text="취소">
                <tooltip>
                   <Tooltip text="신청되어있는 신청을 취소합니다." />
                </tooltip></Button>
@@ -46,7 +46,6 @@
       <GridPane gridLinesVisible="true" VBox.vgrow="SOMETIMES">
         <columnConstraints>
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -69,51 +68,42 @@
                   <Font name="System Bold" size="15.0" />
                </font>
             </Label>
-            <Label text="선발유형" GridPane.columnIndex="1">
+            <Label text="생활관구분" GridPane.columnIndex="1">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
             </Label>
-            <Label text="생활관구분" GridPane.columnIndex="2">
+            <Label text="기간구분" GridPane.columnIndex="2">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
             </Label>
-            <Label text="기간구분" GridPane.columnIndex="3">
+            <Label text="식사구분" GridPane.columnIndex="3">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
             </Label>
-            <Label text="식사구분" GridPane.columnIndex="4">
+            <Label text="생활관비" GridPane.columnIndex="4">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
             </Label>
-            <Label text="생활관비" GridPane.columnIndex="5">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font>
-            </Label>
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <Label text="N/A" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-            <Label text="N/A" GridPane.columnIndex="5" GridPane.rowIndex="2" />
-            <Label text="N/A" GridPane.columnIndex="5" GridPane.rowIndex="3" />
-            <Label text="N/A" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+            <ComboBox fx:id="oneYear_dorm_combobox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="oneYear_period_combobox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <ComboBox fx:id="oneYear_meal_combobox" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Label fx:id="oneYear_cost_label" text="N/A" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <ComboBox fx:id="firstChoice_dorm_combobox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ComboBox fx:id="firstChoice_period_combobox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <ComboBox fx:id="firstChoice_meal_combobox" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <ComboBox fx:id="secondChoice_dorm_combobox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <ComboBox fx:id="secondChoice_period_combobox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <ComboBox fx:id="secondChoice_meal_combobox" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <ComboBox fx:id="thirdChoice_dorm_combobox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ComboBox fx:id="thirdChoice_period_combobox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <ComboBox fx:id="thirdChoice_meal_combobox" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+            <Label fx:id="firstChoice_cost_label" text="N/A" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+            <Label fx:id="secondChoice_cost_label" text="N/A" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+            <Label fx:id="thirdChoice_cost_label" text="N/A" GridPane.columnIndex="4" GridPane.rowIndex="4" />
          </children>
          <VBox.margin>
             <Insets bottom="10.0" top="10.0" />
@@ -134,8 +124,8 @@
                   <Font name="System Bold" size="12.0" />
                </font>
             </Label>
-            <TextField promptText="01012341234 형식으로 입력해주세요." GridPane.columnIndex="1" />
-            <CheckBox mnemonicParsing="false" text="코골이여부" GridPane.columnIndex="2">
+            <TextField fx:id="contact_textfield" promptText="01012341234 형식으로 입력해주세요." GridPane.columnIndex="1" />
+            <CheckBox fx:id="isSnore_checkbox" mnemonicParsing="false" text="코골이여부" GridPane.columnIndex="2">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
@@ -160,7 +150,7 @@
             </Label>
          </children>
       </HBox>
-      <TextArea editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" wrapText="true" VBox.vgrow="ALWAYS">
+      <TextArea fx:id="info_textarea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" wrapText="true" VBox.vgrow="ALWAYS">
          <VBox.margin>
             <Insets top="5.0" />
          </VBox.margin>

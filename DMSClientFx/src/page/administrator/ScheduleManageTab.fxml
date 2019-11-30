@@ -29,7 +29,7 @@
       </HBox>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="조회">
+            <Button fx:id="check_button" mnemonicParsing="false" onAction="#on_check_button_actioned" text="조회">
                <tooltip>
                   <Tooltip text="스케쥴 테이블을 조회합니다." />
                </tooltip></Button>
@@ -38,7 +38,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </VBox.margin>
       </HBox>
-      <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="SOMETIMES">
+      <TableView fx:id="check_schedule_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="SOMETIMES">
         <columns>
           <TableColumn prefWidth="75.0" text="ID" />
           <TableColumn prefWidth="75.0" text="유형(할일)" />
@@ -52,7 +52,7 @@
       </TableView>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="삭제">
+            <Button fx:id="delete_button" mnemonicParsing="false" onAction="#on_delete_button_actioned" text="삭제">
                <tooltip>
                   <Tooltip text="ID에 해당되는 행을 스케쥴 테이블에서 삭제합니다." />
                </tooltip></Button>
@@ -71,12 +71,12 @@
          </rowConstraints>
          <children>
             <Label text="ID" />
-            <TextField promptText="ID를 입력해주세요." GridPane.rowIndex="1" />
+            <TextField fx:id="delete_id_textfield" promptText="ID를 입력해주세요." GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="등록">
+            <Button fx:id="insert_button" mnemonicParsing="false" onAction="#on_insert_button_actioned" text="등록">
                <tooltip>
                   <Tooltip text="해당 값들로 스케쥴 테이블에 INSERT합니다." />
                </tooltip></Button>
@@ -101,10 +101,10 @@
             <Label text="시작일" GridPane.columnIndex="1" />
             <Label text="종료일" GridPane.columnIndex="2" />
             <Label text="비고" GridPane.columnIndex="3" />
-            <ComboBox prefWidth="150.0" GridPane.rowIndex="1" />
-            <DatePicker GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <DatePicker GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <ComboBox fx:id="insert_type_combobox" prefWidth="150.0" GridPane.rowIndex="1" />
+            <DatePicker fx:id="insert_startDate_datepicker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <DatePicker fx:id="insert_endDate_datepicker" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_etc_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>

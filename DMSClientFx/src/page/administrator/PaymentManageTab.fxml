@@ -32,7 +32,7 @@
       </HBox>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="조회">
+            <Button fx:id="check_button" mnemonicParsing="false" onAction="#on_check_button_actioned" text="조회">
                <tooltip>
                   <Tooltip text="신청 테이블을 조회합니다." />
                </tooltip></Button>
@@ -41,7 +41,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </VBox.margin>
       </HBox>
-      <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+      <TableView fx:id="check_application_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn prefWidth="75.0" text="학번" />
           <TableColumn prefWidth="75.0" text="생활관명" />
@@ -60,7 +60,7 @@
       </TableView>
       <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <right>
-            <Button mnemonicParsing="false" text="UPDATE" BorderPane.alignment="CENTER">
+            <Button fx:id="update_button" mnemonicParsing="false" onAction="#on_update_button_actioned" text="UPDATE" BorderPane.alignment="CENTER">
                <tooltip>
                   <Tooltip text="학번, 생활관명, 성별, 학기가 일치하는 행을 UPDATE합니다." />
                </tooltip></Button>
@@ -90,14 +90,14 @@
          </rowConstraints>
          <children>
             <Label text="학번" />
-            <TextField promptText="ID를 입력해주세요." GridPane.rowIndex="1" />
+            <TextField fx:id="update_id_textfield" promptText="ID를 입력해주세요." GridPane.rowIndex="1" />
             <Label text="납부여부" GridPane.columnIndex="4" />
             <ComboBox fx:id="update_isPaid_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="4" GridPane.rowIndex="1" />
             <Label text="생활관명" GridPane.columnIndex="1" />
             <Label text="성별" GridPane.columnIndex="2" />
             <Label text="학기" GridPane.columnIndex="3" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <TextField fx:id="update_dormName_textfield" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="update_semester_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             <ComboBox fx:id="update_gender_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
          <VBox.margin>
@@ -112,16 +112,16 @@
             <Label text="경로 : " BorderPane.alignment="CENTER" />
          </left>
          <center>
-            <Label text="N/A" BorderPane.alignment="CENTER_LEFT" />
+            <Label fx:id="file_directory_label" text="N/A" BorderPane.alignment="CENTER_LEFT" />
          </center>
          <right>
-            <Button mnemonicParsing="false" text="파일 선택" BorderPane.alignment="CENTER">
+            <Button fx:id="file_select_button" mnemonicParsing="false" onAction="#on_file_select_button_actioned" text="파일 선택" BorderPane.alignment="CENTER">
                <tooltip>
                   <Tooltip text="업로드할 .csv 파일을 선택합니다." />
                </tooltip></Button>
          </right>
          <bottom>
-            <Button mnemonicParsing="false" text="CSV 업로드" BorderPane.alignment="CENTER">
+            <Button fx:id="upload_button" mnemonicParsing="false" onAction="#on_upload_button_actioned" text="CSV 업로드" BorderPane.alignment="CENTER">
                <tooltip>
                   <Tooltip text="선택된 csv파일을 업로드합니다." />
                </tooltip></Button>

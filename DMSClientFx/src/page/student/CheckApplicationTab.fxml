@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="CheckApplicationTab" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.student.CheckApplicationTabController">
+<VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.student.CheckApplicationTabController">
    <children>
       <Label text="생활관 신청 조회" VBox.vgrow="NEVER">
          <font>
@@ -20,7 +20,7 @@
       </Label>
       <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="조회">
+            <Button fx:id="check_button" mnemonicParsing="false" onAction="#on_check_button_actioned" text="조회">
                <tooltip>
                   <Tooltip text="이번학기의 신청내역을 조회합니다." />
                </tooltip></Button>
@@ -33,7 +33,7 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
+            <TableView fx:id="oneYear_application_history_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
               <columns>
                 <TableColumn prefWidth="75.0" text="No" />
                 <TableColumn prefWidth="75.0" text="생활관정보" />
@@ -58,7 +58,7 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
+            <TableView fx:id="oneSemester_application_history_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
               <columns>
                 <TableColumn prefWidth="30.0" text="No" />
                 <TableColumn prefWidth="65.0" text="생활관구분" />
@@ -81,7 +81,7 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <TableView prefHeight="200.0" prefWidth="200.0">
+            <TableView fx:id="selection_result_tableview" prefHeight="200.0" prefWidth="200.0">
               <columns>
                 <TableColumn prefWidth="75.0" text="No" />
                 <TableColumn prefWidth="75.0" text="생활관구분" />
@@ -101,7 +101,7 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <TextArea prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+            <TextArea fx:id="info_textarea" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
    </children>
