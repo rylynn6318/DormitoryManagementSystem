@@ -1,6 +1,6 @@
 package application;
 
-import shared.Account;
+import shared.classes.*;
 
 //클라이언트에서 Singleton으로 사용할 UserInfo객체. 사실상 Account랑 동일함. 
 //근데 다른 정보를 저장할지도 모르니 일단 만들어둠. 그리고 Account와 다르게 싱글톤임.

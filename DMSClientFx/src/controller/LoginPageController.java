@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import shared.enums.UserType;
 
 public class LoginPageController
 {
@@ -82,14 +83,14 @@ public class LoginPageController
     	{
     		//로그인 성공
     		showAlert("학생 로그인 성공");
-    		setUserInfo(inputUserId, inputUserPw, 0);			//TODO : 나중에 사용자 타입을 Enum으로 고쳐서 통일할것.
+    		setUserInfo(inputUserId, inputUserPw, UserType.STUDENT);
     		moveToMain();
     		return true;
     	}
     	else if(inputUserId.equals("admin") && inputUserPw.equals("pass"))
     	{
     		showAlert("관리자 로그인 성공");
-    		setUserInfo(inputUserId, inputUserPw, 1);			//TODO : 나중에 사용자 타입을 Enum으로 고쳐서 통일할것.
+    		setUserInfo(inputUserId, inputUserPw, UserType.ADMINISTRATOR);
     		moveToMain();
     		return true;
     	}
@@ -103,12 +104,12 @@ public class LoginPageController
     }
     
     //UserInfo 싱글톤 설정
-    private void setUserInfo(String id, String pw, int type)
+    private void setUserInfo(String id, String pw, UserType userType)
     {
     	UserInfo.getInstance().setAccountId(id);
     	UserInfo.getInstance().setPassword(pw);
-    	System.out.println("DEBUG : setUserInfo에서 Type이 " + type + "으로 설정됨");
-    	UserInfo.getInstance().setType(type);
+    	System.out.println("DEBUG : setUserInfo에서 Type이 " + userType + "으로 설정됨");
+    	UserInfo.getInstance().setUserType(userType);
     }
     
     //경고창 띄우는 메소드
