@@ -8,16 +8,18 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public abstract class AbstractProtocol {
-    private ProtocolHeader head;
+    private BaseHeader head;
     private byte[] body;
 
-    // 새 프로토콜 만들고 head 할당함. body는 setBody로 따로 할당하셈.
-    protected AbstractProtocol(ProtocolHeader head) {
-        this.head = head;
+    // 새 프로토콜 만들고 head 할당함.
+    // 생성자는 쓰지말고 create로 만드셈.
+    protected AbstractProtocol() {
     }
 
     // 패킷으로부터 프로토콜을 만듬.
-    public static AbstractProtocol createProtocol(byte[] packet) {
+    // @Builder까진 필요없을듯
+    public static AbstractProtocol create(byte[] packet) {
+
         return null;
     }
 

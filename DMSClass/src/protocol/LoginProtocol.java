@@ -16,8 +16,4 @@ import protocol.AbstractProtocol;
 
 public class LoginProtocol extends AbstractProtocol {
 
-    protected LoginProtocol(ProtocolHeader head) {
-        super(head);
-    }
-
 }
