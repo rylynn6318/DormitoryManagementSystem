@@ -1,4 +1,4 @@
-package controller;
+package controller.administrator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -7,16 +7,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 
-public class SubmitApplicationTabControlelr implements Initializable 
+public class DormitoryManageTabController implements Initializable 
 {
-
-    @FXML
-    private VBox SubmitApplicationTab;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
-		System.out.println("생활관 입사 신청 새로고침됨");
+		System.out.println("생활관 조회 및 관리 새로고침됨");
 		
 	}
 

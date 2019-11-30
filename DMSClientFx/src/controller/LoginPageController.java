@@ -1,8 +1,12 @@
 package controller;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import application.UserInfo;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -14,7 +18,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import shared.enums.UserType;
 
-public class LoginPageController
+public class LoginPageController implements Initializable
 {
 	@FXML
     private TextField IDField;
@@ -24,6 +28,13 @@ public class LoginPageController
 
     @FXML
     private Button LoginBtn;
+    
+	@Override
+	public void initialize(URL location, ResourceBundle resources)
+	{
+		System.out.println("로그인 페이지 생성됨");
+		
+	}
     
     //---------------------------------------------------------------------------
     //이벤트 발생
