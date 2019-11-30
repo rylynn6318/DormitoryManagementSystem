@@ -26,6 +26,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import shared.enums.UserType;
 
 public class MainPageController implements Initializable 
 {
@@ -178,12 +179,11 @@ public class MainPageController implements Initializable
 		
 		//사용자 타입에 따른 메뉴 설정
 		//TODO : 나중에 ENUM타입으로 switch문으로 고쳐라.
-		System.out.println("DEBUG : UserInfo.getInstance().getType()이 " + UserInfo.getInstance().getType() + "으로 설정됨");
-		if(UserInfo.getInstance().getType() == 0)
+		if(UserInfo.getInstance().getUserType() == UserType.STUDENT)
 		{
 			addStudentNavigationTabs();
 		}
-		else if(UserInfo.getInstance().getType() == 1)
+		else if(UserInfo.getInstance().getUserType() == UserType.ADMINISTRATOR)
 		{
 			addAdminNavigationTabs();	
 		}
@@ -191,11 +191,11 @@ public class MainPageController implements Initializable
 	
 	private void initializeWelcomeLabel()
 	{
-		if(UserInfo.getInstance().getType() == 0)
+		if(UserInfo.getInstance().getUserType() == UserType.STUDENT)
 		{
 			UserInfoLabel.setText("환영합니다! 학생 " + UserInfo.getInstance().getAccountId() + " 님!");
 		}
-		else if(UserInfo.getInstance().getType() == 1)
+		else if(UserInfo.getInstance().getUserType() == UserType.ADMINISTRATOR)
 		{
 			UserInfoLabel.setText("환영합니다! 관리자 " + UserInfo.getInstance().getAccountId() + " 님!");	
 		}

@@ -1,20 +1,22 @@
-package shared;
+package shared.classes;
 //학생
 public class Student
 {
+	//키
 	private String studentId;					//학번
+	
+	//키가 아닌 컬럼
 	private String name;						//성명
 	private char gender;						//성별
-	private String departmentId;				//학과코드
 	private String departmentName;				//학과명
 	private int year;							//학년
-	private double avrScore;					//직전 2학기 평균 학점
 	private String rrn;							//주민등록번호(resident registration number)
 	private String contact;						//학생전화번호
 	private String parentZipCode;				//보호자 우편번호
 	private String parentAddress;				//보호자주소
-	private String medicalCertificatePath;		//(결핵)진단서 경로
-	private boolean medicalCertificateCheck;	//(결핵)진단서 확인여부
+
+	//로컬 변수
+	private double avrScore;					//직전 2학기 평균 학점
 	
 	public void setAvrScore(Score[] myScore) // (등급 환산 점수 * 이수 단위) 모두 합한 것 / 총 이수 단위 = 평균 학점
 	{
@@ -91,15 +93,6 @@ public class Student
 		this.gender = gender;
 	}
 	
-	public String getDepartmentId()
-	{
-		return departmentId;
-	}
-	public void setDepartmentId(String departmentId)
-	{
-		this.departmentId = departmentId;
-	}
-	
 	public String getDepartmentName()
 	{
 		return departmentName;
@@ -153,22 +146,5 @@ public class Student
 	{
 		this.parentAddress = parentAddress;
 	}
-	
-	public String getMedicalCertificatePath()
-	{
-		return medicalCertificatePath;
-	}
-	public void setMedicalCertificatePath(String medicalCertificatePath)
-	{
-		this.medicalCertificatePath = medicalCertificatePath;
-	}
-	
-	public boolean isMedicalCertificateCheck()
-	{
-		return medicalCertificateCheck;
-	}
-	public void setMedicalCertificateCheck(boolean medicalCertificateCheck)
-	{
-		this.medicalCertificateCheck = medicalCertificateCheck;
-	}
+
 }
