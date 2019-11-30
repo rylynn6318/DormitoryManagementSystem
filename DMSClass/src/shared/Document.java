@@ -2,14 +2,14 @@ package shared;
 
 import java.sql.Date;
 
-//신청
+//서류제출
 public class Document
 {
 	private String studentId;			//학생 학번(외래키)
-	private int documentType;			//서류 유형
-	private Date submissionDate;		//제출일
+	private int documentType;			//서류 유형(키)
+	private Date submissionDate;		//제출일(키)
 	private Date diagnosisDate;			//진단일
-	private String documentStoragePath;	//서류저장경로	
+	private String documentStoragePath;	//서류저장경로
 	private boolean isValid;			//유효여부
 	
 	
