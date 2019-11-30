@@ -1,4 +1,4 @@
-package shared;
+package shared.classes;
 //호실정보
 public class RoomInfo
 {

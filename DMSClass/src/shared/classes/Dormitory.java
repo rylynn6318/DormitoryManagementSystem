@@ -1,4 +1,4 @@
-package shared;
+package shared.classes;
 //생활관 정보
 public class Dormitory
 {

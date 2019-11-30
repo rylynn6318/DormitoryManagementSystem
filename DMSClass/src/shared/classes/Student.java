@@ -1,4 +1,4 @@
-package shared;
+package shared.classes;
 //학생
 public class Student
 {

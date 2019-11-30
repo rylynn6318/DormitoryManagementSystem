@@ -1,4 +1,7 @@
-package shared;
+package shared.classes;
+
+import shared.enums.UserType;
+
 //계정
 public class Account
 {
@@ -7,7 +10,7 @@ public class Account
 	
 	//키가 아닌 컬럼
 	private String password;			//비밀번호
-	private int type;					//타입 , 학생 0, 관리자 1, 선생님 2 이런식으로 들어가게 될 것임.
+	private UserType userType;			//사용자 타입 , 학생 0, 관리자 1, 선생님 2
 	
 	public String getAccountId()
 	{
@@ -27,12 +30,12 @@ public class Account
 		this.password = password;
 	}
 	
-	public int getType()
+	public UserType getUserType()
 	{
-		return type;
+		return this.userType;
 	}
-	public void setType(int type)
+	public void setUserType(UserType userType)
 	{
-		this.type = type;
+		this.userType = userType;
 	}
 }

@@ -1,4 +1,4 @@
-package shared;
+package shared.classes;
 import java.util.Date;
 
 //스케쥴
