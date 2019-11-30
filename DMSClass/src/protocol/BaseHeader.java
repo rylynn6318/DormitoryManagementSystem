@@ -6,7 +6,7 @@ import java.nio.ByteOrder;
 
 // 가장 기본적인 프로토콜 헤더
 // Abstract으로 쓰고 싶었지만 AbstractProtocol에 멤버 변수로 들어가는 관계로 그냥 abstract 키워드 못씀
-public class BaseHeader {
+class BaseHeader {
     private short length;
     private byte type;
     private byte response_direction;
@@ -44,5 +44,18 @@ public class BaseHeader {
         baos.write(response_direction);
         baos.write(code);
         return baos.toByteArray();
+    }
+
+    public short getLength() {
+        return length;
+    }
+    public ProtocolType getType() {
+        return ProtocolType.getType(type);
+    }
+    public byte getResponse_direction() {
+        return response_direction;
+    }
+    public byte getCode() {
+        return code;
     }
 }
