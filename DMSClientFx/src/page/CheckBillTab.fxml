@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -20,7 +21,10 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
          <children>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="다운로드" />
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="다운로드">
+               <tooltip>
+                  <Tooltip text="은행, 계좌, 금액이 명시된 고지서를 다운로드합니다." />
+               </tooltip></Button>
             <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="※ 생활관 합격 내역을 확인 후 다운로드를 눌러주세요." textFill="RED" />
          </children>
          <VBox.margin>

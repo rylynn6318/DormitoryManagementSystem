@@ -6,6 +6,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -19,7 +20,10 @@
       </Label>
       <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="조회" />
+            <Button mnemonicParsing="false" text="조회">
+               <tooltip>
+                  <Tooltip text="이번학기의 신청내역을 조회합니다." />
+               </tooltip></Button>
          </children>
       </HBox>
       <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="100.0" VBox.vgrow="ALWAYS">

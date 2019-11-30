@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -29,8 +30,14 @@
       </Label>
       <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0" spacing="30.0" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="신청" />
-            <Button mnemonicParsing="false" text="취소" />
+            <Button mnemonicParsing="false" text="신청">
+               <tooltip>
+                  <Tooltip text="해당 값들로 입사신청을 합니다." />
+               </tooltip></Button>
+            <Button mnemonicParsing="false" text="취소">
+               <tooltip>
+                  <Tooltip text="신청되어있는 신청을 취소합니다." />
+               </tooltip></Button>
          </children>
          <VBox.margin>
             <Insets />
