@@ -7,8 +7,32 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+// 프로토콜 쓰는법
+// 1. 보낼때 (로그인으로 예를 들겠음)
+// Socket socket = new Socket("127.0.0.1", 666);
+// OutputStream outputToServer = socket.getOutputStream();
+// LoginInfo logininfo = new LoginInfo(id, pw); // LoginInfo 클래스는 Serializable 상속받음
+//
+// LoginProtocol lp = LoginProtocol.create(code, logininfo); // code(혹은 page, event 등 코드적인 정보)와 body에 들어갈 클래스만 넣으면 나머진 자동으로 만들어줌
+// outputToServer.write(lp.getPacket());
+// 단 두줄로 끝!
+//
+// 2. 받을때 (이번엔 서버가 받은 정보로 로그인 처리하는 대강의 예제)
+// ServerSocket sSocket = new ServerSocket(666);
+// Socket socket = sSocket.accept();
+// InputStream inputFromClient = socket.getInputStream();
+// byte[] buffer = new byte[우리프로토콜에서 이론상 최대 길이]; // 앞으로 데이터가 쓰일 버퍼
+// inputFromClient.read(buffer); // 클라이언트로부터 정보 수신
+// 
+// LoginProtocol lp = LoginProtocol.create(buffer);
+// LoginInfo logininfo = lp.getBody();
+// 이 역시 앞의 과정 제외하면 두줄로 끝!
+// 좀더 포멀하게 적자면
+// AbstractProtocol protocol = AbstractProtocol.create(buffer);
+// Serializable body = protocol.getBody();
+
 public abstract class AbstractProtocol {
-    private BaseHeader head;
+    private BaseHeader header;
     private byte[] body;
 
     // 새 프로토콜 만들고 head 할당함.
@@ -24,12 +48,16 @@ public abstract class AbstractProtocol {
     }
 
     // head를 바이트 배열로 바꿔서 이를 body랑 합쳐 반환함.
-    public byte[] getBytes() {
-        byte[] headbyte = head.getBytes();
+    public byte[] getPacket() {
+        byte[] headbyte = header.getBytes();
         byte[] packet = new byte[headbyte.length + body.length];
         System.arraycopy(headbyte, 0, packet, 0, headbyte.length);
         System.arraycopy(body, 0, packet, headbyte.length, body.length);
         return packet;
+    }
+
+    public BaseHeader getHeader(){
+        return header;
     }
 
     // Serializable 객체를 직렬화 해서 body에 넣음.

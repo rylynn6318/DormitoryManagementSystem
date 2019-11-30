@@ -1,9 +1,9 @@
 package protocol;
 
-public class EventProtocolHeader extends BaseHeader{
+class EventProtocolHeader extends BaseHeader{
 
-    protected EventProtocolHeader(Builder<?> builder) {
-        super(builder);
+    EventProtocolHeader(short length, byte type, byte direction, byte code) {
+        super(length, type, direction, code);
     }
     
 }

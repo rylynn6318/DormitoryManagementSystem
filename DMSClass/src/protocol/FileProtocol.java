@@ -1,5 +1,5 @@
 package protocol;
 
-public class FileProtocol extends AbstractProtocol{
+public class FileProtocol extends AbstractSplitProtocol{
 
 }

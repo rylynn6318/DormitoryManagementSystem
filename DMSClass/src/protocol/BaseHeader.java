@@ -7,6 +7,7 @@ import java.nio.ByteOrder;
 // 가장 기본적인 프로토콜 헤더
 // Abstract으로 쓰고 싶었지만 AbstractProtocol에 멤버 변수로 들어가는 관계로 그냥 abstract 키워드 못씀
 // 근데 어짜피 접근제한자로 외부 패키지에선 접근 못함
+// 또한 헤더 자체가 바디가 결정되면 code 정도를 제외하곤 리플렉션 등을 이용해 전부 값을 자동으로 할당해 줄 수 있음으로 헤더 클래스 자체를 외부에 노출시킬 것인지 고민해 봐야할듯?
 // 모든 헤더의 멤버변수는 final로 할것
 class BaseHeader {
     private final short length;
@@ -14,46 +15,18 @@ class BaseHeader {
     private final byte direction;
     private final byte code;
 
-    public static class Builder<T extends Builder<T>>{
-        private short length;
-        private byte type;
-        private byte direction;
-        private byte code;
-        
-        public Builder(){}
+    BaseHeader(short length, byte type, byte direction, byte code) {
+        this.length = length;
+        this.type = type;
+        this.direction = direction;
+        this.code = code;
+	}
 
-        public T length(short length){
-            this.length = length;
-            return (T)this;
-        }
-        public T type(ProtocolType type){
-            this.type = (byte)type.ordinal();
-            return (T)this;
-        }
-        public T direction(byte direction){
-            this.direction = direction;
-            return (T)this;
-        }
-        public T code(byte code){
-            this.code = code;
-            return (T)this;
-        }
-        public BaseHeader build(){
-            return new BaseHeader(this);
-        }
-    }
-
-    protected BaseHeader(Builder<?> builder){
-        this.length = builder.length;
-        this.type = builder.type;
-        this.direction = builder.direction;
-        this.code = builder.code;
-    }
-
-    public static BaseHeader create(byte[] packet){
+    static BaseHeader create(byte[] packet){
         if(packet.length < 5)
             return null;
-
+        
+        // 아래는 공통적으로 쓰이는 헤더 부분
         ByteBuffer bb = ByteBuffer.allocate(2);
         bb.order(ByteOrder.LITTLE_ENDIAN);
         bb.put(packet[0]);
@@ -63,7 +36,7 @@ class BaseHeader {
         if(length != packet.length)
             return null;
         byte type = packet[2];
-        byte response_direction = packet[3];
+        byte direction = packet[3];
         byte code = packet[4];
 
         switch(ProtocolType.getType(packet[2])){
@@ -71,21 +44,21 @@ class BaseHeader {
                 // 이 경우로 프로토콜이 생성되는 경우는 없음!
                 break;
             case LOGIN:
-                return new LoginProtocolHeader.Builder().build();
+                return new LoginProtocolHeader(length, type, direction, code);
             case FILE:
-                return new FileProtocolHeader.Builder().build();
+                return new FileProtocolHeader(length, type, direction, code);
             case EVENT:
-                return new EventProtocolHeader.Builder().build();
+                return new EventProtocolHeader(length, type, direction, code);
             default:
                 // 이 경우로 프로토콜이 생성되면 안됨!
                 break;
         }
 
-        // 먼가 문제 생겨서 switch 내에서 return 안되면 null 리턴 == 예외 발생!
+        // 먼가 문제 생겨서 switch 내에서 return 안되면 null 리턴 == 예외다! 따라서 null 체크 하셈ㅋ or 예외 던지게 코드 수정
         return null;
     }
 
-    public byte[] getBytes() {
+    byte[] getBytes() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(length);
         baos.write(type);
@@ -94,16 +67,19 @@ class BaseHeader {
         return baos.toByteArray();
     }
 
-    public short getLength() {
+    short getLength() {
         return length;
     }
-    public ProtocolType getType() {
+
+    ProtocolType getType() {
         return ProtocolType.getType(type);
     }
-    public byte getDirection() {
+
+    byte getDirection() {
         return direction;
     }
-    public byte getCode() {
+
+    byte getCode() {
         return code;
     }
 }

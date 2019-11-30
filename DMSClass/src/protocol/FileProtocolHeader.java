@@ -1,9 +1,9 @@
 package protocol;
 
-public class FileProtocolHeader extends BaseHeader{
+class FileProtocolHeader extends BaseHeader{
 
-    protected FileProtocolHeader(Builder<?> builder) {
-        super(builder);
+    FileProtocolHeader(short length, byte type, byte direction, byte code) {
+        super(length, type, direction, code);
     }
 
 }
