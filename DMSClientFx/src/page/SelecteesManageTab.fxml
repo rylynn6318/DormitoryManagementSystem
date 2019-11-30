@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -28,26 +29,50 @@
             </Label>
          </children>
       </HBox>
+      <BorderPane VBox.vgrow="NEVER">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <center>
+            <Label text="※ 입사 선발자 결과 등록. 신청테이블에서 합격여부를 UPDATE합니다." textFill="RED" BorderPane.alignment="CENTER_LEFT">
+               <font>
+                  <Font size="13.0" />
+               </font>
+               <BorderPane.margin>
+                  <Insets left="5.0" />
+               </BorderPane.margin>
+            </Label>
+         </center>
+         <left>
+            <Button mnemonicParsing="false" text="입사자 선발" BorderPane.alignment="CENTER">
+               <tooltip>
+                  <Tooltip text="ex) 100명을 뽑아야하면 100명까지 합격여부 Y로 수정" />
+               </tooltip></Button>
+         </left>
+      </BorderPane>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="조회" />
+            <Button mnemonicParsing="false" text="조회">
+               <tooltip>
+                  <Tooltip text="신청 테이블을 조회합니다." />
+               </tooltip></Button>
          </children>
          <VBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </VBox.margin>
       </HBox>
-      <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+      <TableView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
         <columns>
-          <TableColumn prefWidth="75.0" text="ID" />
             <TableColumn prefWidth="75.0" text="학번" />
+            <TableColumn prefWidth="75.0" text="생활관명" />
+            <TableColumn prefWidth="75.0" text="성별" />
+            <TableColumn prefWidth="75.0" text="학기" />
           <TableColumn prefWidth="75.0" text="지망" />
             <TableColumn prefWidth="75.0" text="몇일식" />
             <TableColumn prefWidth="75.0" text="납부여부" />
             <TableColumn prefWidth="75.0" text="합격여부" />
             <TableColumn prefWidth="75.0" text="최종결과" />
-            <TableColumn prefWidth="75.0" text="생활관명" />
-            <TableColumn prefWidth="75.0" text="성별" />
-            <TableColumn prefWidth="75.0" text="학기" />
+            <TableColumn prefWidth="75.0" text="코골이여부" />
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -55,7 +80,10 @@
       </TableView>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="삭제" />
+            <Button mnemonicParsing="false" text="삭제">
+               <tooltip>
+                  <Tooltip text="대상을 신청 테이블에서 삭제합니다." />
+               </tooltip></Button>
          </children>
          <VBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -64,24 +92,28 @@
       <GridPane gridLinesVisible="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <columnConstraints>
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <Label text="ID" />
-            <TextField promptText="ID를 입력해주세요." GridPane.rowIndex="1" />
+            <Label text="지망" GridPane.columnIndex="4" />
+            <TextField GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <Label text="학번" />
+            <Label text="생활관명" GridPane.columnIndex="1" />
+            <Label text="성별" GridPane.columnIndex="2" />
+            <Label text="학기" GridPane.columnIndex="3" />
+            <TextField GridPane.rowIndex="1" />
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
       </GridPane>
-      <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-         <children>
-            <Button mnemonicParsing="false" text="입사자 선발" />
-         </children>
-         <VBox.margin>
-            <Insets top="10.0" />
-         </VBox.margin>
-      </HBox>
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

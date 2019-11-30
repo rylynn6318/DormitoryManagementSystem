@@ -89,30 +89,20 @@ public class MainPageController implements Initializable
 		NavigationTab tab5 = new NavigationTab("서류 제출", TabType.SubmitDocument);
 		NavigationTab tab6 = new NavigationTab("서류 조회", TabType.CheckDocument);
 		
-		NavigationListView.getItems().add(tab1);
-		NavigationListView.getItems().add(tab2);
-		NavigationListView.getItems().add(tab3);
-		NavigationListView.getItems().add(tab4);
-		NavigationListView.getItems().add(tab5);
-		NavigationListView.getItems().add(tab6);
+		NavigationListView.getItems().addAll(tab1, tab2, tab3, tab4, tab5, tab6);
 	}
 	
 	//테스트용 관리자용 네비게이션 탭 객체 추가
 	private void addAdminNavigationTabs()
 	{
-		NavigationTab tab7 = new NavigationTab("선발 일정 조회 및 관리", TabType.ScheduleManage);
-		NavigationTab tab8 = new NavigationTab("생활관 조회 및 관리", TabType.DormitoryManage);
-		NavigationTab tab9 = new NavigationTab("입사 선발자 조회 및 관리", TabType.SelecteesManage);
-		NavigationTab tab10 = new NavigationTab("입사자 조회 및 관리", TabType.BoarderManage);
-		NavigationTab tab11 = new NavigationTab("납부 여부 조회 및 관리", TabType.PaymentManage);
-		NavigationTab tab12 = new NavigationTab("서류 조회 및 제출", TabType.DocumentManage);
+		NavigationTab tab1 = new NavigationTab("선발 일정 조회 및 관리", TabType.ScheduleManage);
+		NavigationTab tab2 = new NavigationTab("생활관 조회 및 관리", TabType.DormitoryManage);
+		NavigationTab tab3 = new NavigationTab("입사 선발자 조회 및 관리", TabType.SelecteesManage);
+		NavigationTab tab4 = new NavigationTab("입사자 조회 및 관리", TabType.BoarderManage);
+		NavigationTab tab5 = new NavigationTab("납부 여부 조회 및 관리", TabType.PaymentManage);
+		NavigationTab tab6 = new NavigationTab("서류 조회 및 제출", TabType.DocumentManage);
 		
-		NavigationListView.getItems().add(tab7);
-		NavigationListView.getItems().add(tab8);
-		NavigationListView.getItems().add(tab9);
-		NavigationListView.getItems().add(tab10);
-		NavigationListView.getItems().add(tab11);
-		NavigationListView.getItems().add(tab12);
+		NavigationListView.getItems().addAll(tab1, tab2, tab3, tab4, tab5, tab6);
 	}
 	
 	private void initializeNavigationTabs()

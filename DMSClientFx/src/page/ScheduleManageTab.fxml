@@ -8,6 +8,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -28,7 +29,10 @@
       </HBox>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="조회" />
+            <Button mnemonicParsing="false" text="조회">
+               <tooltip>
+                  <Tooltip text="스케쥴 테이블을 조회합니다." />
+               </tooltip></Button>
          </children>
          <VBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -48,7 +52,10 @@
       </TableView>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="삭제" />
+            <Button mnemonicParsing="false" text="삭제">
+               <tooltip>
+                  <Tooltip text="ID에 해당되는 행을 스케쥴 테이블에서 삭제합니다." />
+               </tooltip></Button>
          </children>
          <VBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -69,7 +76,10 @@
       </GridPane>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="등록" />
+            <Button mnemonicParsing="false" text="등록">
+               <tooltip>
+                  <Tooltip text="해당 값들로 스케쥴 테이블에 INSERT합니다." />
+               </tooltip></Button>
          </children>
          <VBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

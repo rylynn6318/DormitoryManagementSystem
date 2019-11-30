@@ -8,6 +8,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -16,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER" VBox.vgrow="NEVER">
          <children>
@@ -29,7 +30,10 @@
       </HBox>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Button mnemonicParsing="false" text="조회" />
+            <Button mnemonicParsing="false" text="조회">
+               <tooltip>
+                  <Tooltip text="서류 테이블을 조회합니다." />
+               </tooltip></Button>
          </children>
          <VBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -48,30 +52,45 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-         <children>
-            <Label text="서류 삭제">
+      <BorderPane VBox.vgrow="NEVER">
+         <left>
+            <Label text="서류 삭제" BorderPane.alignment="CENTER">
                <font>
                   <Font size="13.0" />
                </font>
             </Label>
-         </children>
+         </left>
+         <right>
+            <Button mnemonicParsing="false" text="삭제" BorderPane.alignment="CENTER">
+               <tooltip>
+                  <Tooltip text="해당 정보로 서류 테이블을 조회하여 해당되는 행을 삭제합니다." />
+               </tooltip>
+            </Button>
+         </right>
          <VBox.margin>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            <Insets bottom="5.0" top="10.0" />
          </VBox.margin>
-      </HBox>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </BorderPane>
       <GridPane alignment="CENTER" gridLinesVisible="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <columnConstraints>
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" prefWidth="500.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="60.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" prefWidth="500.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" prefWidth="500.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <Label text="ID" />
-            <TextField promptText="ID를 입력해주세요." />
-            <Button mnemonicParsing="false" text="삭제" GridPane.columnIndex="1" />
+            <Label text="서류유형" GridPane.columnIndex="1" />
+            <TextField GridPane.rowIndex="1" />
+            <Label text="학번" />
+            <Label text="제출일" GridPane.columnIndex="2" />
+            <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <DatePicker GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
          <VBox.margin>
             <Insets />
@@ -84,8 +103,14 @@
          <right>
             <HBox spacing="10.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button mnemonicParsing="false" text="파일 첨부" />
-                  <Button mnemonicParsing="false" text="등록" />
+                  <Button mnemonicParsing="false" text="파일 첨부">
+                     <tooltip>
+                        <Tooltip text="파일은 반드시 10MB 이하 JPG파일이어야 합니다." />
+                     </tooltip></Button>
+                  <Button mnemonicParsing="false" text="등록">
+                     <tooltip>
+                        <Tooltip text="JPG 파일을 업로드합니다." />
+                     </tooltip></Button>
                </children>
             </HBox>
          </right>
@@ -150,7 +175,10 @@
          <children>
             <TextField prefWidth="236.0" promptText="학번을 입력해주세요." GridPane.rowIndex="1" />
             <ComboBox prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <Button mnemonicParsing="false" text="UPDATE" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" text="UPDATE" GridPane.columnIndex="5" GridPane.rowIndex="1">
+               <tooltip>
+                  <Tooltip text="학번, 서류유형, 제출일에 해당되는 행의 진단일, 유효여부를 갱신합니다." />
+               </tooltip></Button>
             <Label text="유효여부" GridPane.columnIndex="4" />
             <Label text="학번" />
             <Label text="진단일" GridPane.columnIndex="3" />
