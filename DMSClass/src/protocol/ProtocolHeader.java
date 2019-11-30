@@ -5,7 +5,7 @@ class ProtocolHeader{
     
     private byte[] type = new byte[SIZE_TYPE];
 
-    public ProtocolType type(){
-        return ProtocolType.getType();
-    }
+//    public ProtocolType type(){
+//        return ProtocolType.getType();
+//    }
 }

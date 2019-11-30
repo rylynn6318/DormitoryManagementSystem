@@ -2,9 +2,12 @@ package shared;
 //생활관 정보
 public class Dormitory
 {
+	//키
 	private String dormitoryName;			//생활관명
 	private char gender;					//성별
 	private int semesterCode;				//학기코드
+	
+	//키가 아닌 컬럼
 	private int capacity;					//수용인원
 	private boolean isMealDuty;				//식사의무			식사가 의무이면 true, 의무가 아니면 false
 	private int mealCost5;					//5일치 식비, 번역 못해서 임시로 mealCost5로 해둠.
