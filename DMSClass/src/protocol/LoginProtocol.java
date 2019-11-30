@@ -1,9 +1,10 @@
-package protocol.client;
+package protocol;
+
 import protocol.AbstractProtocol;
 
 // LoginProtocol
-//  클라이언트가 서버의 로그인을 할때 쓰는 프로토콜.
-// ┌ LOGIN_RESPONSE_ID, PW ┐ 시작 인덱스
+//  로그인을 할때 쓰는 프로토콜.
+// ┌──────── LOGIN ────────┐ 시작 인덱스
 // ├───────┬───────────────┤  0
 // │   0   │ ProtocolType  │  
 // ├───────┼───────────────┤  LEN_PROTOCOL_TYPE
@@ -13,11 +14,10 @@ import protocol.AbstractProtocol;
 // └───────┴───────────────┘ 최종 길이
 //							  LEN_PROTOCOL_TYPE + LEN_LOGIN_ID + LEN_LOGIN_PASSWORD
 
-public class LoginTryProtocol extends AbstractProtocol {
+public class LoginProtocol extends AbstractProtocol {
 
-    LoginTryProtocol(byte[] packet) {
+    protected LoginProtocol(byte[] packet) {
         super(packet);
-        // TODO Auto-generated constructor stub
     }
 
 }
