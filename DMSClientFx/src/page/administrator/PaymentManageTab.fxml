@@ -92,13 +92,13 @@
             <Label text="학번" />
             <TextField promptText="ID를 입력해주세요." GridPane.rowIndex="1" />
             <Label text="납부여부" GridPane.columnIndex="4" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <ComboBox fx:id="update_isPaid_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="4" GridPane.rowIndex="1" />
             <Label text="생활관명" GridPane.columnIndex="1" />
             <Label text="성별" GridPane.columnIndex="2" />
             <Label text="학기" GridPane.columnIndex="3" />
             <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <ComboBox fx:id="update_gender_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
          <VBox.margin>
             <Insets />

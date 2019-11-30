@@ -26,14 +26,14 @@
             <Label fx:id="UserInfoLabel" text="환영합니다! N/A 님!" BorderPane.alignment="CENTER" />
          </right>
       </BorderPane>
-      <SplitPane dividerPositions="0.2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" VBox.vgrow="ALWAYS">
+      <SplitPane dividerPositions="0.2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" VBox.vgrow="ALWAYS">
          <items>
             <VBox maxHeight="1.7976931348623157E308" maxWidth="200.0" minWidth="120.0">
                <children>
                   <ListView fx:id="NavigationListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
-            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="50.0" minWidth="50.0" prefWidth="600.0" style="-fx-border-color: gray; -fx-border-radius: 3;">
+            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="50.0" minWidth="50.0" prefHeight="700.0" prefWidth="600.0" style="-fx-border-color: gray; -fx-border-radius: 3;">
                <children>
                   <TabPane fx:id="MainTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="100.0" tabClosingPolicy="ALL_TABS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>

@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 
+//선발 일정 조회 및 관리
 public class ScheduleManageTabController implements Initializable 
 {
 

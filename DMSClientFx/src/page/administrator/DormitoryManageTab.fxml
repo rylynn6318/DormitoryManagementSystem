@@ -78,7 +78,7 @@
             <Label text="성별" GridPane.columnIndex="1" />
             <Label text="학기" GridPane.columnIndex="2" />
             <TextField GridPane.rowIndex="1" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="delete_gender_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
       </GridPane>
@@ -118,7 +118,7 @@
             <Label text="7일식 식비" GridPane.columnIndex="6" />
             <Label text="기숙사비" GridPane.columnIndex="7" />
             <TextField GridPane.rowIndex="1" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="enroll_gender_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" />
             <TextField GridPane.columnIndex="5" GridPane.rowIndex="1" />

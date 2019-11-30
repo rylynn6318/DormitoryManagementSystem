@@ -174,7 +174,7 @@
         </rowConstraints>
          <children>
             <TextField prefWidth="236.0" promptText="학번을 입력해주세요." GridPane.rowIndex="1" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <ComboBox fx:id="update_isValid_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="4" GridPane.rowIndex="1" />
             <Button mnemonicParsing="false" text="UPDATE" GridPane.columnIndex="5" GridPane.rowIndex="1">
                <tooltip>
                   <Tooltip text="학번, 서류유형, 제출일에 해당되는 행의 진단일, 유효여부를 갱신합니다." />
