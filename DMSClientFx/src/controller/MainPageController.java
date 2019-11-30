@@ -170,35 +170,42 @@ public class MainPageController implements Initializable
 			        		System.out.println(e.getMessage());
 						}
 		        	}
-		        	
-		        	
-		        	
 		        }
 		    }
 		});
 		
 		//사용자 타입에 따른 메뉴 설정
-		//TODO : 나중에 ENUM타입으로 switch문으로 고쳐라.
-		if(UserInfo.getInstance().getUserType() == UserType.STUDENT)
+		switch(UserInfo.getInstance().getUserType())
 		{
+		case STUDENT:
 			addStudentNavigationTabs();
-		}
-		else if(UserInfo.getInstance().getUserType() == UserType.ADMINISTRATOR)
-		{
-			addAdminNavigationTabs();	
+			break;
+		case ADMINISTRATOR:
+			addAdminNavigationTabs();
+			break;
+		case TEACHER:
+			addAdminNavigationTabs();
+			break;
 		}
 	}
 	
 	private void initializeWelcomeLabel()
 	{
-		if(UserInfo.getInstance().getUserType() == UserType.STUDENT)
+		String userStr = "";
+		switch(UserInfo.getInstance().getUserType())
 		{
-			UserInfoLabel.setText("환영합니다! 학생 " + UserInfo.getInstance().getAccountId() + " 님!");
+		case STUDENT:
+			userStr = "학생";
+			break;
+		case ADMINISTRATOR:
+			userStr = "관리자";	
+			break;
+		case TEACHER:
+			userStr = "선생님";
+			break;
 		}
-		else if(UserInfo.getInstance().getUserType() == UserType.ADMINISTRATOR)
-		{
-			UserInfoLabel.setText("환영합니다! 관리자 " + UserInfo.getInstance().getAccountId() + " 님!");	
-		}
+		
+		UserInfoLabel.setText("환영합니다! " + userStr + " " + UserInfo.getInstance().getAccountId() + " 님!");	
 	}
 	
 	private void addWelcomeTab()

@@ -60,7 +60,7 @@ public class LoginPageController
     //로직
     
     //서버와 통신한다. (통신이 미구현임으로 여기서 대충 처리한다)
-    private boolean tryLogin()
+    private void tryLogin()
     {
     	//사용자가 입력한 아이디, 비밀번호를 가져온다.
     	String inputUserId = IDField.getText();
@@ -70,35 +70,47 @@ public class LoginPageController
     	{
     		showAlert("아이디가 비어있습니다");
     		IDField.requestFocus();
-    		return false;
+    		return;
     	}
     	else if(inputUserPw.isEmpty())
     	{
     		showAlert("비밀번호가 비어있습니다");
     		PWField.requestFocus();
-    		return false;
+    		return;
     	}
     	
-    	if(inputUserId.equals("stu") && inputUserPw.equals("pass"))
+    	
+    	//네트워킹 여기서 해라
+    	if(networking(inputUserId, inputUserPw))
+    	{
+    		showAlert("로그인 성공");
+    		moveToMain();
+    	}
+    	else
+    	{
+    		showAlert("아이디 혹은 비밀번호가 틀렸습니다.");
+    		IDField.requestFocus();
+    	}
+    }
+    
+    //테스트용 네트워킹
+    private boolean networking(String id, String pw)
+    {
+    	if(id.equals("stu") && pw.equals("pass"))
     	{
     		//로그인 성공
-    		showAlert("학생 로그인 성공");
-    		setUserInfo(inputUserId, inputUserPw, UserType.STUDENT);
-    		moveToMain();
+    		setUserInfo(id, pw, UserType.STUDENT);
     		return true;
     	}
-    	else if(inputUserId.equals("admin") && inputUserPw.equals("pass"))
+    	else if(id.equals("admin") && pw.equals("pass"))
     	{
-    		showAlert("관리자 로그인 성공");
-    		setUserInfo(inputUserId, inputUserPw, UserType.ADMINISTRATOR);
-    		moveToMain();
+    		//관리자 로그인 성공
+    		setUserInfo(id, pw, UserType.ADMINISTRATOR);
     		return true;
     	}
     	else
     	{
 			//로그인 실패
-    		showAlert("아이디 혹은 비밀번호가 틀렸습니다.");
-    		IDField.requestFocus();
     		return false;
     	}
     }
@@ -108,7 +120,6 @@ public class LoginPageController
     {
     	UserInfo.getInstance().setAccountId(id);
     	UserInfo.getInstance().setPassword(pw);
-    	System.out.println("DEBUG : setUserInfo에서 Type이 " + userType + "으로 설정됨");
     	UserInfo.getInstance().setUserType(userType);
     }
     
