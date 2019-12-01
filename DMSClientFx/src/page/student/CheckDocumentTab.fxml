@@ -48,7 +48,7 @@
         </rowConstraints>
          <children>
             <Label text="제출서류구분" />
-            <ComboBox fx:id="document_type_combobox" prefWidth="150.0" GridPane.columnIndex="1" />
+            <ComboBox fx:id="document_type_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" />
             <Label text="제출일시" GridPane.columnIndex="2" />
             <Label fx:id="submit_date_label" text="N/A" GridPane.columnIndex="3" />
             <Label text="진단일시" GridPane.columnIndex="4" />
@@ -60,7 +60,7 @@
       </GridPane>
       <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
-            <Label text="파일명 : ">
+            <Label text="파일경로 : ">
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin></Label>

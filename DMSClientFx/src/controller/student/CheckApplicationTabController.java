@@ -42,8 +42,14 @@ public class CheckApplicationTabController implements Initializable
     void on_check_button_actioned(ActionEvent event) 
     {
     	System.out.println("생활관 신청 조회 : 조회 클릭됨");
+    	checkApplication();
     }
     
     //---------------------로직---------------------
+    
+    private void checkApplication()
+    {
+    	//여기는 뭐 검사할 필요없이 바로 서버로 요청날림.
+    }
 
 }

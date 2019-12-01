@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.student.SubmitDocumentTabController">
+<VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.student.SubmitDocumentTabController">
    <children>
       <HBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
@@ -47,37 +47,37 @@
             <Label text="제출년도" />
             <Label fx:id="year_label" text="N/A" GridPane.columnIndex="1" />
             <Label prefHeight="0.0" prefWidth="72.0" text="제출서류구분" GridPane.columnIndex="2" />
-            <ComboBox fx:id="document_type_combobox" prefWidth="150.0" GridPane.columnIndex="3" />
+            <ComboBox fx:id="document_type_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="3" />
          </children>
          <VBox.margin>
             <Insets bottom="10.0" top="10.0" />
          </VBox.margin>
       </GridPane>
-      <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="SOMETIMES">
-         <children>
-            <BorderPane>
-               <left>
-                  <Button fx:id="select_file_button" mnemonicParsing="false" onAction="#on_select_file_button_actioned" text="파일선택" BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets right="10.0" />
-                     </BorderPane.margin>
-                     <tooltip>
-                        <Tooltip text="제출할 서류 파일을 선택합니다." />
-                     </tooltip>
-                  </Button>
-               </left>
-               <right>
-                  <Label fx:id="file_directory_label" text="N/A" BorderPane.alignment="CENTER" />
-               </right>
-               <center>
-                  <Label text="파일 경로 : " BorderPane.alignment="CENTER" />
-               </center>
-               <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </HBox.margin>
-            </BorderPane>
-         </children>
-      </HBox>
+      <BorderPane VBox.vgrow="NEVER">
+         <left>
+            <Button fx:id="select_file_button" mnemonicParsing="false" onAction="#on_select_file_button_actioned" text="파일선택" BorderPane.alignment="CENTER_LEFT">
+               <BorderPane.margin>
+                  <Insets right="10.0" />
+               </BorderPane.margin>
+               <tooltip>
+                  <Tooltip text="제출할 서류 파일을 선택합니다." />
+               </tooltip>
+            </Button>
+         </left>
+         <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
+         <center>
+            <Label fx:id="file_directory_label" text="N/A" BorderPane.alignment="CENTER_LEFT">
+               <graphic>
+                  <Label text="파일 경로 : " />
+               </graphic>
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Label>
+         </center>
+      </BorderPane>
       <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <children>
             <Label text="안내사항">

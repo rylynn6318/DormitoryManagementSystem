@@ -25,8 +25,14 @@ public class CheckBillTabController implements Initializable
     void on_check_button_actioned(ActionEvent event) 
     {
 		System.out.println("생활관 고지서 조회 : 조회 클릭 됨");
+		checkBill();
     }
 	
 	//---------------------로직---------------------
+	
+	private void checkBill()
+	{
+		//여기는 뭐 검사할 필요없이 바로 서버로 요청날림.
+	}
 
 }
