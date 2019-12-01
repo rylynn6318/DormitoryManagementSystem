@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -131,7 +132,7 @@
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
             <Label text="학번" />
@@ -141,7 +142,21 @@
             <Label text="서류유형" GridPane.columnIndex="1" />
             <ComboBox fx:id="upload_documentType_combobox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="upload_id_textfield" GridPane.rowIndex="1" />
-            <Label fx:id="upload_fileDirectory_label" text="N/A" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <ScrollPane hbarPolicy="ALWAYS" vbarPolicy="NEVER" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+               <content>
+                  <Label fx:id="upload_fileDirectory_label" alignment="CENTER" text="N/A">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </Label>
+               </content>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </ScrollPane>
          </children>
          <VBox.margin>
             <Insets />

@@ -38,8 +38,6 @@ public class SubmitDocumentTabController implements Initializable
 
     @FXML
     private TextArea info_textarea;
-    
-    private final long MAXFILESIZE = 10485760;	//10MB = 10485760 byte(in 바이너리)
 
 
 	@Override
@@ -78,48 +76,14 @@ public class SubmitDocumentTabController implements Initializable
     
     private void selectFile()
     {
-    	JFileChooser jfc;
+    	String selectedFileDirectory, currentFileDirectory;
+    	FileNameExtensionFilter filter = new FileNameExtensionFilter("JPG", "jpg");		//jpg만 선택할 수 있게 함. 필터 앞 인수는 설명, 뒷 인수는 확장자
+    	currentFileDirectory = file_directory_label.getText();							//이전에 파일 선택했었으면, 다시 파일선택 시 그 폴더에서 보여주게하기위함.
     	
-    	//이전에 파일을 열었다면, 그 파일이 있는 폴더에서 열 수 있게 함.
-    	if(file_directory_label.getText().equals("N/A"))
-    	{
-    		jfc = new JFileChooser();
-    	}
-    	else
-    	{
-    		jfc = new JFileChooser(file_directory_label.getText());
-    	}
+    	selectedFileDirectory =	IOHandler.getInstance().selectFile(currentFileDirectory, filter);	//파일선택
     	
-    	jfc.setFileFilter(new FileNameExtensionFilter("JPG", "jpg"));		//jpg만 선택할 수 있게 함. 필터 앞 인수는 설명, 뒷 인수는 확장자
-    	
-		int returnVal = jfc.showOpenDialog(null);
-		if(returnVal == 0)
-		{
-			//파일선택 선택됨
-			try
-			{
-				File file = jfc.getSelectedFile();
-				long fileSize = file.length();
-				
-				if(fileSize <= MAXFILESIZE)
-				{
-					file_directory_label.setText(file.getPath());
-				}
-				else
-				{
-					IOHandler.getInstance().showAlert("파일의 크기가 10MB보다 큽니다.");
-				}
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-		else
-		{
-			//파일선택 취소됨
-			IOHandler.getInstance().showAlert("파일 선택이 취소되었습니다.");
-		}
+    	if(selectedFileDirectory != null)
+    		file_directory_label.setText(selectedFileDirectory);						//파일이 선택됬으면 label에 경로 저장
     }
     
     private void submit()
