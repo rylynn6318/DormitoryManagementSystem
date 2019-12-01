@@ -1,12 +1,16 @@
 package assign;
 
+import java.sql.Date;
+
 import shared.classes.RoomInfo;
 
 public class AssignRoomInfo extends RoomInfo  {
 	private String seat;
 	private boolean isEmpty;
 	private String studentId;
+	private Date checkout;
 	
+		
 	public String getSeat()
 	{
 		return seat;
@@ -30,5 +34,13 @@ public class AssignRoomInfo extends RoomInfo  {
 	public void setStudentId(String studentId)
 	{
 		this.studentId = studentId;
+	}
+	public Date getCheckOut()
+	{
+		return checkout;
+	}
+	public void setCheckout(Date checkout)
+	{
+		this.checkout = checkout;
 	}
 }
