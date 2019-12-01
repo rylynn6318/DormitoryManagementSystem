@@ -15,7 +15,7 @@ import java.util.Arrays;
 // LoginInfo logininfo = new LoginInfo(id, pw); // LoginInfo 클래스는 Serializable 상속받음
 //
 // LoginProtocol lp = LoginProtocol.create(code, logininfo); // code(혹은 page, event 등 코드적인 정보)와 body에 들어갈 클래스만 넣으면 나머진 자동으로 만들어주게 할꺼임
-// lp.send(outputToServer);
+// lp.send(outputToServer); or outputToServer.write(lp.getPacket());
 // 단 두줄로 끝!
 //
 // 2. 받을때 (이번엔 서버가 받은 정보로 로그인 처리하는 대강의 예제)
@@ -57,7 +57,7 @@ import java.util.Arrays;
 // 애초에 요청 하나에 소켓 하나라서 진짜 헤더 더 안보내도 될듯; 월요일에 선명킴한테 물어봐야지
 // 만약 그렇다면 AbstractSplittableHeader를 쓸 필요도 없을듯
 
-// 위에 의식의 흐름대로 주석(시진핑 아님) 쓰고 든 생각 정리
+// 위에 의식의 흐름대로 주석 쓰고 든 생각 정리
 // 1. stateless 서버라면 한번에 하나의 프로토콜만 전송된다. 소켓 레벨에서 다른 프로토콜이랑 썪일 이유가 없다. 그렇다면 분할되는 프로토콜에 헤더 넣어줄 필요가 있나?
 //    즉, [header|body] + [header|body] + ... 이렇게 말고 [header|body] + [body] + [body] 이렇게 보내도 되는거 아닌가? 내가 잘못 알고 있나?
 // 2. 프로토콜을 받는건 그렇다 치고, 보낼때 Protocol 타입을 명시 해야할까? Header만 만들어서 넣어주면 body엔 머가 드가든 상관 없지 않나?
