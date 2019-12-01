@@ -6,14 +6,17 @@ import shared.classes.*;
 
 public class ResidentSelecter 
 {
-	public void temp()
+	public void temp()	//실제 배치는 버튼 하나만 누르면 자동으로 다 되서 pass 함수만 가지고는 구현할 수 없음 -> pass함수를 모든 경우의 수로 돌려주는 함수가 필요함
 	{
 //		알고리즘
 //		SQL문 SELECT * FROM 신청 WHERE 생활관명=오름3 && 지망=1 && 학기=201901 && 합격여부=N 를 통해 현재 학기에서 생활관명, 지망이 동일하고 합격여부가 Y인 것들만 뽑아낸 테이블과 생활관.getCapacity()를 pass 함수에 넣음
 //		SELECT COUNT(*) FROM (SELECT * FROM 배정내역 WHERE 생활관명=찾을 생활관 명 AND 학기=현재학기)의 결과가 생활관.getCapacity()보다 작으면 생활관.getCapacity에서 앞 SQL문의 결과로 나온 값만큼 빼서 pass를 다시 돌림
 //		SELECT COUNT(*) FROM (SELECT * FROM 배정내역 WHERE 생활관명=찾을 생활관 명 AND 학기=현재학기)의 결과가 생활관.getCapacity()과 같아질 때 까지 반복
 //		위 3단계를 각 생활관별로 시행한다.
+//		근데 생각해보니까 합격자 선발 알고리즘 돌리기 전에 Student에서 평균점수 뽑고 신청 테이블에서 가져온 Application배열의 각 객체 전부에서 평균점수 + 가산점을 계산해서 변수를 다 채운 다음에 돌려야하는데
+//		그럼 신청 테이블을 어디에서 제일 먼저 가져오고 돌아다니면서 지역변수 채우는거 어떻게 해야할까?
 	}
+	
 	//SQL문 SELECT * FROM 신청 WHERE 생활관명=오름3 && 지망=1 && 학기=201901 이런 식으로 현재 학기에서 생활관명, 지망이 동일한 것들만 뽑아낸 테이블을 넣어줘야함
 	public void pass(Application[] apps, int num)	//apps == 정렬되기 전의 신청 배열, num == 기숙사의 수용인원 - 현재 합격된 인원 
 	{
