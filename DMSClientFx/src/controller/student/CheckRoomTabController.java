@@ -52,8 +52,14 @@ public class CheckRoomTabController implements Initializable
     void on_check_button_actioned(ActionEvent event) 
     {
     	System.out.println("생활관 호실 조회 : 조회 클릭됨");
+    	checkRoom();
     }
 	
 	//---------------------로직---------------------
+    
+    private void checkRoom()
+    {
+    	//여기는 뭐 검사할 필요없이 바로 서버로 요청날림.
+    }
 
 }

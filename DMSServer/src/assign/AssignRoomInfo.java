@@ -3,7 +3,7 @@ package assign;
 import java.sql.Date;
 
 import shared.classes.RoomInfo;
-
+//RoomInfo를 상속받아서 배정에 필요한 정보를 더 넣은 클래스
 public class AssignRoomInfo extends RoomInfo  {
 	private String seat;
 	private boolean isEmpty;

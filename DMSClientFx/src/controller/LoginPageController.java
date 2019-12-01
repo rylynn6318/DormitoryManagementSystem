@@ -3,6 +3,7 @@ package controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import application.IOHandler;
 import application.UserInfo;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -79,13 +80,13 @@ public class LoginPageController implements Initializable
     	
     	if(inputUserId.isEmpty())
     	{
-    		showAlert("아이디가 비어있습니다");
+    		IOHandler.getInstance().showAlert("아이디가 비어있습니다");
     		IDField.requestFocus();
     		return;
     	}
     	else if(inputUserPw.isEmpty())
     	{
-    		showAlert("비밀번호가 비어있습니다");
+    		IOHandler.getInstance().showAlert("비밀번호가 비어있습니다");
     		PWField.requestFocus();
     		return;
     	}
@@ -94,12 +95,12 @@ public class LoginPageController implements Initializable
     	//네트워킹 여기서 해라
     	if(networking(inputUserId, inputUserPw))
     	{
-    		showAlert("로그인 성공");
+    		IOHandler.getInstance().showAlert("로그인 성공");
     		moveToMain();
     	}
     	else
     	{
-    		showAlert("아이디 혹은 비밀번호가 틀렸습니다.");
+    		IOHandler.getInstance().showAlert("아이디 혹은 비밀번호가 틀렸습니다.");
     		IDField.requestFocus();
     	}
     }
@@ -132,16 +133,6 @@ public class LoginPageController implements Initializable
     	UserInfo.getInstance().setAccountId(id);
     	UserInfo.getInstance().setPassword(pw);
     	UserInfo.getInstance().setUserType(userType);
-    }
-    
-    //경고창 띄우는 메소드
-    private void showAlert(String s)
-    {
-    	Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("information");
-		alert.setHeaderText(null);
-		alert.setContentText(s);
-		alert.showAndWait();
     }
     
     //메인 화면으로 이동
