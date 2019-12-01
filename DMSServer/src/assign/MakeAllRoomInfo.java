@@ -1,5 +1,7 @@
 package assign;
 
+import java.sql.Date;
+
 public class MakeAllRoomInfo {
 	public static AssignRoomInfo[] getO1()
 	{

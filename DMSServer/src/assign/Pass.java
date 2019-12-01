@@ -389,7 +389,53 @@ public class Pass
 			}
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//이제 업데이트 해줘야함
+		//이제 업데이트
+		for(int i = 1; i < O1.length; i++)
+		{
+			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O1[i].getStudentId() + "', '" + O1[i].getSeat()+ "', '"+O1[i].getCheckOut()+ "', '오름1', '" + O1[i].getSemesterCode() + "', '" + O1[i].getRoomNumber() +"')";
+			state.executeQuery(sql5);
+		}
+		for(int i = 1; i < O2.length; i++)
+		{
+			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O2[i].getStudentId() + "', '" + O2[i].getSeat()+ "', '"+O2[i].getCheckOut()+ "', '오름1', '" + O2[i].getSemesterCode() + "', '" + O2[i].getRoomNumber() +"')";
+			state.executeQuery(sql5);
+		}
+		for(int i = 1; i < O3.length; i++)
+		{
+			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O3[i].getStudentId() + "', '" + O3[i].getSeat()+ "', '"+O3[i].getCheckOut()+ "', '오름1', '" + O3[i].getSemesterCode() + "', '" + O3[i].getRoomNumber() +"')";
+			state.executeQuery(sql5);
+		}
+		for(int i = 1; i < P1.length; i++)
+		{
+			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P1[i].getStudentId() + "', '" + P1[i].getSeat()+ "', '"+P1[i].getCheckOut()+ "', '오름1', '" + P1[i].getSemesterCode() + "', '" + P1[i].getRoomNumber() +"')";
+			state.executeQuery(sql5);
+		}
+		for(int i = 1; i < P2.length; i++)
+		{
+			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P2[i].getStudentId() + "', '" + P2[i].getSeat()+ "', '"+P2[i].getCheckOut()+ "', '오름1', '" + P2[i].getSemesterCode() + "', '" + P2[i].getRoomNumber() +"')";
+			state.executeQuery(sql5);
+		}
+		for(int i = 1; i < P3.length; i++)
+		{
+			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P3[i].getStudentId() + "', '" + P3[i].getSeat()+ "', '"+P3[i].getCheckOut()+ "', '오름1', '" + P3[i].getSemesterCode() + "', '" + P3[i].getRoomNumber() +"')";
+			state.executeQuery(sql5);
+		}
+		for(int i = 1; i < P4.length; i++)
+		{
+			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P4[i].getStudentId() + "', '" + P4[i].getSeat()+ "', '"+P4[i].getCheckOut()+ "', '오름1', '" + P4[i].getSemesterCode() + "', '" + P4[i].getRoomNumber() +"')";
+			state.executeQuery(sql5);
+		}
+		for(int i = 1; i < SN.length; i++)
+		{
+			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + SN[i].getStudentId() + "', '" + SN[i].getSeat()+ "', '"+SN[i].getCheckOut()+ "', '오름1', '" + SN[i].getSemesterCode() + "', '" + SN[i].getRoomNumber() +"')";
+			state.executeQuery(sql5);
+		}
+		for(int i = 1; i < SY.length; i++)
+		{
+			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + SY[i].getStudentId() + "', '" + SY[i].getSeat()+ "', '"+SY[i].getCheckOut()+ "', '오름1', '" + SY[i].getSemesterCode() + "', '" + SY[i].getRoomNumber() +"')";
+			state.executeQuery(sql5);
+		}
+		
 		
 		
 	}
