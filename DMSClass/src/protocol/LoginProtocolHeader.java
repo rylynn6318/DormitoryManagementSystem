@@ -6,10 +6,4 @@ class LoginProtocolHeader extends AbstractHeader {
 	LoginProtocolHeader(short length, byte type, byte direction, byte code) {
 		super(length, type, direction, code);
 	}
-
-	@Override
-	int getHeaderLength() {
-		return 5;
-	}
-
 }

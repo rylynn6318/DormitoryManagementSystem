@@ -9,8 +9,4 @@ abstract class AbstractSplitableHeader extends AbstractHeader {
         super(length, type, direction, code);
     }
 
-    @Override
-    int getHeaderLength() {
-        return 10;
-    }
 }
