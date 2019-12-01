@@ -90,7 +90,7 @@
             <TextField fx:id="delete_id_textfield" GridPane.rowIndex="1" />
             <Label text="학번" />
             <Label text="제출일" GridPane.columnIndex="2" />
-            <ComboBox fx:id="delete_documentType_combobox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="delete_documentType_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <DatePicker fx:id="delete_date_datepicker" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
          <VBox.margin>
@@ -128,7 +128,6 @@
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -136,13 +135,11 @@
          </rowConstraints>
          <children>
             <Label text="학번" />
-            <Label text="제출일" GridPane.columnIndex="2" />
-            <Label text="파일명" GridPane.columnIndex="3" />
-            <DatePicker fx:id="upload_date_datepicker" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label text="파일명" GridPane.columnIndex="2" />
             <Label text="서류유형" GridPane.columnIndex="1" />
-            <ComboBox fx:id="upload_documentType_combobox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="upload_documentType_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="upload_id_textfield" GridPane.rowIndex="1" />
-            <ScrollPane hbarPolicy="ALWAYS" vbarPolicy="NEVER" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <ScrollPane hbarPolicy="ALWAYS" vbarPolicy="NEVER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <content>
                   <Label fx:id="upload_fileDirectory_label" alignment="CENTER" text="N/A">
                      <font>
@@ -200,7 +197,7 @@
             <DatePicker fx:id="update_diagnosisDate_datepicker" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             <Label text="서류유형" GridPane.columnIndex="1" />
             <Label text="제출일" GridPane.columnIndex="2" />
-            <ComboBox fx:id="update_documentType_combobox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="update_documentType_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <DatePicker fx:id="update_submitDate_datepicker" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
       </GridPane>

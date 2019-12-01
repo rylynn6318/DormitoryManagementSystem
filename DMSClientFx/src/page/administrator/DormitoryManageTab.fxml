@@ -124,7 +124,7 @@
             <TextField fx:id="insert_mealCost5_textfield" GridPane.columnIndex="5" GridPane.rowIndex="1" />
             <TextField fx:id="insert_mealCost7_textfield" GridPane.columnIndex="6" GridPane.rowIndex="1" />
             <TextField fx:id="insert_boradingFees_textfield" GridPane.columnIndex="7" GridPane.rowIndex="1" />
-            <ComboBox fx:id="insert_mealDuty_combobox" prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <ComboBox fx:id="insert_mealDuty_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="4" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>

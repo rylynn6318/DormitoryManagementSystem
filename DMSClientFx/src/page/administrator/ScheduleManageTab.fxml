@@ -101,7 +101,7 @@
             <Label text="시작일" GridPane.columnIndex="1" />
             <Label text="종료일" GridPane.columnIndex="2" />
             <Label text="비고" GridPane.columnIndex="3" />
-            <ComboBox fx:id="insert_type_combobox" prefWidth="150.0" GridPane.rowIndex="1" />
+            <ComboBox fx:id="insert_type_combobox" prefWidth="150.0" promptText="선택" GridPane.rowIndex="1" />
             <DatePicker fx:id="insert_startDate_datepicker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <DatePicker fx:id="insert_endDate_datepicker" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <TextField fx:id="insert_etc_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />

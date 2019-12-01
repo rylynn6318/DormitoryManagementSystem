@@ -96,33 +96,34 @@ public class SubmitDocumentTabController implements Initializable
     	{
     		//년도 비어있음
     		IOHandler.getInstance().showAlert("제출년도가 비어있습니다.");
+    		return;
     	}
     	else if(comboboxItem == null || comboboxItem.isEmpty())
     	{
-    		//제출서류구분 비어있음
-    		IOHandler.getInstance().showAlert("제출서류구분이 비어있습니다.");
+    		//서류유형 비어있음
+    		IOHandler.getInstance().showAlert("서류유형이 비어있습니다.");
+    		return;
     	}
     	else if(fileDirectory == null || fileDirectory.equals("N/A"))
     	{
     		//파일 경로가 없음
     		IOHandler.getInstance().showAlert("파일을 선택해주세요.");
+    		return;
     	}
-    	else
-    	{
-    		//전송
-    		
-    		//전송하기전에 파일이 존재하는지 체크
-    		File file = new File(fileDirectory);
-    		if(file.exists())
-    		{
-    			//파일전송하는 프로토콜
-    			IOHandler.getInstance().showAlert("서류가 제출되었습니다.");    			
-    		}
-    		else
-    		{
-    			IOHandler.getInstance().showAlert("파일이 존재하지 않습니다!");
-    		}
-    	}
+    	
+    	//전송
+		
+		//전송하기전에 파일이 존재하는지 체크
+		File file = new File(fileDirectory);
+		if(file.exists())
+		{
+			//파일전송하는 프로토콜
+			IOHandler.getInstance().showAlert("서류가 제출되었습니다.");    			
+		}
+		else
+		{
+			IOHandler.getInstance().showAlert("파일이 존재하지 않습니다!");
+		}
     }
 
 }

@@ -65,8 +65,8 @@ public class CheckDocumentTabController implements Initializable
 		
 		if(comboboxItem == null || comboboxItem.isEmpty())
     	{
-    		//제출서류구분 비어있음
-    		IOHandler.getInstance().showAlert("제출서류구분이 비어있습니다.");
+    		//서류유형 비어있음
+    		IOHandler.getInstance().showAlert("서류유형이 비어있습니다.");
     		return;
     	}
 		

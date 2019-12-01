@@ -47,7 +47,7 @@
          <children>
             <Label text="제출년도" />
             <Label fx:id="year_label" text="N/A" GridPane.columnIndex="1" />
-            <Label prefHeight="0.0" prefWidth="72.0" text="제출서류구분" GridPane.columnIndex="2" />
+            <Label prefHeight="0.0" prefWidth="72.0" text="서류유형" GridPane.columnIndex="2" />
             <ComboBox fx:id="document_type_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="3" />
          </children>
          <VBox.margin>

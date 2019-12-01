@@ -47,7 +47,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="제출서류구분" />
+            <Label text="서류유형" />
             <ComboBox fx:id="document_type_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" />
             <Label text="제출일시" GridPane.columnIndex="2" />
             <Label fx:id="submit_date_label" text="N/A" GridPane.columnIndex="3" />
