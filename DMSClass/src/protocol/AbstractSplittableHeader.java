@@ -11,8 +11,12 @@ abstract class AbstractSplittableHeader extends AbstractHeader {
     protected final boolean isLast;
     protected final short sequence;
 
-    AbstractSplittableHeader(short length, byte type, byte direction, byte code) {
+    AbstractSplittableHeader(short length, byte type, byte direction, byte code, byte codeType) {
         super(length, type, direction, code);
+        this.codeType = codeType;
+        this.isLast = false;
+        this.isSplitted = false;
+        this.sequence = 0x00;
     }
 
     @Override
