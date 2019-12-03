@@ -1,7 +1,5 @@
 package database;
 
-import java.sql.Connection;
-import java.sql.Statement;
 import java.util.Iterator;
 import java.util.TreeSet;
 import shared.classes.*;
@@ -39,7 +37,7 @@ public class ResidentSelecter
 //		그럼 신청 테이블을 어디에서 제일 먼저 가져오고 돌아다니면서 지역변수 채우는거 어떻게 해야할까?
 	}
 	
-	public void selecter() throws SQLException, ClassNotFoundException
+	public void realSelecter(TreeSet<Application> sortedApps) throws SQLException, ClassNotFoundException
 	{
 		Connection conn = null;
 		Statement state = null;
@@ -48,10 +46,23 @@ public class ResidentSelecter
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-		TreeSet<Application> sortedApp = new TreeSet<Application>();
+		int leftCapacity = 0;
+//		설계중 건드리지마시오
+	}
+	
+	public TreeSet<Application> selecter() throws SQLException, ClassNotFoundException
+	{
+		Connection conn = null;
+		Statement state = null;
+		
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
+		state = conn.createStatement();
+		
+		TreeSet<Application> sortedApps = new TreeSet<Application>();
 		int choice = 1;
 		
-		String query = "SELECT * FROM 신청 WHERE 생활관명=푸름1 && 지망=" + choice + "학기=201901 && 합격여부=N";   // 푸름 1을 choice지망으로 하고 학기가 201901이며 합격여부가 N인 신청
+		String query = "SELECT * FROM 신청 WHERE 생활관명=푸름1 AND 지망=" + choice + "학기=201901 AND 합격여부=N";   // 푸름 1을 choice지망으로 하고 학기가 201901이며 합격여부가 N인 신청
 		ResultSet apps = state.executeQuery(query);
 		
 		while(apps.next())
@@ -59,9 +70,59 @@ public class ResidentSelecter
 			Application temp = new Application(apps.getString("학번"), apps.getString("생활관정보_생활관명"), apps.getString("생활관정보_성별"), apps.getInt("생활관정보_학기"), apps.getInt("지망"));
 			setFinalScore(temp);
 			
-			sortedApp.add(temp);
+			sortedApps.add(temp);
 		}
+		
+		return sortedApps;
 	}
+	
+	public int getNumOfLeftSeat(String dormName) throws ClassNotFoundException, SQLException	//생활관 이름을 넣으면 남은 자리의 수를 리턴하는 함수
+	{
+		Connection conn = null;
+		Statement state = null;
+		
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
+		state = conn.createStatement();
+		
+		String query = "SELECT COUNT(*) FROM (SELECT * FROM 배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + 201901 + ")";
+		ResultSet passed = state.executeQuery(query);
+		
+		int leftCapacity = 0;
+		
+		Statement state2 = conn.createStatement();
+		query = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + 201901;
+		ResultSet capacity = state2.executeQuery(query);
+		
+		capacity.next();
+		passed.next();
+		leftCapacity = capacity.getInt("수용인원") - passed.getInt("COUNT(*)");
+		return leftCapacity;
+	}
+	
+	//이 아래 코드는 불확실한데 일단 뇌피셜로 짠거니까 제대로 아는 사람 있으면 수정좀
+//	public void passerSelection()
+//	{	
+//		Connection conn = null;
+//		Statement state = null;
+//		
+//		try 
+//		{
+//			int leftCapacity;	//특정 기숙사에 대해 수용인원 - 해당 기숙사에 대해 합격 여부가 Y인 신청의 수
+//			
+//			String sql = "SELECT COUNT(*) FROM (SELECT * FROM 배정내역 WHERE 생활관명=" + "찾을 생활관 명" + " AND 학기=" + "현재학기" + ")";	//이 SQL문 결과가 그냥 int형으로 숫자 반환하는지 1행1열짜리 숫자 들어있는 테이블인지 모르겠음;;
+//			현재 학기의 특정 생활관에 배치된 수를 구하는 쿼리 / 이 SQL문 결과가 그냥 int형으로 숫자 반환하는지 1행1열짜리 숫자 들어있는 테이블인지 모르겠음
+//			ResultSet rs = state.executeQuery(sql);
+//			leftCapacity = 생활관.getCapacity - 위sql문 결과
+//			TODO leftCapacity를 ResidentSelecter에 있는 pass 함수의 num에 넣어줘야하는데 어떻게 하지?
+//			
+//		}
+//		catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//	}
 
 //	1. 학번을 가지고 점수 테이블로 감 v
 //	2. 해당 학번의 직전 2학기치 점수를 다 들고옴 v
@@ -78,7 +139,7 @@ public class ResidentSelecter
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-		String query = "SELECT 학점,등급 FROM 점수 WHERE 학번=" + a.getStudentId() + "학기 BETWEEN '" + pastTwo(a.getSemesterCode()) + "' AND '" + pastOne(a.getSemesterCode()) + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
+		String query = "SELECT 학점,등급 FROM 점수 WHERE 학번=" + a.getStudentId() + "AND 학기 BETWEEN '" + pastTwo(a.getSemesterCode()) + "' AND '" + pastOne(a.getSemesterCode()) + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
 		ResultSet scores = state.executeQuery(query);
 		
 		double sumOfTakenGrade = 0;

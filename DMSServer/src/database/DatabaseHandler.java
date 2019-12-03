@@ -160,28 +160,4 @@ public class DatabaseHandler
 	{
 		
 	}
-	
-	//이 아래 코드는 불확실한데 일단 뇌피셜로 짠거니까 제대로 아는 사람 있으면 수정좀
-//	public void passerSelection()
-//	{	
-//		Connection conn = null;
-//		Statement state = null;
-//		
-//		try 
-//		{
-//			int leftCapacity;	//특정 기숙사에 대해 수용인원 - 해당 기숙사에 대해 합격 여부가 Y인 신청의 수
-//			
-//			String sql = "SELECT COUNT(*) FROM (SELECT * FROM 배정내역 WHERE 생활관명=" + "찾을 생활관 명" + " AND 학기=" + "현재학기" + ")";	//이 SQL문 결과가 그냥 int형으로 숫자 반환하는지 1행1열짜리 숫자 들어있는 테이블인지 모르겠음;;
-//			현재 학기의 특정 생활관에 배치된 수를 구하는 쿼리 / 이 SQL문 결과가 그냥 int형으로 숫자 반환하는지 1행1열짜리 숫자 들어있는 테이블인지 모르겠음
-//			ResultSet rs = state.executeQuery(sql);
-//			leftCapacity = 생활관.getCapacity - 위sql문 결과
-//			TODO leftCapacity를 ResidentSelecter에 있는 pass 함수의 num에 넣어줘야하는데 어떻게 하지?
-//			
-//		}
-//		catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//	}
 }
