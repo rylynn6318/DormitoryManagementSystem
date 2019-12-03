@@ -47,18 +47,120 @@ public class ResidentSelecter
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
-		Statement state2 = conn.createStatement();
 		
 		TreeSet<Application> sortedApp = new TreeSet<Application>();
 		int choice = 1;
 		
 		String query = "SELECT * FROM 신청 WHERE 생활관명=푸름1 && 지망=" + choice + "학기=201901 && 합격여부=N";   // 푸름 1을 choice지망으로 하고 학기가 201901이며 합격여부가 N인 신청
-		ResultSet purs = state.executeQuery(query);
+		ResultSet apps = state.executeQuery(query);
 		
-		while(purs.next())
+		while(apps.next())
 		{
-			//Application temp = new Application(purs.getString("학번"), purs.getString("생활관정보_생활관명"), purs.getString("생활관정보_성별"), purs.getInt("생활관정보_학기"), purs.getInt("지망");
+			Application temp = new Application(apps.getString("학번"), apps.getString("생활관정보_생활관명"), apps.getString("생활관정보_성별"), apps.getInt("생활관정보_학기"), apps.getInt("지망"));
+			setFinalScore(temp);
+			
+			sortedApp.add(temp);
 		}
+	}
+
+//	1. 학번을 가지고 점수 테이블로 감 v
+//	2. 해당 학번의 직전 2학기치 점수를 다 들고옴 v
+//	3. 평균 점수를 구함 v
+//	4. 어딘가에서 구해온 가산점을 더함 x
+//	5. Application에 넣음 v
+//	6. 반환 v
+	public void setFinalScore(Application a) throws ClassNotFoundException, SQLException
+	{
+		Connection conn = null;
+		Statement state = null;
+		
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
+		state = conn.createStatement();
+		
+		String query = "SELECT 학점,등급 FROM 점수 WHERE 학번=" + a.getStudentId() + "학기 BETWEEN '" + pastTwo(a.getSemesterCode()) + "' AND '" + pastOne(a.getSemesterCode()) + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
+		ResultSet scores = state.executeQuery(query);
+		
+		double sumOfTakenGrade = 0;
+		double sumOfTakenCredit = 0;
+		
+		while(scores.next())
+		{
+			sumOfTakenCredit += scores.getInt("학점");
+			switch(scores.getString("성적등급")) 
+			{
+			case "A+":
+				sumOfTakenGrade += 4.5 * scores.getInt("학점");
+				break;
+			case "A":
+				sumOfTakenGrade += 4 * scores.getInt("학점");
+				break;
+			case "B+":
+				sumOfTakenGrade += 3.5 * scores.getInt("학점");
+				break;
+			case "B":
+				sumOfTakenGrade += 3 * scores.getInt("학점");
+				break;
+			case "C+":
+				sumOfTakenGrade += 2.5 * scores.getInt("학점");
+				break;
+			case "C":
+				sumOfTakenGrade += 2 * scores.getInt("학점");
+				break;
+			case "D+":
+				sumOfTakenGrade += 1.5 * scores.getInt("학점");
+				break;
+			case "D":
+				sumOfTakenGrade += 1 * scores.getInt("학점");
+				break;
+			case "F":
+				break;
+			}
+		}
+		
+		a.setScore(sumOfTakenGrade/sumOfTakenCredit);
+	}
+	
+	public int pastOne(int semester)
+	{
+		String pureSemester = String.valueOf(semester).substring(4);	//학기부분만 잘라냄 ex)201901에서 01
+		
+		switch(pureSemester)
+		{
+		case "01":
+			semester -= 98;
+			break;
+		case "02":
+			semester -= 99;
+			break;
+		case "03":
+			semester -= 2;
+			break;
+		case "04":
+			semester -= 3;
+			break;
+		}
+		
+		return semester;
+	}
+	
+	public int pastTwo(int semester)
+	{
+		String pureSemester = String.valueOf(semester).substring(4);	//학기부분만 잘라냄 ex)201901에서 01
+		
+		switch(pureSemester)
+		{
+		case "01":
+		case "03":
+			semester -= 100;
+			break;
+		case "02":
+		case "04":
+			semester -= 101;
+			break;
+		}
+		
+		return semester;
 	}
 	
 	//SQL문 SELECT * FROM 신청 WHERE 생활관명=오름3 && 지망=1 && 학기=201901 이런 식으로 현재 학기에서 생활관명, 지망이 동일한 것들만 뽑아낸 테이블을 넣어줘야함

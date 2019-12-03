@@ -122,6 +122,10 @@ public class Application implements Comparable<Application>
 	{
 		return score;
 	}
+	public void setScore(double score)
+	{
+		this.score = score;
+	}
 	
 	@Override
 	public int compareTo(Application a) {

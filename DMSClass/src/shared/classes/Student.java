@@ -15,56 +15,6 @@ public class Student
 	private String parentZipCode;				//보호자 우편번호
 	private String parentAddress;				//보호자주소
 
-	//로컬 변수
-	private double avrScore;					//직전 2학기 평균 학점
-	
-	public void setAvrScore(Score[] myScore) // (등급 환산 점수 * 이수 단위) 모두 합한 것 / 총 이수 단위 = 평균 학점
-	{
-		double sumOfTakenCredit = 0;
-		double sumOfTakenGrade = 0;
-		String tempGrade;
-		for(int i = 0; i < myScore.length; i++)
-		{
-			sumOfTakenCredit += myScore[i].getCredit();
-			
-			tempGrade = String.valueOf(myScore[i].getGrade());	//Score의 grade가 char형 배열이라 switch에 넣기 위해 string으로 변환함
-			switch(tempGrade) {
-			case "A+":
-				sumOfTakenGrade += 4.5 * myScore[i].getCredit();
-				break;
-			case "A":
-				sumOfTakenGrade += 4 * myScore[i].getCredit();
-				break;
-			case "B+":
-				sumOfTakenGrade += 3.5 * myScore[i].getCredit();
-				break;
-			case "B":
-				sumOfTakenGrade += 3 * myScore[i].getCredit();
-				break;
-			case "C+":
-				sumOfTakenGrade += 2.5 * myScore[i].getCredit();
-				break;
-			case "C":
-				sumOfTakenGrade += 2 * myScore[i].getCredit();
-				break;
-			case "D+":
-				sumOfTakenGrade += 1.5 * myScore[i].getCredit();
-				break;
-			case "D":
-				sumOfTakenGrade += 1 * myScore[i].getCredit();
-				break;
-			case "F":
-				break;
-			}
-		}
-		
-		avrScore = sumOfTakenGrade / sumOfTakenCredit;
-	}
-	
-	public double getAvrScore()
-	{
-		return Math.round(avrScore * 100) / 100;	// 소수점 셋째 자리수에서 반올림 ex)4.1666 -> 416.6 -> 417 -> 4.17
-	}
 	
 	public String getStudentId()
 	{
