@@ -52,17 +52,17 @@ import java.util.Arrays;
 
 public class Protocol {
     class Header {
-        public final short length;      // 2바이트, 전체 프로토콜 길이
+        public final short length; // 2바이트, 전체 프로토콜 길이
         public final ProtocolType type; // 1바이트, 프로토콜 타입
-        public final byte direction;    // 1바이트, 프로토콜 응답 방향
-        public final byte code;         // 2바이트, 프로토콜 코드
+        public final byte direction; // 1바이트, 프로토콜 응답 방향
+        public final byte code; // 2바이트, 프로토콜 코드
         // 아래 3개는 body가 커져서 프로토콜 분리시 쓰임
         public final boolean isSplitted;// 1바이트, 프로토콜 분리 여부
-        public final boolean isLast;    // 1바이트, 마지막 프로토콜인지 여부
-        public final short sequence;    // 2바이트, 시퀀스 넘버
+        public final boolean isLast; // 1바이트, 마지막 프로토콜인지 여부
+        public final short sequence; // 2바이트, 시퀀스 넘버
         // body 시작 인덱스를 알기 위해 자신의 길이를 가지고 있다.
         public static final int header_length = 10;
-    
+
         Header(short length, ProtocolType type, byte direction, byte code) {
             this.length = length;
             this.type = type;
@@ -70,12 +70,12 @@ public class Protocol {
             this.code = code;
             this.header_length = this.getHeaderLength();
         }
-    
+
         // 받은 패킷으로부터 프로토콜 헤더 추출
         static Header create(byte[] packet) {
             if (packet.length < 5)
                 return null; // 먼가 짧은게 들어왔다!!
-    
+
             // 아래는 공통적으로 쓰이는 헤더 부분
             ByteBuffer bb = ByteBuffer.allocate(2);
             bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -88,10 +88,10 @@ public class Protocol {
             ProtocolType type = ProtocolType.getType(packet[2]);
             byte direction = packet[3];
             byte code = packet[4];
-    
+
             return create(length, type, direction, code);
         }
-    
+
         // 새로 헤더 하나 만듬
         static Header create(short length, ProtocolType type, byte direction, byte code) {
             switch (type) {
@@ -108,16 +108,16 @@ public class Protocol {
                 // 이 경우로 프로토콜이 생성되면 안됨!
                 break;
             }
-    
+
             // 먼가 문제 생겨서 switch 내에서 return 안되면 null 리턴 == 예외다!
             // 따라서 null 체크 하셈ㅋ or 예외 던지게 코드 수정
             return null;
         }
-    
-        protected int getHeaderLength(){
+
+        protected int getHeaderLength() {
             return 5;
         }
-    
+
         byte[] getBytes() {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos.write(length);
@@ -128,9 +128,44 @@ public class Protocol {
         }
     }
 
+    // 프로토콜 생성시 Builder 이용할 것
+    public static class Builder {
+        // 필수
+        private final short length; // 2바이트, 전체 프로토콜 길이
+        private final ProtocolType type; // 1바이트, 프로토콜 타입
+        private final byte direction; // 1바이트, 프로토콜 응답 방향
+        private final byte code; // 2바이트, 프로토콜 코드
+        // 옵션
+        private boolean isSplitted = false; // 1바이트, 프로토콜 분리 여부
+        private boolean isLast = false; // 1바이트, 마지막 프로토콜인지 여부
+        private short sequence = 0; // 2바이트, 시퀀스 넘버
+
+        public Builder(short length, ProtocolType type, byte direction, byte code) {
+            this.length = length;
+            this.type = type;
+            this.direction = direction;
+            this.code = code;
+        }
+
+        public Builder sequence(short seq, boolean islast) {
+            isSplitted = true;
+            sequence = seq;
+            isLast = islast;
+            return this;
+        }
+
+        public Protocol build() {
+            return new Protocol(this);
+        }
+    }
+
     public final Header header;
     public final Serializable body;
     protected final byte[] body_bytes;
+
+    public Protocol(Builder builder) {
+
+    }
 
     // 받은 패킷으로부터 새 프로토콜 만들고 head 할당함.
     public Protocol(byte[] packet) throws IOException, ClassNotFoundException {
