@@ -1,11 +1,33 @@
 package database;
 
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.Iterator;
 import java.util.TreeSet;
 import shared.classes.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class ResidentSelecter 
 {
+	static final String DRIVER_NAME = "mysql";
+	static final String HOSTNAME = "wehatejava.czztgstzacsv.us-east-1.rds.amazonaws.com";
+	static final String PORT = "3306";
+	static final String DB_NAME = "Prototype";													//DB이름
+	static final String USER_NAME = "admin"; 													//DB에 접속할 사용자 이름을 상수로 정의
+	static final String PASSWORD = "En2i3oHKLGh9UlnbYFP1"; 									//사용자의 비밀번호를 상수로 정의
+	static final String DB_URL = 
+					"jdbc:" + 
+					DRIVER_NAME + "://" + 
+					HOSTNAME + ":" + 
+					PORT + "/" + 
+					DB_NAME + "?user=" + 
+					USER_NAME + "&password=" + 
+					PASSWORD; 
+	
 	public void temp()	//실제 배치는 버튼 하나만 누르면 자동으로 다 되서 pass 함수만 가지고는 구현할 수 없음 -> pass함수를 모든 경우의 수로 돌려주는 함수가 필요함
 	{
 //		알고리즘
@@ -15,6 +37,28 @@ public class ResidentSelecter
 //		위 3단계를 각 생활관별로 시행한다.
 //		근데 생각해보니까 합격자 선발 알고리즘 돌리기 전에 Student에서 평균점수 뽑고 신청 테이블에서 가져온 Application배열의 각 객체 전부에서 평균점수 + 가산점을 계산해서 변수를 다 채운 다음에 돌려야하는데
 //		그럼 신청 테이블을 어디에서 제일 먼저 가져오고 돌아다니면서 지역변수 채우는거 어떻게 해야할까?
+	}
+	
+	public void selecter() throws SQLException, ClassNotFoundException
+	{
+		Connection conn = null;
+		Statement state = null;
+		
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
+		state = conn.createStatement();
+		Statement state2 = conn.createStatement();
+		
+		TreeSet<Application> sortedApp = new TreeSet<Application>();
+		int choice = 1;
+		
+		String query = "SELECT * FROM 신청 WHERE 생활관명=푸름1 && 지망=" + choice + "학기=201901 && 합격여부=N";   // 푸름 1을 choice지망으로 하고 학기가 201901이며 합격여부가 N인 신청
+		ResultSet purs = state.executeQuery(query);
+		
+		while(purs.next())
+		{
+			//Application temp = new Application(purs.getString("학번"), purs.getString("생활관정보_생활관명"), purs.getString("생활관정보_성별"), purs.getInt("생활관정보_학기"), purs.getInt("지망");
+		}
 	}
 	
 	//SQL문 SELECT * FROM 신청 WHERE 생활관명=오름3 && 지망=1 && 학기=201901 이런 식으로 현재 학기에서 생활관명, 지망이 동일한 것들만 뽑아낸 테이블을 넣어줘야함

@@ -19,6 +19,15 @@ public class Application implements Comparable<Application>
 	//로컬 변수
 	private double score;			//평균점수 + 가산점
 	
+	public Application(String studentId, String dormitoryName, String gender, int semesterCode, int choice)	//합격 알고리즘에 필요한 생성자임 터치 ㄴㄴ해
+	{
+		this.studentId = studentId;
+		this.dormitoryName = dormitoryName;
+		this.gender = gender.toCharArray()[0];
+		this.semesterCode = semesterCode;
+		this.choice = choice;
+	}
+	
 	public String getStudentId()
 	{
 		return studentId;
