@@ -1,7 +1,7 @@
 package shared.classes;
 
 import shared.enums.UserType;
-//커밋 테스트
+//커밋 테스트 2
 //계정
 public class Account
 {
