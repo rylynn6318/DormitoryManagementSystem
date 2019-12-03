@@ -16,7 +16,7 @@ import java.util.Arrays;
 // OutputStream outputToServer = socket.getOutputStream();
 // LoginInfo logininfo = new LoginInfo(id, pw); // LoginInfo 클래스는 Serializable 상속받음
 //
-// Protocol lp = Protocol.create(code, logininfo, ProtocolType.LOGIN); // code(혹은 page, event 등 코드적인 정보)와 body에 들어갈 클래스, tpye 넣으면 나머진 자동으로 만들어주게 할꺼임
+// Protocol lp = Protocol.Builder(타입 등 각종 정보...).build();
 // lp.send(outputToServer); or outputToServer.write(lp.getPacket());
 // 단 두줄로 끝!
 //
@@ -27,11 +27,11 @@ import java.util.Arrays;
 // byte[] buffer = new byte[우리프로토콜에서 이론상 최대 길이]; // 앞으로 데이터가 쓰일 버퍼
 // inputFromClient.read(buffer); // 클라이언트로부터 정보 수신
 // 
-// Protocol lp = Protocol.create(buffer);
+// Protocol lp = Protocol.Builder(buffer).build();
 // LoginInfo logininfo = lp.getBody();
-// 이 역시 앞의 과정 제외하면 두줄로 끝!
-// 좀더 포멀하게 적자면
+// 즉 공통적으로 이렇게 쓰면 됨
 // Serializable body = protocol.getBody();
+// 이 역시 앞의 과정 제외하면 두줄로 끝!
 // 
 // 파일처럼 분할되서 오면?
 // 위에 buffer를
@@ -180,7 +180,6 @@ public class Protocol {
         }
     }
 
-    // body에 있는 바이트 배열을 역직렬화해서 Serializable 객체 반환. 이후 캐스팅은 알아서 하셈.
     private static Serializable deserialization(byte[] bytes) throws ClassNotFoundException, IOException {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
             try (ObjectInputStream ois = new ObjectInputStream(bais)) {
