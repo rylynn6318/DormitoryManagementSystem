@@ -1,6 +1,5 @@
 package assign;
 
-import java.sql.Date;
 
 import shared.classes.RoomInfo;
 //RoomInfo를 상속받아서 배정에 필요한 정보를 더 넣은 클래스
@@ -8,7 +7,7 @@ public class AssignRoomInfo extends RoomInfo  {
 	private String seat;
 	private boolean isEmpty;
 	private String studentId;
-	private Date checkout;
+	private int checkout;
 	
 		
 	public String getSeat()
@@ -35,11 +34,11 @@ public class AssignRoomInfo extends RoomInfo  {
 	{
 		this.studentId = studentId;
 	}
-	public Date getCheckOut()
+	public int getCheckOut()
 	{
 		return checkout;
 	}
-	public void setCheckout(Date checkout)
+	public void setCheckout(int checkout)
 	{
 		this.checkout = checkout;
 	}

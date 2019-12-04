@@ -23,6 +23,9 @@ public class Pass
 					USER_NAME + "&password=" + 
 					PASSWORD; 
 	private static int currentSemester;
+	private static int availablePeriod;
+	private static int checkOutDate1; //이건 1학기나 계절학기 신청자들의 기숙사 종료일 어차피 현재 받고있는 신청자들의 학기에 따라 변수 알아서 바뀌니 걱정 ㄴ
+	private static int checkOutDate2; //이건 1년 신청자들의 기숙사 종료일
 	
 	public static void passUpdate() throws SQLException, ClassNotFoundException
 	{	
@@ -56,7 +59,7 @@ public class Pass
 		
 	}
 	
-	public static void currentSemester() throws ClassNotFoundException, SQLException
+	public static void setCurrentSemester() throws ClassNotFoundException, SQLException
 	{
 		Connection conn = null;
 		Statement state = null;
@@ -70,23 +73,52 @@ public class Pass
 		currentSemester = rcrs.getInt("학기");
 	}
 	
-	public static void residenceCheckOut() throws ClassNotFoundException, SQLException
+	public static void setAvailablePeriod()
 	{
-		Connection conn = null;
-		Statement state = null;
+		switch(currentSemester % 10)
+		{
+		case 1:
+			availablePeriod = (currentSemester - 1) * 100 + 620; // 1학기
+			break;
+		case 2:
+			availablePeriod = (currentSemester - 2) * 100 + 720; // 여름계절
+			break;
+		case 3:
+			availablePeriod = (currentSemester - 3) * 100 + 1220; // 2학기
+			break;
+		case 4:
+			availablePeriod = (currentSemester - 4) * 100 + 10120; // 겨울계절
+			break;
+		}
+	}
+	
+	public static void setCheckOutPeriod()
+	{
+		switch(currentSemester % 10)
+		{
+		case 1:
+			checkOutDate1 = (currentSemester - 1) * 100 + 620;	// 1학기 
+			checkOutDate2 = (currentSemester - 1) * 100 + 1220; // 1년 신청일 경우
+			break;
+		case 2:
+			checkOutDate1 = (currentSemester - 2) * 100 + 720;	// 여름계절
+			break;
+		case 3:
+			checkOutDate1 = (currentSemester - 3) * 100 + 1220;	// 2학기
+			break;
+		case 4:
+			checkOutDate1 = (currentSemester - 4) * 100 + 10120; //	겨울계절
+			break;
+		}
+	}
+
 		
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
-		state = conn.createStatement();
-		
-		String sql = "SELECT 학기 FROM";  // 이제 체크아웃 넘긴 사람들 내쫓기 
 				
 				//여기에요 여기 여기부터 코딩 하시면 돼요
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	}
 	
 	public static void residenceUpdate() throws ClassNotFoundException, SQLException
 	{
@@ -121,10 +153,11 @@ public class Pass
 					{
 						O1[i].setRoomNumber(rurs2.getString("호"));
 						O1[i + 1].setRoomNumber(rurs2.getString("호"));
-						O1[i].setSemesterCode(201901);
-						O1[i].setSemesterCode(201901);
+						O1[i].setSemesterCode(currentSemester);
+						O1[i + 1].setSemesterCode(currentSemester);
 					}
 				}
+				break;
 			}
 			case "오름2" :
 			{
@@ -134,9 +167,11 @@ public class Pass
 					{
 						O2[i].setRoomNumber(rurs2.getString("호"));
 						O2[i + 1].setRoomNumber(rurs2.getString("호"));
-						O2[i].setSemesterCode(201901);
+						O2[i].setSemesterCode(currentSemester);
+						O2[i + 1].setSemesterCode(currentSemester);
 					}
 				}
+				break;
 			}
 			case "오름3" :
 			{
@@ -146,9 +181,11 @@ public class Pass
 					{
 						O3[i].setRoomNumber(rurs2.getString("호"));
 						O3[i + 1].setRoomNumber(rurs2.getString("호"));
-						O3[i].setSemesterCode(201901);
+						O3[i].setSemesterCode(currentSemester);
+						O3[i + 1].setSemesterCode(currentSemester);
 					}
 				}
+				break;
 			}
 			case "푸름1" :
 			{
@@ -158,7 +195,8 @@ public class Pass
 					{
 						P1[i].setRoomNumber(rurs2.getString("호"));
 						P1[i + 1].setRoomNumber(rurs2.getString("호"));
-						P1[i].setSemesterCode(201901);
+						P1[i].setSemesterCode(currentSemester);
+						P1[i + 1].setSemesterCode(currentSemester);
 					}
 				}
 			}
@@ -170,9 +208,11 @@ public class Pass
 					{
 						P2[i].setRoomNumber(rurs2.getString("호"));
 						P2[i + 1].setRoomNumber(rurs2.getString("호"));
-						P2[i].setSemesterCode(201901);
+						P2[i].setSemesterCode(currentSemester);
+						P2[i + 1].setSemesterCode(currentSemester);
 					}
 				}
+				break;
 			}
 			case "푸름3" :
 			{
@@ -184,9 +224,11 @@ public class Pass
 						P3[i + 1].setRoomNumber(rurs2.getString("호"));
 						P3[i + 2].setRoomNumber(rurs2.getString("호"));
 						P3[i + 3].setRoomNumber(rurs2.getString("호"));
-						P3[i].setSemesterCode(201901);
+						P3[i].setSemesterCode(currentSemester);
+						P3[i + 1].setSemesterCode(currentSemester);
 					}
 				}
+				break;
 			}
 			case "푸름4" :
 			{
@@ -198,9 +240,11 @@ public class Pass
 						P4[i + 1].setRoomNumber(rurs2.getString("호"));
 						P4[i + 2].setRoomNumber(rurs2.getString("호"));
 						P4[i + 3].setRoomNumber(rurs2.getString("호"));
-						P4[i].setSemesterCode(201901);
+						P4[i].setSemesterCode(currentSemester);
+						P4[i + 1].setSemesterCode(currentSemester);
 					}
 				}
+				break;
 			}
 			case "신평남" :
 			{
@@ -210,9 +254,11 @@ public class Pass
 					{
 						SN[i].setRoomNumber(rurs2.getString("호"));
 						SN[i + 1].setRoomNumber(rurs2.getString("호"));
-						SN[i].setSemesterCode(201901);
+						SN[i].setSemesterCode(currentSemester);
+						SN[i + 1].setSemesterCode(currentSemester);
 					}
 				}
+				break;
 			}
 			case "신평여" :
 			{
@@ -222,15 +268,17 @@ public class Pass
 					{
 						SY[i].setRoomNumber(rurs2.getString("호"));
 						SY[i + 1].setRoomNumber(rurs2.getString("호"));
-						SY[i].setSemesterCode(201901);
+						SY[i].setSemesterCode(currentSemester);
+						SY[i + 1].setSemesterCode(currentSemester);
 					}
 				}
+				break;
 			}
 			}
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//배정내역을 불러와서 서버 메모리에 있는 해당 생활관 호실에 배정내역이 있으면 생활관 호실에 학번을 넣어줌
-		String sql3 = "SELECT 호, 생활관명, 자리, ID FROM " + DB_NAME + ".배정내역";
+		String sql3 = "SELECT 호, 생활관명, 자리, ID FROM " + DB_NAME + ".배정내역 WHERE 퇴사예정일 > "+ availablePeriod;// 여러 배정내역 (몇년 전꺼까지도) 중에서 아직 쓰고있는 방 예를들어 지금 2학기인데 1학기 1년 입사자
 		ResultSet rurs3 = state.executeQuery(sql3);
 		
 		while(rurs3.next())
@@ -246,6 +294,7 @@ public class Pass
 						O1[i].setStudentId(rurs3.getString("ID"));
 					}
 				}
+				break;
 			}
 			case "오름2" :
 			{
@@ -256,6 +305,7 @@ public class Pass
 						O2[i].setStudentId(rurs3.getString("ID"));
 					}
 				}
+				break;
 			}
 			case "오름3" :
 			{
@@ -266,6 +316,7 @@ public class Pass
 						O3[i].setStudentId(rurs3.getString("ID"));
 					}
 				}
+				break;
 			}
 			case "푸름1" :
 			{
@@ -276,6 +327,7 @@ public class Pass
 						P1[i].setStudentId(rurs3.getString("ID"));
 					}
 				}
+				break;
 			}
 			case "푸름2" :
 			{
@@ -286,6 +338,7 @@ public class Pass
 						P2[i].setStudentId(rurs3.getString("ID"));
 					}
 				}
+				break;
 			}
 			case "푸름3" :
 			{
@@ -296,6 +349,7 @@ public class Pass
 						P3[i].setStudentId(rurs3.getString("ID"));
 					}
 				}
+				break;
 			}
 			case "푸름4" :
 			{
@@ -306,6 +360,7 @@ public class Pass
 						P4[i].setStudentId(rurs3.getString("ID"));
 					}
 				}
+				break;
 			}
 			case "신평남" :
 			{
@@ -316,6 +371,7 @@ public class Pass
 						SN[i].setStudentId(rurs3.getString("ID"));
 					}
 				}
+				break;
 			}
 			case "신평여" :
 			{
@@ -326,12 +382,13 @@ public class Pass
 						SY[i].setStudentId(rurs3.getString("ID"));
 					}
 				}
+				break;
 			}
 			}
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//신청자가 신청한 생활관을 가져와서 메모리에 있는 현재 배정된 내역과 대조하면서 방에 넣어줌
-		String sql4 = "SELECT ID, 생활관명 FROM " + DB_NAME + ".신청 WHERE (학기 "+ currentSemester +" and 최종결과 = 'Y') order by 생활관명";   // 201901은 임시로 넣은것, 제대로 하려면 학기를 유동적으로 바꿀 수 있어야함.
+		String sql4 = "SELECT ID, 생활관명 FROM, 지망 " + DB_NAME + ".신청 WHERE (퇴사예정일> "+ availablePeriod +" and 최종결과 = 'Y') order by 생활관명";  //학기 말고 누가 살고 있는 방인지로
 		ResultSet rurs4 = state.executeQuery(sql4);
 		
 		while(rurs4.next())
@@ -345,8 +402,17 @@ public class Pass
 					if(O1[i].getStudentId() == "")
 					{
 						O1[i].setStudentId(rurs4.getString("ID"));
+						if(rurs4.getInt("지망") == 0)
+						{
+							O1[i].setCheckout(checkOutDate2);
+						}
+						else 
+						{
+							O1[i].setCheckout(checkOutDate1);
+						}
 					}
 				}
+				break;
 			}
 			case "오름2" :
 			{
@@ -355,8 +421,17 @@ public class Pass
 					if(O2[i].getStudentId() == "")
 					{
 						O2[i].setStudentId(rurs4.getString("ID"));
+						if(rurs4.getInt("지망") == 0)
+						{
+							O2[i].setCheckout(checkOutDate2);
+						}
+						else 
+						{
+							O2[i].setCheckout(checkOutDate1);
+						}
 					}
 				}
+				break;
 			}
 			case "오름3" :
 			{
@@ -365,8 +440,17 @@ public class Pass
 					if(O3[i].getStudentId() == "")
 					{
 						O3[i].setStudentId(rurs4.getString("ID"));
+						if(rurs4.getInt("지망") == 0)
+						{
+							O3[i].setCheckout(checkOutDate2);
+						}
+						else 
+						{
+							O3[i].setCheckout(checkOutDate1);
+						}
 					}
 				}
+				break;
 			}
 			case "푸름1" :
 			{
@@ -375,8 +459,17 @@ public class Pass
 					if(P1[i].getStudentId() == "")
 					{
 						P1[i].setStudentId(rurs4.getString("ID"));
+						if(rurs4.getInt("지망") == 0)
+						{
+							P1[i].setCheckout(checkOutDate2);
+						}
+						else 
+						{
+							P1[i].setCheckout(checkOutDate1);
+						}
 					}
 				}
+				break;
 			}
 			case "푸름2" :
 			{
@@ -385,8 +478,17 @@ public class Pass
 					if(P2[i].getStudentId() == "")
 					{
 						P2[i].setStudentId(rurs4.getString("ID"));
+						if(rurs4.getInt("지망") == 0)
+						{
+							P2[i].setCheckout(checkOutDate2);
+						}
+						else 
+						{
+							P2[i].setCheckout(checkOutDate1);
+						}
 					}
 				}
+				break;
 			}
 			case "푸름3" :
 			{
@@ -395,8 +497,17 @@ public class Pass
 					if(P3[i].getStudentId() == "")
 					{
 						P3[i].setStudentId(rurs4.getString("ID"));
+						if(rurs4.getInt("지망") == 0)
+						{
+							P3[i].setCheckout(checkOutDate2);
+						}
+						else 
+						{
+							P3[i].setCheckout(checkOutDate1);
+						}
 					}
 				}
+				break;
 			}
 			case "푸름4" :
 			{
@@ -405,8 +516,17 @@ public class Pass
 					if(P4[i].getStudentId() == "")
 					{
 						P4[i].setStudentId(rurs4.getString("ID"));
+						if(rurs4.getInt("지망") == 0)
+						{
+							P4[i].setCheckout(checkOutDate2);
+						}
+						else 
+						{
+							P4[i].setCheckout(checkOutDate1);
+						}
 					}
 				}
+				break;
 			}
 			case "신평남" :
 			{
@@ -415,8 +535,17 @@ public class Pass
 					if(SN[i].getStudentId() == "")
 					{
 						SN[i].setStudentId(rurs4.getString("ID"));
+						if(rurs4.getInt("지망") == 0)
+						{
+							SN[i].setCheckout(checkOutDate2);
+						}
+						else 
+						{
+							SN[i].setCheckout(checkOutDate1);
+						}
 					}
 				}
+				break;
 			}
 			case "신평여" :
 			{
@@ -425,8 +554,17 @@ public class Pass
 					if(SY[i].getStudentId() == "")
 					{
 						SY[i].setStudentId(rurs4.getString("ID"));
+						if(rurs4.getInt("지망") == 0)
+						{
+							SY[i].setCheckout(checkOutDate2);
+						}
+						else 
+						{
+							SY[i].setCheckout(checkOutDate1);
+						}
 					}
 				}
+				break;
 			}
 			}
 		}
@@ -482,7 +620,9 @@ public class Pass
 	}
 	public static void main(String[] args) throws ClassNotFoundException, SQLException
 	{
-		currentSemester();
+		setCurrentSemester();
+		setAvailablePeriod();
+		setCheckOutPeriod();
 		passUpdate();
 		residenceUpdate();
 	}
