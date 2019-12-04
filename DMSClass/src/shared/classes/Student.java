@@ -1,6 +1,9 @@
 package shared.classes;
+
+import java.io.Serializable;
+
 //학생
-public class Student
+public class Student implements Serializable
 {
 	//키
 	private String studentId;					//학번

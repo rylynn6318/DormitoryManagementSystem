@@ -3,5 +3,8 @@ shared-class update log
 2019-12-04 이전
 	고대유물
 	
-2019-12-04 v1.0
+2019-12-04 v1.00
 	손승민이 마지막으로 프로토콜 손봄
+
+2019-12-04 v1.01
+	shared class 안의 모든 클래스 serializable 상속받음.

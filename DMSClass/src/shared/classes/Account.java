@@ -1,5 +1,7 @@
 package shared.classes;
 
+import java.io.Serializable;
+
 import shared.enums.UserType;
 
 import java.io.Serializable;

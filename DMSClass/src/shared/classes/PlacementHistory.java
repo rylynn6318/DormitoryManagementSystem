@@ -1,9 +1,10 @@
 package shared.classes;
 
+import java.io.Serializable;
 import java.util.Date;
 
 //배정내역
-public class PlacementHistory
+public class PlacementHistory implements Serializable
 {
 	//키
 	private String studentId;			//학생의 학번(외래키)

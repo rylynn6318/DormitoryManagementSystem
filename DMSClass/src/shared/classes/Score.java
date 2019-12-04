@@ -1,6 +1,9 @@
 package shared.classes;
+
+import java.io.Serializable;
+
 //성적
-public class Score
+public class Score implements Serializable
 {
 	//키
 	private String studentId;		//학생의 학번(외래키)

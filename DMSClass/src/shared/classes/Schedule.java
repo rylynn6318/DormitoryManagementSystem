@@ -1,8 +1,9 @@
 package shared.classes;
+import java.io.Serializable;
 import java.util.Date;
 
 //스케쥴
-public class Schedule
+public class Schedule implements Serializable
 {
 	//키
 	private String scheduleId;			//스케쥴 고유 아이디
