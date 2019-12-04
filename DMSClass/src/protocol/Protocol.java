@@ -98,10 +98,6 @@ public class Protocol {
             bb.order(ByteOrder.LITTLE_ENDIAN);
             bb.put(packet[0]);
             bb.put(packet[1]);
-
-            if (bb.getShort() != packet.length)
-                throw new Exception("왜 패킷에 담긴 길이랑 실제 길이랑 다름???");
-
             this.length = bb.getShort();
             this.type = ProtocolType.getType(packet[2]);
             this.direction = packet[3];

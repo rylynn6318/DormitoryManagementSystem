@@ -59,8 +59,7 @@ public class LoginPageController implements Initializable
     
     //비밀번호 필드에서 엔터 입력 시
     @FXML
-    void On_PWField_Typed(KeyEvent event) 
-    {
+    void On_PWField_Typed(KeyEvent event) throws Exception {
     	if(event.getCode() == KeyCode.ENTER || event.getCharacter().equals("\r"))
     	{
     		tryLogin();
@@ -68,8 +67,7 @@ public class LoginPageController implements Initializable
     }
     
     @FXML
-    void On_LoginBtn_Clicked(MouseEvent event) 
-    {
+    void On_LoginBtn_Clicked(MouseEvent event) throws Exception {
     	//로그인 시도
     	tryLogin();
     	
@@ -79,8 +77,7 @@ public class LoginPageController implements Initializable
     //로직
     
     //서버와 통신한다. (통신이 미구현임으로 여기서 대충 처리한다)
-    private void tryLogin()
-	{
+    private void tryLogin() throws Exception {
 		Account account = new Account();
     	//사용자가 입력한 아이디, 비밀번호를 가져온다.
     	String inputUserId = IDField.getText();
@@ -116,7 +113,7 @@ public class LoginPageController implements Initializable
     }
     
     //테스트용 네트워킹
-    private boolean networking(Account account) throws IOException
+    private boolean networking(Account account) throws Exception
 	{
 		Socket socket = new Socket("127.0.0.1", 666);
 		OutputStream outputToServer = socket.getOutputStream();
@@ -126,23 +123,28 @@ public class LoginPageController implements Initializable
 		Protocol login = new Protocol.Builder(ProtocolType.LOGIN, (byte)0x00, (byte)0x00, (byte)0x00).body(account).build();
 		outputToServer.write(login.getPacket());
 
-
-
-    	if(id.equals("stu") && pw.equals("pass"))
+		inputFromServer.read(buffer);
+		login = new Protocol.Builder(buffer).build();
+    	if(login.code == 0x00)
+    	{
+    		//로그인 실패
+    		return false;
+    	}
+    	else if(login.code == 0x01)
     	{
     		//로그인 성공
-    		setUserInfo(id, pw, UserType.STUDENT);
+    		account.setUserType(UserType.STUDENT);
     		return true;
     	}
-    	else if(id.equals("admin") && pw.equals("pass"))
-    	{
-    		//관리자 로그인 성공
-    		setUserInfo(id, pw, UserType.ADMINISTRATOR);
-    		return true;
-    	}
+		else if(login.code == 0x02)
+		{
+			//관리자 로그인 성공
+			account.setUserType(UserType.ADMINISTRATOR);
+			return true;
+		}
     	else
     	{
-			//로그인 실패
+			//문제 발생!
     		return false;
     	}
     }
