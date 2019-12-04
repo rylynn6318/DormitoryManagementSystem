@@ -1,5 +1,6 @@
 import database.DatabaseHandler;
 import io.*;
+import network.NetworkHandler;
 
 //기숙사 관리 시스템(Dormitory Management System)
 
@@ -67,7 +68,7 @@ public class DMSServer
 		if(testDBHandler.connectionTest())
 		{
 			IOHandler.getInstnace().printMsg(MsgType.GENERAL, "run", "연결 성공!");
-			testDBHandler.tempTest();
+			NetworkHandler.getInstance().createServerThread();
 		}
 		else
 		{
@@ -100,5 +101,6 @@ public class DMSServer
 		//해당 작업이 완료되면 종료되게끔.
 		
 		IOHandler.getInstnace().printMsg(MsgType.GENERAL, "shutdown", "서버를 종료합니다.");
+		NetworkHandler.getInstance().prepareShutdown();
 	}
 }
