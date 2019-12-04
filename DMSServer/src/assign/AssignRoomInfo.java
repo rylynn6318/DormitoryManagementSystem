@@ -9,7 +9,8 @@ public class AssignRoomInfo extends RoomInfo  {
 	private String studentId;
 	private int checkout;
 	
-		
+	
+	
 	public String getSeat()
 	{
 		return seat;
