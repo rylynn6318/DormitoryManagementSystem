@@ -116,7 +116,7 @@ public class LoginPageController implements Initializable
     }
     
     //테스트용 네트워킹
-    private boolean networking(Account account) throws IOException
+    private boolean networking(Account account) throws Exception
 	{
 		Socket socket = new Socket("127.0.0.1", 666);
 		OutputStream outputToServer = socket.getOutputStream();
@@ -126,7 +126,8 @@ public class LoginPageController implements Initializable
 		Protocol login = new Protocol.Builder(ProtocolType.LOGIN, (byte)0x00, (byte)0x00, (byte)0x00).body(account).build();
 		outputToServer.write(login.getPacket());
 
-
+		inputFromServer.read(buffer);
+		login = new Protocol.Builder(buffer).build();
 
     	if(id.equals("stu") && pw.equals("pass"))
     	{
