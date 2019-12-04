@@ -39,6 +39,8 @@ public class PayCheck {
 	
 	public static void main(String[] args) throws IOException, Exception
 	{
+		currentSemester();
+		
 		File csv = new File("C:|Users|DongHyeon|Downloads");
 		BufferedReader br = new BufferedReader(new FileReader(csv));
 		String line ="";
