@@ -65,7 +65,7 @@ public class PayCheck {
 		{
 			if(csvlist.contains(purs.getString("학번")))
 			{
-				String sql1 = "UPDATE "+ DB_NAME + "SET 납부여부='Y' WHERE "+purs.getString("학번");
+				String sql1 = "UPDATE "+ DB_NAME + "SET 납부여부='Y' WHERE 학번 ="+purs.getString("학번");
 				ResultSet purs2 = state.executeQuery(sql1);
 			}
 		}
