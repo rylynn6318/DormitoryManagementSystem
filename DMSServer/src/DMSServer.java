@@ -1,6 +1,16 @@
 import database.DatabaseHandler;
 import io.*;
 import network.NetworkHandler;
+import protocol.Protocol;
+import protocol.ProtocolType;
+import shared.classes.Account;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.AccessibleObject;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 //기숙사 관리 시스템(Dormitory Management System)
 
@@ -21,86 +31,41 @@ import network.NetworkHandler;
 
 public class DMSServer
 {
-	public static void main(String[] args)
-	{
-		System.out.println("기숙사 관리 시스템 서버입니다.");
-		
-		MenuType userInput = null;
-		while(userInput != MenuType.SHUTDOWN)
-		{
-			IOHandler.getInstnace().showMenu();
-			userInput = IOHandler.getInstnace().getMenu();
-			
-			switch(userInput)
-			{
-			case RUN:
-				//쓰레드를 만들어 서버 작업을 수행한다.
-				run();
-				break;
-				
-			case DEBUG:
-				//디버그 모드로 서버 작업을 수행한다.
-				//디버깅하기 편하게 쓰레드를 안만들고 메인쓰레드에서 하게끔?
-				debug();
-				break;
-				
-			case SHUTDOWN:
-				//소켓을 끊고, DB를 중지하고, 배치 알고리즘을 돌리는 중에도 안전하게 끌 수 있게 해야한다.
-				shutdown();
-				break;
-				
-			default:
-				IOHandler.getInstnace().printMsg(MsgType.ERROR, "main", "잘못된 입력입니다.");
-				break;
-				
+	public static void main(String[] args) throws Exception {
+		while(true){
+			ServerSocket sSocket = new ServerSocket(666);
+			System.out.println("클라이언트 접속 대기중...");
+			Socket socket = sSocket.accept();
+			System.out.println("클라이언트 접속");
+
+			OutputStream outputToClient = socket.getOutputStream();
+			InputStream inputFromClient = socket.getInputStream();
+
+			while(true){
+				byte[] buffer = new byte[1024];
+				inputFromClient.read(buffer);
+				Protocol protocol = new Protocol.Builder(buffer).build();
+
+				switch (protocol.type){
+					case UNDEFINED:
+						break;
+					case LOGIN:
+						Account account = (Account) protocol.body;
+						// 여기서 DB랑 통신해서 로그인 처리 해야함.
+						// 일단은 하드코딩
+						if(account.getAccountId().equals("admin"))
+							protocol = new Protocol.Builder(ProtocolType.LOGIN, (byte)0x02, (byte)0x00, (byte)0x02).build();
+						else
+							protocol = new Protocol.Builder(ProtocolType.LOGIN, (byte)0x02, (byte)0x00, (byte)0x01).build();
+
+						outputToClient.write(protocol.getPacket());
+						break;
+					case FILE:
+						break;
+					case EVENT:
+						break;
+				}
 			}
 		}
-		
-		//서버 종료
-	}
-	
-	private static void run()
-	{
-		IOHandler.getInstnace().printMsg(MsgType.GENERAL, "run", "서버를 실행합니다.");
-		DatabaseHandler testDBHandler = new DatabaseHandler();
-		IOHandler.getInstnace().setDebugMode(false);						//디버그모드 해제
-		
-		if(testDBHandler.connectionTest())
-		{
-			IOHandler.getInstnace().printMsg(MsgType.GENERAL, "run", "연결 성공!");
-			NetworkHandler.getInstance().createServerThread();
-		}
-		else
-		{
-			IOHandler.getInstnace().printMsg(MsgType.GENERAL, "run", "연결 실패!");
-		}
-	}
-	
-	//디버그모드로 실행했을 때만 MsgType이 DEBUG인 메시지가 printMsg로 호출 시 표시된다. 
-	private static void debug()
-	{
-		IOHandler.getInstnace().printMsg(MsgType.GENERAL, "shutdown", "디버그모드로 서버를 실행합니다.");
-		DatabaseHandler testDBHandler = new DatabaseHandler();
-		IOHandler.getInstnace().setDebugMode(true);						//디버그모드로 설정
-		
-		if(testDBHandler.connectionTest())
-		{
-			IOHandler.getInstnace().printMsg(MsgType.DEBUG, "debug", "연결 성공!");
-		}
-		else
-		{
-			IOHandler.getInstnace().printMsg(MsgType.DEBUG, "debug", "연결 실패!");
-		}
-	}
-	
-	private static void shutdown()
-	{
-		//IOHandler, DatabaseHandler, NetworkHandler 등 핸들러들에게서
-		//prepareShutdown이라는 메소드를 호출한다.
-		//각 핸들러들은 종료할 준비를 마친다.
-		//해당 작업이 완료되면 종료되게끔.
-		
-		IOHandler.getInstnace().printMsg(MsgType.GENERAL, "shutdown", "서버를 종료합니다.");
-		NetworkHandler.getInstance().prepareShutdown();
 	}
 }
