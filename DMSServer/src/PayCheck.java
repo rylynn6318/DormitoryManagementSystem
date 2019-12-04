@@ -60,8 +60,7 @@ public class PayCheck {
 		}
 		br.close();
 		
-		Collections.sort(csvlist); // csvlist 오름차순 정렬
-		
+		Collections.sort(csvlist); // csvlist 오름차순 정렬 끗
 		
 	}
 }
