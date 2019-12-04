@@ -49,7 +49,6 @@ public class PayCheck {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
-		Statement state2 = conn.createStatement();
 		
 		String sql = "SELECT ID FROM " + DB_NAME + ".신청 (WHERE 학기 =" + currentSemester +" and 합격여부 = 'Y' )";
 		ResultSet purs = state.executeQuery(sql);
@@ -66,7 +65,8 @@ public class PayCheck {
 		{
 			if(csvlist.contains(purs.getString("학번")))
 			{
-				
+				String sql1 = "UPDATE "+ DB_NAME + "SET 납부여부='Y' WHERE "+purs.getString("학번");
+				ResultSet purs2 = state.executeQuery(sql1);
 			}
 		}
 	}
