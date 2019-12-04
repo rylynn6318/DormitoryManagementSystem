@@ -29,43 +29,47 @@ import java.net.Socket;
 //개발 시간을 단축시키기 위해서 서버 종료, 디버깅모드, 서버 실행 등 간단한 메뉴는 서버 자체에서
 //할 수 있는게 좋다고 판단하였다.
 
-public class DMSServer
-{
-	public static void main(String[] args) throws Exception {
-		while(true){
-			ServerSocket sSocket = new ServerSocket(666);
-			System.out.println("클라이언트 접속 대기중...");
-			Socket socket = sSocket.accept();
-			System.out.println("클라이언트 접속");
+public class DMSServer {
+    public static void main(String[] args) throws Exception {
+		ServerSocket sSocket = new ServerSocket(666);
+		System.out.println("클라이언트 접속 대기중...");
 
-			OutputStream outputToClient = socket.getOutputStream();
-			InputStream inputFromClient = socket.getInputStream();
+        while (true) {
+            Socket socket = sSocket.accept();
+            System.out.println("클라이언트 접속");
 
-			while(true){
-				byte[] buffer = new byte[1024];
-				inputFromClient.read(buffer);
-				Protocol protocol = new Protocol.Builder(buffer).build();
+            OutputStream outputToClient = socket.getOutputStream();
+            InputStream inputFromClient = socket.getInputStream();
 
-				switch (protocol.type){
-					case UNDEFINED:
-						break;
-					case LOGIN:
-						Account account = (Account) protocol.body;
-						// 여기서 DB랑 통신해서 로그인 처리 해야함.
-						// 일단은 하드코딩
-						if(account.getAccountId().equals("admin"))
-							protocol = new Protocol.Builder(ProtocolType.LOGIN, (byte)0x02, (byte)0x00, (byte)0x02).build();
-						else
-							protocol = new Protocol.Builder(ProtocolType.LOGIN, (byte)0x02, (byte)0x00, (byte)0x01).build();
+            byte[] buffer = new byte[1024];
+            inputFromClient.read(buffer);
+            Protocol protocol = new Protocol.Builder(buffer).build();
 
-						outputToClient.write(protocol.getPacket());
-						break;
-					case FILE:
-						break;
-					case EVENT:
-						break;
-				}
-			}
-		}
-	}
+            switch (protocol.type) {
+                case UNDEFINED:
+                    break;
+                case LOGIN:
+                    Account account = (Account) protocol.body;
+                    // 여기서 DB랑 통신해서 로그인 처리 해야함.
+                    // 일단은 하드코딩
+                    if (account.getAccountId().equals("admin"))
+						protocol = new Protocol.Builder(ProtocolType.LOGIN, (byte) 0x02, (byte) 0x00, (byte) 0x02).body(null).build();
+                    else
+						protocol = new Protocol.Builder(ProtocolType.LOGIN, (byte) 0x02, (byte) 0x00, (byte) 0x01).body(null).build();
+
+                    byte[] tmp = protocol.getPacket();
+
+                    outputToClient.write(protocol.getPacket());
+                    break;
+                case FILE:
+                    break;
+                case EVENT:
+                    break;
+            }
+
+			inputFromClient.close();
+			outputToClient.close();
+			socket.close();
+        }
+    }
 }
