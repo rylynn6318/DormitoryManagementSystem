@@ -79,8 +79,7 @@ public class LoginPageController implements Initializable
     //로직
     
     //서버와 통신한다. (통신이 미구현임으로 여기서 대충 처리한다)
-    private void tryLogin()
-	{
+    private void tryLogin() throws Exception {
 		Account account = new Account();
     	//사용자가 입력한 아이디, 비밀번호를 가져온다.
     	String inputUserId = IDField.getText();
@@ -128,22 +127,26 @@ public class LoginPageController implements Initializable
 
 		inputFromServer.read(buffer);
 		login = new Protocol.Builder(buffer).build();
-
-    	if(id.equals("stu") && pw.equals("pass"))
+    	if(login.code == 0x00)
+    	{
+    		//로그인 실패
+    		return false;
+    	}
+    	else if(login.code == 0x01)
     	{
     		//로그인 성공
-    		setUserInfo(id, pw, UserType.STUDENT);
+    		account.setUserType(UserType.STUDENT);
     		return true;
     	}
-    	else if(id.equals("admin") && pw.equals("pass"))
-    	{
-    		//관리자 로그인 성공
-    		setUserInfo(id, pw, UserType.ADMINISTRATOR);
-    		return true;
-    	}
+		else if(login.code == 0x02)
+		{
+			//관리자 로그인 성공
+			account.setUserType(UserType.ADMINISTRATOR);
+			return true;
+		}
     	else
     	{
-			//로그인 실패
+			//문제 발생!
     		return false;
     	}
     }
