@@ -59,8 +59,7 @@ public class LoginPageController implements Initializable
     
     //비밀번호 필드에서 엔터 입력 시
     @FXML
-    void On_PWField_Typed(KeyEvent event) 
-    {
+    void On_PWField_Typed(KeyEvent event) throws Exception {
     	if(event.getCode() == KeyCode.ENTER || event.getCharacter().equals("\r"))
     	{
     		tryLogin();
@@ -68,8 +67,7 @@ public class LoginPageController implements Initializable
     }
     
     @FXML
-    void On_LoginBtn_Clicked(MouseEvent event) 
-    {
+    void On_LoginBtn_Clicked(MouseEvent event) throws Exception {
     	//로그인 시도
     	tryLogin();
     	
