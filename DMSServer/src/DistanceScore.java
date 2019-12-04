@@ -1,11 +1,9 @@
-
 public class DistanceScore {
 	public static double getDistanceScore(String s)
 	{
 		double b;
-		int a = Integer.parseInt(s);
-		int c = Integer.parseInt(s);
-		if(c/100 == 402) return 0.4;	//울릉도
+		int a = Integer.parseInt(s);		
+		if(a/100 == 402) return 0.4;	//울릉도
 		
 		a = a/1000;
 		if(a==63) return 0.4;	//제주도
