@@ -1,9 +1,11 @@
 package shared.classes;
 
+import java.io.Serializable;
+
 import shared.enums.UserType;
 //커밋 테스트
 //계정
-public class Account
+public class Account implements Serializable
 {
 	//키
 	private String accountId;			//아이디, 학생은 학번이 들어가게 되고, 선생님/관리자는 문자열이 들어갈 수 있음.

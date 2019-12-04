@@ -1,6 +1,9 @@
 package shared.classes;
+
+import java.io.Serializable;
+
 //신청
-public class Application implements Comparable<Application>
+public class Application implements Comparable<Application>, Serializable
 {
 	//키
 	private String studentId;		//학생 학번(외래키)

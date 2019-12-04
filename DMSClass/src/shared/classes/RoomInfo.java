@@ -1,6 +1,9 @@
 package shared.classes;
+
+import java.io.Serializable;
+
 //호실정보
-public class RoomInfo
+public class RoomInfo implements Serializable
 {
 	//키
 	private String dormitoryName;		//생활관명(외래키)

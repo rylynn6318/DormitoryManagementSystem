@@ -1,9 +1,10 @@
 package shared.classes;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 //서류제출
-public class Document
+public class Document implements Serializable
 {
 	//키
 	private String studentId;			//학생 학번(외래키)
