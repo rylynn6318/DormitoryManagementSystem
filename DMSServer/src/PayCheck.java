@@ -62,5 +62,12 @@ public class PayCheck {
 		
 		Collections.sort(csvlist); // csvlist 오름차순 정렬 끗
 		
+		while(purs.next())
+		{
+			if(csvlist.contains(purs.getString("학번")))
+			{
+				
+			}
+		}
 	}
 }
