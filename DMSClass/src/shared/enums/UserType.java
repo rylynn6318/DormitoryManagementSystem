@@ -1,9 +1,7 @@
 package shared.enums;
 
-import java.io.Serializable;
-
 //사용자 타입, enum타입임. 학생 0, 관리자 1, 선생님 2.
-public enum UserType implements Serializable
+public enum UserType
 {
 	STUDENT(0), ADMINISTRATOR(1), TEACHER(2);
 	
