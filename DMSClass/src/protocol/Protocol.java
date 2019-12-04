@@ -95,7 +95,7 @@ public class Protocol {
 
             // 2바이트짜리 정보 만듬
             ByteBuffer bb = ByteBuffer.allocate(2);
-            bb.order(ByteOrder.LITTLE_ENDIAN);
+            bb.order(ByteOrder.BIG_ENDIAN);
             bb.put(packet[0]);
             bb.put(packet[1]);
             this.length = bb.getShort();
@@ -155,14 +155,17 @@ public class Protocol {
     // 순서는 변수 선언 순서와 같음
     public byte[] getPacket() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.write(length);
+        // short 타입은 Big Endian으로 변환
+        baos.write((byte)((length >> 8) & 0xff));
+        baos.write((byte)(length & 0xff));
         baos.write(type.ordinal());
         baos.write(direction);
         baos.write(code_type);
         baos.write(code);
         baos.write(is_splitted ? 0x01 : 0x00);
         baos.write(is_last ? 0x01 : 0x00);
-        baos.write(sequence);
+        baos.write((byte)((sequence >> 8) & 0xff));
+        baos.write((byte)(sequence & 0xff));
         baos.write(body_bytes);
         return baos.toByteArray();
     }
