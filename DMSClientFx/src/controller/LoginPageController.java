@@ -1,5 +1,9 @@
 package controller;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -17,7 +21,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import protocol.ProtocolType;
+import shared.classes.Account;
 import shared.enums.UserType;
+import protocol.Protocol;
 
 public class LoginPageController implements Initializable
 {
@@ -73,11 +80,12 @@ public class LoginPageController implements Initializable
     
     //서버와 통신한다. (통신이 미구현임으로 여기서 대충 처리한다)
     private void tryLogin()
-    {
+	{
+		Account account = new Account();
     	//사용자가 입력한 아이디, 비밀번호를 가져온다.
     	String inputUserId = IDField.getText();
     	String inputUserPw = PWField.getText();
-    	
+
     	if(inputUserId.isEmpty())
     	{
     		IOHandler.getInstance().showAlert("아이디가 비어있습니다");
@@ -90,10 +98,12 @@ public class LoginPageController implements Initializable
     		PWField.requestFocus();
     		return;
     	}
-    	
-    	
+
+		account.setAccountId(inputUserId);
+		account.setPassword(inputUserPw);
+
     	//네트워킹 여기서 해라
-    	if(networking(inputUserId, inputUserPw))
+    	if(networking(account))
     	{
     		IOHandler.getInstance().showAlert("로그인 성공");
     		moveToMain();
@@ -106,8 +116,18 @@ public class LoginPageController implements Initializable
     }
     
     //테스트용 네트워킹
-    private boolean networking(String id, String pw)
-    {
+    private boolean networking(Account account) throws IOException
+	{
+		Socket socket = new Socket("127.0.0.1", 666);
+		OutputStream outputToServer = socket.getOutputStream();
+		InputStream inputFromServer = socket.getInputStream();
+		byte[] buffer = new byte[1024];
+
+		Protocol login = new Protocol.Builder(ProtocolType.LOGIN, (byte)0x00, (byte)0x00, (byte)0x00).body(account).build();
+		outputToServer.write(login.getPacket());
+
+
+
     	if(id.equals("stu") && pw.equals("pass"))
     	{
     		//로그인 성공
