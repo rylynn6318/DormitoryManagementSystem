@@ -93,23 +93,14 @@ public class Protocol {
             if (packet.length < HEADER_LENGTH)
                 throw new Exception("패킷 길이가 먼가 짧다!!!");
 
-            // 2바이트짜리 정보 만듬
-            ByteBuffer bb = ByteBuffer.allocate(2);
-            bb.order(ByteOrder.BIG_ENDIAN);
-            bb.put(packet[0]);
-            bb.put(packet[1]);
-            this.length = bb.getShort();
+            this.length = (short)((packet[1] & 0xFF) | packet[0]<<8);
             this.type = ProtocolType.getType(packet[2]);
             this.direction = packet[3];
             this.code_type = packet[4];
             this.code = packet[5];
             this.is_splitted = packet[6] == 0x00 ? false : true;
             this.is_last = packet[7] == 0x00 ? false : true;
-
-            bb.clear();
-            bb.put(packet[8]);
-            bb.put(packet[9]);
-            this.sequence = bb.getShort();
+            this.sequence = (short)((packet[9] & 0xFF) | packet[8]<<8);
 
             this.body_bytes = Arrays.copyOfRange(packet, HEADER_LENGTH, packet.length);
             this.body = deserialization(this.body_bytes);

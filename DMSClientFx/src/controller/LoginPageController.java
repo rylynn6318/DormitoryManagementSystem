@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
@@ -115,12 +117,18 @@ public class LoginPageController implements Initializable
     //테스트용 네트워킹
     private boolean networking(Account account) throws Exception
 	{
+		short a = 600;
+		byte a1 = (byte)((a >> 8) & 0xff);
+		byte a2 = (byte)(a & 0xff);
+		short b = (short)((a2 & 0xFF) | a1<<8);
+
 		Socket socket = new Socket("127.0.0.1", 666);
 		OutputStream outputToServer = socket.getOutputStream();
 		InputStream inputFromServer = socket.getInputStream();
 		byte[] buffer = new byte[1024];
 
 		Protocol login = new Protocol.Builder(ProtocolType.LOGIN, (byte)0x00, (byte)0x00, (byte)0x00).body(account).build();
+
 		outputToServer.write(login.getPacket());
 
 		inputFromServer.read(buffer);
