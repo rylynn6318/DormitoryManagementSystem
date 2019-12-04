@@ -65,7 +65,7 @@ public class Pass
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-		String sql = "SELECT 학기 FROM" + DB_NAME + ".신청 limit1"; //신청테이블에서 하나만 가져와서 그 학기를 봄
+		String sql = "SELECT 학기 FROM" + DB_NAME + ".신청 ORDER BY 학기 DESC LIMIT1"; //신청테이블에서 하나만 가져와서 그 학기를 봄
 		ResultSet rcrs = state.executeQuery(sql);
 		currentSemester = rcrs.getInt("학기");
 	}
