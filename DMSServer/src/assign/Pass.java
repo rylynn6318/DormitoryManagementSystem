@@ -22,6 +22,7 @@ public class Pass
 					DB_NAME + "?user=" + 
 					USER_NAME + "&password=" + 
 					PASSWORD; 
+	private static int currentSemester;
 	
 	public static void passUpdate() throws SQLException, ClassNotFoundException
 	{	
@@ -52,7 +53,39 @@ public class Pass
 				state2.executeUpdate(query);
 			} 
 		}
-
+		
+	}
+	
+	public static void currentSemester() throws ClassNotFoundException, SQLException
+	{
+		Connection conn = null;
+		Statement state = null;
+		
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
+		state = conn.createStatement();
+		
+		String sql = "SELECT 학기 FROM" + DB_NAME + ".신청 limit1"; //신청테이블에서 하나만 가져와서 그 학기를 봄
+		ResultSet rcrs = state.executeQuery(sql);
+		currentSemester = rcrs.getInt("학기");
+	}
+	
+	public static void residenceCheckOut() throws ClassNotFoundException, SQLException
+	{
+		Connection conn = null;
+		Statement state = null;
+		
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
+		state = conn.createStatement();
+		
+		String sql = "SELECT 학기 FROM";  // 이제 체크아웃 넘긴 사람들 내쫓기 
+				
+				//여기에요 여기 여기부터 코딩 하시면 돼요
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	}
 	
 	public static void residenceUpdate() throws ClassNotFoundException, SQLException
@@ -298,7 +331,7 @@ public class Pass
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//신청자가 신청한 생활관을 가져와서 메모리에 있는 현재 배정된 내역과 대조하면서 방에 넣어줌
-		String sql4 = "SELECT ID, 생활관명 FROM " + DB_NAME + ".신청 WHERE (학기 = 201901 and 최종결과 = 'Y') order by 생활관명";   // 201901은 임시로 넣은것, 제대로 하려면 학기를 유동적으로 바꿀 수 있어야함.
+		String sql4 = "SELECT ID, 생활관명 FROM " + DB_NAME + ".신청 WHERE (학기 "+ currentSemester +" and 최종결과 = 'Y') order by 생활관명";   // 201901은 임시로 넣은것, 제대로 하려면 학기를 유동적으로 바꿀 수 있어야함.
 		ResultSet rurs4 = state.executeQuery(sql4);
 		
 		while(rurs4.next())
