@@ -23,6 +23,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+<<<<<<< HEAD
+=======
+import protocol.ProtocolField;
+import protocol.ProtocolHelper;
+>>>>>>> branch 'master' of https://github.com/dldhk97/WeHateJava
 import shared.classes.Account;
 import shared.enums.UserType;
 import protocol.Protocol;
@@ -93,11 +98,11 @@ public class LoginPageController implements Initializable {
         account.setPassword(inputUserPw);
 
         //네트워킹 여기서 해라
-        //boolean isPassed = networking(account);
+        boolean isPassed = networking(account);
         
         //일단 테스트용으로 네트워킹 주석처리하고 패스함.
-        boolean isPassed = true;
-        account.setUserType(UserType.ADMINISTRATOR);			//관리자 페이지로 들어가려면 ADMINISTRATOR로 바꾸면됨
+        // boolean isPassed = true;
+        // account.setUserType(UserType.ADMINISTRATOR);			//관리자 페이지로 들어가려면 ADMINISTRATOR로 바꾸면됨
         //------------------------
         
         if (isPassed) {
@@ -114,6 +119,7 @@ public class LoginPageController implements Initializable {
 
     //테스트용 네트워킹
     private boolean networking(Account account) throws Exception {
+<<<<<<< HEAD
 //        Socket socket = new Socket("127.0.0.1", 666);
 //        OutputStream outputToServer = socket.getOutputStream();
 //        InputStream inputFromServer = socket.getInputStream();
@@ -139,6 +145,35 @@ public class LoginPageController implements Initializable {
 //            account.setUserType(UserType.ADMINISTRATOR);
 //            return true;
 //        }
+=======
+        Socket socket = new Socket("127.0.0.1", 666);
+        OutputStream outputToServer = socket.getOutputStream();
+        InputStream inputFromServer = socket.getInputStream();
+
+        // To_Server일때 code1, code2는 머가 드가든 상관 없음.
+        Protocol login = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_SERVER, ProtocolField.Code1.Null.NULL, ProtocolField.Code2.LoginResult.FAIL)
+                .body(ProtocolHelper.serialization(account)).build();
+        outputToServer.write(login.getPacket());
+
+        ///////위 코드는 전송//////////////////아래 코드는 수신///////////
+
+        byte[] buffer = new byte[1024];
+        inputFromServer.read(buffer);
+        login = new Protocol.Builder(buffer).build();
+
+        if (login.code2 == ProtocolField.Code2.LoginResult.FAIL) {
+            //로그인 실패
+            return false;
+        } else if (login.code2 == ProtocolField.Code2.LoginResult.STUDENT) {
+            //로그인 성공
+            account.setUserType(UserType.STUDENT);
+            return true;
+        } else if (login.code2 == ProtocolField.Code2.LoginResult.ADMIN) {
+            //관리자 로그인 성공
+            account.setUserType(UserType.ADMINISTRATOR);
+            return true;
+        }
+>>>>>>> branch 'master' of https://github.com/dldhk97/WeHateJava
 
         //문제 발생!
         return false;
