@@ -26,6 +26,15 @@ public class ResidentSelecter
 					USER_NAME + "&password=" + 
 					PASSWORD; 
 	
+//	탑층 알고리즘 설계중
+//	1. 탑층 capacity보다 신청이 많은지 확인
+//	2. 일반 capacity보다 신청이 많은지 확인
+//	
+//	둘 다 true일 경우 -> 그대로 진행
+//	1은 true, 2는 false일 경우 -> ???
+//	1은 false, 2는 true일 경우 -> 1의 남은 capacity를 2에 합쳐서 선발
+//	둘 다 false일 경우 -> 그대로 진행
+	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException
 	{
 		passerSelection("푸름1");
@@ -40,7 +49,6 @@ public class ResidentSelecter
 		passerSelection("신평_남");
 		passerSelection("신평_여");
 	}
-
 	
 	public static void passerSelection(String dormName) throws SQLException, ClassNotFoundException
 	{
