@@ -9,7 +9,7 @@ public class PlacementHistory implements Serializable
 	//키
 	private String studentId;			//학생의 학번(외래키)
 	private int roomId;					//방의 고유 아이디(외래키)
-	private int semesterCode;			//학기코드(외래키)
+	private int semester;				//학기(외래키)
 	private String dormitoryName;		//생활관명(외래키)
 	
 	//키가 아닌 컬럼
@@ -34,13 +34,13 @@ public class PlacementHistory implements Serializable
 		this.roomId = roomId;
 	}
 	
-	public int getSemesterCode()
+	public int getSemester()
 	{
-		return semesterCode;
+		return semester;
 	}
-	public void setSemesterCode(int semesterCode)
+	public void setSemester(int semester)
 	{
-		this.semesterCode = semesterCode;
+		this.semester = semester;
 	}
 	
 	public String getDormitoryName()

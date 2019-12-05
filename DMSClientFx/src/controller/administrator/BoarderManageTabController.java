@@ -2,9 +2,13 @@ package controller.administrator;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,6 +17,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import shared.classes.PlacementHistory;
 
 //입사자 조회 및 관리
 public class BoarderManageTabController implements Initializable 
@@ -118,6 +123,25 @@ public class BoarderManageTabController implements Initializable
     private void checkBoarders()
     {
     	//배정내역 테이블 조회 요청
+    	
+//    	applicationList = FXCollections.observableArrayList(
+//    			new ApplicationViewModel("20161234", "오름관 2동", 201901, 1, 7, true, true, true, true),
+//    			new ApplicationViewModel("20161235", "오름관 3동", 201901, 2, 5, true, true, true, false),
+//    			new ApplicationViewModel("20161236", "푸름관 2동", 201901, 0, 7, false, true, false, true),
+//    			new ApplicationViewModel("20161237", "오름관 2동", 201901, 1, 5, false, true, true, true)
+//        		);
+//    	
+//    	//서버에서 받아온거 표시하게 만듬.
+//    	check_application_column_id.setCellValueFactory(cellData -> cellData.getValue().studentIdProperty());
+//    	check_application_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
+//    	check_application_column_semester.setCellValueFactory(cellData -> cellData.getValue().semesterProperty());
+//    	check_application_column_choice.setCellValueFactory(cellData -> cellData.getValue().choiceProperty());
+//    	check_application_column_mealType.setCellValueFactory(cellData -> cellData.getValue().mealTypeProperty());
+//    	check_application_column_isPaid.setCellValueFactory(cellData -> cellData.getValue().isPaidProperty());
+//    	check_application_column_isPassed.setCellValueFactory(cellData -> cellData.getValue().isPassedProperty());
+//    	check_application_column_isLastPassed.setCellValueFactory(cellData -> cellData.getValue().isLastPassedProperty());
+//    	check_application_column_isSnore.setCellValueFactory(cellData -> cellData.getValue().isSnoreProperty());
+//    	check_application_tableview.setItems(applicationList);
     }
     
     private void deleteBoarder()
@@ -242,6 +266,79 @@ public class BoarderManageTabController implements Initializable
 		{
 			IOHandler.getInstance().showAlert("입사자 등록에 실패하였습니다.");
 		}
-    }
-    
+    }   
+}
+
+class PlacementHistoryViewModel extends PlacementHistory
+{
+	private StringProperty studentIdStr;
+	private StringProperty roomIdStr;
+	private StringProperty semesterStr;
+	private StringProperty dormitoryNameStr;
+	private StringProperty seatStr;
+	private StringProperty checkoutStr;
+	
+//	public PlacementHistoryViewModel(String studentId, String dormNameStr, int semester, int choice, int mealType, 
+//			boolean isPaid, boolean isPassed, boolean isLastPassed, boolean isSnore)
+//	{
+//		
+//		super.setStudentId(studentId);
+//		super.setRoomId(roomId);
+//		super.setSemesterCode(semester);
+//		super.dormitoryNameStr(dormitoryName);
+//		super.seatStr(seat);
+//		super.checkoutStr(checkout);
+//		
+//		this.studentIdStr = new SimpleStringProperty(studentId);
+//		this.roomIdStr = new SimpleStringProperty(dormNameStr);
+//		this.semesterStr = new SimpleStringProperty(Integer.toString(semester));
+//		this.dormitoryNameStr = new SimpleStringProperty(Integer.toString(choice));
+//		this.seatStr = new SimpleStringProperty(Integer.toString(mealType));
+//		this.checkoutStr = new SimpleStringProperty(isPaid ? "T" : "F");
+//	}
+//	
+//	public StringProperty studentIdProperty()
+//	{
+//		return studentIdStr;
+//	}
+//	
+//	public StringProperty dormNameProperty()
+//	{
+//		return dormNameStr;
+//	}
+//	
+//	public StringProperty semesterProperty()
+//	{
+//		return semesterStr;
+//	}
+//	
+//	public StringProperty choiceProperty()
+//	{
+//		return choiceStr;
+//	}
+//	
+//	public StringProperty mealTypeProperty()
+//	{
+//		return mealTypeStr;
+//	}
+//	
+//	public StringProperty isPaidProperty()
+//	{
+//		return isPaidStr;
+//	}
+//	
+//	public StringProperty isPassedProperty()
+//	{
+//		return isPassedStr;
+//	}
+//	
+//	public StringProperty isLastPassedProperty()
+//	{
+//		return isLastPassedStr;
+//	}
+//	
+//	public StringProperty isSnoreProperty()
+//	{
+//		return isSnoreStr;
+//	}
 }

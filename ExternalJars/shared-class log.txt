@@ -41,3 +41,4 @@ shared-class update log
 
 2019-12-06 v1.12
 	Protocol 개편
+	Shared Class 안의 PlacementHistory 에 학기가 SemesterCode로 되있는걸 Semester로 수정하고 Export해서 적용함.
