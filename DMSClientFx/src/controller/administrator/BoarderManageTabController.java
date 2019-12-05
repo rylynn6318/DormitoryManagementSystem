@@ -9,12 +9,14 @@ import application.IOHandler;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import shared.classes.PlacementHistory;
@@ -30,7 +32,25 @@ public class BoarderManageTabController implements Initializable
     private Button check_button;
 
     @FXML
-    private TableView<?> check_placementHistory_tableview;
+    private TableView<PlacementHistoryViewModel> check_placementHistory_tableview;
+    
+    @FXML
+    private TableColumn<PlacementHistoryViewModel, String> check_placementHistory_column_studentId;
+
+    @FXML
+    private TableColumn<PlacementHistoryViewModel, String> check_placementHistory_column_roomNumber;
+
+    @FXML
+    private TableColumn<PlacementHistoryViewModel, String> check_placementHistory_column_semester;
+
+    @FXML
+    private TableColumn<PlacementHistoryViewModel, String> check_placementHistory_column_dormName;
+
+    @FXML
+    private TableColumn<PlacementHistoryViewModel, String> check_placementHistory_column_seat;
+
+    @FXML
+    private TableColumn<PlacementHistoryViewModel, String> check_placementHistory_column_checkout;
 
     @FXML
     private Button delete_button;
@@ -69,11 +89,12 @@ public class BoarderManageTabController implements Initializable
     private TextField insert_dormName_textfield;
 
     @FXML
-    private DatePicker insert_exitDate_datepicker;
+    private DatePicker insert_checkout_datepicker;
 
     @FXML
     private CheckBox insert_snore_checkbox;
-
+    
+    private ObservableList<PlacementHistoryViewModel> historyList;
     
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
@@ -124,24 +145,21 @@ public class BoarderManageTabController implements Initializable
     {
     	//배정내역 테이블 조회 요청
     	
-//    	applicationList = FXCollections.observableArrayList(
-//    			new ApplicationViewModel("20161234", "오름관 2동", 201901, 1, 7, true, true, true, true),
-//    			new ApplicationViewModel("20161235", "오름관 3동", 201901, 2, 5, true, true, true, false),
-//    			new ApplicationViewModel("20161236", "푸름관 2동", 201901, 0, 7, false, true, false, true),
-//    			new ApplicationViewModel("20161237", "오름관 2동", 201901, 1, 5, false, true, true, true)
-//        		);
-//    	
-//    	//서버에서 받아온거 표시하게 만듬.
-//    	check_application_column_id.setCellValueFactory(cellData -> cellData.getValue().studentIdProperty());
-//    	check_application_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
-//    	check_application_column_semester.setCellValueFactory(cellData -> cellData.getValue().semesterProperty());
-//    	check_application_column_choice.setCellValueFactory(cellData -> cellData.getValue().choiceProperty());
-//    	check_application_column_mealType.setCellValueFactory(cellData -> cellData.getValue().mealTypeProperty());
-//    	check_application_column_isPaid.setCellValueFactory(cellData -> cellData.getValue().isPaidProperty());
-//    	check_application_column_isPassed.setCellValueFactory(cellData -> cellData.getValue().isPassedProperty());
-//    	check_application_column_isLastPassed.setCellValueFactory(cellData -> cellData.getValue().isLastPassedProperty());
-//    	check_application_column_isSnore.setCellValueFactory(cellData -> cellData.getValue().isSnoreProperty());
-//    	check_application_tableview.setItems(applicationList);
+    	historyList = FXCollections.observableArrayList(
+    			new PlacementHistoryViewModel("20161234", 201, 201901, "오른관 2동", 'A', new Date(2019,07,01)),
+    			new PlacementHistoryViewModel("20161235", 304, 201901, "푸름관 2동", 'B', new Date(2019,07,01)),
+    			new PlacementHistoryViewModel("20161236", 406, 201901, "오른관 3동", 'A', new Date(2019,07,01))
+        		);
+    	
+    	//서버에서 받아온거 표시하게 만듬.
+    	check_placementHistory_column_studentId.setCellValueFactory(cellData -> cellData.getValue().studentIdProperty());
+    	check_placementHistory_column_roomNumber.setCellValueFactory(cellData -> cellData.getValue().roomIdProperty());
+    	check_placementHistory_column_semester.setCellValueFactory(cellData -> cellData.getValue().semesterProperty());
+    	check_placementHistory_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormitoryNameProperty());
+    	check_placementHistory_column_seat.setCellValueFactory(cellData -> cellData.getValue().seatProperty());
+    	check_placementHistory_column_checkout.setCellValueFactory(cellData -> cellData.getValue().checkoutProperty());
+    	
+    	check_placementHistory_tableview.setItems(historyList);
     }
     
     private void deleteBoarder()
@@ -201,7 +219,7 @@ public class BoarderManageTabController implements Initializable
     	String semester = insert_semester_textfield.getText();
     	String dormName = insert_dormName_textfield.getText();
     	String seat = insert_seat_textfield.getText();
-    	LocalDate exitDate = insert_exitDate_datepicker.getValue();
+    	LocalDate checkout = insert_checkout_datepicker.getValue();
     	String mealType = insert_mealType_textfield.getText();
     	
     	if(id == null || id.isEmpty())
@@ -234,7 +252,7 @@ public class BoarderManageTabController implements Initializable
     		IOHandler.getInstance().showAlert("자리가 비어있습니다.");
     		return;
     	}
-    	else if(exitDate == null || exitDate.toString().isEmpty())
+    	else if(checkout == null || checkout.toString().isEmpty())
     	{
     		//퇴사예정일이 없음
     		IOHandler.getInstance().showAlert("퇴사예정일이 비어있습니다.");
@@ -259,7 +277,7 @@ public class BoarderManageTabController implements Initializable
 			insert_semester_textfield.setText(null);
 			insert_dormName_textfield.setText(null);
 			insert_seat_textfield.setText(null);
-			insert_exitDate_datepicker.setValue(null);
+			insert_checkout_datepicker.setValue(null);
 			insert_mealType_textfield.setText(null);
 		}
 		else
@@ -278,67 +296,51 @@ class PlacementHistoryViewModel extends PlacementHistory
 	private StringProperty seatStr;
 	private StringProperty checkoutStr;
 	
-//	public PlacementHistoryViewModel(String studentId, String dormNameStr, int semester, int choice, int mealType, 
-//			boolean isPaid, boolean isPassed, boolean isLastPassed, boolean isSnore)
-//	{
-//		
-//		super.setStudentId(studentId);
-//		super.setRoomId(roomId);
-//		super.setSemesterCode(semester);
-//		super.dormitoryNameStr(dormitoryName);
-//		super.seatStr(seat);
-//		super.checkoutStr(checkout);
-//		
-//		this.studentIdStr = new SimpleStringProperty(studentId);
-//		this.roomIdStr = new SimpleStringProperty(dormNameStr);
-//		this.semesterStr = new SimpleStringProperty(Integer.toString(semester));
-//		this.dormitoryNameStr = new SimpleStringProperty(Integer.toString(choice));
-//		this.seatStr = new SimpleStringProperty(Integer.toString(mealType));
-//		this.checkoutStr = new SimpleStringProperty(isPaid ? "T" : "F");
-//	}
-//	
-//	public StringProperty studentIdProperty()
-//	{
-//		return studentIdStr;
-//	}
-//	
-//	public StringProperty dormNameProperty()
-//	{
-//		return dormNameStr;
-//	}
-//	
-//	public StringProperty semesterProperty()
-//	{
-//		return semesterStr;
-//	}
-//	
-//	public StringProperty choiceProperty()
-//	{
-//		return choiceStr;
-//	}
-//	
-//	public StringProperty mealTypeProperty()
-//	{
-//		return mealTypeStr;
-//	}
-//	
-//	public StringProperty isPaidProperty()
-//	{
-//		return isPaidStr;
-//	}
-//	
-//	public StringProperty isPassedProperty()
-//	{
-//		return isPassedStr;
-//	}
-//	
-//	public StringProperty isLastPassedProperty()
-//	{
-//		return isLastPassedStr;
-//	}
-//	
-//	public StringProperty isSnoreProperty()
-//	{
-//		return isSnoreStr;
-//	}
+	public PlacementHistoryViewModel(String studentId, int roomId, int semester, String dormitoryName, char seat, Date checkout)
+	{
+		
+		super.setStudentId(studentId);
+		super.setRoomId(roomId);
+		super.setSemester(semester);
+		super.setDormitoryName(dormitoryName);
+		super.setSeat(seat);
+		super.setCheckout(checkout);
+		
+		this.studentIdStr = new SimpleStringProperty(studentId);
+		this.roomIdStr = new SimpleStringProperty(Integer.toString(roomId));
+		this.semesterStr = new SimpleStringProperty(Integer.toString(semester));
+		this.dormitoryNameStr = new SimpleStringProperty(dormitoryName);
+		this.seatStr = new SimpleStringProperty(String.valueOf(seat));
+		this.checkoutStr = new SimpleStringProperty(checkout.toString());
+	}
+	
+	public StringProperty studentIdProperty()
+	{
+		return studentIdStr;
+	}
+	
+	public StringProperty roomIdProperty()
+	{
+		return roomIdStr;
+	}
+	
+	public StringProperty semesterProperty()
+	{
+		return semesterStr;
+	}
+	
+	public StringProperty dormitoryNameProperty()
+	{
+		return dormitoryNameStr;
+	}
+	
+	public StringProperty seatProperty()
+	{
+		return seatStr;
+	}
+	
+	public StringProperty checkoutProperty()
+	{
+		return checkoutStr;
+	}
 }
