@@ -23,7 +23,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import protocol.ProtocolType;
 import shared.classes.Account;
 import shared.enums.UserType;
 import protocol.Protocol;
@@ -115,31 +114,31 @@ public class LoginPageController implements Initializable {
 
     //테스트용 네트워킹
     private boolean networking(Account account) throws Exception {
-        Socket socket = new Socket("127.0.0.1", 666);
-        OutputStream outputToServer = socket.getOutputStream();
-        InputStream inputFromServer = socket.getInputStream();
-
-        Protocol login = new Protocol.Builder(ProtocolType.LOGIN, (byte) 0x00, (byte) 0x00, (byte) 0x00).body(account).build();
-        outputToServer.write(login.getPacket());
-
-        ///////위 코드는 전송//////////////////아래 코드는 수신///////////
-
-        byte[] buffer = new byte[1024];
-        inputFromServer.read(buffer);
-        login = new Protocol.Builder(buffer).build();
-
-        if (login.code == 0x00) {
-            //로그인 실패
-            return false;
-        } else if (login.code == 0x01) {
-            //로그인 성공
-            account.setUserType(UserType.STUDENT);
-            return true;
-        } else if (login.code == 0x02) {
-            //관리자 로그인 성공
-            account.setUserType(UserType.ADMINISTRATOR);
-            return true;
-        }
+//        Socket socket = new Socket("127.0.0.1", 666);
+//        OutputStream outputToServer = socket.getOutputStream();
+//        InputStream inputFromServer = socket.getInputStream();
+//
+//        Protocol login = new Protocol.Builder(ProtocolType.LOGIN, (byte) 0x00, (byte) 0x00, (byte) 0x00).body(account).build();
+//        outputToServer.write(login.getPacket());
+//
+//        ///////위 코드는 전송//////////////////아래 코드는 수신///////////
+//
+//        byte[] buffer = new byte[1024];
+//        inputFromServer.read(buffer);
+//        login = new Protocol.Builder(buffer).build();
+//
+//        if (login.code == 0x00) {
+//            //로그인 실패
+//            return false;
+//        } else if (login.code == 0x01) {
+//            //로그인 성공
+//            account.setUserType(UserType.STUDENT);
+//            return true;
+//        } else if (login.code == 0x02) {
+//            //관리자 로그인 성공
+//            account.setUserType(UserType.ADMINISTRATOR);
+//            return true;
+//        }
 
         //문제 발생!
         return false;

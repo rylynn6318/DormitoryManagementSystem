@@ -4,13 +4,18 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import shared.classes.Application;
 
 //입사 선발자 조회 및 관리
 public class SelecteesManageTabController implements Initializable 
@@ -22,7 +27,34 @@ public class SelecteesManageTabController implements Initializable
     private Button check_application_button;
 
     @FXML
-    private TableView<?> check_application_tableview;
+    private TableView<ApplicationViewModel> check_application_tableview;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_id;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_dormName;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_semester;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_choice;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_mealType;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_isPaid;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_isPassed;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_isLastPassed;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_isSnore;
 
     @FXML
     private Button delete_button;
@@ -38,6 +70,8 @@ public class SelecteesManageTabController implements Initializable
 
     @FXML
     private TextField delete_semester_textfield;
+    
+    ObservableList<ApplicationViewModel> applicationList;
     	
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
@@ -78,6 +112,27 @@ public class SelecteesManageTabController implements Initializable
     private void checkApplications()
     {
     	//서버에서 신청테이블->이번학기->객체 배열 쫙 긁어와서 tableview에 보여줌
+    	
+    	//서버랑 통신했다 치고 Application 객체 받아옴.
+    	//물론 실제로 받아왔을때 받아온 Application 배열목록을 ApplicationViewModel로 변환하고 넣어야됨.
+    	applicationList = FXCollections.observableArrayList(
+    			new ApplicationViewModel("20161234", "오름관 2동", 201901, 1, 7, true, true, true, true),
+    			new ApplicationViewModel("20161235", "오름관 3동", 201901, 2, 5, true, true, true, false),
+    			new ApplicationViewModel("20161236", "푸름관 2동", 201901, 0, 7, false, true, false, true),
+    			new ApplicationViewModel("20161237", "오름관 2동", 201901, 1, 5, false, true, true, true)
+        		);
+    	
+    	//서버에서 받아온거 표시하게 만듬.
+    	check_application_column_id.setCellValueFactory(cellData -> cellData.getValue().studentIdProperty());
+    	check_application_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
+    	check_application_column_semester.setCellValueFactory(cellData -> cellData.getValue().semesterProperty());
+    	check_application_column_choice.setCellValueFactory(cellData -> cellData.getValue().choiceProperty());
+    	check_application_column_mealType.setCellValueFactory(cellData -> cellData.getValue().mealTypeProperty());
+    	check_application_column_isPaid.setCellValueFactory(cellData -> cellData.getValue().isPaidProperty());
+    	check_application_column_isPassed.setCellValueFactory(cellData -> cellData.getValue().isPassedProperty());
+    	check_application_column_isLastPassed.setCellValueFactory(cellData -> cellData.getValue().isLastPassedProperty());
+    	check_application_column_isSnore.setCellValueFactory(cellData -> cellData.getValue().isSnoreProperty());
+    	check_application_tableview.setItems(applicationList);
     }
     
     private void deleteSelectee()
@@ -129,4 +184,87 @@ public class SelecteesManageTabController implements Initializable
 			IOHandler.getInstance().showAlert("입사 선발자 삭제에 실패하였습니다.");
 		}
     }
+}
+
+class ApplicationViewModel extends Application
+{
+	private StringProperty studentIdStr;
+	private StringProperty dormNameStr;
+	private StringProperty semesterStr;
+	private StringProperty choiceStr;
+	private StringProperty mealTypeStr;
+	private StringProperty isPaidStr;
+	private StringProperty isPassedStr;
+	private StringProperty isLastPassedStr;
+	private StringProperty isSnoreStr;
+	
+	public ApplicationViewModel(String studentId, String dormNameStr, int semester, int choice, int mealType, 
+			boolean isPaid, boolean isPassed, boolean isLastPassed, boolean isSnore)
+	{
+		//생성자로 묶을수있을거같은데, 일단 보류
+		super.setStudentId(studentId);
+		super.setDormitoryName(dormNameStr);
+		super.setSemesterCode(semester);
+		super.setChoice(choice);
+		super.setMealType(mealType);
+		super.setPaid(isPaid);
+		super.setPassed(isPassed);
+		super.setLastPassed(isLastPassed);
+		super.setSnore(isSnore);
+		
+		this.studentIdStr = new SimpleStringProperty(studentId);
+		this.dormNameStr = new SimpleStringProperty(dormNameStr);
+		this.semesterStr = new SimpleStringProperty(Integer.toString(semester));
+		this.choiceStr = new SimpleStringProperty(Integer.toString(choice));
+		this.mealTypeStr = new SimpleStringProperty(Integer.toString(mealType));
+		this.isPaidStr = new SimpleStringProperty(isPaid ? "T" : "F");
+		this.isPassedStr = new SimpleStringProperty(isPassed ? "T" : "F");
+		this.isLastPassedStr = new SimpleStringProperty(isLastPassed ? "T" : "F");
+		this.isSnoreStr = new SimpleStringProperty(isSnore ? "T" : "F");
+	}
+	
+	public StringProperty studentIdProperty()
+	{
+		return studentIdStr;
+	}
+	
+	public StringProperty dormNameProperty()
+	{
+		return dormNameStr;
+	}
+	
+	public StringProperty semesterProperty()
+	{
+		return semesterStr;
+	}
+	
+	public StringProperty choiceProperty()
+	{
+		return choiceStr;
+	}
+	
+	public StringProperty mealTypeProperty()
+	{
+		return mealTypeStr;
+	}
+	
+	public StringProperty isPaidProperty()
+	{
+		return isPaidStr;
+	}
+	
+	public StringProperty isPassedProperty()
+	{
+		return isPassedStr;
+	}
+	
+	public StringProperty isLastPassedProperty()
+	{
+		return isLastPassedStr;
+	}
+	
+	public StringProperty isSnoreProperty()
+	{
+		return isSnoreStr;
+	}
 }
