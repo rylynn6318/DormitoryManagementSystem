@@ -38,18 +38,11 @@ public class SelecteesManageTabController implements Initializable
 
     @FXML
     private TextField delete_semester_textfield;
-    
-    @FXML
-	private ComboBox<String> delete_gender_combobox;
-	
-	private final String[] comboboxItem_gender = {"M", "F"}; 
-	
+    	
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
 		System.out.println("입사 선발자 조회 및 관리 새로고침됨");
-		
-		delete_gender_combobox.getItems().addAll(comboboxItem_gender);
 	}
 	
 	//---------------------이벤트---------------------
@@ -91,7 +84,6 @@ public class SelecteesManageTabController implements Initializable
     {
     	String id = delete_id_textfield.getText();
     	String dormName = delete_dormName_textfield.getText();
-    	String gender = delete_gender_combobox.getSelectionModel().getSelectedItem();
     	String semester = delete_semester_textfield.getText();
     	String choice = delete_choice_textfield.getText();
     	
@@ -105,12 +97,6 @@ public class SelecteesManageTabController implements Initializable
     	{
     		//생활관명 비어있음
     		IOHandler.getInstance().showAlert("생활관명이 비어있습니다.");
-    		return;
-    	}
-    	else if(gender == null || gender.isEmpty())
-    	{
-    		//성별 비어있음
-    		IOHandler.getInstance().showAlert("성별이 비어있습니다.");
     		return;
     	}
     	else if(semester == null || semester.isEmpty())
@@ -135,7 +121,6 @@ public class SelecteesManageTabController implements Initializable
 			//선택한 항목들 클리어
 			delete_id_textfield.setText(null);
 			delete_dormName_textfield.setText(null);
-			delete_gender_combobox.getSelectionModel().select(-1);
 			delete_semester_textfield.setText(null);
 			delete_choice_textfield.setText(null);
 		}

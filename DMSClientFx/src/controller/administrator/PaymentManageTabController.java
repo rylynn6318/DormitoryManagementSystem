@@ -47,14 +47,10 @@ public class PaymentManageTabController implements Initializable
 
     @FXML
     private Button upload_button;
-
-    @FXML
-    private ComboBox<String> update_gender_combobox;
 	
 	@FXML
     private ComboBox<String> update_isPaid_combobox;
 	
-	private final String[] comboboxItem_gender = {"M", "F"};
 	private final String[] comboboxItem_boolean = {"T", "F"};
 	
 	@Override
@@ -62,7 +58,6 @@ public class PaymentManageTabController implements Initializable
 	{
 		System.out.println("납부 여부 조회 및 관리 새로고침됨");
 		
-		update_gender_combobox.getItems().addAll(comboboxItem_gender);
 		update_isPaid_combobox.getItems().addAll(comboboxItem_boolean);
 	}
 	
@@ -104,7 +99,6 @@ public class PaymentManageTabController implements Initializable
     {
     	String id = update_id_textfield.getText();
     	String dormName = update_dormName_textfield.getText();
-    	String gender = update_gender_combobox.getSelectionModel().getSelectedItem();
     	String semester = update_semester_textfield.getText();
     	String isPaid = update_isPaid_combobox.getSelectionModel().getSelectedItem();
     	
@@ -118,12 +112,6 @@ public class PaymentManageTabController implements Initializable
     	{
     		//생활관명 비어있음
     		IOHandler.getInstance().showAlert("생활관명이 비어있습니다.");
-    		return;
-    	}
-    	else if(gender == null || gender.isEmpty())
-    	{
-    		//성별 비어있음
-    		IOHandler.getInstance().showAlert("성별이 비어있습니다.");
     		return;
     	}
     	else if(semester == null || semester.isEmpty())
@@ -148,7 +136,6 @@ public class PaymentManageTabController implements Initializable
 			//선택한 항목들 클리어
 			update_id_textfield.setText(null);
 			update_dormName_textfield.setText(null);
-			update_gender_combobox.getSelectionModel().select(-1);
 			update_semester_textfield.setText(null);
 			update_isPaid_combobox.getSelectionModel().select(-1);
 		}

@@ -34,24 +34,28 @@ public class CheckApplicationTabController implements Initializable
     private TableColumn<ApplicationViewModel, String> application_history_column_mealType;
 
     @FXML
-    private TableView<?> selection_result_tableview;
+    private TableView<SelectionResultViewModel> selection_result_tableview;
 
     @FXML
-    private TableColumn<?, ?> selection_result_column_choice;
+    private TableColumn<SelectionResultViewModel, String> selection_result_column_choice;
 
     @FXML
-    private TableColumn<?, ?> selection_result_column_dormName;
+    private TableColumn<SelectionResultViewModel, String> selection_result_column_dormName;
 
     @FXML
-    private TableColumn<?, ?> selection_result_column_mealType;
+    private TableColumn<SelectionResultViewModel, String> selection_result_column_mealType;
+    
+    @FXML
+    private TableColumn<SelectionResultViewModel, String> selection_result_column_isPassed;
 
     @FXML
-    private TableColumn<?, ?> selection_result_column_result;
+    private TableColumn<SelectionResultViewModel, String> selection_result_column_isPaid;
 
     @FXML
     private TextArea info_textarea;
     
     ObservableList<ApplicationViewModel> appHistory;
+    ObservableList<SelectionResultViewModel> selections;
     
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
@@ -68,7 +72,14 @@ public class CheckApplicationTabController implements Initializable
 				new ApplicationViewModel(2, "푸름관1동", 7),
 				new ApplicationViewModel(3, "푸름관4동", 0)
 				);
-				
+		
+		//이건 생활관 선발 결과 객체 배열
+		//지망, 생활관명, 식비구분, 합격여부, 납부여부를 받아와야한다.
+		selections = FXCollections.observableArrayList(
+				new SelectionResultViewModel(1, "오름관2동", 5, true, true),
+				new SelectionResultViewModel(2, "푸름관1동", 7, true, false),
+				new SelectionResultViewModel(3, "푸름관4동", 0, true, false)
+				);
 	}
 	
 	//---------------------이벤트---------------------
@@ -88,6 +99,7 @@ public class CheckApplicationTabController implements Initializable
     	//서버로 요청날리고 받아온 후 refreshApplicationTable 호출
     	
     	refreshApplicationTable();
+    	refreshApplicationResultTable();
     }
     
     private void refreshApplicationTable()
@@ -97,13 +109,25 @@ public class CheckApplicationTabController implements Initializable
     	application_history_column_mealType.setCellValueFactory(cellData -> cellData.getValue().mealTypeProperty());
     	application_history_tableview.setItems(appHistory);
     }
+    
+    private void refreshApplicationResultTable()
+    {
+    	selection_result_column_choice.setCellValueFactory(cellData -> cellData.getValue().choiceProperty());
+    	selection_result_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
+    	selection_result_column_mealType.setCellValueFactory(cellData -> cellData.getValue().mealTypeProperty());
+    	selection_result_column_isPassed.setCellValueFactory(cellData -> cellData.getValue().isPassedProperty());
+    	selection_result_column_isPaid.setCellValueFactory(cellData -> cellData.getValue().isPaidProperty());
+    	selection_result_tableview.setItems(selections);
+    }
 }
+
+//---------------------테이블뷰 모델---------------------
 
 class ApplicationViewModel extends Application
 {
-	StringProperty choiceStr;
-	StringProperty dormNameStr;
-	StringProperty mealTypeStr;
+	private StringProperty choiceStr;
+	private StringProperty dormNameStr;
+	private StringProperty mealTypeStr;
 	
 	public ApplicationViewModel(String studentId, String dormitoryName, String gender, int semesterCode, int choice)
 	{
@@ -158,6 +182,34 @@ class ApplicationViewModel extends Application
 		default:
 			return new SimpleStringProperty("알 수 없음");
 		}
+	}
+}
+
+class SelectionResultViewModel extends ApplicationViewModel
+{
+	private StringProperty isPassedStr;
+	private StringProperty isPaidStr;
+	
+	public SelectionResultViewModel(int choice, String dormitoryName, int mealType)
+	{
+		super(choice, dormitoryName, mealType);
+	}
+	
+	public SelectionResultViewModel(int choice, String dormitoryName, int mealType, boolean isPassed, boolean isPaid)
+	{
+		super(choice, dormitoryName, mealType);
+		isPassedStr = isPassed ? new SimpleStringProperty("합격") : new SimpleStringProperty("불합격");
+		isPaidStr = isPaid ? new SimpleStringProperty("납부") : new SimpleStringProperty("미납");
+	}
+	
+	public StringProperty isPassedProperty()
+	{
+		return isPassedStr;
+	}
+	
+	public StringProperty isPaidProperty()
+	{
+		return isPaidStr;
 	}
 	
 }

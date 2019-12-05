@@ -40,7 +40,6 @@
       <TableView fx:id="check_dormitory_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
         <columns>
           <TableColumn prefWidth="75.0" text="생활관명" />
-          <TableColumn prefWidth="75.0" text="성별" />
             <TableColumn prefWidth="75.0" text="학기" />
             <TableColumn prefWidth="75.0" text="수용인원" />
             <TableColumn prefWidth="75.0" text="식사의무" />
@@ -67,7 +66,6 @@
          <columnConstraints>
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
@@ -75,11 +73,9 @@
          </rowConstraints>
          <children>
             <Label text="생활관명" />
-            <Label text="성별" GridPane.columnIndex="1" />
-            <Label text="학기" GridPane.columnIndex="2" />
+            <Label text="학기" GridPane.columnIndex="1" />
             <TextField fx:id="delete_dormName_textfield" GridPane.rowIndex="1" />
-            <ComboBox fx:id="delete_gender_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="delete_semester_textfield" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="delete_semester_textfield" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
@@ -102,7 +98,6 @@
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
@@ -110,21 +105,19 @@
          </rowConstraints>
          <children>
             <Label text="생활관명" />
-            <Label text="성별" GridPane.columnIndex="1" />
-            <Label text="학기" GridPane.columnIndex="2" />
-            <Label text="수용인원" GridPane.columnIndex="3" />
-            <Label text="식사의무" GridPane.columnIndex="4" />
-            <Label text="5일식 식비" GridPane.columnIndex="5" />
-            <Label text="7일식 식비" GridPane.columnIndex="6" />
-            <Label text="기숙사비" GridPane.columnIndex="7" />
+            <Label text="학기" GridPane.columnIndex="1" />
+            <Label text="수용인원" GridPane.columnIndex="2" />
+            <Label text="식사의무" GridPane.columnIndex="3" />
+            <Label text="5일식 식비" GridPane.columnIndex="4" />
+            <Label text="7일식 식비" GridPane.columnIndex="5" />
+            <Label text="기숙사비" GridPane.columnIndex="6" />
             <TextField fx:id="insert_dormName_textfield" GridPane.rowIndex="1" />
-            <ComboBox fx:id="insert_gender_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="insert_semester_textfield" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <TextField fx:id="insert_capacity_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <TextField fx:id="insert_mealCost5_textfield" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-            <TextField fx:id="insert_mealCost7_textfield" GridPane.columnIndex="6" GridPane.rowIndex="1" />
-            <TextField fx:id="insert_boradingFees_textfield" GridPane.columnIndex="7" GridPane.rowIndex="1" />
-            <ComboBox fx:id="insert_mealDuty_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_semester_textfield" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_capacity_textfield" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_mealCost5_textfield" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_mealCost7_textfield" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_boradingFees_textfield" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+            <ComboBox fx:id="insert_mealDuty_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="3" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>

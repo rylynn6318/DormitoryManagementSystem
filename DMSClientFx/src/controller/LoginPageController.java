@@ -98,7 +98,7 @@ public class LoginPageController implements Initializable {
         
         //일단 테스트용으로 네트워킹 주석처리하고 패스함.
         boolean isPassed = true;
-        account.setUserType(UserType.STUDENT);			//관리자 페이지로 들어가려면 ADMINISTRATOR로 바꾸면됨
+        account.setUserType(UserType.ADMINISTRATOR);			//관리자 페이지로 들어가려면 ADMINISTRATOR로 바꾸면됨
         //------------------------
         
         if (isPassed) {
