@@ -2,7 +2,8 @@ import database.DatabaseHandler;
 import io.*;
 import network.NetworkHandler;
 import protocol.Protocol;
-import protocol.ProtocolType;
+import protocol.ProtocolField;
+import protocol.ProtocolHelper;
 import shared.classes.Account;
 
 import java.io.IOException;
@@ -46,16 +47,14 @@ public class DMSServer {
             Protocol protocol = new Protocol.Builder(buffer).build();
 
             switch (protocol.type) {
-                case UNDEFINED:
-                    break;
                 case LOGIN:
-                    Account account = (Account) protocol.body;
+                    Account account = (Account) ProtocolHelper.deserialization(protocol.body_bytes);
                     // 여기서 DB랑 통신해서 로그인 처리 해야함.
                     // 일단은 하드코딩
                     if (account.getAccountId().equals("admin"))
-						protocol = new Protocol.Builder(ProtocolType.LOGIN, (byte) 0x02, (byte) 0x00, (byte) 0x02).body(null).build();
+						protocol = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_CLIENT, ProtocolField.Code1.Null.NULL, ProtocolField.Code2.LoginResult.ADMIN).build();
                     else
-						protocol = new Protocol.Builder(ProtocolType.LOGIN, (byte) 0x02, (byte) 0x00, (byte) 0x01).body(null).build();
+						protocol = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_CLIENT, ProtocolField.Code1.Null.NULL, ProtocolField.Code2.LoginResult.STUDENT).build();
 
                     byte[] tmp = protocol.getPacket();
 

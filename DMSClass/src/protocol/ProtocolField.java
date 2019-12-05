@@ -81,7 +81,9 @@ public final class ProtocolField {
             }
         }
 
-        public static enum Null implements ICode1 {
+        public final static Null NULL = Code1.Null.NULL;
+
+        protected static enum Null implements ICode1 {
             NULL((byte) 0x00);
 
             private final byte code;
@@ -190,8 +192,25 @@ public final class ProtocolField {
             }
         }
 
+        public final static Null NULL = Code2.Null.NULL;
+
+        protected static enum Null implements ICode2 {
+            NULL((byte) 0x00);
+
+            private final byte code;
+
+            @Override
+            public byte getCode() {
+                return code;
+            }
+
+            Null(byte code) {
+                this.code = code;
+            }
+        }
+
         public static enum LoginResult implements ICode2 {
-            FAIL((byte) 0x00), STUDENT((byte) 0x00), ADMIN((byte) 0x00);
+            FAIL((byte) 0x00), STUDENT((byte) 0x01), ADMIN((byte) 0x02);
 
             private final byte code;
 

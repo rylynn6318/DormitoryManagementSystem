@@ -23,7 +23,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import protocol.ProtocolType;
+import protocol.ProtocolField;
+import protocol.ProtocolHelper;
 import shared.classes.Account;
 import shared.enums.UserType;
 import protocol.Protocol;
@@ -94,11 +95,11 @@ public class LoginPageController implements Initializable {
         account.setPassword(inputUserPw);
 
         //네트워킹 여기서 해라
-        //boolean isPassed = networking(account);
+        boolean isPassed = networking(account);
         
         //일단 테스트용으로 네트워킹 주석처리하고 패스함.
-        boolean isPassed = true;
-        account.setUserType(UserType.ADMINISTRATOR);			//관리자 페이지로 들어가려면 ADMINISTRATOR로 바꾸면됨
+        // boolean isPassed = true;
+        // account.setUserType(UserType.ADMINISTRATOR);			//관리자 페이지로 들어가려면 ADMINISTRATOR로 바꾸면됨
         //------------------------
         
         if (isPassed) {
@@ -119,7 +120,9 @@ public class LoginPageController implements Initializable {
         OutputStream outputToServer = socket.getOutputStream();
         InputStream inputFromServer = socket.getInputStream();
 
-        Protocol login = new Protocol.Builder(ProtocolType.LOGIN, (byte) 0x00, (byte) 0x00, (byte) 0x00).body(account).build();
+        // To_Server일때 code1, code2는 머가 드가든 상관 없음.
+        Protocol login = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_SERVER, ProtocolField.Code1.Null.NULL, ProtocolField.Code2.LoginResult.FAIL)
+                .body(ProtocolHelper.serialization(account)).build();
         outputToServer.write(login.getPacket());
 
         ///////위 코드는 전송//////////////////아래 코드는 수신///////////
@@ -128,14 +131,14 @@ public class LoginPageController implements Initializable {
         inputFromServer.read(buffer);
         login = new Protocol.Builder(buffer).build();
 
-        if (login.code == 0x00) {
+        if (login.code2 == ProtocolField.Code2.LoginResult.FAIL) {
             //로그인 실패
             return false;
-        } else if (login.code == 0x01) {
+        } else if (login.code2 == ProtocolField.Code2.LoginResult.STUDENT) {
             //로그인 성공
             account.setUserType(UserType.STUDENT);
             return true;
-        } else if (login.code == 0x02) {
+        } else if (login.code2 == ProtocolField.Code2.LoginResult.ADMIN) {
             //관리자 로그인 성공
             account.setUserType(UserType.ADMINISTRATOR);
             return true;
