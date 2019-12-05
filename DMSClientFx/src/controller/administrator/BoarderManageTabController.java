@@ -301,7 +301,7 @@ class PlacementHistoryViewModel extends PlacementHistory
 		
 		super.setStudentId(studentId);
 		super.setRoomId(roomId);
-		super.setSemesterCode(semester);
+		super.setSemester(semester);
 		super.setDormitoryName(dormitoryName);
 		super.setSeat(seat);
 		super.setCheckout(checkout);
