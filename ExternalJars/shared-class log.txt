@@ -26,3 +26,6 @@ shared-class update log
 	
 2019-12-05 v1.07
 	Grade, DocumentType, Seat Enum 추가.
+	
+2019-12-05 v1.08
+	UserType Enum에 바이트 추가, Gender Enum이 String을 저장하는 것에서 Char 저장하도록 변경.
