@@ -2,17 +2,24 @@ package controller.administrator;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import shared.classes.Schedule;
 
 //선발 일정 조회 및 관리
 public class ScheduleManageTabController implements Initializable 
@@ -21,7 +28,22 @@ public class ScheduleManageTabController implements Initializable
     private Button check_button;
 
     @FXML
-    private TableView<?> check_schedule_tableview;
+    private TableView<ScheduleViewModel> check_schedule_tableview;
+    
+    @FXML
+    private TableColumn<ScheduleViewModel, String> check_schedule_column_id;
+
+    @FXML
+    private TableColumn<ScheduleViewModel, String> check_schedule_column_type;
+
+    @FXML
+    private TableColumn<ScheduleViewModel, String> check_schedule_column_startDay;
+
+    @FXML
+    private TableColumn<ScheduleViewModel, String> check_schedule_column_endDay;
+
+    @FXML
+    private TableColumn<ScheduleViewModel, String> check_schedule_column_description;
 
     @FXML
     private Button delete_button;
@@ -82,6 +104,19 @@ public class ScheduleManageTabController implements Initializable
     private void checkSchdules()
     {
     	//네트워킹해서 스케쥴 테이블 쫙 긁어와야됨.
+    	//긁어올때 스케쥴 할일 코드 테이블도 긁어와야됨.
+    	
+    	ObservableList<ScheduleViewModel> list = FXCollections.observableArrayList(
+    			new ScheduleViewModel("1234", 3, new Date(2019, 3, 2), new Date(219, 7, 13), "입사 기간"),	//귀찮아서 대충 때려박음. 꼬우면 RG?
+    			new ScheduleViewModel("1235", 77, new Date(2019, 3, 1), new Date(219, 3, 2), "배정")
+    			);
+    	
+    	check_schedule_column_id.setCellValueFactory(cellData -> cellData.getValue().scheduleIdProperty());
+    	check_schedule_column_type.setCellValueFactory(cellData -> cellData.getValue().codeProperty());
+    	check_schedule_column_startDay.setCellValueFactory(cellData -> cellData.getValue().startDateProperty());
+    	check_schedule_column_endDay.setCellValueFactory(cellData -> cellData.getValue().endDateProperty());
+    	check_schedule_column_description.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
+    	check_schedule_tableview.setItems(list);
     }
     
     private void deleteSchedule()
@@ -142,6 +177,8 @@ public class ScheduleManageTabController implements Initializable
 		{
 			IOHandler.getInstance().showAlert("일정 등록에 성공하였습니다.");
 			
+			//전송
+			
 			//선택한 항목들 클리어
 			insert_type_combobox.getSelectionModel().select(-1);
 			insert_startDate_datepicker.setValue(null);
@@ -153,4 +190,48 @@ public class ScheduleManageTabController implements Initializable
 			IOHandler.getInstance().showAlert("일정 등록에 실패하였습니다.");
 		}
     }
+}
+
+class ScheduleViewModel extends Schedule
+{
+	private StringProperty scheduleIdStr;
+	private StringProperty codeStr;
+	private StringProperty startDateStr;
+	private StringProperty endDateStr;
+	private StringProperty descriptionStr;
+	
+	public ScheduleViewModel(String scheduleId, int code, Date startDate, Date endDate, String description)
+	{
+		super(scheduleId, code, startDate, endDate, description);
+		scheduleIdStr = new SimpleStringProperty(scheduleId);
+		codeStr = new SimpleStringProperty(String.valueOf(code));			//이거 스케쥴 할일 코드 가져와서 String 보여줘야됨.
+		startDateStr = new SimpleStringProperty(startDate.toString());
+		endDateStr = new SimpleStringProperty(endDate.toString());
+		descriptionStr = new SimpleStringProperty(description);
+	}
+	
+	public StringProperty scheduleIdProperty()
+	{
+		return scheduleIdStr;
+	}
+	
+	public StringProperty codeProperty()
+	{
+		return codeStr;
+	}
+	
+	public StringProperty startDateProperty()
+	{
+		return startDateStr;
+	}
+	
+	public StringProperty endDateProperty()
+	{
+		return endDateStr;
+	}
+	
+	public StringProperty descriptionProperty()
+	{
+		return descriptionStr;
+	}
 }

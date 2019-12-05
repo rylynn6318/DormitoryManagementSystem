@@ -64,22 +64,6 @@ public class CheckApplicationTabController implements Initializable
 
 		//네트워킹
 		info_textarea.setText("서버에서 받아온 안내사항입니다.");
-		
-		//테스트용 객체 배열, 배열 받아왔다는 가정 하에 만듬.
-		//서버에서 Application 객체를 가져오면, ApplicationViewModel로 형변환해서 써야할듯. 
-		appHistory = FXCollections.observableArrayList(
-				new ApplicationViewModel(1, "오름관2동", 5),
-				new ApplicationViewModel(2, "푸름관1동", 7),
-				new ApplicationViewModel(3, "푸름관4동", 0)
-				);
-		
-		//이건 생활관 선발 결과 객체 배열
-		//지망, 생활관명, 식비구분, 합격여부, 납부여부를 받아와야한다.
-		selections = FXCollections.observableArrayList(
-				new SelectionResultViewModel(1, "오름관2동", 5, true, true),
-				new SelectionResultViewModel(2, "푸름관1동", 7, true, false),
-				new SelectionResultViewModel(3, "푸름관4동", 0, true, false)
-				);
 	}
 	
 	//---------------------이벤트---------------------
@@ -97,6 +81,22 @@ public class CheckApplicationTabController implements Initializable
     {
     	//여기는 뭐 검사할 필요없이 바로 서버로 요청날림.
     	//서버로 요청날리고 받아온 후 refreshApplicationTable 호출
+    	
+    	//아래에서 서버와 통신하여 appHistory 배열과, selections 배열을 객체로 채웠다..
+		//서버에서 Application 객체를 가져오면, ApplicationViewModel로 형변환해서 써야할듯. 
+		appHistory = FXCollections.observableArrayList(
+				new ApplicationViewModel(1, "오름관2동", 5),
+				new ApplicationViewModel(2, "푸름관1동", 7),
+				new ApplicationViewModel(3, "푸름관4동", 0)
+				);
+		
+		//이건 생활관 선발 결과 객체 배열
+		//지망, 생활관명, 식비구분, 합격여부, 납부여부를 받아와야한다.
+		selections = FXCollections.observableArrayList(
+				new SelectionResultViewModel(1, "오름관2동", 5, true, true),
+				new SelectionResultViewModel(2, "푸름관1동", 7, true, false),
+				new SelectionResultViewModel(3, "푸름관4동", 0, true, false)
+				);
     	
     	refreshApplicationTable();
     	refreshApplicationResultTable();

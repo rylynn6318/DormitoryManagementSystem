@@ -14,6 +14,20 @@ public class Schedule implements Serializable
 	private Date endDate;				//종료일
 	private String description;			//비고, 설명
 	
+	public Schedule()
+	{
+		
+	}
+	
+	public Schedule(String scheduleId, int code, Date startDate, Date endDate, String description)
+	{
+		this.scheduleId = scheduleId;
+		this.code = code;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.description = description;
+	}
+	
 	public String getScheduleId()
 	{
 		return scheduleId;

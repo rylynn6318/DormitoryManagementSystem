@@ -1,17 +1,23 @@
 package controller.administrator;
 
 import java.net.URL;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import shared.classes.Dormitory;
 
 //생활관 조회 및 관리
 public class DormitoryManageTabController implements Initializable 
@@ -20,7 +26,28 @@ public class DormitoryManageTabController implements Initializable
     private Button check_button;
 
     @FXML
-    private TableView<?> check_dormitory_tableview;
+    private TableView<DormitoryViewModel> check_dormitory_tableview;
+    
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_dormName;
+
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_semester;
+
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_capacity;
+
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_mealDuty;
+
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_meal5;
+
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_meal7;
+
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_boardingFee;
 
     @FXML
     private Button delete_button;
@@ -54,6 +81,8 @@ public class DormitoryManageTabController implements Initializable
 
     @FXML
     private ComboBox<String> insert_mealDuty_combobox;
+    
+    ObservableList<DormitoryViewModel> dormitoryList;
     
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
@@ -92,6 +121,22 @@ public class DormitoryManageTabController implements Initializable
     private void checkDormitories()
     {
     	//서버에서 생활관 목록 쫙 조회함.
+    	
+    	
+    	
+    	dormitoryList = FXCollections.observableArrayList(
+        		new DormitoryViewModel("오름관1동", 201903, 100, true, 150000, 200000, 700000),
+        		new DormitoryViewModel("오름관3동", 201903, 100, true, 150000, 230000, 800000)
+        		);
+    	
+    	check_dormitory_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
+    	check_dormitory_column_semester.setCellValueFactory(cellData -> cellData.getValue().semesterProperty());
+    	check_dormitory_column_capacity.setCellValueFactory(cellData -> cellData.getValue().capacityProperty());
+    	check_dormitory_column_mealDuty.setCellValueFactory(cellData -> cellData.getValue().mealDutyProperty());
+    	check_dormitory_column_meal5.setCellValueFactory(cellData -> cellData.getValue().meal5Property());
+    	check_dormitory_column_meal7.setCellValueFactory(cellData -> cellData.getValue().meal7Property());
+    	check_dormitory_column_boardingFee.setCellValueFactory(cellData -> cellData.getValue().boardingProperty());
+    	check_dormitory_tableview.setItems(dormitoryList);
     }
     
     private void deleteDormitory()
@@ -202,3 +247,70 @@ public class DormitoryManageTabController implements Initializable
 		}
     }
 }
+
+
+class DormitoryViewModel extends Dormitory
+{
+	private StringProperty dormNameStr;
+	private StringProperty semesterStr;
+	private StringProperty capacityStr;
+	private StringProperty mealDutyStr;
+	private StringProperty meal5Str;
+	private StringProperty meal7Str;
+	private StringProperty boardingFee;
+	
+	public DormitoryViewModel(String dormitoryName, int semesterCode, int capacity, boolean isMealDuty, int mealCost5, int mealCost7, int boardingFees)
+	{
+		super.setDormitoryName(dormitoryName);
+		super.setSemesterCode(semesterCode);
+		super.setCapacity(capacity);
+		super.setMealDuty(isMealDuty);
+		super.setMealCost5(mealCost5);
+		super.setMealCost7(mealCost7);
+		super.setBoardingFees(boardingFees);
+		
+		this.dormNameStr = new SimpleStringProperty(dormitoryName);
+		this.semesterStr = new SimpleStringProperty(Integer.toString(semesterCode));
+		this.capacityStr = new SimpleStringProperty(Integer.toString(capacity));
+		this.mealDutyStr = new SimpleStringProperty(isMealDuty ? "필수" : "선택");
+		this.meal5Str = new SimpleStringProperty(Integer.toString(mealCost5));
+		this.meal7Str = new SimpleStringProperty(Integer.toString(mealCost7));
+		this.boardingFee = new SimpleStringProperty(Integer.toString(boardingFees));
+	}
+	
+	public StringProperty dormNameProperty()
+	{
+		return dormNameStr;
+	}
+	
+	public StringProperty semesterProperty()
+	{
+		return semesterStr;
+	}
+	
+	public StringProperty capacityProperty()
+	{
+		return capacityStr;
+	}
+	
+	public StringProperty mealDutyProperty()
+	{
+		return mealDutyStr;
+	}
+	
+	public StringProperty meal5Property()
+	{
+		return meal5Str;
+	}
+	
+	public StringProperty meal7Property()
+	{
+		return meal7Str;
+	}
+	
+	public StringProperty boardingProperty()
+	{
+		return boardingFee;
+	}
+}
+
