@@ -113,9 +113,7 @@ class ApplicationViewModel extends Application
 	//클라이언트 학생모드에서 '생활관 신청 조회' 페이지 테이블에서 사용함.
 	public ApplicationViewModel(int choice, String dormitoryName, int mealType)
 	{
-		super.setChoice(choice);
-		super.setDormitoryName(dormitoryName);
-		super.setMealType(mealType);
+		super(choice, dormitoryName, mealType);
 		
 		choiceStr = convertChoice(choice);
 		dormNameStr = convertDormName(dormitoryName);
