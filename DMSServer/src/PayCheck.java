@@ -32,14 +32,14 @@ public class PayCheck {
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-//		String sql = "SELECT 학기 FROM" + DB_NAME + ".신청 limit1"; //신청테이블에서 하나만 가져와서 그 학기를 봄
-//		ResultSet rcrs = state.executeQuery(sql);
-//		currentSemester = rcrs.getInt("학기");
+		String sql = "SELECT 학기 FROM" + DB_NAME + ".신청 limit1"; //신청테이블에서 하나만 가져와서 그 학기를 봄
+		ResultSet rcrs = state.executeQuery(sql);
+		currentSemester = rcrs.getInt("학기");
 	}
 	
 	public static void main(String[] args) throws IOException, Exception
 	{
-		currentSemester=201901;
+		//currentSemester=201901;
 		
 		File csv = new File("C:|Users|DongHyeon|Downloads");
 		BufferedReader br = new BufferedReader(new FileReader(csv));
