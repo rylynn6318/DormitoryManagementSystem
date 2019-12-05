@@ -463,7 +463,11 @@ public class Pass
 					if(P1[i].getStudentId() == "")
 					{
 						P1[i].setStudentId(rurs4.getString("ID"));
-						if(rurs4.getInt("지망") == 0)
+						if(P1[i].getSeat().equals("B") && P1[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣지마라는 뜻
+						{
+							P1[i].setStudentId("");
+						}
+						else if(rurs4.getInt("지망") == 0)
 						{
 							P1[i].setCheckout(checkOutDate2);
 						}
@@ -482,7 +486,11 @@ public class Pass
 					if(P2[i].getStudentId() == "")
 					{
 						P2[i].setStudentId(rurs4.getString("ID"));
-						if(rurs4.getInt("지망") == 0)
+						if(P2[i].getSeat().equals("B") && P2[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣지마라는 뜻
+						{
+							P2[i].setStudentId("");
+						}
+						else if(rurs4.getInt("지망") == 0)
 						{
 							P2[i].setCheckout(checkOutDate2);
 						}
@@ -498,17 +506,18 @@ public class Pass
 			{
 				for (int i = 1; i < P3.length; i++)
 				{
-					if(P3[i].getStudentId() == "")
+					P3[i].setStudentId(rurs4.getString("ID"));
+					if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣지마라는 뜻
 					{
-						P3[i].setStudentId(rurs4.getString("ID"));
-						if(rurs4.getInt("지망") == 0)
-						{
-							P3[i].setCheckout(checkOutDate2);
-						}
-						else 
-						{
-							P3[i].setCheckout(checkOutDate1);
-						}
+						P3[i].setStudentId("");
+					}
+					else if(rurs4.getInt("지망") == 0)
+					{
+						P3[i].setCheckout(checkOutDate2);
+					}
+					else 
+					{
+						P3[i].setCheckout(checkOutDate1);
 					}
 				}
 				break;
@@ -517,17 +526,18 @@ public class Pass
 			{
 				for (int i = 1; i < O1.length; i++)
 				{
-					if(P4[i].getStudentId() == "")
+					P3[i].setStudentId(rurs4.getString("ID"));
+					if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣지마라는 뜻
 					{
-						P4[i].setStudentId(rurs4.getString("ID"));
-						if(rurs4.getInt("지망") == 0)
-						{
-							P4[i].setCheckout(checkOutDate2);
-						}
-						else 
-						{
-							P4[i].setCheckout(checkOutDate1);
-						}
+						P3[i].setStudentId("");
+					}
+					else if(rurs4.getInt("지망") == 0)
+					{
+						P3[i].setCheckout(checkOutDate2);
+					}
+					else 
+					{
+						P3[i].setCheckout(checkOutDate1);
 					}
 				}
 				break;
@@ -565,6 +575,110 @@ public class Pass
 						else 
 						{
 							SY[i].setCheckout(checkOutDate1);
+						}
+					}
+				}
+				break;
+			}
+			case "푸름탑1" :
+			{
+				for (int i = 1; i < P1.length; i++)
+				{
+					if(P1[i].getStudentId() == "")
+					{
+						P1[i].setStudentId(rurs4.getString("ID"));
+						if(P1[i].getSeat().equals("B") && P1[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣으라는 뜻
+						{
+							if(rurs4.getInt("지망") == 0)
+							{
+								P1[i].setCheckout(checkOutDate2);
+							}
+							else
+							{
+								P1[i].setCheckout(checkOutDate1);
+							}
+						}
+						else
+						{
+							P1[i].setStudentId("");													// 아니면 다시 빈자리로 냅두고 나와
+						}
+					}
+				}
+				break;
+			}
+			case "푸름탑2" :
+			{
+				for (int i = 1; i < P2.length; i++)
+				{
+					if(P2[i].getStudentId() == "")
+					{
+						P2[i].setStudentId(rurs4.getString("ID"));
+						if(P2[i].getSeat().equals("B") && P2[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣으라는 뜻
+						{
+							if(rurs4.getInt("지망") == 0)
+							{
+								P2[i].setCheckout(checkOutDate2);
+							}
+							else
+							{
+								P2[i].setCheckout(checkOutDate1);
+							}
+						}
+						else
+						{
+							P2[i].setStudentId("");													// 아니면 다시 빈자리로 냅두고 나와
+						}
+					}
+				}
+				break;
+			}
+			case "푸름탑3" :
+			{
+				for (int i = 1; i < P3.length; i++)
+				{
+					if(P3[i].getStudentId() == "")
+					{
+						P3[i].setStudentId(rurs4.getString("ID"));
+						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D")) && P2[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣으라는 뜻
+						{
+							if(rurs4.getInt("지망") == 0)
+							{
+								P3[i].setCheckout(checkOutDate2);
+							}
+							else
+							{
+								P3[i].setCheckout(checkOutDate1);
+							}
+						}
+						else
+						{
+							P3[i].setStudentId("");													// 아니면 다시 빈자리로 냅두고 나와
+						}
+					}
+				}
+				break;
+			}
+			case "푸름탑4" :
+			{
+				for (int i = 1; i < P3.length; i++)
+				{
+					if(P4[i].getStudentId() == "")
+					{
+						P4[i].setStudentId(rurs4.getString("ID"));
+						if((P4[i].getSeat().equals("B") || P4[i].getSeat().equals("D")) && P4[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣으라는 뜻
+						{
+							if(rurs4.getInt("지망") == 0)
+							{
+								P4[i].setCheckout(checkOutDate2);
+							}
+							else
+							{
+								P4[i].setCheckout(checkOutDate1);
+							}
+						}
+						else
+						{
+							P4[i].setStudentId("");													// 아니면 다시 빈자리로 냅두고 나와
 						}
 					}
 				}
