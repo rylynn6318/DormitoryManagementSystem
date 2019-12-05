@@ -226,13 +226,15 @@ public class Pass
 						P3[i + 3].setRoomNumber(rurs2.getString("호"));
 						P3[i].setSemesterCode(currentSemester);
 						P3[i + 1].setSemesterCode(currentSemester);
+						P3[i + 2].setSemesterCode(currentSemester);
+						P3[i + 3].setSemesterCode(currentSemester);
 					}
 				}
 				break;
 			}
 			case "푸름4" :
 			{
-				for(int i = 1; i < P4.length; i += 2)
+				for(int i = 1; i < P4.length; i += 4)
 				{
 					if(P4[i].getRoomNumber() == "")
 					{
@@ -242,6 +244,8 @@ public class Pass
 						P4[i + 3].setRoomNumber(rurs2.getString("호"));
 						P4[i].setSemesterCode(currentSemester);
 						P4[i + 1].setSemesterCode(currentSemester);
+						P3[i + 2].setSemesterCode(currentSemester);
+						P3[i + 3].setSemesterCode(currentSemester);
 					}
 				}
 				break;
