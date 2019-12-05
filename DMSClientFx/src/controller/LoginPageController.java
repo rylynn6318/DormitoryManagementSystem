@@ -121,7 +121,7 @@ public class LoginPageController implements Initializable {
         InputStream inputFromServer = socket.getInputStream();
 
         // To_Server일때 code1, code2는 머가 드가든 상관 없음.
-        Protocol login = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_SERVER, ProtocolField.Code1.Null.NULL, ProtocolField.Code2.LoginResult.FAIL)
+        Protocol login = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_SERVER, ProtocolField.Code1.NULL, ProtocolField.Code2.NULL)
                 .body(ProtocolHelper.serialization(account)).build();
         outputToServer.write(login.getPacket());
 

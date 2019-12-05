@@ -52,9 +52,9 @@ public class DMSServer {
                     // 여기서 DB랑 통신해서 로그인 처리 해야함.
                     // 일단은 하드코딩
                     if (account.getAccountId().equals("admin"))
-						protocol = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_CLIENT, ProtocolField.Code1.Null.NULL, ProtocolField.Code2.LoginResult.ADMIN).build();
+						protocol = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_CLIENT, ProtocolField.Code1.NULL, ProtocolField.Code2.LoginResult.ADMIN).build();
                     else
-						protocol = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_CLIENT, ProtocolField.Code1.Null.NULL, ProtocolField.Code2.LoginResult.STUDENT).build();
+						protocol = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_CLIENT, ProtocolField.Code1.NULL, ProtocolField.Code2.LoginResult.STUDENT).build();
 
                     byte[] tmp = protocol.getPacket();
 

@@ -181,9 +181,9 @@ public final class ProtocolField {
         public static ICode2 get(Type type, byte code) {
             switch (type) {
             case LOGIN:
-                return null;
+                return Code2.LoginResult.get(code);
             case FILE:
-                return null;
+                return Code2.FileCode.get(code);
             case EVENT:
                 return Code2.Event.get(code);
             default:

@@ -60,7 +60,8 @@ public class Protocol {
         private short sequence = 0; // 2바이트, 시퀀스 넘버
         private byte[] body_bytes = null; // body가 직렬화 된것
 
-        public Builder(ProtocolField.Type type, ProtocolField.Direction direction, ProtocolField.Code1.ICode1 code1, ProtocolField.Code2.ICode2 code2) {
+        public Builder(ProtocolField.Type type, ProtocolField.Direction direction, ProtocolField.Code1.ICode1 code1,
+                ProtocolField.Code2.ICode2 code2) {
             this.type = type;
             this.direction = direction;
             this.code1 = code1;
@@ -101,7 +102,7 @@ public class Protocol {
         // why? 진짜 아무것도 없는거보단 null이 들어가게 만들기 위해
         public Protocol build() throws IOException {
             if (body_bytes == null)
-                body_bytes = ProtocolHelper.serialization(null);
+                body(ProtocolHelper.serialization(null));
 
             return new Protocol(this);
         }
