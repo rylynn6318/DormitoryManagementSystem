@@ -70,4 +70,33 @@ public class documentManager
 		String deleteDocumentQuery = "DELETE FROM 서류 WHERE 학번=" + studentId + " AND 서류유형=" + documentType + " AND 제출일=" + date;
 		state.execute(deleteDocumentQuery);
 	}
+	
+	public static void uploadDocument(String studentId, int documentType, String filePath)	//파일 업로드는 어케 해야하지??
+	{
+		
+	}
+	
+	public static void updateDocument(String studentId, int documentType, java.util.Date submissionDate, java.util.Date diagnosisDate, boolean isValid) throws ClassNotFoundException, SQLException
+	{
+		Connection conn = null;
+		Statement state = null;
+		
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
+		state = conn.createStatement();
+		
+		String sIsValid;
+		if(isValid)
+			sIsValid = "T";
+		else
+			sIsValid = "F";
+		
+		@SuppressWarnings("deprecation")
+		java.sql.Date submissionSqlDate = new java.sql.Date(submissionDate.getYear(), submissionDate.getMonth(), submissionDate.getDay());
+		@SuppressWarnings("deprecation")
+		java.sql.Date diagnosisSqlDate = new java.sql.Date(diagnosisDate.getYear(), diagnosisDate.getMonth(), diagnosisDate.getDay());
+		
+		String deleteDocumentQuery = "UPDATE 서류 SET 유효여부=" + sIsValid + " WHERE 제출일 = " + submissionSqlDate + " AND 진단일=" + diagnosisSqlDate + " AND 서류유형=" + sIsValid;
+		state.execute(deleteDocumentQuery);
+	}
 }
