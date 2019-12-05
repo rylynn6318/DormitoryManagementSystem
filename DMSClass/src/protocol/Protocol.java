@@ -120,7 +120,8 @@ public class Protocol {
     // body 시작 인덱스를 알기 위해 자신의 길이를 가지고 있다.
     public static final int HEADER_LENGTH = 10;
 
-    // Body 자바는 final이여도 배열은 수정가능하네; getter 수정 필요함
+    // Body
+    // TODO : 자바는 final이여도 배열은 수정가능하네; getter 수정 필요함
     public final byte[] body_bytes;
 
     // Builder로부터 프로토콜 생성
