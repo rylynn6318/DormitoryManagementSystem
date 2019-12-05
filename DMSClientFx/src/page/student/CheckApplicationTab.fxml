@@ -43,9 +43,9 @@
             </Label>
             <TableView fx:id="application_history_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
               <columns>
-                  <TableColumn prefWidth="75.0" text="지망" />
-                <TableColumn prefWidth="65.0" text="생활관명" />
-                  <TableColumn prefWidth="75.0" text="식사구분" />
+                  <TableColumn fx:id="application_history_column_choice" prefWidth="75.0" style="-fx-alignment: CENTER;" text="지망" />
+                <TableColumn fx:id="application_history_column_dormName" prefWidth="65.0" style="-fx-alignment: CENTER;" text="생활관명" />
+                  <TableColumn fx:id="application_history_column_mealType" prefWidth="75.0" style="-fx-alignment: CENTER;" text="식사구분" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -61,10 +61,10 @@
             </Label>
             <TableView fx:id="selection_result_tableview" prefHeight="200.0" prefWidth="200.0">
               <columns>
-                  <TableColumn prefWidth="75.0" text="지망" />
-                <TableColumn prefWidth="75.0" text="생활관명" />
-                  <TableColumn prefWidth="75.0" text="식비구분" />
-                  <TableColumn minWidth="-Infinity" text="결과" />
+                  <TableColumn fx:id="selection_result_column_choice" prefWidth="75.0" text="지망" />
+                <TableColumn fx:id="selection_result_column_dormName" prefWidth="75.0" text="생활관명" />
+                  <TableColumn fx:id="selection_result_column_mealType" prefWidth="75.0" text="식비구분" />
+                  <TableColumn fx:id="selection_result_column_result" minWidth="-Infinity" text="결과" />
               </columns>
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />

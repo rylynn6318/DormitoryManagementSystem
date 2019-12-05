@@ -17,3 +17,6 @@ shared-class update log
 	
 2019-12-05 v1.04
 	손승민이 프로토콜 수정했음.
+
+2019-12-05 v1.05
+	Gender Enum 추가. Application에 기본생성자 추가함.
