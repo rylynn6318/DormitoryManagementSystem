@@ -392,7 +392,7 @@ public class Pass
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//신청자가 신청한 생활관을 가져와서 메모리에 있는 현재 배정된 내역과 대조하면서 방에 넣어줌
-		String sql4 = "SELECT ID, 생활관명 FROM, 지망 " + DB_NAME + ".신청 WHERE (퇴사예정일> "+ availablePeriod +" and 최종결과 = 'Y') order by 생활관명";  //학기 말고 누가 살고 있는 방인지로
+		String sql4 = "SELECT ID, 생활관명 FROM, 지망 " + DB_NAME + ".신청 WHERE (퇴사예정일> "+ availablePeriod +" and 최종결과 = 'Y') order by 생활관명";  //이미 누가 쓰고 있는방인가 알기위한 쿼리
 		ResultSet rurs4 = state.executeQuery(sql4);
 		
 		while(rurs4.next())
