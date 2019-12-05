@@ -39,7 +39,7 @@ public class PayCheck {
 	
 	public static void main(String[] args) throws IOException, Exception
 	{
-		currentSemester();
+		//currentSemester=201901;
 		
 		File csv = new File("C:|Users|DongHyeon|Downloads");
 		BufferedReader br = new BufferedReader(new FileReader(csv));
@@ -52,7 +52,7 @@ public class PayCheck {
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-		String sql = "SELECT ID FROM " + DB_NAME + ".신청 (WHERE 학기 =" + currentSemester +" and 합격여부 = 'Y' )";
+		String sql = "SELECT 학생_ID FROM " + DB_NAME + ".신청 WHERE (학기 =" + currentSemester +" and 합격여부 = 'Y' )";
 		ResultSet purs = state.executeQuery(sql);
 		
 		while((line = br.readLine())!=null)	//csvlist에 모든 학번저장
@@ -65,11 +65,17 @@ public class PayCheck {
 		
 		while(purs.next())
 		{
-			if(csvlist.contains(purs.getString("학번")))
+			if(csvlist.contains(purs.getString("학생_ID")))
 			{
-				String sql1 = "UPDATE "+ DB_NAME + "SET 납부여부='Y' WHERE 학번 ="+purs.getString("학번");
-				ResultSet purs2 = state.executeQuery(sql1);
+				Connection conn1 = null;
+				Statement state1 = null;
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				conn1 = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
+				state1 = conn1.createStatement();
+				String sql1 = "UPDATE "+ DB_NAME + ".신청 SET 납부여부='Y' WHERE ( 학생_ID ="+purs.getString("학생_ID")+")";
+				state1.executeUpdate(sql1);
 			}
 		}
+		System.out.println("성공");
 	}
 }

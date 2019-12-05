@@ -113,10 +113,10 @@ public class SubmitApplicationTabController implements Initializable
 		thirdChoice_meal_combobox.getItems().addAll("5일식", "7일식", "식사안함");
 		
 		//이건 사용자 선택에 따라 결정, 변경되야함. 물론 서버에서 기본 정보는 다 받아오고, 사용자 선택에 맞는 값을 표시해줘야함.
-		oneYear_cost_label.setText("만원");
-		firstChoice_cost_label.setText("만원");
-		secondChoice_cost_label.setText("만원");
-		thirdChoice_cost_label.setText("만원");
+//		oneYear_cost_label.setText("만원");
+//		firstChoice_cost_label.setText("만원");
+//		secondChoice_cost_label.setText("만원");
+//		thirdChoice_cost_label.setText("만원");
 		
 	}
 	
