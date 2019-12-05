@@ -61,10 +61,11 @@
             </Label>
             <TableView fx:id="selection_result_tableview" prefHeight="200.0" prefWidth="200.0">
               <columns>
-                  <TableColumn fx:id="selection_result_column_choice" prefWidth="75.0" text="지망" />
-                <TableColumn fx:id="selection_result_column_dormName" prefWidth="75.0" text="생활관명" />
-                  <TableColumn fx:id="selection_result_column_mealType" prefWidth="75.0" text="식비구분" />
-                  <TableColumn fx:id="selection_result_column_result" minWidth="-Infinity" text="결과" />
+                  <TableColumn fx:id="selection_result_column_choice" prefWidth="75.0" style="-fx-alignment: CENTER;" text="지망" />
+                <TableColumn fx:id="selection_result_column_dormName" prefWidth="75.0" style="-fx-alignment: CENTER;" text="생활관명" />
+                  <TableColumn fx:id="selection_result_column_mealType" prefWidth="75.0" style="-fx-alignment: CENTER;" text="식비구분" />
+                  <TableColumn fx:id="selection_result_column_isPassed" minWidth="-Infinity" style="-fx-alignment: CENTER;" text="합격여부" />
+                  <TableColumn fx:id="selection_result_column_isPaid" prefWidth="75.0" style="-fx-alignment: CENTER;" text="납부여부" />
               </columns>
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />

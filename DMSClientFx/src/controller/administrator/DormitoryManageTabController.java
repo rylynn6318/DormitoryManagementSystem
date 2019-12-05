@@ -1,17 +1,23 @@
 package controller.administrator;
 
 import java.net.URL;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import shared.classes.Dormitory;
 
 //생활관 조회 및 관리
 public class DormitoryManageTabController implements Initializable 
@@ -20,16 +26,34 @@ public class DormitoryManageTabController implements Initializable
     private Button check_button;
 
     @FXML
-    private TableView<?> check_dormitory_tableview;
+    private TableView<DormitoryViewModel> check_dormitory_tableview;
+    
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_dormName;
+
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_semester;
+
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_capacity;
+
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_mealDuty;
+
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_meal5;
+
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_meal7;
+
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_boardingFee;
 
     @FXML
     private Button delete_button;
 
     @FXML
     private TextField delete_dormName_textfield;
-
-    @FXML
-    private ComboBox<String> delete_gender_combobox;
 
     @FXML
     private TextField delete_semester_textfield;
@@ -39,9 +63,6 @@ public class DormitoryManageTabController implements Initializable
 
     @FXML
     private TextField insert_dormName_textfield;
-
-    @FXML
-    private ComboBox<String> insert_gender_combobox;
 
     @FXML
     private TextField insert_semester_textfield;
@@ -60,16 +81,13 @@ public class DormitoryManageTabController implements Initializable
 
     @FXML
     private ComboBox<String> insert_mealDuty_combobox;
-
-    private final String[] comboboxItem_gender = {"M", "F"}; 
+    
+    ObservableList<DormitoryViewModel> dormitoryList;
     
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
 		System.out.println("생활관 조회 및 관리 새로고침됨");
-		
-		delete_gender_combobox.getItems().addAll(comboboxItem_gender);
-		insert_gender_combobox.getItems().addAll(comboboxItem_gender);
 		
 		//네트워크 통신 후 식사의무칸 가져와야하나? 어짜피 모든 기숙사엔 5일식 7일식 식사안함밖에없으니까.
 		insert_mealDuty_combobox.getItems().addAll("5일식", "7일식", "식사안함");
@@ -103,24 +121,33 @@ public class DormitoryManageTabController implements Initializable
     private void checkDormitories()
     {
     	//서버에서 생활관 목록 쫙 조회함.
+    	
+    	
+    	
+    	dormitoryList = FXCollections.observableArrayList(
+        		new DormitoryViewModel("오름관1동", 201903, 100, true, 150000, 200000, 700000),
+        		new DormitoryViewModel("오름관3동", 201903, 100, true, 150000, 230000, 800000)
+        		);
+    	
+    	check_dormitory_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
+    	check_dormitory_column_semester.setCellValueFactory(cellData -> cellData.getValue().semesterProperty());
+    	check_dormitory_column_capacity.setCellValueFactory(cellData -> cellData.getValue().capacityProperty());
+    	check_dormitory_column_mealDuty.setCellValueFactory(cellData -> cellData.getValue().mealDutyProperty());
+    	check_dormitory_column_meal5.setCellValueFactory(cellData -> cellData.getValue().meal5Property());
+    	check_dormitory_column_meal7.setCellValueFactory(cellData -> cellData.getValue().meal7Property());
+    	check_dormitory_column_boardingFee.setCellValueFactory(cellData -> cellData.getValue().boardingProperty());
+    	check_dormitory_tableview.setItems(dormitoryList);
     }
     
     private void deleteDormitory()
     {
     	String dormName = delete_dormName_textfield.getText();
-    	String gender = delete_gender_combobox.getSelectionModel().getSelectedItem();
     	String semester = delete_semester_textfield.getText();
     	
     	if(dormName == null || dormName.isEmpty())
     	{
     		//생활관명 비어있음
     		IOHandler.getInstance().showAlert("생활관명이 비어있습니다.");
-    		return;
-    	}
-    	else if(gender == null || gender.isEmpty())
-    	{
-    		//성별이 비어있음
-    		IOHandler.getInstance().showAlert("성별이 비어있습니다.");
     		return;
     	}
     	else if(semester == null || semester.isEmpty())
@@ -138,7 +165,6 @@ public class DormitoryManageTabController implements Initializable
 			
 			//선택한 항목들 클리어
 			delete_dormName_textfield.setText(null);
-			delete_gender_combobox.getSelectionModel().select(-1);
 			delete_semester_textfield.setText(null);
 		}
 		else
@@ -150,7 +176,6 @@ public class DormitoryManageTabController implements Initializable
     private void insertDormitory()
     {
     	String dormName = insert_dormName_textfield.getText();
-    	String gender = insert_gender_combobox.getSelectionModel().getSelectedItem();
     	String semester = insert_semester_textfield.getText();
     	String capacity = insert_capacity_textfield.getText();
     	String mealDuty = insert_mealDuty_combobox.getSelectionModel().getSelectedItem();
@@ -162,12 +187,6 @@ public class DormitoryManageTabController implements Initializable
     	{
     		//생활관명 비어있음
     		IOHandler.getInstance().showAlert("생활관명이 비어있습니다.");
-    		return;
-    	}
-    	else if(gender == null || gender.isEmpty())
-    	{
-    		//성별이 비어있음
-    		IOHandler.getInstance().showAlert("성별이 비어있습니다.");
     		return;
     	}
     	else if(semester == null || semester.isEmpty())
@@ -215,7 +234,6 @@ public class DormitoryManageTabController implements Initializable
 			
 			//선택한 항목들 클리어
 			insert_dormName_textfield.setText(null);
-			insert_gender_combobox.getSelectionModel().select(-1);
 			insert_semester_textfield.setText(null);
 			insert_capacity_textfield.setText(null);
 			insert_mealDuty_combobox.getSelectionModel().select(-1);
@@ -229,3 +247,70 @@ public class DormitoryManageTabController implements Initializable
 		}
     }
 }
+
+
+class DormitoryViewModel extends Dormitory
+{
+	private StringProperty dormNameStr;
+	private StringProperty semesterStr;
+	private StringProperty capacityStr;
+	private StringProperty mealDutyStr;
+	private StringProperty meal5Str;
+	private StringProperty meal7Str;
+	private StringProperty boardingFee;
+	
+	public DormitoryViewModel(String dormitoryName, int semesterCode, int capacity, boolean isMealDuty, int mealCost5, int mealCost7, int boardingFees)
+	{
+		super.setDormitoryName(dormitoryName);
+		super.setSemesterCode(semesterCode);
+		super.setCapacity(capacity);
+		super.setMealDuty(isMealDuty);
+		super.setMealCost5(mealCost5);
+		super.setMealCost7(mealCost7);
+		super.setBoardingFees(boardingFees);
+		
+		this.dormNameStr = new SimpleStringProperty(dormitoryName);
+		this.semesterStr = new SimpleStringProperty(Integer.toString(semesterCode));
+		this.capacityStr = new SimpleStringProperty(Integer.toString(capacity));
+		this.mealDutyStr = new SimpleStringProperty(isMealDuty ? "필수" : "선택");
+		this.meal5Str = new SimpleStringProperty(Integer.toString(mealCost5));
+		this.meal7Str = new SimpleStringProperty(Integer.toString(mealCost7));
+		this.boardingFee = new SimpleStringProperty(Integer.toString(boardingFees));
+	}
+	
+	public StringProperty dormNameProperty()
+	{
+		return dormNameStr;
+	}
+	
+	public StringProperty semesterProperty()
+	{
+		return semesterStr;
+	}
+	
+	public StringProperty capacityProperty()
+	{
+		return capacityStr;
+	}
+	
+	public StringProperty mealDutyProperty()
+	{
+		return mealDutyStr;
+	}
+	
+	public StringProperty meal5Property()
+	{
+		return meal5Str;
+	}
+	
+	public StringProperty meal7Property()
+	{
+		return meal7Str;
+	}
+	
+	public StringProperty boardingProperty()
+	{
+		return boardingFee;
+	}
+}
+

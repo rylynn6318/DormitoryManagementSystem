@@ -15,7 +15,7 @@ public class Dormitory implements Serializable
 	private boolean isMealDuty;				//식사의무			식사가 의무이면 true, 의무가 아니면 false
 	private int mealCost5;					//5일치 식비, 번역 못해서 임시로 mealCost5로 해둠.
 	private int mealCost7;					//7일치 식비, 번역 못해서 임시로 mealCost7로 해둠.
-	private String boardingFees;			//기숙사비
+	private int boardingFees;				//기숙사비
 	
 	public String getDormitoryName()
 	{
@@ -80,11 +80,11 @@ public class Dormitory implements Serializable
 		this.mealCost7 = mealCost7;
 	}
 	
-	public String getBoardingFees()
+	public int getBoardingFees()
 	{
 		return boardingFees;
 	}
-	public void setBoardingFees(String boardingFees)
+	public void setBoardingFees(int boardingFees)
 	{
 		this.boardingFees = boardingFees;
 	}

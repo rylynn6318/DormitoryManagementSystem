@@ -15,7 +15,7 @@ public class Application implements Comparable<Application>, Serializable
 	//키가 아닌 컬럼
 	private int mealType;			//몇일식				0이면 안함, 5이면 5일식, 7이면 7일식
 	private boolean isPaid;			//납부여부
-	private boolean isPassed;		//합격여부	
+	private boolean isPassed;		//합격여부
 	private boolean isLastPassed;	//결과, 최종합격여부
 	private boolean isSnore;		//코골이여부
 	
