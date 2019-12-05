@@ -1,11 +1,7 @@
 package protocol;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Arrays;
 import shared.enums.*;
 // 프로토콜 쓰는법 (계획)
@@ -47,15 +43,14 @@ import shared.enums.*;
 // 대충 이런 느낌으로? 처리해야 할듯?? 아직 구현 안해서 확답 못함ㅎ
 
 // TODO : 현재 send buffer 크기 이상의 객체에 대해 예외 처리가 안되어 있음. 즉 프로토콜 사용자가 알아서 자르고 지지고 레릿고 해야함
-// TODO : 현재 is_last와 code등이 하드코딩 되어있음. Enum이나 함수로 바꾸는게 좋아 보임
 public class Protocol {
     // 프로토콜 생성시 Builder 이용할 것
     public static class Builder {
         // 필수
-        private final ProtocolType type; // 1바이트, 프로토콜 타입
-        private final byte direction; // 1바이트, 프로토콜 응답 방향
-        private final byte code_type; // 1바이트, 프로토콜 코드 종류
-        private final byte code; // 1바이트, 프로토콜 코드
+        private final ProtocolField.Type type; // 1바이트, 프로토콜 타입
+        private final ProtocolField.Direction direction; // 1바이트, 프로토콜 응답 방향
+        private final ProtocolField.Code1.ICode1 code1; // 1바이트, 프로토콜 코드
+        private final ProtocolField.Code2.ICode2 code2; // 1바이트, 프로토콜 코드
         // 옵션
         private short length = HEADER_LENGTH; // 2바이트, 전체 프로토콜 길이.
                                               // 실제 프로토콜에선 필수 정보지만 헤더길이는 10으로 고정되어 있으니
@@ -65,11 +60,11 @@ public class Protocol {
         private short sequence = 0; // 2바이트, 시퀀스 넘버
         private byte[] body_bytes = null; // body가 직렬화 된것
 
-        public Builder(ProtocolType type, byte direction, byte code_type, byte code) {
+        public Builder(ProtocolField.Type type, ProtocolField.Direction direction, ProtocolField.Code1.ICode1 code1, ProtocolField.Code2.ICode2 code2) {
             this.type = type;
             this.direction = direction;
-            this.code_type = code_type;
-            this.code = code;
+            this.code1 = code1;
+            this.code2 = code2;
         }
 
         public Builder sequence(short seq, Bool islast) {
@@ -91,10 +86,10 @@ public class Protocol {
 
             // 빅 엔디안으로 읽음
             this.length = (short) (packet[0] << 8 | (packet[1] & 0xFF));
-            this.type = ProtocolType.getType(packet[2]);
-            this.direction = packet[3];
-            this.code_type = packet[4];
-            this.code = packet[5];
+            this.type = ProtocolField.Type.get(packet[2]);
+            this.direction = ProtocolField.Direction.get(packet[3]);
+            this.code1 = ProtocolField.Code1.get(this.type, packet[4]);
+            this.code2 = ProtocolField.Code2.get(this.type, packet[5]);
             this.is_splitted = Bool.get(packet[6]);
             this.is_last = Bool.get(packet[7]);
             this.sequence = (short) (packet[8] << 8 | (packet[9] & 0xFF));
@@ -102,17 +97,22 @@ public class Protocol {
             this.body_bytes = Arrays.copyOfRange(packet, HEADER_LENGTH, packet.length);
         }
 
+        // body에 아무것도 할당하지 않았을 경우 null을 직렬화해서 body에 할당함
+        // why? 진짜 아무것도 없는거보단 null이 들어가게 만들기 위해
         public Protocol build() throws IOException {
+            if (body_bytes == null)
+                body_bytes = ProtocolHelper.serialization(null);
+
             return new Protocol(this);
         }
     }
 
     // Header
     public final short length; // 2바이트, 전체 프로토콜 길이
-    public final ProtocolType type; // 1바이트, 프로토콜 타입
-    public final byte direction; // 1바이트, 프로토콜 응답 방향
-    public final byte code_type; // 1바이트, 프로토콜 코드 종류
-    public final byte code; // 1바이트, 프로토콜 코드
+    public final ProtocolField.Type type; // 1바이트, 프로토콜 타입
+    public final ProtocolField.Direction direction; // 1바이트, 프로토콜 응답 방향
+    public final ProtocolField.Code1.ICode1 code1; // 1바이트, 프로토콜 코드 종류
+    public final ProtocolField.Code2.ICode2 code2; // 1바이트, 프로토콜 코드
     // 아래 3개는 body가 커져서 프로토콜 분리시 쓰임
     public final Bool is_splitted;// 1바이트, 프로토콜 분리 여부
     public final Bool is_last; // 1바이트, 마지막 프로토콜인지 여부
@@ -120,7 +120,7 @@ public class Protocol {
     // body 시작 인덱스를 알기 위해 자신의 길이를 가지고 있다.
     public static final int HEADER_LENGTH = 10;
 
-    // Body
+    // Body 자바는 final이여도 배열은 수정가능하네; getter 수정 필요함
     public final byte[] body_bytes;
 
     // Builder로부터 프로토콜 생성
@@ -128,8 +128,8 @@ public class Protocol {
         this.length = builder.length;
         this.type = builder.type;
         this.direction = builder.direction;
-        this.code_type = builder.code_type;
-        this.code = builder.code;
+        this.code1 = builder.code1;
+        this.code2 = builder.code2;
         this.is_splitted = builder.is_splitted;
         this.is_last = builder.is_last;
         this.sequence = builder.sequence;
@@ -143,36 +143,15 @@ public class Protocol {
         // short 타입은 Big Endian으로 변환
         baos.write((byte) ((length >> 8) & 0xff));
         baos.write((byte) (length & 0xff));
-        baos.write(type.ordinal());
-        baos.write(direction);
-        baos.write(code_type);
-        baos.write(code);
+        baos.write(type.getCode());
+        baos.write(direction.getCode());
+        baos.write(code1.getCode());
+        baos.write(code2.getCode());
         baos.write(is_splitted.bit);
         baos.write(is_last.bit);
         baos.write((byte) ((sequence >> 8) & 0xff));
         baos.write((byte) (sequence & 0xff));
         baos.write(body_bytes);
         return baos.toByteArray();
-    }
-
-    // 프로토콜을 잘라서 보내야 할 경우가 있음으로 내부적으로 하던 (역)직렬화 과정을 없애고
-    // 아래 두 함수를 외부에 노출함
-    // 좀더 엄밀히 보면 이게 Protocol 클래스에 있으면 안됨. 추후에 ProtocolManager나 SerializeHelper 등의 클래스 만들어서 옮겨야 함.
-    public static byte[] serialization(Serializable obj) throws IOException {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
-                oos.writeObject(obj);
-                return baos.toByteArray();
-            }
-        }
-    }
-
-    public static Serializable deserialization(byte[] bytes) throws ClassNotFoundException, IOException {
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
-            try (ObjectInputStream ois = new ObjectInputStream(bais)) {
-                Object obj = ois.readObject();
-                return (Serializable) obj;
-            }
-        }
     }
 }
