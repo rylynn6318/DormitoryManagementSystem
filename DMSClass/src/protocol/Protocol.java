@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
-
+import shared.enums.*;
 // 프로토콜 쓰는법 (계획)
 // 1. 보낼때 (로그인으로 예를 들겠음)
 // Socket socket = new Socket("127.0.0.1", 666);
@@ -60,10 +60,9 @@ public class Protocol {
         private short length = HEADER_LENGTH; // 2바이트, 전체 프로토콜 길이.
                                               // 실제 프로토콜에선 필수 정보지만 헤더길이는 10으로 고정되어 있으니
                                               // body 받고나면 길이 계산 가능해서 Builder에선 옵션임.
-        private boolean is_splitted = false; // 1바이트, 프로토콜 분리 여부
-        private boolean is_last = false; // 1바이트, 마지막 프로토콜인지 여부
+        private Bool is_splitted = Bool.FALSE; // 1바이트, 프로토콜 분리 여부
+        private Bool is_last = Bool.FALSE; // 1바이트, 마지막 프로토콜인지 여부
         private short sequence = 0; // 2바이트, 시퀀스 넘버
-        private Serializable body = null; // Body에 들어갈 객체
         private byte[] body_bytes = null; // body가 직렬화 된것
 
         public Builder(ProtocolType type, byte direction, byte code_type, byte code) {
@@ -73,17 +72,16 @@ public class Protocol {
             this.code = code;
         }
 
-        public Builder sequence(short seq, boolean islast) {
-            is_splitted = true;
+        public Builder sequence(short seq, Bool islast) {
+            is_splitted = Bool.TRUE;
             sequence = seq;
             is_last = islast;
             return this;
         }
 
-        public Builder body(Serializable obj) throws IOException {
-            body = obj;
-            body_bytes = serialization(obj);
-            this.length = (short) (HEADER_LENGTH + body_bytes.length);
+        public Builder body(byte[] serialized) throws IOException {
+            body_bytes = serialized;
+            this.length = (short) (HEADER_LENGTH + serialized.length);
             return this;
         }
 
@@ -91,17 +89,17 @@ public class Protocol {
             if (packet.length < HEADER_LENGTH)
                 throw new Exception("패킷 길이가 먼가 짧다!!!");
 
-            this.length = (short)((packet[1] & 0xFF) | packet[0]<<8);
+            // 빅 엔디안으로 읽음
+            this.length = (short) (packet[0] << 8 | (packet[1] & 0xFF));
             this.type = ProtocolType.getType(packet[2]);
             this.direction = packet[3];
             this.code_type = packet[4];
             this.code = packet[5];
-            this.is_splitted = packet[6] == 0x00 ? false : true;
-            this.is_last = packet[7] == 0x00 ? false : true;
-            this.sequence = (short)((packet[9] & 0xFF) | packet[8]<<8);
+            this.is_splitted = Bool.get(packet[6]);
+            this.is_last = Bool.get(packet[7]);
+            this.sequence = (short) (packet[8] << 8 | (packet[9] & 0xFF));
 
             this.body_bytes = Arrays.copyOfRange(packet, HEADER_LENGTH, packet.length);
-            this.body = deserialization(this.body_bytes);
         }
 
         public Protocol build() throws IOException {
@@ -116,14 +114,13 @@ public class Protocol {
     public final byte code_type; // 1바이트, 프로토콜 코드 종류
     public final byte code; // 1바이트, 프로토콜 코드
     // 아래 3개는 body가 커져서 프로토콜 분리시 쓰임
-    public final boolean is_splitted;// 1바이트, 프로토콜 분리 여부
-    public final boolean is_last; // 1바이트, 마지막 프로토콜인지 여부
+    public final Bool is_splitted;// 1바이트, 프로토콜 분리 여부
+    public final Bool is_last; // 1바이트, 마지막 프로토콜인지 여부
     public final short sequence; // 2바이트, 시퀀스 넘버
     // body 시작 인덱스를 알기 위해 자신의 길이를 가지고 있다.
     public static final int HEADER_LENGTH = 10;
 
     // Body
-    public final Serializable body;
     public final byte[] body_bytes;
 
     // Builder로부터 프로토콜 생성
@@ -136,7 +133,6 @@ public class Protocol {
         this.is_splitted = builder.is_splitted;
         this.is_last = builder.is_last;
         this.sequence = builder.sequence;
-        this.body = builder.body;
         this.body_bytes = builder.body_bytes;
     }
 
@@ -145,21 +141,24 @@ public class Protocol {
     public byte[] getPacket() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         // short 타입은 Big Endian으로 변환
-        baos.write((byte)((length >> 8) & 0xff));
-        baos.write((byte)(length & 0xff));
+        baos.write((byte) ((length >> 8) & 0xff));
+        baos.write((byte) (length & 0xff));
         baos.write(type.ordinal());
         baos.write(direction);
         baos.write(code_type);
         baos.write(code);
-        baos.write(is_splitted ? 0x01 : 0x00);
-        baos.write(is_last ? 0x01 : 0x00);
-        baos.write((byte)((sequence >> 8) & 0xff));
-        baos.write((byte)(sequence & 0xff));
+        baos.write(is_splitted.bit);
+        baos.write(is_last.bit);
+        baos.write((byte) ((sequence >> 8) & 0xff));
+        baos.write((byte) (sequence & 0xff));
         baos.write(body_bytes);
         return baos.toByteArray();
     }
 
-    private static byte[] serialization(Serializable obj) throws IOException {
+    // 프로토콜을 잘라서 보내야 할 경우가 있음으로 내부적으로 하던 (역)직렬화 과정을 없애고
+    // 아래 두 함수를 외부에 노출함
+    // 좀더 엄밀히 보면 이게 Protocol 클래스에 있으면 안됨. 추후에 ProtocolManager나 SerializeHelper 등의 클래스 만들어서 옮겨야 함.
+    public static byte[] serialization(Serializable obj) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
                 oos.writeObject(obj);
@@ -168,7 +167,7 @@ public class Protocol {
         }
     }
 
-    private static Serializable deserialization(byte[] bytes) throws ClassNotFoundException, IOException {
+    public static Serializable deserialization(byte[] bytes) throws ClassNotFoundException, IOException {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
             try (ObjectInputStream ois = new ObjectInputStream(bais)) {
                 Object obj = ois.readObject();
