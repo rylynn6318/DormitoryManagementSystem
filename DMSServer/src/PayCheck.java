@@ -76,6 +76,6 @@ public class PayCheck {
 				state1.executeUpdate(sql1);
 			}
 		}
-		System.out.println("성공");
+		//System.out.println("성공");
 	}
 }
