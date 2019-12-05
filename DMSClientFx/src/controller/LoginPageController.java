@@ -95,18 +95,16 @@ public class LoginPageController implements Initializable {
         account.setPassword(inputUserPw);
 
         //네트워킹 여기서 해라
-//        boolean isPassed = networking(account);
+        boolean isPassed = networking(account);
         
         //일단 테스트용으로 네트워킹 주석처리하고 패스함.
-         boolean isPassed = true;
-         account.setUserType(UserType.ADMINISTRATOR);			//관리자 페이지로 들어가려면 ADMINISTRATOR로 바꾸면됨
+        // boolean isPassed = true;
+        // account.setUserType(UserType.ADMINISTRATOR);			//관리자 페이지로 들어가려면 ADMINISTRATOR로 바꾸면됨
         //------------------------
         
         if (isPassed) {
             IOHandler.getInstance().showAlert("로그인 성공");
-            UserInfo.getInstance().setUserType(account.getUserType());
-            UserInfo.getInstance().setAccountId(account.getAccountId());
-            UserInfo.getInstance().setPassword(account.getPassword());
+            setUserInfo(account);
             moveToMain();
         } else {
             IOHandler.getInstance().showAlert("아이디 혹은 비밀번호가 틀렸습니다.");
@@ -149,10 +147,10 @@ public class LoginPageController implements Initializable {
     }
 
     //UserInfo 싱글톤 설정
-    private void setUserInfo(String id, String pw, UserType userType) {
-        UserInfo.getInstance().setAccountId(id);
-        UserInfo.getInstance().setPassword(pw);
-        UserInfo.getInstance().setUserType(userType);
+    private void setUserInfo(Account account) {
+        UserInfo.getInstance().setAccountId(account.getAccountId());
+        UserInfo.getInstance().setPassword(account.getPassword());
+        UserInfo.getInstance().setUserType(account.getUserType());
     }
 
     //메인 화면으로 이동
