@@ -271,23 +271,23 @@ public class BoarderManageTabController implements Initializable
 
 class PlacementHistoryViewModel extends PlacementHistory
 {
-//	private StringProperty studentIdStr;
-//	private StringProperty roomIdStr;
-//	private StringProperty semesterStr;
-//	private StringProperty dormitoryNameStr;
-//	private StringProperty seatStr;
-//	private StringProperty checkoutStr;
-//	
+	private StringProperty studentIdStr;
+	private StringProperty roomIdStr;
+	private StringProperty semesterStr;
+	private StringProperty dormitoryNameStr;
+	private StringProperty seatStr;
+	private StringProperty checkoutStr;
+	
 //	public PlacementHistoryViewModel(String studentId, String dormNameStr, int semester, int choice, int mealType, 
 //			boolean isPaid, boolean isPassed, boolean isLastPassed, boolean isSnore)
 //	{
 //		
 //		super.setStudentId(studentId);
-//		super.roomIdStr(dormNameStr);
-//		super.semesterCodeStr(semester);
-//		super.dormitoryNameStr(choice);
-//		super.seatStr(mealType);
-//		super.checkoutStr(isPaid);
+//		super.setRoomId(roomId);
+//		super.setSemesterCode(semester);
+//		super.dormitoryNameStr(dormitoryName);
+//		super.seatStr(seat);
+//		super.checkoutStr(checkout);
 //		
 //		this.studentIdStr = new SimpleStringProperty(studentId);
 //		this.roomIdStr = new SimpleStringProperty(dormNameStr);

@@ -38,3 +38,6 @@ shared-class update log
 	
 2019-12-06 v1.11
 	Document에 생성자 추가, java.sql.Date를 java.util.Date로 변경
+
+2019-12-06 v1.12
+	Shared Class 안의 PlacementHistory 에 학기가 SemesterCode로 되있는걸 Semester로 수정하고 Export해서 적용함.

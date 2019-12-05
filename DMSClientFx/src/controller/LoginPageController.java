@@ -95,11 +95,11 @@ public class LoginPageController implements Initializable {
         account.setPassword(inputUserPw);
 
         //네트워킹 여기서 해라
-        boolean isPassed = networking(account);
+//        boolean isPassed = networking(account);
         
         //일단 테스트용으로 네트워킹 주석처리하고 패스함.
-        // boolean isPassed = true;
-        // account.setUserType(UserType.ADMINISTRATOR);			//관리자 페이지로 들어가려면 ADMINISTRATOR로 바꾸면됨
+         boolean isPassed = true;
+         account.setUserType(UserType.ADMINISTRATOR);			//관리자 페이지로 들어가려면 ADMINISTRATOR로 바꾸면됨
         //------------------------
         
         if (isPassed) {
@@ -121,7 +121,7 @@ public class LoginPageController implements Initializable {
         InputStream inputFromServer = socket.getInputStream();
 
         // To_Server일때 code1, code2는 머가 드가든 상관 없음.
-        Protocol login = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_SERVER, ProtocolField.Code1.Null.NULL, ProtocolField.Code2.LoginResult.FAIL)
+        Protocol login = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_SERVER, ProtocolField.Code1.NULL, ProtocolField.Code2.LoginResult.FAIL)
                 .body(ProtocolHelper.serialization(account)).build();
         outputToServer.write(login.getPacket());
 
