@@ -3,10 +3,12 @@ package controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.SocketChannel;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
@@ -118,16 +120,24 @@ public class LoginPageController implements Initializable {
         OutputStream outputToServer = socket.getOutputStream();
         InputStream inputFromServer = socket.getInputStream();
 
+        InetSocketAddress server = new InetSocketAddress("127.0.0.1", 666);
+        SocketChannel client = SocketChannel.open(server);
+
         // To_Server일때 code1, code2는 머가 드가든 상관 없음.
         Protocol login = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_SERVER, ProtocolField.Code1.NULL, ProtocolField.Code2.NULL)
                 .body(ProtocolHelper.serialization(account)).build();
-        outputToServer.write(login.getPacket());
+
+        // outputToServer.write(login.getPacket());
+
+        client.write(ByteBuffer.wrap(login.getPacket()));
 
         ///////위 코드는 전송//////////////////아래 코드는 수신///////////
 
-        byte[] buffer = new byte[1024];
-        inputFromServer.read(buffer);
-        login = new Protocol.Builder(buffer).build();
+        ByteBuffer bb = ByteBuffer.allocate(1024);
+        client.read(bb);
+        // byte[] buffer = new byte[1024];
+        // inputFromServer.read(buffer);
+        login = new Protocol.Builder(bb.array()).build();
 
         if (login.code2 == ProtocolField.Code2.LoginResult.FAIL) {
             //로그인 실패
