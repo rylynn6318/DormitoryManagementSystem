@@ -69,8 +69,8 @@ public class ResidentSelecter
 			for(int i = 0; i < leftCapacity; i++)
 			{
 				Application temp = iterator.next();
-				String update = "UPDATE 신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + " AND 생활관정보_생활관명=" + temp.getDormitoryName() + " AND 성별=" + temp.getGender() + " AND 학기=" + temp.getSemesterCode() + " AND 지망=" + temp.getChoice();
-				state.executeUpdate(update);
+				String updateQuery = "UPDATE 신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + " AND 생활관정보_생활관명=" + temp.getDormitoryName() + " AND 성별=" + temp.getGender() + " AND 학기=" + temp.getSemesterCode() + " AND 지망=" + temp.getChoice();
+				state.executeUpdate(updateQuery);
 			}
 		}
 	}
@@ -86,8 +86,8 @@ public class ResidentSelecter
 		
 		TreeSet<Application> sortedApps = new TreeSet<Application>();
 		
-		String query = "SELECT * FROM 신청 WHERE 생활관명=" + dormName + " AND 지망=" + choice + "학기=201901 AND 합격여부=N";
-		ResultSet apps = state.executeQuery(query);
+		String getUnsortedAppsQuery = "SELECT * FROM 신청 WHERE 생활관명=" + dormName + " AND 지망=" + choice + "학기=201901 AND 합격여부=N";
+		ResultSet apps = state.executeQuery(getUnsortedAppsQuery);
 		
 		while(apps.next())
 		{
@@ -108,12 +108,12 @@ public class ResidentSelecter
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-		String query = "SELECT COUNT(*) FROM (SELECT * FROM 배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + 201901 + ")";
-		ResultSet passed = state.executeQuery(query);
+		String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM 배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + 201901 + ")";
+		ResultSet passed = state.executeQuery(getNumOfPassedAppsQuery);
 		
 		Statement state2 = conn.createStatement();
-		query = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + 201901;
-		ResultSet capacity = state2.executeQuery(query);
+		String getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + 201901;
+		ResultSet capacity = state2.executeQuery(getCapacityQuery);
 		
 		capacity.next();
 		passed.next();
@@ -132,8 +132,8 @@ public class ResidentSelecter
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-		String query = "SELECT 학점,등급 FROM 점수 WHERE 학번=" + a.getStudentId() + "AND 학기 BETWEEN '" + pastTwo(a.getSemesterCode()) + "' AND '" + pastOne(a.getSemesterCode()) + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
-		ResultSet scores = state.executeQuery(query);
+		String getScoresQuery = "SELECT 학점,등급 FROM 점수 WHERE 학번=" + a.getStudentId() + "AND 학기 BETWEEN '" + pastTwo(a.getSemesterCode()) + "' AND '" + pastOne(a.getSemesterCode()) + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
+		ResultSet scores = state.executeQuery(getScoresQuery);
 		
 		double sumOfTakenGrade = 0;
 		double sumOfTakenCredit = 0;
