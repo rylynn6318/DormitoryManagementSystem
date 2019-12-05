@@ -1,20 +1,16 @@
 package shared.enums;
 
-//사용자 타입, enum타입임. 학생 0, 관리자 1, 선생님 2.
-public enum UserType
-{
-	STUDENT(0), ADMINISTRATOR(1), TEACHER(2);
-	
-	private final int type;
-	
-	UserType(int type)
-	{
-		this.type = type;
-	}
-	
-	//DB에 넣기위해 int로 받으려면 이거 호출하면됨.
-	public int getTypeAsInt()
-	{
-		return this.type;
-	}
+//몇지망인지 나타내는 ENUM
+public enum UserType{
+	STUDENT(0, (byte)0x00),
+    ADMINISTRATOR(1, (byte)0x01),
+	TEACHER(2, (byte)0x02);
+
+    public final int type;
+    public final byte bit;
+
+    UserType(int type, byte bit){
+        this.type = type;
+        this.bit = bit;
+    }
 }

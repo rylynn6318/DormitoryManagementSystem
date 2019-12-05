@@ -28,19 +28,21 @@ public class ResidentSelecter
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException
 	{
-		realSelecter("푸름1");
-		realSelecter("푸름2");
-		realSelecter("푸름3");
-		realSelecter("푸름4");
-		realSelecter("오름1");
-		realSelecter("오름2");
-		realSelecter("오름3");
-		realSelecter("신평_남");
-		realSelecter("신평_여");
+		passerSelection("푸름1");
+		passerSelection("푸름1_탑층");
+		passerSelection("푸름2");
+		passerSelection("푸름2_탑층");
+		passerSelection("푸름3");
+		passerSelection("푸름4");
+		passerSelection("오름1");
+		passerSelection("오름2");
+		passerSelection("오름3");
+		passerSelection("신평_남");
+		passerSelection("신평_여");
 	}
 
 	
-	public static void realSelecter(String dormName) throws SQLException, ClassNotFoundException
+	public static void passerSelection(String dormName) throws SQLException, ClassNotFoundException
 	{
 		Connection conn = null;
 		Statement state = null;
@@ -49,20 +51,23 @@ public class ResidentSelecter
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-		int leftCapacity = getNumOfLeftSeat(dormName);
-		TreeSet<Application> apps = selecter(dormName);
-		
-		Iterator<Application> iterator = apps.iterator();
-		
-		for(int i = 0; i < leftCapacity; i++)
+		for(int choice = 0; choice < 4; choice ++)
 		{
-			Application temp = iterator.next();
-			String update = "UPDATE 신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + " AND 생활관정보_생활관명=" + temp.getDormitoryName() + " AND 성별=" + temp.getGender() + " AND 학기=" + temp.getSemesterCode() + " AND 지망=" + temp.getChoice();
-			state.executeUpdate(update);
+			int leftCapacity = getNumOfLeftSeat(dormName);
+			TreeSet<Application> apps = getSortedApplications(dormName, choice);
+			
+			Iterator<Application> iterator = apps.iterator();
+			
+			for(int i = 0; i < leftCapacity; i++)
+			{
+				Application temp = iterator.next();
+				String update = "UPDATE 신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + " AND 생활관정보_생활관명=" + temp.getDormitoryName() + " AND 성별=" + temp.getGender() + " AND 학기=" + temp.getSemesterCode() + " AND 지망=" + temp.getChoice();
+				state.executeUpdate(update);
+			}
 		}
 	}
 	
-	public static TreeSet<Application> selecter(String dormName) throws SQLException, ClassNotFoundException
+	public static TreeSet<Application> getSortedApplications(String dormName, int choice) throws SQLException, ClassNotFoundException
 	{
 		Connection conn = null;
 		Statement state = null;
@@ -72,16 +77,14 @@ public class ResidentSelecter
 		state = conn.createStatement();
 		
 		TreeSet<Application> sortedApps = new TreeSet<Application>();
-		int choice = 1;
 		
-		String query = "SELECT * FROM 신청 WHERE 생활관명=" + dormName + " AND 지망=" + choice + "학기=201901 AND 합격여부=N";   // 푸름 1을 choice지망으로 하고 학기가 201901이며 합격여부가 N인 신청
+		String query = "SELECT * FROM 신청 WHERE 생활관명=" + dormName + " AND 지망=" + choice + "학기=201901 AND 합격여부=N";
 		ResultSet apps = state.executeQuery(query);
 		
 		while(apps.next())
 		{
 			Application temp = new Application(apps.getString("학번"), apps.getString("생활관정보_생활관명"), apps.getString("생활관정보_성별"), apps.getInt("생활관정보_학기"), apps.getInt("지망"));
 			setFinalScore(temp);
-			
 			sortedApps.add(temp);
 		}
 		
@@ -100,20 +103,18 @@ public class ResidentSelecter
 		String query = "SELECT COUNT(*) FROM (SELECT * FROM 배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + 201901 + ")";
 		ResultSet passed = state.executeQuery(query);
 		
-		int leftCapacity = 0;
-		
 		Statement state2 = conn.createStatement();
 		query = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + 201901;
 		ResultSet capacity = state2.executeQuery(query);
 		
 		capacity.next();
 		passed.next();
-		leftCapacity = capacity.getInt("수용인원") - passed.getInt("COUNT(*)");
+		
+		int leftCapacity = capacity.getInt("수용인원") - passed.getInt("COUNT(*)");
+		
 		return leftCapacity;
 	}
 	
-
-//	가산점 구해서 더하는거 만들어야됨
 	public static void setFinalScore(Application a) throws ClassNotFoundException, SQLException
 	{
 		Connection conn = null;
@@ -163,8 +164,27 @@ public class ResidentSelecter
 			}
 		}
 		
-		a.setScore(sumOfTakenGrade/sumOfTakenCredit);
+		Statement state2 = conn.createStatement();
+		String zipCodeQuery = "SELECT 보호자우편번호 FROM 학생 WHERE 학번=" + a.getStudentId();
+		ResultSet zipCode = state2.executeQuery(zipCodeQuery);
+		zipCode.next();
+		a.setScore(sumOfTakenGrade/sumOfTakenCredit + getDistanceScore(zipCode.getString("보호자우편번호")));
 	}
+	
+	public static double getDistanceScore(String s)
+	{
+		int a = Integer.parseInt(s);		
+		if(a/100 == 402) return 0.4;	//울릉도
+		
+		a = a/1000;
+		if(a==63) return 0.4;	//제주도
+		else if(35 <a && a<44) return 0.1;	//경북, 대구
+		else if(43 <a && a<54) return 0.2;	//울산, 부산, 경남
+		else if(33 <a && a<36) return 0.2;	//대전
+		else
+			return 0.3;
+	}
+
 	
 	public static int pastOne(int semester)
 	{

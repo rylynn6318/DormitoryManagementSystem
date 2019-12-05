@@ -22,6 +22,12 @@ public class Application implements Comparable<Application>, Serializable
 	//로컬 변수
 	private double score;			//평균점수 + 가산점
 	
+	//클라이언트에서 사용함.
+	public Application()
+	{
+		
+	}
+	
 	public Application(String studentId, String dormitoryName, String gender, int semesterCode, int choice)	//합격 알고리즘에 필요한 생성자임 터치 ㄴㄴ해
 	{
 		this.studentId = studentId;
@@ -29,6 +35,13 @@ public class Application implements Comparable<Application>, Serializable
 		this.gender = gender.toCharArray()[0];
 		this.semesterCode = semesterCode;
 		this.choice = choice;
+	}
+	
+	public Application(int choice, String dormitoryName, int mealType)
+	{
+		this.choice = choice;
+		this.dormitoryName = dormitoryName;
+		this.mealType = mealType;
 	}
 	
 	public String getStudentId()
