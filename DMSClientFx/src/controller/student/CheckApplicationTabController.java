@@ -16,10 +16,7 @@ public class CheckApplicationTabController implements Initializable
     private Button check_button;
 
     @FXML
-    private TableView<?> oneYear_application_history_tableview;
-
-    @FXML
-    private TableView<?> oneSemester_application_history_tableview;
+    private TableView<?> application_history_tableview;
 
     @FXML
     private TableView<?> selection_result_tableview;
@@ -51,5 +48,12 @@ public class CheckApplicationTabController implements Initializable
     {
     	//여기는 뭐 검사할 필요없이 바로 서버로 요청날림.
     }
+    
+    private void refreshTableView()
+    {
+    	
+    }
 
 }
+
+//public class oneYear
