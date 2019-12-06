@@ -86,14 +86,14 @@ public final class Protocol implements Comparable<Protocol> {
                 throw new Exception("패킷 길이가 먼가 짧다!!!");
 
             // 빅 엔디안으로 읽음
-            this.length = (short) (packet[0] << 8 | (packet[1] & 0xFF));
+            this.length = ProtocolHelper.bytesToShort(packet[0], packet[1]); // (short) (packet[0] << 8 | (packet[1] & 0xFF));
             this.type = ProtocolType.get(packet[2]);
             this.direction = Direction.get(packet[3]);
             this.code1 = Code1.get(this.type, packet[4]);
             this.code2 = Code2.get(this.type, packet[5]);
             this.is_splitted = Bool.get(packet[6]);
             this.is_last = Bool.get(packet[7]);
-            this.sequence = (short) (packet[8] << 8 | (packet[9] & 0xFF));
+            this.sequence = ProtocolHelper.bytesToShort(packet[8], packet[9]); //(short) (packet[8] << 8 | (packet[9] & 0xFF));
 
             this.body_bytes = Arrays.copyOfRange(packet, HEADER_LENGTH, packet.length);
         }
@@ -146,16 +146,16 @@ public final class Protocol implements Comparable<Protocol> {
     public byte[] getPacket() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         // short 타입은 Big Endian으로 변환
-        baos.write((byte) ((length >> 8) & 0xff));
-        baos.write((byte) (length & 0xff));
+        baos.write(ProtocolHelper.shortToByte(length)[0]); // (byte) ((length >> 8) & 0xff)
+        baos.write(ProtocolHelper.shortToByte(length)[1]); // (byte) (length & 0xff)
         baos.write(type.getCode());
         baos.write(direction.getCode());
         baos.write(code1.getCode());
         baos.write(code2.getCode());
         baos.write(is_splitted.bit);
         baos.write(is_last.bit);
-        baos.write((byte) ((sequence >> 8) & 0xff));
-        baos.write((byte) (sequence & 0xff));
+        baos.write(ProtocolHelper.shortToByte(length)[0]); // (byte) ((sequence >> 8) & 0xff)
+        baos.write(ProtocolHelper.shortToByte(length)[1]); // (byte) (sequence & 0xff)
         baos.write(body_bytes);
         return baos.toByteArray();
     }

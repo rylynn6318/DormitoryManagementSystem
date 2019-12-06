@@ -6,11 +6,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ProtocolHelper {
-    public static byte[] serialization(Serializable obj) throws IOException {
+import enums.Bool;
+
+public final class ProtocolHelper {
+    public static byte[] serialization(final Serializable obj) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
                 oos.writeObject(obj);
@@ -19,18 +22,71 @@ public class ProtocolHelper {
         }
     }
 
-    public static Serializable deserialization(byte[] bytes) throws ClassNotFoundException, IOException {
+    public static Serializable deserialization(final byte[] bytes) throws ClassNotFoundException, IOException {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
             try (ObjectInputStream ois = new ObjectInputStream(bais)) {
-                Object obj = ois.readObject();
+                final Object obj = ois.readObject();
                 return (Serializable) obj;
             }
         }
     }
 
-    public static void splitBySize(List<byte[]> byte_list, byte[] bytes, int chunk_size) {
+    public static byte[] shortToByte(short input){
+        byte[] result = new byte[2];
+        result[0] = (byte) ((input >> 8) & 0xff);
+        result[1] = (byte) (input & 0xff);
+        return result;
+    }
+    public static short bytesToShort(byte[] input){
+        return (short) (input[0] << 8 | (input[1] & 0xFF));
+    }
+    public static short bytesToShort(byte a, byte b){
+        return (short) (a << 8 | (b & 0xFF));
+    }
+
+    public static List<byte[]> splitBySize(final byte[] bytes, final int chunk_size) {
+        final List<byte[]> result = new ArrayList<>();
         for (int i = 0; i < bytes.length; i += chunk_size) {
-            byte_list.add(Arrays.copyOfRange(bytes, i, Math.min(bytes.length, i + chunk_size)));
+            result.add(Arrays.copyOfRange(bytes, i, Math.min(bytes.length, i + chunk_size)));
         }
+        return result;
+    }
+
+    public static List<Protocol> split(final Protocol protocol, final int size_to_split) throws IOException {
+        List<Protocol> result = new ArrayList<>();
+        byte[] tmp = protocol.getBody();
+        List<byte[]> body_chunks = splitBySize(tmp, size_to_split - Protocol.HEADER_LENGTH);
+
+        int body_chunks_size = body_chunks.size();
+        short seq = 0;
+        Bool isLast = Bool.get(false);
+
+        for (; seq < body_chunks_size; ++seq) {
+            if (seq + 1 == body_chunks_size)
+                isLast = Bool.get(true);
+            result.add(new Protocol.Builder(protocol.type, protocol.direction, protocol.code1, protocol.code2)
+                    .body(body_chunks.get(seq)).sequence(seq, isLast).build());
+        }
+
+        return result;
+    }
+
+    public static Protocol merge(final byte[] packet) throws IOException, Exception {
+        List<Protocol> tmp = new ArrayList<>();
+
+        int chunk_size = 0;
+        for(int cursor = 0; cursor < packet.length; cursor += chunk_size){
+            chunk_size = bytesToShort(packet[cursor], packet[cursor + 1]);
+            tmp.add(new Protocol.Builder(Arrays.copyOfRange(packet, cursor, chunk_size)).build());
+        }
+
+        tmp.sort(null);
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        for (Protocol protocol : tmp) {
+            output.write(protocol.getBody());
+        }
+
+        return new Protocol.Builder(tmp.get(0).type, tmp.get(0).direction, tmp.get(0).code1, tmp.get(0).code2).body(output.toByteArray()).build();
     }
 }

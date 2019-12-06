@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import application.SocketHandler;
 import application.UserInfo;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -125,21 +126,15 @@ public class LoginPageController implements Initializable {
 
     //테스트용 네트워킹
     private Code2.LoginResult login(Account account) throws Exception {
-        Socket socket = new Socket("127.0.0.1", 666);
-        OutputStream outputToServer = socket.getOutputStream();
-        InputStream inputFromServer = socket.getInputStream();
-
         // To_Server 일때 code1, code2는 머가 드가든 상관 없음.
         Protocol login = new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_SERVER, Code1.NULL, Code2.NULL)
                 .body(ProtocolHelper.serialization(account)).build();
 
-        outputToServer.write(login.getPacket());
+        SocketHandler.INSTANCE.send(login);
 
         ///////위 코드는 전송//////////////////아래 코드는 수신///////////
 
-        byte[] buffer = new byte[1024];
-        inputFromServer.read(buffer);
-        login = new Protocol.Builder(buffer).build();
+        login = new Protocol.Builder(SocketHandler.INSTANCE.read()).build();
 
         return (Code2.LoginResult) login.code2;
     }
