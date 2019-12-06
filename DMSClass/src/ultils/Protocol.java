@@ -44,7 +44,7 @@ import enums.*;
 import interfaces.*;
 
 // TODO : 현재 send buffer 크기 이상의 객체에 대해 예외 처리가 안되어 있음. 즉 프로토콜 사용자가 알아서 자르고 지지고 레릿고 해야함
-public class Protocol {
+public final class Protocol {
     // 프로토콜 생성시 Builder 이용할 것
     public static class Builder {
         // 필수
@@ -123,7 +123,11 @@ public class Protocol {
 
     // Body
     // TODO : 자바는 final이여도 배열은 수정가능하네; getter 수정 필요함
-    public final byte[] body_bytes;
+    private final byte[] body_bytes;
+
+    public byte[] getBody(){
+        return body_bytes;
+    }
 
     // Builder로부터 프로토콜 생성
     protected Protocol(Builder builder) throws IOException {
