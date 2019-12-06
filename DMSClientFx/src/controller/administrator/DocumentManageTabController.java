@@ -6,10 +6,11 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.ResourceBundle;
 
-import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import application.IOHandler;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,8 +18,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import tableViewModel.*;
 
 //서류 조회 및 제출
 public class DocumentManageTabController implements Initializable 
@@ -27,7 +30,25 @@ public class DocumentManageTabController implements Initializable
     private Button check_button;
 
     @FXML
-    private TableView<?> check_document_tableview;
+    private TableView<DocumentViewModel> check_document_tableview;
+    
+    @FXML
+    private TableColumn<DocumentViewModel, String> check_document_column_studentId;
+
+    @FXML
+    private TableColumn<DocumentViewModel, String> check_document_column_docType;
+
+    @FXML
+    private TableColumn<DocumentViewModel, String> check_document_column_submissionDate;
+
+    @FXML
+    private TableColumn<DocumentViewModel, String> check_document_column_diagnosisDate;
+
+    @FXML
+    private TableColumn<DocumentViewModel, String> check_document_column_docStoragePath;
+
+    @FXML
+    private TableColumn<DocumentViewModel, String> check_document_column_isValid;
 
     @FXML
     private Button delete_button;
@@ -76,6 +97,8 @@ public class DocumentManageTabController implements Initializable
     
 	private final String[] comboboxItem_boolean = {"T", "F"};
 	
+	private ObservableList<DocumentViewModel> documentList;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
@@ -96,6 +119,7 @@ public class DocumentManageTabController implements Initializable
 	{
 		System.out.println("서류 조회 및 제출 : 조회 클릭됨");
 		//네트워킹해서 받은 객체배열 역직렬화->tableview에 뿌려라
+		checkDocuments();
     }
 
     @FXML
@@ -127,6 +151,27 @@ public class DocumentManageTabController implements Initializable
     }
     
     //---------------------로직---------------------
+    
+    private void checkDocuments()
+    {
+    	//네트워킹으로 서류 조회
+    	documentList = FXCollections.observableArrayList(
+    			new DocumentViewModel("20161234", 0, new Date(2019,7,1), new Date(2019,8,1), "C:\\와샌즈1", true),
+    			new DocumentViewModel("20161235", 1, new Date(2019,7,1), new Date(2019,8,1), "C:\\와샌즈2", false),
+    			new DocumentViewModel("20161236", 2, new Date(2019,7,1), new Date(2019,8,1), "C:\\와샌즈3", true),
+    			new DocumentViewModel("20161236", 3, new Date(2019,7,1), new Date(2019,8,1), "C:\\와샌즈4", false)
+        		);
+    	
+    	//서버에서 받아온거 표시하게 만듬.
+    	check_document_column_studentId.setCellValueFactory(cellData -> cellData.getValue().studentIdProperty());
+    	check_document_column_docType.setCellValueFactory(cellData -> cellData.getValue().documentTypeProperty());
+    	check_document_column_submissionDate.setCellValueFactory(cellData -> cellData.getValue().submissionDateProperty());
+    	check_document_column_diagnosisDate.setCellValueFactory(cellData -> cellData.getValue().diagnosisDateProperty());
+    	check_document_column_docStoragePath.setCellValueFactory(cellData -> cellData.getValue().documentStoragePathProperty());
+    	check_document_column_isValid.setCellValueFactory(cellData -> cellData.getValue().isValidProperty());
+    	
+    	check_document_tableview.setItems(documentList);
+    }
     
     private void deleteDocument()
     {

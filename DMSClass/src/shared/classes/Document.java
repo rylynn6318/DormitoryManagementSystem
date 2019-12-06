@@ -16,6 +16,11 @@ public class Document implements Serializable
 	private String documentStoragePath;	//서류저장경로
 	private boolean isValid;			//유효여부
 	
+	public Document()
+	{
+		
+	}
+	
 	public Document(String studentId, int documentType, Date submissionDate, Date diagnosisDate, String documentStoragePath, String isValid)
 	{
 		this.studentId = studentId;

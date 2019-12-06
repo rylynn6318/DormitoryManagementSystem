@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,7 +17,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import shared.classes.PlacementHistory;
+import tableViewModel.PlacementHistoryViewModel;
 
 //입사자 조회 및 관리
 public class BoarderManageTabController implements Initializable 
@@ -285,62 +283,4 @@ public class BoarderManageTabController implements Initializable
 			IOHandler.getInstance().showAlert("입사자 등록에 실패하였습니다.");
 		}
     }   
-}
-
-class PlacementHistoryViewModel extends PlacementHistory
-{
-	private StringProperty studentIdStr;
-	private StringProperty roomIdStr;
-	private StringProperty semesterStr;
-	private StringProperty dormitoryNameStr;
-	private StringProperty seatStr;
-	private StringProperty checkoutStr;
-	
-	public PlacementHistoryViewModel(String studentId, int roomId, int semester, String dormitoryName, char seat, Date checkout)
-	{
-		
-		super.setStudentId(studentId);
-		super.setRoomId(roomId);
-		super.setSemester(semester);
-		super.setDormitoryName(dormitoryName);
-		super.setSeat(seat);
-		super.setCheckout(checkout);
-		
-		this.studentIdStr = new SimpleStringProperty(studentId);
-		this.roomIdStr = new SimpleStringProperty(Integer.toString(roomId));
-		this.semesterStr = new SimpleStringProperty(Integer.toString(semester));
-		this.dormitoryNameStr = new SimpleStringProperty(dormitoryName);
-		this.seatStr = new SimpleStringProperty(String.valueOf(seat));
-		this.checkoutStr = new SimpleStringProperty(checkout.toString());
-	}
-	
-	public StringProperty studentIdProperty()
-	{
-		return studentIdStr;
-	}
-	
-	public StringProperty roomIdProperty()
-	{
-		return roomIdStr;
-	}
-	
-	public StringProperty semesterProperty()
-	{
-		return semesterStr;
-	}
-	
-	public StringProperty dormitoryNameProperty()
-	{
-		return dormitoryNameStr;
-	}
-	
-	public StringProperty seatProperty()
-	{
-		return seatStr;
-	}
-	
-	public StringProperty checkoutProperty()
-	{
-		return checkoutStr;
-	}
 }

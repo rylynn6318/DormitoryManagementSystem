@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,7 +17,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import shared.classes.Schedule;
+import tableViewModel.ScheduleViewModel;
 
 //선발 일정 조회 및 관리
 public class ScheduleManageTabController implements Initializable 
@@ -192,46 +190,4 @@ public class ScheduleManageTabController implements Initializable
     }
 }
 
-class ScheduleViewModel extends Schedule
-{
-	private StringProperty scheduleIdStr;
-	private StringProperty codeStr;
-	private StringProperty startDateStr;
-	private StringProperty endDateStr;
-	private StringProperty descriptionStr;
-	
-	public ScheduleViewModel(String scheduleId, int code, Date startDate, Date endDate, String description)
-	{
-		super(scheduleId, code, startDate, endDate, description);
-		scheduleIdStr = new SimpleStringProperty(scheduleId);
-		codeStr = new SimpleStringProperty(String.valueOf(code));			//이거 스케쥴 할일 코드 가져와서 String 보여줘야됨.
-		startDateStr = new SimpleStringProperty(startDate.toString());
-		endDateStr = new SimpleStringProperty(endDate.toString());
-		descriptionStr = new SimpleStringProperty(description);
-	}
-	
-	public StringProperty scheduleIdProperty()
-	{
-		return scheduleIdStr;
-	}
-	
-	public StringProperty codeProperty()
-	{
-		return codeStr;
-	}
-	
-	public StringProperty startDateProperty()
-	{
-		return startDateStr;
-	}
-	
-	public StringProperty endDateProperty()
-	{
-		return endDateStr;
-	}
-	
-	public StringProperty descriptionProperty()
-	{
-		return descriptionStr;
-	}
-}
+

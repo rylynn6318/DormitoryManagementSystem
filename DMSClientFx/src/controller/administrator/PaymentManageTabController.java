@@ -2,20 +2,23 @@ package controller.administrator;
 
 import java.io.File;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import application.IOHandler;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import tableViewModel.*;
 
 //납부 여부 조회 및 관리
 public class PaymentManageTabController implements Initializable 
@@ -25,7 +28,34 @@ public class PaymentManageTabController implements Initializable
     private Button check_button;
 
     @FXML
-    private TableView<?> check_application_tableview;
+    private TableView<ApplicationViewModel> check_application_tableview;
+    
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_id;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_dormName;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_semester;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_choice;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_mealType;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_isPaid;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_isPassed;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_isLastPassed;
+
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_isSnore;
 
     @FXML
     private Button update_button;
@@ -53,6 +83,8 @@ public class PaymentManageTabController implements Initializable
 	
 	private final String[] comboboxItem_boolean = {"T", "F"};
 	
+	ObservableList<ApplicationViewModel> applicationList;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
@@ -68,6 +100,7 @@ public class PaymentManageTabController implements Initializable
 	{
 		System.out.println("납부 여부 조회 및 관리 : 조회 클릭됨");
 		//네트워크 통신해서 신청테이블->이번학기->객체 배열 가져와서 보여줘라.
+		checkApplications();
     }
 
     @FXML
@@ -94,6 +127,32 @@ public class PaymentManageTabController implements Initializable
     
 	
 	//---------------------로직---------------------
+    
+    private void checkApplications()
+    {
+    	//서버에서 신청테이블->이번학기->객체 배열 쫙 긁어와서 tableview에 보여줌
+    	
+    	//서버랑 통신했다 치고 Application 객체 받아옴.
+    	//물론 실제로 받아왔을때 받아온 Application 배열목록을 ApplicationViewModel로 변환하고 넣어야됨.
+    	applicationList = FXCollections.observableArrayList(
+    			new ApplicationViewModel("20160001", "오름관 1동", 201901, 1, 7, true, true, false, true),
+    			new ApplicationViewModel("20160002", "오름관 2동", 201901, 2, 5, true, true, false, false),
+    			new ApplicationViewModel("20160003", "푸름관 3동", 201901, 0, 7, false, true, false, false),
+    			new ApplicationViewModel("20160004", "푸름관 4동", 201901, 1, 5, false, false, false, true)
+        		);
+    	
+    	//서버에서 받아온거 표시하게 만듬.
+    	check_application_column_id.setCellValueFactory(cellData -> cellData.getValue().studentIdProperty());
+    	check_application_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
+    	check_application_column_semester.setCellValueFactory(cellData -> cellData.getValue().semesterProperty());
+    	check_application_column_choice.setCellValueFactory(cellData -> cellData.getValue().choiceProperty());
+    	check_application_column_mealType.setCellValueFactory(cellData -> cellData.getValue().mealTypeProperty());
+    	check_application_column_isPaid.setCellValueFactory(cellData -> cellData.getValue().isPaidProperty());
+    	check_application_column_isPassed.setCellValueFactory(cellData -> cellData.getValue().isPassedProperty());
+    	check_application_column_isLastPassed.setCellValueFactory(cellData -> cellData.getValue().isLastPassedProperty());
+    	check_application_column_isSnore.setCellValueFactory(cellData -> cellData.getValue().isSnoreProperty());
+    	check_application_tableview.setItems(applicationList);
+    }
     
     private void updatePayment()
     {
