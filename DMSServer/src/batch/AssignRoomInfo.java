@@ -1,4 +1,4 @@
-package assign;
+package batch;
 
 
 import shared.classes.RoomInfo;

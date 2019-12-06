@@ -1,4 +1,4 @@
-package database;
+package logic;
 
 import java.util.Iterator;
 import java.util.TreeSet;

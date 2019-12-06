@@ -1,4 +1,4 @@
-package assign;
+package batch;
 
 public class MakeAllRoomInfo {
 	public static AssignRoomInfo[] getO1()
