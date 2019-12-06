@@ -5,7 +5,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import DB.DBinfo;
+
 
 public class AssignAlgorithm 
 {
@@ -139,7 +141,7 @@ public class AssignAlgorithm
 			{
 				for(int i = 1; i < O1.length; i += 2)
 				{
-					if(O1[i].getRoomNumber().equals(""))
+					if(O1[i].getRoomNumber() == null)
 					{
 						O1[i].setRoomNumber(rurs3.getString("호"));
 						O1[i + 1].setRoomNumber(rurs3.getString("호"));
@@ -153,7 +155,7 @@ public class AssignAlgorithm
 			{
 				for(int i = 1; i < O2.length; i += 2)
 				{
-					if(O2[i].getRoomNumber().equals(""))
+					if(O2[i].getRoomNumber() == null)
 					{
 						O2[i].setRoomNumber(rurs3.getString("호"));
 						O2[i + 1].setRoomNumber(rurs3.getString("호"));
@@ -167,7 +169,7 @@ public class AssignAlgorithm
 			{
 				for(int i = 1; i < O3.length; i += 2)
 				{
-					if(O3[i].getRoomNumber().equals(""))
+					if(O3[i].getRoomNumber() == null)
 					{
 						O3[i].setRoomNumber(rurs3.getString("호"));
 						O3[i + 1].setRoomNumber(rurs3.getString("호"));
@@ -181,7 +183,7 @@ public class AssignAlgorithm
 			{
 				for(int i = 1; i < P1.length; i += 2)
 				{
-					if(P1[i].getRoomNumber().equals(""))
+					if(P1[i].getRoomNumber() == null)
 					{
 						P1[i].setRoomNumber(rurs3.getString("호"));
 						P1[i + 1].setRoomNumber(rurs3.getString("호"));
@@ -194,7 +196,7 @@ public class AssignAlgorithm
 			{
 				for(int i = 1; i < P2.length; i += 2)
 				{
-					if(P2[i].getRoomNumber().equals(""))
+					if(P2[i].getRoomNumber() == null)
 					{
 						P2[i].setRoomNumber(rurs3.getString("호"));
 						P2[i + 1].setRoomNumber(rurs3.getString("호"));
@@ -208,7 +210,7 @@ public class AssignAlgorithm
 			{
 				for(int i = 1; i < P3.length; i += 4)
 				{
-					if(P3[i].getRoomNumber().equals(""))
+					if(P3[i].getRoomNumber() == null)
 					{
 						P3[i].setRoomNumber(rurs3.getString("호"));
 						P3[i + 1].setRoomNumber(rurs3.getString("호"));
@@ -226,7 +228,7 @@ public class AssignAlgorithm
 			{
 				for(int i = 1; i < P4.length; i += 4)
 				{
-					if(P4[i].getRoomNumber().equals(""))
+					if(P4[i].getRoomNumber() == null)
 					{
 						P4[i].setRoomNumber(rurs3.getString("호"));
 						P4[i + 1].setRoomNumber(rurs3.getString("호"));
@@ -234,8 +236,8 @@ public class AssignAlgorithm
 						P4[i + 3].setRoomNumber(rurs3.getString("호"));
 						P4[i].setSemesterCode(currentSemester);
 						P4[i + 1].setSemesterCode(currentSemester);
-						P3[i + 2].setSemesterCode(currentSemester);
-						P3[i + 3].setSemesterCode(currentSemester);
+						P4[i + 2].setSemesterCode(currentSemester);
+						P4[i + 3].setSemesterCode(currentSemester);
 					}
 				}
 				break;
@@ -244,7 +246,7 @@ public class AssignAlgorithm
 			{
 				for(int i = 1; i < SN.length; i += 2)
 				{
-					if(SN[i].getRoomNumber().equals(""))
+					if(SN[i].getRoomNumber() == null)
 					{
 						SN[i].setRoomNumber(rurs3.getString("호"));
 						SN[i + 1].setRoomNumber(rurs3.getString("호"));
@@ -258,7 +260,7 @@ public class AssignAlgorithm
 			{
 				for(int i = 1; i < SY.length; i += 2)
 				{
-					if(SY[i].getRoomNumber().equals(""))
+					if(SY[i].getRoomNumber() == null)
 					{
 						SY[i].setRoomNumber(rurs3.getString("호"));
 						SY[i + 1].setRoomNumber(rurs3.getString("호"));
@@ -397,7 +399,7 @@ public class AssignAlgorithm
 			{
 				for (int i = 1; i < O1.length; i++)
 				{
-					if(O1[i].getStudentId().equals(""))
+					if(O1[i].getStudentId() == null)
 					{
 						O1[i].setStudentId(rurs5.getString("ID"));
 						if(rurs5.getInt("지망") == 0)
@@ -416,7 +418,7 @@ public class AssignAlgorithm
 			{
 				for (int i = 1; i < O2.length; i++)
 				{
-					if(O2[i].getStudentId().equals(""))
+					if(O2[i].getStudentId() == null)
 					{
 						O2[i].setStudentId(rurs5.getString("ID"));
 						if(rurs5.getInt("지망") == 0)
@@ -435,7 +437,7 @@ public class AssignAlgorithm
 			{
 				for (int i = 1; i < O3.length; i++)
 				{
-					if(O3[i].getStudentId().equals(""))
+					if(O3[i].getStudentId() == null)
 					{
 						O3[i].setStudentId(rurs5.getString("ID"));
 						if(rurs5.getInt("지망") == 0)
@@ -454,20 +456,23 @@ public class AssignAlgorithm
 			{
 				for (int i = 1; i < P1.length; i++)
 				{
-					if(P1[i].getStudentId().equals(""))
+					if(P1[i].getStudentId() == null)
 					{
 						P1[i].setStudentId(rurs5.getString("ID"));
 						if(P1[i].getSeat().equals("B") && P1[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣지마라는 뜻
 						{
-							P1[i].setStudentId("");
 						}
 						else if(rurs5.getInt("지망") == 0)
 						{
 							P1[i].setCheckout(checkOutDate2);
+							P1[i].setStudentId(rurs5.getString("ID"));
+
 						}
 						else 
 						{
 							P1[i].setCheckout(checkOutDate1);
+							P1[i].setStudentId(rurs5.getString("ID"));
+
 						}
 					}
 				}
@@ -477,20 +482,22 @@ public class AssignAlgorithm
 			{
 				for (int i = 1; i < P2.length; i++)
 				{
-					if(P2[i].getStudentId().equals(""))
+					if(P2[i].getStudentId() == null)
 					{
-						P2[i].setStudentId(rurs5.getString("ID"));
 						if(P2[i].getSeat().equals("B") && P2[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣지마라는 뜻
 						{
-							P2[i].setStudentId("");
 						}
 						else if(rurs5.getInt("지망") == 0)
 						{
 							P2[i].setCheckout(checkOutDate2);
+							P2[i].setStudentId(rurs5.getString("ID"));
+
 						}
 						else 
 						{
 							P2[i].setCheckout(checkOutDate1);
+							P2[i].setStudentId(rurs5.getString("ID"));
+
 						}
 					}
 				}
@@ -500,18 +507,23 @@ public class AssignAlgorithm
 			{
 				for (int i = 1; i < P3.length; i++)
 				{
-					P3[i].setStudentId(rurs5.getString("ID"));
-					if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣지마라는 뜻
+					if(P3[i].getStudentId() == null)
 					{
-						P3[i].setStudentId("");
-					}
-					else if(rurs5.getInt("지망") == 0)
-					{
-						P3[i].setCheckout(checkOutDate2);
-					}
-					else 
-					{
-						P3[i].setCheckout(checkOutDate1);
+						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣지마라는 뜻
+						{
+						}
+						else if(rurs5.getInt("지망") == 0)
+						{
+							P3[i].setCheckout(checkOutDate2);
+							P3[i].setStudentId(rurs5.getString("ID"));
+
+						}
+						else 
+						{
+							P3[i].setCheckout(checkOutDate1);
+							P3[i].setStudentId(rurs5.getString("ID"));
+
+						}
 					}
 				}
 				break;
@@ -520,18 +532,22 @@ public class AssignAlgorithm
 			{
 				for (int i = 1; i < O1.length; i++)
 				{
-					P3[i].setStudentId(rurs5.getString("ID"));
-					if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣지마라는 뜻
+					if(P4[i].getStudentId() == null)
 					{
-						P3[i].setStudentId("");
-					}
-					else if(rurs5.getInt("지망") == 0)
-					{
-						P3[i].setCheckout(checkOutDate2);
-					}
-					else 
-					{
-						P3[i].setCheckout(checkOutDate1);
+						if((P4[i].getSeat().equals("B") || P4[i].getSeat().equals("D"))&& P4[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣지마라는 뜻
+						{
+						}
+						else if(rurs5.getInt("지망") == 0)
+						{
+							P4[i].setCheckout(checkOutDate2);
+							P4[i].setStudentId(rurs5.getString("ID"));
+						}
+						else 
+						{
+							P4[i].setCheckout(checkOutDate1);
+							P4[i].setStudentId(rurs5.getString("ID"));
+
+						}
 					}
 				}
 				break;
@@ -540,7 +556,7 @@ public class AssignAlgorithm
 			{
 				for (int i = 1; i < SN.length; i++)
 				{
-					if(SN[i].getStudentId().equals(""))
+					if(SN[i].getStudentId() == null)
 					{
 						SN[i].setStudentId(rurs5.getString("ID"));
 						if(rurs5.getInt("지망") == 0)
@@ -559,7 +575,7 @@ public class AssignAlgorithm
 			{
 				for (int i = 1; i < SY.length; i++)
 				{
-					if(SY[i].getStudentId().equals(""))
+					if(SY[i].getStudentId() == null)
 					{
 						SY[i].setStudentId(rurs5.getString("ID"));
 						if(rurs5.getInt("지망") == 0)
@@ -578,7 +594,7 @@ public class AssignAlgorithm
 			{
 				for (int i = 1; i < P1.length; i++)
 				{
-					if(P1[i].getStudentId().equals(""))
+					if(P1[i].getStudentId() == null)
 					{
 						P1[i].setStudentId(rurs5.getString("ID"));
 						if(P1[i].getSeat().equals("B") && P1[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣으라는 뜻
@@ -604,7 +620,7 @@ public class AssignAlgorithm
 			{
 				for (int i = 1; i < P2.length; i++)
 				{
-					if(P2[i].getStudentId().equals(""))
+					if(P2[i].getStudentId() == null)
 					{
 						P2[i].setStudentId(rurs5.getString("ID"));
 						if(P2[i].getSeat().equals("B") && P2[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣으라는 뜻
@@ -630,7 +646,7 @@ public class AssignAlgorithm
 			{
 				for (int i = 1; i < P3.length; i++)
 				{
-					if(P3[i].getStudentId().equals(""))
+					if(P3[i].getStudentId() == null)
 					{
 						P3[i].setStudentId(rurs5.getString("ID"));
 						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D")) && P2[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣으라는 뜻
@@ -656,7 +672,7 @@ public class AssignAlgorithm
 			{
 				for (int i = 1; i < P3.length; i++)
 				{
-					if(P4[i].getStudentId().equals(""))
+					if(P4[i].getStudentId() == null)
 					{
 						P4[i].setStudentId(rurs5.getString("ID"));
 						if((P4[i].getSeat().equals("B") || P4[i].getSeat().equals("D")) && P4[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣으라는 뜻
