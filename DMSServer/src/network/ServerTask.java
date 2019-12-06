@@ -14,44 +14,51 @@ class ServerTask implements Runnable
 {
 	private int port;
 	ServerSocket serverSocket;
+	DatabaseHandler db;
+	Socket sock;
 	private static final int THREAD_CNT = 2;
 	private static ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_CNT);
 	
 	private boolean stop = false;
 	
-	public ServerTask(int PORT)
+	public ServerTask(Socket s, DBMANAGER db )
 	{
-		this.port = PORT;
+		sock = s;
+		this.db=db;
 	}
 	
 	@Override
 	public void run()
 	{
-		try
+		
+		
+		OutputStream os = sock.getOutputStream();
+		InputStream is = sock.getInputStream();
+		byte protocolType;
+		byte[] buffer= new byte[2000];
+		//NetworkHandler에서 종료요청이 오기전까지 계속 클라이언트의 요청을 받아들인다.
+		while(!stop)
 		{
-			serverSocket = new ServerSocket(port);
+			is.read(buffer);
 			
-			//NetworkHandler에서 종료요청이 오기전까지 계속 클라이언트의 요청을 받아들인다.
-			while(!stop)
-			{
-				System.out.println("waiting for client...");
-				Socket socket = serverSocket.accept();
-				try
-				{
-					// 요청이 오면 스레드 풀의 스레드로 소켓을 넣어줍니다.
-					// 이후는 스레드 내에서 처리합니다.
-					threadPool.execute(new ClientTask(socket));
-				}
-				catch(Exception e)
-				{
-					e.printStackTrace();
-				}
+			protocolType = buffer[0]
+			
+					
+			switch(protocolType) {
+			case 0x01:
+				// login 처리
+				break;
+			case 0x02:
+				//file 처리
+				break;
+			case 0x03:
+				//event 처리
+				break;
 			}
+			
+			
 		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		
 	}
 	
 	public void close()

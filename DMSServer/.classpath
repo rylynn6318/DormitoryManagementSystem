@@ -4,5 +4,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="/WeHateJava/ExternalJars/mysql-connector-java-8.0.18.jar"/>
 	<classpathentry exported="true" kind="lib" path="/WeHateJava/ExternalJars/shared-class.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Seohee/eclipse-workspace/WeHateJava/ExternalJars/mysql-connector-java-8.0.18.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Seohee/eclipse-workspace/WeHateJava/ExternalJars/shared-class.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
