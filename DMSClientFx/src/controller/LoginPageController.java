@@ -3,6 +3,7 @@ package controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
@@ -97,20 +98,38 @@ public class LoginPageController implements Initializable {
         account.setPassword(inputUserPw);
 
         //네트워킹 여기서 해라
-//        boolean isPassed = networking(account);
-        
-        //일단 테스트용으로 네트워킹 주석처리하고 패스함.
-         boolean isPassed = true;
-         account.setUserType(UserType.ADMINISTRATOR);			//관리자 페이지로 들어가려면 ADMINISTRATOR로 바꾸면됨
-        //------------------------
-        
-        if (isPassed) {
-            IOHandler.getInstance().showAlert("로그인 성공");
-            setUserInfo(account);
-            moveToMain();
-        } else {
-            IOHandler.getInstance().showAlert("아이디 혹은 비밀번호가 틀렸습니다.");
-            IDField.requestFocus();
+        boolean isPassed = false;
+        try
+        {
+        	isPassed = networking(account);
+        	
+        	//테스트용으로 네트워킹 주석처리하고 패스함.
+	        //isPassed = true;
+	        //account.setUserType(UserType.ADMINISTRATOR);			//관리자로 들어가려면 UserType을 ADMINISTRATOR로 바꾸면됨, 학생은 STUDENT, 
+        	
+        	if (isPassed) 
+        	{
+                IOHandler.getInstance().showAlert("로그인 성공");
+                setUserInfo(account);
+                moveToMain();
+            } 
+        	else 
+        	{
+                IOHandler.getInstance().showAlert("아이디 혹은 비밀번호가 틀렸습니다.");
+                IDField.requestFocus();
+            }
+        }
+        catch(ConnectException ce)
+        {
+        	IOHandler.getInstance().showAlert("서버 연결에 실패했습니다.");
+        }
+        catch(IOException ie)
+        {
+        	IOHandler.getInstance().showAlert("서버와의 연결이 끊여졌습니다.");
+        }
+        catch(Exception e) 
+        {
+        	IOHandler.getInstance().showAlert("알 수 없는 이유로 로그인에 실패했습니다.");
         }
     }
 
@@ -120,24 +139,24 @@ public class LoginPageController implements Initializable {
         OutputStream outputToServer = socket.getOutputStream();
         InputStream inputFromServer = socket.getInputStream();
 
-        InetSocketAddress server = new InetSocketAddress("127.0.0.1", 666);
-        SocketChannel client = SocketChannel.open(server);
+        //InetSocketAddress server = new InetSocketAddress("127.0.0.1", 666);
+        //SocketChannel client = SocketChannel.open(server);
 
         // To_Server일때 code1, code2는 머가 드가든 상관 없음.
         Protocol login = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_SERVER, ProtocolField.Code1.NULL, ProtocolField.Code2.NULL)
                 .body(ProtocolHelper.serialization(account)).build();
 
-        // outputToServer.write(login.getPacket());
+         outputToServer.write(login.getPacket());
 
-        client.write(ByteBuffer.wrap(login.getPacket()));
+        //client.write(ByteBuffer.wrap(login.getPacket()));
 
         ///////위 코드는 전송//////////////////아래 코드는 수신///////////
 
         ByteBuffer bb = ByteBuffer.allocate(1024);
-        client.read(bb);
-        // byte[] buffer = new byte[1024];
-        // inputFromServer.read(buffer);
-        login = new Protocol.Builder(bb.array()).build();
+        //client.read(bb);
+        byte[] buffer = new byte[1024];
+        inputFromServer.read(buffer);
+        login = new Protocol.Builder(buffer).build();
 
         if (login.code2 == ProtocolField.Code2.LoginResult.FAIL) {
             //로그인 실패
