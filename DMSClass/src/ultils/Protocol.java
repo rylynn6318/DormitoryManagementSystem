@@ -4,46 +4,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import enums.*;
-// 프로토콜 쓰는법 (계획)
-// 1. 보낼때 (로그인으로 예를 들겠음)
-// Socket socket = new Socket("127.0.0.1", 666);
-// OutputStream outputToServer = socket.getOutputStream();
-// LoginInfo logininfo = new LoginInfo(id, pw); // LoginInfo 클래스는 Serializable 상속받음
-//
-// Protocol lp = Protocol.Builder(타입 등 각종 정보...).build();
-// lp.send(outputToServer); or outputToServer.write(lp.getPacket());
-// 단 두줄로 끝!
-//
-// 2. 받을때 (이번엔 서버가 받은 정보로 로그인 처리하는 대강의 예제)
-// ServerSocket sSocket = new ServerSocket(666);
-// Socket socket = sSocket.accept();
-// InputStream inputFromClient = socket.getInputStream();
-// byte[] buffer = new byte[우리프로토콜에서 이론상 최대 길이]; // 앞으로 데이터가 쓰일 버퍼
-// inputFromClient.read(buffer); // 클라이언트로부터 정보 수신
-// 
-// Protocol lp = Protocol.Builder(buffer).build();
-// LoginInfo logininfo = lp.getBody();
-// 즉 공통적으로 이렇게 쓰면 됨
-// Serializable body = protocol.getBody();
-// 이 역시 앞의 과정 제외하면 두줄로 끝!
-// 
-// 파일처럼 분할되서 오면?
-// 위에 buffer를
-// int readBytes;
-// while ((readBytes = inputFromClient.read(buffer)) != -1) {
-//     fos.write(buffer, 0, readBytes); // 파일 쓰기
-//     boas.write(buffer, 0, readBytes); // 바이트 배열 쓰기
-// }
-// 이런식으로 읽어온다음
-// 바이트 첫번째 정보가 총 길이니 이걸 기준으로 짤라야함
-// byte[] protocols = SomethingClass.getByteArrays(buffer);
-// foreach(var protocol in protocols){
-//     data += protocol.getBody();
-// }
-// 대충 이런 느낌으로? 처리해야 할듯?? 아직 구현 안해서 확답 못함ㅎ
 import interfaces.*;
 
-// TODO : 현재 send buffer 크기 이상의 객체에 대해 예외 처리가 안되어 있음. 즉 프로토콜 사용자가 알아서 자르고 지지고 레릿고 해야함
+// 사용법
+// 1. Builder를 통해 프로토콜을 만든다.
+// 2. SocketHelper를 통해 통신한다
+// 3. profit!
+
 public final class Protocol implements Comparable<Protocol> {
     // 프로토콜 생성시 Builder 이용할 것
     public static class Builder {
