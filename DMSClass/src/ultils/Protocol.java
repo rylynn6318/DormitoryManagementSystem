@@ -2,6 +2,7 @@ package ultils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.rmi.UnexpectedException;
 import java.util.Arrays;
 import enums.*;
 // 프로토콜 쓰는법 (계획)
@@ -44,7 +45,7 @@ import enums.*;
 import interfaces.*;
 
 // TODO : 현재 send buffer 크기 이상의 객체에 대해 예외 처리가 안되어 있음. 즉 프로토콜 사용자가 알아서 자르고 지지고 레릿고 해야함
-public final class Protocol {
+public final class Protocol implements Comparable<Protocol> {
     // 프로토콜 생성시 Builder 이용할 것
     public static class Builder {
         // 필수
@@ -122,10 +123,9 @@ public final class Protocol {
     public static final int HEADER_LENGTH = 10;
 
     // Body
-    // TODO : 자바는 final이여도 배열은 수정가능하네; getter 수정 필요함
     private final byte[] body_bytes;
 
-    public byte[] getBody(){
+    public byte[] getBody() {
         return body_bytes;
     }
 
@@ -159,5 +159,17 @@ public final class Protocol {
         baos.write((byte) (sequence & 0xff));
         baos.write(body_bytes);
         return baos.toByteArray();
+    }
+
+    @Override
+    public int compareTo(Protocol o) {
+        if (this.sequence < o.sequence)
+            return -1;
+        else if (this.sequence > o.sequence)
+            return 1;
+        else if (this.sequence == 0 && o.sequence == 0)
+            return 0;
+        else
+            throw new RuntimeException("두 프로토콜의 시퀀스가 같으면 안됩니다!");
     }
 }
