@@ -25,18 +25,13 @@ public class documentManager
 					PORT + "/" + 
 					DB_NAME + "?user=" + 
 					USER_NAME + "&password=" + 
-					PASSWORD; 
-	
-	public static void main(String[] args) throws ClassNotFoundException, SQLException
-	{
-		
-	}
+					PASSWORD;
 	
 	public static void lookUpDocuments() throws ClassNotFoundException, SQLException	//FXCollection 몰라서 일단 띵근이가 써놓은거 따라했는데 사용법 아는사람 있으면 확인점
 	{
 		Connection conn = null;
 		Statement state = null;
-		
+
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();

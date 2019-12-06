@@ -59,10 +59,7 @@ public class ScheduleCheck {
 		else
 		{
 			System.out.println("해당 기간 맞음 ㅇㅇ");
-		}	
-		
-		
-		
+		}			
 	}
 	
 

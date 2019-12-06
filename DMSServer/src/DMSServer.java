@@ -1,15 +1,6 @@
 import database.DatabaseHandler;
 import io.*;
-import network.NetworkHandler;
-import protocol.Protocol;
-import protocol.ProtocolField;
-import protocol.ProtocolHelper;
-import shared.classes.Account;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.AccessibleObject;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -32,43 +23,15 @@ import java.net.Socket;
 
 public class DMSServer {
     public static void main(String[] args) throws Exception {
-		ServerSocket sSocket = new ServerSocket(666);
-		System.out.println("클라이언트 접속 대기중...");
-
+        ServerSocket sSocket = new ServerSocket(666);
+        System.out.println("클라이언트 접속 대기중...");
+        DatabaseHandler db = new DatabaseHandler();
+        db.connection();
         while (true) {
             Socket socket = sSocket.accept();
             System.out.println("클라이언트 접속");
-
-            OutputStream outputToClient = socket.getOutputStream();
-            InputStream inputFromClient = socket.getInputStream();
-
-            byte[] buffer = new byte[1024];
-            inputFromClient.read(buffer);
-            Protocol protocol = new Protocol.Builder(buffer).build();
-
-            switch (protocol.type) {
-                case LOGIN:
-                    Account account = (Account) ProtocolHelper.deserialization(protocol.body_bytes);
-                    // 여기서 DB랑 통신해서 로그인 처리 해야함.
-                    // 일단은 하드코딩
-                    if (account.getAccountId().equals("admin"))
-						protocol = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_CLIENT, ProtocolField.Code1.NULL, ProtocolField.Code2.LoginResult.ADMIN).build();
-                    else
-						protocol = new Protocol.Builder(ProtocolField.Type.LOGIN, ProtocolField.Direction.TO_CLIENT, ProtocolField.Code1.NULL, ProtocolField.Code2.LoginResult.STUDENT).build();
-
-                    byte[] tmp = protocol.getPacket();
-
-                    outputToClient.write(protocol.getPacket());
-                    break;
-                case FILE:
-                    break;
-                case EVENT:
-                    break;
-            }
-
-			inputFromClient.close();
-			outputToClient.close();
-			socket.close();
+            new ServerTask(socket, db).start();    //반복수행
         }
     }
+}
 }
