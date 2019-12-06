@@ -1,3 +1,4 @@
+package DB;
 
 
 public enum DBinfo {
