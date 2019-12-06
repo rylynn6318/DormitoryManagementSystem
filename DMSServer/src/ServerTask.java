@@ -1,8 +1,9 @@
+import enums.*;
+import models.Account;
+import ultils.*;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -13,51 +14,54 @@ import java.util.concurrent.Executors;
 public class ServerTask implements Runnable {
     private int port;
     ServerSocket serverSocket;
-    //DatabaseHandler db;
-    Socket sock;
-    private static final int THREAD_CNT = 2;
-    private static ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_CNT);
+    SocketHelper socketHelper;
+    private static ExecutorService threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     private boolean stop = false;
 
-    //public ServerTask(Socket s, DatabaseHandler db) {
-    //    sock = s;
-    //    this.db = db;
-    //}
+    public ServerTask(SocketHelper socketHelper) {
+        this.socketHelper = socketHelper;
+    }
 
     @Override
     public void run() {
-        try {
-            OutputStream os = sock.getOutputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        InputStream is = null;
-        try {
-            is = sock.getInputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        byte protocolType;
-        byte[] buffer = new byte[2000];
         //NetworkHandler 에서 종료요청이 오기전까지 계속 클라이언트의 요청을 받아들인다.
         while (!stop) {
+            Protocol protocol = null;
             try {
-                is.read(buffer);
-            } catch (IOException e) {
+                protocol = socketHelper.read();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            protocolType = buffer[0];
 
-            switch (protocolType) {
-                case 0x01:
-                    // login 처리
+            switch (protocol.type) {
+                case LOGIN:
+                    try {
+                        if (((Account) ProtocolHelper.deserialization(protocol.getBody())).accountId.equals("admin")) {
+                            try {
+                                socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.ADMIN).build());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        else {
+                            try {
+                                socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.STUDENT).build());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
-                case 0x02:
+                case FILE:
                     //file 처리
                     break;
-                case 0x03:
+                case EVENT:
                     //event 처리
                     break;
             }
@@ -67,13 +71,7 @@ public class ServerTask implements Runnable {
     public void close() {
         System.out.println("클라이언트스레드풀 종료 시작");
         stop = true;
-        try {
-            //이부분에서 예외잡힘...
-            //Socket socket = serverSocket.accept(); 이거랑 관련있는것 같은데, 해결법 찾아보는중...
-            serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
         threadPool.shutdown();
         System.out.println("클라이언트스레드풀 종료됨");
     }

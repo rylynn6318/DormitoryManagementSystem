@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -89,8 +90,8 @@ public class LoginPageController implements Initializable {
 
         try {
             //테스트용으로 네트워킹 주석처리하고 패스함.
-            // loginResult = networking(account);
-            loginResult = Code2.LoginResult.ADMIN;
+            loginResult = login(account);
+            // loginResult = Code2.LoginResult.ADMIN;
 
             switch (loginResult){
                 case FAIL:
@@ -121,12 +122,21 @@ public class LoginPageController implements Initializable {
     }
 
     //테스트용 네트워킹
-    private Code2.LoginResult login(Account account) throws Exception {
+    private Code2.LoginResult login(Account account){
         // To_Server 일때 code1, code2는 머가 드가든 상관 없음.
-        Protocol login = new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_SERVER, Code1.NULL, Code2.NULL)
-                .body(ProtocolHelper.serialization(account)).build();
+        Protocol login = null;
+        try {
+            login = new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_SERVER, Code1.NULL, Code2.NULL)
+                    .body(ProtocolHelper.serialization(account)).build();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        login = SocketHandler.INSTANCE.request(login);
+        try {
+            login = SocketHandler.INSTANCE.request(login);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return (Code2.LoginResult) login.code2;
     }
