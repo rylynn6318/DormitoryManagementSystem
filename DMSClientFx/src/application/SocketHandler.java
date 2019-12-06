@@ -1,7 +1,9 @@
 package application;
 
 import ultils.Protocol;
+import ultils.ProtocolHelper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -23,13 +25,20 @@ public enum SocketHandler {
         }
     }
 
-    public void send(Protocol p) throws IOException {
-        socket.getOutputStream().write(p.getPacket());
+    public void write(Protocol p) throws IOException {
+        for(Protocol protocol : ProtocolHelper.split(p, sendbuffer_size)){
+            socket.getOutputStream().write(protocol.getPacket());
+        }
     }
 
-    public byte[] read() throws IOException {
+    public Protocol read() throws Exception {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[sendbuffer_size];
-        socket.getInputStream().read(buffer);
-        return buffer;
+
+        while (socket.getInputStream().read(buffer) != -1) {
+            output.write(buffer);
+        }
+
+        return new Protocol.Builder(output.toByteArray()).build();
     }
 }

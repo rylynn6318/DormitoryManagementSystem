@@ -1,10 +1,6 @@
 package controller;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
@@ -130,11 +126,11 @@ public class LoginPageController implements Initializable {
         Protocol login = new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_SERVER, Code1.NULL, Code2.NULL)
                 .body(ProtocolHelper.serialization(account)).build();
 
-        SocketHandler.INSTANCE.send(login);
+        SocketHandler.INSTANCE.write(login);
 
         ///////위 코드는 전송//////////////////아래 코드는 수신///////////
 
-        login = new Protocol.Builder(SocketHandler.INSTANCE.read()).build();
+        login = SocketHandler.INSTANCE.read();
 
         return (Code2.LoginResult) login.code2;
     }
