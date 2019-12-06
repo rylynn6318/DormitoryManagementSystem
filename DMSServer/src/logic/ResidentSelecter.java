@@ -2,7 +2,7 @@ package logic;
 
 import java.util.Iterator;
 import java.util.TreeSet;
-import shared.classes.*;
+import models.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;

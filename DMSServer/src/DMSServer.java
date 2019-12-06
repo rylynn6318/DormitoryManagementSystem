@@ -1,12 +1,4 @@
-<<<<<<< HEAD
 
-
-
-=======
-import database.DatabaseHandler;
-import io.*;
-
->>>>>>> 747304a2197bf463c5cc307205030434e3caf072
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -31,16 +23,12 @@ public class DMSServer {
     public static void main(String[] args) throws Exception {
         ServerSocket sSocket = new ServerSocket(666);
         System.out.println("클라이언트 접속 대기중...");
-        DatabaseHandler db = new DatabaseHandler();
-        db.connection();
+        //DatabaseHandler db = new DatabaseHandler();
+        //db.connection();
         while (true) {
             Socket socket = sSocket.accept();
             System.out.println("클라이언트 접속");
-            new ServerTask(socket, db).start();    //반복수행
+            // new ServerTask(socket, db).start();    //반복수행
         }
     }
 }
-<<<<<<< HEAD
-=======
-}
->>>>>>> 747304a2197bf463c5cc307205030434e3caf072
