@@ -91,9 +91,8 @@ public class LoginPageController implements Initializable {
         Account account = new Account(inputUserId, inputUserPw, UserType.STUDENT);
 
         try {
-        	// loginResult = networking(account);
-
             //테스트용으로 네트워킹 주석처리하고 패스함.
+            // loginResult = networking(account);
             loginResult = Code2.LoginResult.ADMIN;
 
             switch (loginResult){
