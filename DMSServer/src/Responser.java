@@ -1,5 +1,6 @@
 import logic.ScheduleCheck;
 import protocol.ProtocolField;
+import shared.enums.Gender;
 
 //디버깅용 클래스
 //대충 클라이언트에서 어떤 요청이 왔을때 그에 대한 반응(로직)을 모아둠.
@@ -59,7 +60,7 @@ public class Responser
 		String id = "20160469"; //수정 필요
 		
 		//3. 학생테이블에서 학번으로 조회하여 성별을 알아낸다.
-		StudentParser.getGender(id);
+		Gender g = StudentParser.getGender(id);
 		
 		//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
 		
