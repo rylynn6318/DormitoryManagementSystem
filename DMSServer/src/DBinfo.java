@@ -1,6 +1,3 @@
-
-
-
 public class DBinfo {
 	static final String DRIVER_NAME = "mysql";
 	static final String HOSTNAME = "wehatejava.czztgstzacsv.us-east-1.rds.amazonaws.com";
