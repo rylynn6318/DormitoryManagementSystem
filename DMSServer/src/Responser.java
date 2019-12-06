@@ -2,9 +2,14 @@ import java.util.ArrayList;
 
 import DB.DormParser;
 import DB.StudentParser;
+import enums.Gender;
 import logic.ScheduleCheck;
+<<<<<<< HEAD
 import models.*;
 import enums.Gender;
+=======
+import models.Dormitory;
+>>>>>>> f1faa357f596354ba5fa2e1e1fcdc5eedea24deb
 
 //디버깅용 클래스
 //대충 클라이언트에서 어떤 요청이 왔을때 그에 대한 반응(로직)을 모아둠.
@@ -67,12 +72,13 @@ public class Responser
 		Gender g = StudentParser.getGender(id);
 		
 		//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
-		ArrayList<Dormitory> dList = new ArrayList<Dormitory>();
-		dList = DormParser.getDormList(g);
+		ArrayList<String> dList = new ArrayList<String>();	//이건 맨첨에 생활관명만 들고있는 Dormitory Arraylist로 처리했었는데 Dorm클래스가 구조가 바뀌면서 생성자 조건땜시 그냥 생활관명만 들고있는 String배열로 바꿈
+		dList = DormParser.getDormList(g);					//손이 이렇게 해놓으면 지가 나중에 Dorm타입을 바꾸겠다함 미1친놈임 그냥 생성자 하나 더만들면되는데 ㅇㅈ?
 		
 		//5. 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
 		//	 스케쥴 테이블에서 비고(안내사항)를 가져온다.
-		
+		ArrayList<Dormitory> dormList = new ArrayList<Dormitory>();
+		dormList = DormParser.getDormInfo(dList);
 		
 		//6. 해당 정보를 객체화, 배열로 만들어 클라이언트에게 전송한다.
 	}
