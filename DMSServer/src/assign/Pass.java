@@ -288,7 +288,11 @@ public class Pass
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//배정내역을 불러와서 서버 메모리에 있는 해당 생활관 호실에 배정내역이 있으면 생활관 호실에 학번을 넣어줌
 		String sql3 = "SELECT 호실정보_호, 생활관명, 자리, ID FROM " + DB_NAME + ".배정내역 WHERE 퇴사예정일 > "+ availablePeriod;// 여러 배정내역 (몇년 전꺼까지도) 중에서 아직 쓰고있는 방 예를들어 지금 2학기인데 1학기 1년 입사자
+<<<<<<< HEAD
 		Statement state4 = conn.createStatement();
+=======
+		Statement state4;
+>>>>>>> branch 'gunhyuk' of https://github.com/dldhk97/WeHateJava
 		ResultSet rurs4 = state4.executeQuery(sql3);
 		
 		while(rurs4.next())
@@ -399,7 +403,11 @@ public class Pass
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//신청자가 신청한 생활관을 가져와서 메모리에 있는 현재 배정된 내역과 대조하면서 방에 넣어줌
 		
+<<<<<<< HEAD
 		Statement state5 = conn.createStatement();
+=======
+		Statement state5;
+>>>>>>> branch 'gunhyuk' of https://github.com/dldhk97/WeHateJava
 		String sql5 = "SELECT ID, 생활관명 FROM 지망 " + DB_NAME + ".신청 WHERE (퇴사예정일> "+ availablePeriod +" and 최종결과 = 'Y') order by 생활관명";  //이미 누가 쓰고 있는방인가 알기위한 쿼리
 		ResultSet rurs5 = state5.executeQuery(sql5);
 		
@@ -696,8 +704,13 @@ public class Pass
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//이제 업데이트
+<<<<<<< HEAD
 		Statement state6 = conn.createStatement();
 		String sql6;
+=======
+		Statement state6;
+		String sql6
+>>>>>>> branch 'gunhyuk' of https://github.com/dldhk97/WeHateJava
 		for(int i = 1; i < O1.length; i++)
 		{
 			sql6 = "INSERT INTO " + DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O1[i].getStudentId() + "', '" + O1[i].getSeat()+ "', '"+O1[i].getCheckOut()+ "', '오름1', '" + O1[i].getSemesterCode() + "', '" + O1[i].getRoomNumber() +"')";
