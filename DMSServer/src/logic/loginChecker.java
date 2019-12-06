@@ -6,20 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import DB.DBinfo;
+
 public class loginChecker {
-	static final String DRIVER_NAME = "mysql";
-	static final String HOSTNAME = "wehatejava.czztgstzacsv.us-east-1.rds.amazonaws.com";
-	static final String PORT = "3306";
-	static final String DB_NAME = "Prototype";													//DB이름
-	static final String USER_NAME = "admin"; 													//DB에 접속할 사용자 이름을 상수로 정의
-	static final String PASSWORD = "En2i3oHKLGh9UlnbYFP1"; 										//사용자의 비밀번호를 상수로 정의
-	static final String DB_URL = "jdbc:" + 
-					DRIVER_NAME + "://" + 
-					HOSTNAME + ":" + 
-					PORT + "/" + 
-					DB_NAME + "?user=" + 
-					USER_NAME + "&password=" + 
-					PASSWORD; 
 	public static int check(String id, String pw) throws ClassNotFoundException, SQLException
 	{
 		int result = 0;
@@ -27,9 +16,9 @@ public class loginChecker {
 		Statement state = null;
 			
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
+		conn = DriverManager.getConnection(DBinfo.DB_URL, DBinfo.DB_NAME, DBinfo.PASSWORD);		
 		state = conn.createStatement();
-		String sql = "SELECT PW, 계정 타입_코드 FROM " + DB_NAME + ".계정 WHERE ID = "+ id;			//받아온 id pw를 db에서 조회
+		String sql = "SELECT PW, 계정 타입_코드 FROM " + DBinfo.DB_NAME + ".계정 WHERE ID = "+ id;			//받아온 id pw를 db에서 조회
 		ResultSet loginRs = state.executeQuery(sql);
 		if(loginRs.next())																		//조회된게 있으면
 			{
