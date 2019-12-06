@@ -1,4 +1,4 @@
-package classes;
+package models;
 
 import enums.*;
 import java.io.Serializable;
@@ -14,5 +14,12 @@ public final class RoomInfo implements Serializable
 	
 	//키가 아닌 컬럼
 	public final int capacity;				//몇인실
-	
+
+	public RoomInfo(String dormitoryName, int semesterCode, String roomNumber, Gender gender, int capacity) {
+		this.dormitoryName = dormitoryName;
+		this.semesterCode = semesterCode;
+		this.roomNumber = roomNumber;
+		this.gender = gender;
+		this.capacity = capacity;
+	}
 }

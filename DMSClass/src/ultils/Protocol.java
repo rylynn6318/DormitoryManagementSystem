@@ -1,4 +1,4 @@
-package classes;
+package ultils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -41,16 +41,17 @@ import enums.*;
 //     data += protocol.getBody();
 // }
 // 대충 이런 느낌으로? 처리해야 할듯?? 아직 구현 안해서 확답 못함ㅎ
+import interfaces.*;
 
 // TODO : 현재 send buffer 크기 이상의 객체에 대해 예외 처리가 안되어 있음. 즉 프로토콜 사용자가 알아서 자르고 지지고 레릿고 해야함
 public class Protocol {
     // 프로토콜 생성시 Builder 이용할 것
     public static class Builder {
         // 필수
-        private final ProtocolField.Type type; // 1바이트, 프로토콜 타입
-        private final ProtocolField.Direction direction; // 1바이트, 프로토콜 응답 방향
-        private final ProtocolField.Code1.ICode1 code1; // 1바이트, 프로토콜 코드
-        private final ProtocolField.Code2.ICode2 code2; // 1바이트, 프로토콜 코드
+        private final ProtocolType type; // 1바이트, 프로토콜 타입
+        private final Direction direction; // 1바이트, 프로토콜 응답 방향
+        private final ICode1 code1; // 1바이트, 프로토콜 코드
+        private final ICode2 code2; // 1바이트, 프로토콜 코드
         // 옵션
         private short length = HEADER_LENGTH; // 2바이트, 전체 프로토콜 길이.
                                               // 실제 프로토콜에선 필수 정보지만 헤더길이는 10으로 고정되어 있으니
@@ -60,8 +61,7 @@ public class Protocol {
         private short sequence = 0; // 2바이트, 시퀀스 넘버
         private byte[] body_bytes = null; // body가 직렬화 된것
 
-        public Builder(ProtocolField.Type type, ProtocolField.Direction direction, ProtocolField.Code1.ICode1 code1,
-                ProtocolField.Code2.ICode2 code2) {
+        public Builder(ProtocolType type, Direction direction, ICode1 code1, ICode2 code2) {
             this.type = type;
             this.direction = direction;
             this.code1 = code1;
@@ -87,10 +87,10 @@ public class Protocol {
 
             // 빅 엔디안으로 읽음
             this.length = (short) (packet[0] << 8 | (packet[1] & 0xFF));
-            this.type = ProtocolField.Type.get(packet[2]);
-            this.direction = ProtocolField.Direction.get(packet[3]);
-            this.code1 = ProtocolField.Code1.get(this.type, packet[4]);
-            this.code2 = ProtocolField.Code2.get(this.type, packet[5]);
+            this.type = ProtocolType.get(packet[2]);
+            this.direction = Direction.get(packet[3]);
+            this.code1 = Code1.get(this.type, packet[4]);
+            this.code2 = Code2.get(this.type, packet[5]);
             this.is_splitted = Bool.get(packet[6]);
             this.is_last = Bool.get(packet[7]);
             this.sequence = (short) (packet[8] << 8 | (packet[9] & 0xFF));
@@ -110,10 +110,10 @@ public class Protocol {
 
     // Header
     public final short length; // 2바이트, 전체 프로토콜 길이
-    public final ProtocolField.Type type; // 1바이트, 프로토콜 타입
-    public final ProtocolField.Direction direction; // 1바이트, 프로토콜 응답 방향
-    public final ProtocolField.Code1.ICode1 code1; // 1바이트, 프로토콜 코드 종류
-    public final ProtocolField.Code2.ICode2 code2; // 1바이트, 프로토콜 코드
+    public final ProtocolType type; // 1바이트, 프로토콜 타입
+    public final Direction direction; // 1바이트, 프로토콜 응답 방향
+    public final ICode1 code1; // 1바이트, 프로토콜 코드 종류
+    public final ICode2 code2; // 1바이트, 프로토콜 코드
     // 아래 3개는 body가 커져서 프로토콜 분리시 쓰임
     public final Bool is_splitted;// 1바이트, 프로토콜 분리 여부
     public final Bool is_last; // 1바이트, 마지막 프로토콜인지 여부

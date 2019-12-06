@@ -1,4 +1,4 @@
-package classes;
+package models;
 
 import java.io.Serializable;
 
@@ -14,4 +14,12 @@ public final class Score implements Serializable {
 	// 키가 아닌 컬럼
 	public final int credit; // 학점 (이수 단위)
 	public final Grade grade; // 성적 등급(A+, A, B+, B, ...)
+
+	public Score(String studentId, String subjectName, int semesterCode, int credit, Grade grade) {
+		this.studentId = studentId;
+		this.subjectName = subjectName;
+		this.semesterCode = semesterCode;
+		this.credit = credit;
+		this.grade = grade;
+	}
 }

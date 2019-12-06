@@ -1,72 +1,30 @@
-package shared.classes;
+package models;
 
 import java.io.Serializable;
 import java.util.Date;
 
+import enums.Seat;
+
 //배정내역
-public class PlacementHistory implements Serializable
+public final class PlacementHistory implements Serializable
 {
 	//키
-	private String studentId;			//학생의 학번(외래키)
-	private int roomId;					//방의 고유 아이디(외래키)
-	private int semester;				//학기(외래키)
-	private String dormitoryName;		//생활관명(외래키)
+	public final String studentId;			//학생의 학번(외래키)
+	public final int roomId;					//방의 고유 아이디(외래키)
+	public final int semester;				//학기(외래키)
+	public final String dormitoryName;		//생활관명(외래키)
 	
 	//키가 아닌 컬럼
-	private char seat;					//자리
-	private Date checkout;				//퇴사 예정일
-	
-	public String getStudentId()
-	{
-		return studentId;
-	}
-	public void setStudentId(String studentId)
-	{
+	public final Seat seat;					//자리
+	public final Date checkout;				//퇴사 예정일
+
+	public PlacementHistory(String studentId, int roomId, int semester, String dormitoryName, Seat seat,
+			Date checkout) {
 		this.studentId = studentId;
-	}
-	
-	public int getRoomId()
-	{
-		return roomId;
-	}
-	public void setRoomId(int roomId)
-	{
 		this.roomId = roomId;
-	}
-	
-	public int getSemester()
-	{
-		return semester;
-	}
-	public void setSemester(int semester)
-	{
 		this.semester = semester;
-	}
-	
-	public String getDormitoryName()
-	{
-		return dormitoryName;
-	}
-	public void setDormitoryName(String dormitoryName)
-	{
 		this.dormitoryName = dormitoryName;
-	}
-	
-	public char getSeat()
-	{
-		return seat;
-	}
-	public void setSeat(char seat)
-	{
 		this.seat = seat;
-	}
-	
-	public Date getCheckout()
-	{
-		return checkout;
-	}
-	public void setCheckout(Date checkout)
-	{
 		this.checkout = checkout;
 	}
 }

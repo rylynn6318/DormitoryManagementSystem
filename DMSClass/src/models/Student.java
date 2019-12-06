@@ -1,4 +1,4 @@
-package classes;
+package models;
 
 import java.io.Serializable;
 
@@ -19,4 +19,16 @@ public final class Student implements Serializable {
 	public final String parentZipCode; // 보호자 우편번호
 	public final String parentAddress; // 보호자주소
 
+	public Student(String studentId, String name, Gender gender, String departmentName, int year, String rrn,
+			String contact, String parentZipCode, String parentAddress) {
+		this.studentId = studentId;
+		this.name = name;
+		this.gender = gender;
+		this.departmentName = departmentName;
+		this.year = year;
+		this.rrn = rrn;
+		this.contact = contact;
+		this.parentZipCode = parentZipCode;
+		this.parentAddress = parentAddress;
+	}
 }
