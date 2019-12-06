@@ -1,4 +1,4 @@
-package protocol;
+package enums;
 
 // 프로토콜 만들때 필수 파라메터인
 // 타입, 방향, 코드타입, 코드에 대한 Enum 클래스

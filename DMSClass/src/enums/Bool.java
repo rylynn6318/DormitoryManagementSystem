@@ -1,4 +1,4 @@
-package shared.enums;
+package enums;
 
 public enum Bool{
     TRUE(true, "Y", (byte)0x01),
