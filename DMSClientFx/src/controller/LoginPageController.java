@@ -101,11 +101,11 @@ public class LoginPageController implements Initializable {
         boolean isPassed = false;
         try
         {
-        	isPassed = networking(account);
+//        	isPassed = networking(account);
         	
         	//테스트용으로 네트워킹 주석처리하고 패스함.
-	        //isPassed = true;
-	        //account.setUserType(UserType.ADMINISTRATOR);			//관리자로 들어가려면 UserType을 ADMINISTRATOR로 바꾸면됨, 학생은 STUDENT, 
+	        isPassed = true;
+	        account.setUserType(UserType.STUDENT);			//관리자로 들어가려면 UserType을 ADMINISTRATOR로 바꾸면됨, 학생은 STUDENT, 
         	
         	if (isPassed) 
         	{
@@ -119,14 +119,14 @@ public class LoginPageController implements Initializable {
                 IDField.requestFocus();
             }
         }
-        catch(ConnectException ce)
-        {
-        	IOHandler.getInstance().showAlert("서버 연결에 실패했습니다.");
-        }
-        catch(IOException ie)
-        {
-        	IOHandler.getInstance().showAlert("서버와의 연결이 끊여졌습니다.");
-        }
+//        catch(ConnectException ce)
+//        {
+//        	IOHandler.getInstance().showAlert("서버 연결에 실패했습니다.");
+//        }
+//        catch(IOException ie)
+//        {
+//        	IOHandler.getInstance().showAlert("서버와의 연결이 끊여졌습니다.");
+//        }
         catch(Exception e) 
         {
         	IOHandler.getInstance().showAlert("알 수 없는 이유로 로그인에 실패했습니다.");

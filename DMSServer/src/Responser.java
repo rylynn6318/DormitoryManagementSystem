@@ -19,6 +19,33 @@ public class Responser
 	//(1) 메소드 위에 붙는 모든 주석은 클라이언트에서의 동작이다.
 	//(2) 메소드 안에 있는 주석 및 코드는 서버에서의 동작이다.
 	//(3) 괄호가 쳐진 인덱스와 내용은 클라이언트에서의 동작이다.
+	//(4) 주석 아래에 그 동작에 해당하는 메소드를 적는다.
+	//(5) 전체적인 흐름을 한눈에 파악할 수 있도록, 코드가 길어지면 다른클래스로 분할한다.
+	//(6) IF문과 같은 간단한 제어문은 있어도 상관없다.
+	
+//	[예시]
+//	학생 - 생활관 입사 신청 - 들어왔을 때
+//	public void student_submitApplicationPage_onEnter()
+//	{
+//		//1. 스케쥴을 확인하고 입사 신청 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
+//		boolean isPassed = DifferentClass.checkSchedule();
+//		
+//		//2. 받은 요청의 헤더에서 학번을 알아낸다.
+//		String id = DifferentClass2.checkId();
+//		
+//		//3. 학생테이블에서 학번으로 조회하여 성별을 알아낸다.
+//		Gender g = DifferentClass2.getGender();
+//		
+//		//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
+//		ArrayList<Dormitory> dormList = DifferentClass3.getDorms();
+//		
+//		//5. 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
+//		//	 스케쥴 테이블에서 비고(안내사항)를 가져온다.
+//		ArrayList<DataModel> rs = DBManager.getDatas();
+//		
+//		//6. 해당 정보를 객체화, 배열로 만들어 클라이언트에게 전송한다.
+//		Networking(rs);
+//	}
 	
 	//학생 - 생활관 입사 신청 - 들어왔을 때
 	public void student_submitApplicationPage_onEnter()
@@ -53,7 +80,7 @@ public class Responser
 	
 	//------------------------------------------------------------------------
 	
-	//학생 - 생활관 입사 신청 - 들어왔을 때
+	//학생 - 생활관 신청 조회 - 들어왔을 때
 	public void student_CheckApplicationPage_onEnter()
 	{
 		//1. 스케쥴을 확인하고 신청내역 조회 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
@@ -62,7 +89,7 @@ public class Responser
 		//(4. 클라이언트에서는 받은 비고(안내사항)을 표시한다)
 	}
 	
-	//학생 - 생활관 입사 신청 - 조회 버튼 클릭 시
+	//학생 - 생활관 신청 조회 - 조회 버튼 클릭 시
 	public void student_CheckApplicationPage_onCheck()
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
@@ -166,3 +193,7 @@ public class Responser
 //변경 로그
 //2019-12-06 v1.00
 //	Responser.java 생성하였음 -명근
+
+//2019-12-07 v1.01
+//주석 추가 및 오타 수정 -명근
+
