@@ -96,8 +96,8 @@ public class ResidentSelecter
 		
 		while(apps.next())
 		{
-			Application temp = new Application(apps.getString("학번"), apps.getString("생활관정보_생활관명"), apps.getString("생활관정보_성별"), apps.getInt("생활관정보_학기"), apps.getInt("지망"));
-			setFinalScore(temp);
+			Application temp = new Application(apps.getString("학번"), apps.getString("생활관정보_생활관명"), apps.getString("생활관정보_성별"), apps.getInt("생활관정보_학기"), apps.getInt("지망"), getFinalScore(apps.getString("학번")));
+
 			sortedApps.add(temp);
 		}
 		
@@ -128,7 +128,7 @@ public class ResidentSelecter
 		return leftCapacity;
 	}
 	
-	public static void setFinalScore(Application a) throws ClassNotFoundException, SQLException
+	public static double getFinalScore(String studentId) throws ClassNotFoundException, SQLException
 	{
 		Connection conn = null;
 		Statement state = null;
@@ -137,7 +137,7 @@ public class ResidentSelecter
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-		String getScoresQuery = "SELECT 학점,등급 FROM 점수 WHERE 학번=" + a.getStudentId() + "AND 학기 BETWEEN '" + pastTwo(a.getSemesterCode()) + "' AND '" + pastOne(a.getSemesterCode()) + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
+		String getScoresQuery = "SELECT 학점,등급 FROM 점수 WHERE 학번=" + studentId + "AND 학기 BETWEEN '" + pastTwo(201901) + "' AND '" + pastOne(201901) + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
 		ResultSet scores = state.executeQuery(getScoresQuery);
 		
 		double sumOfTakenGrade = 0;
@@ -178,10 +178,11 @@ public class ResidentSelecter
 		}
 		
 		Statement state2 = conn.createStatement();
-		String zipCodeQuery = "SELECT 보호자우편번호 FROM 학생 WHERE 학번=" + a.getStudentId();
+		String zipCodeQuery = "SELECT 보호자우편번호 FROM 학생 WHERE 학번=" + studentId;
 		ResultSet zipCode = state2.executeQuery(zipCodeQuery);
 		zipCode.next();
-		a.setScore(sumOfTakenGrade/sumOfTakenCredit + getDistanceScore(zipCode.getString("보호자우편번호")));
+		
+		return (sumOfTakenGrade/sumOfTakenCredit + getDistanceScore(zipCode.getString("보호자우편번호")));
 	}
 	
 	public static double getDistanceScore(String s)

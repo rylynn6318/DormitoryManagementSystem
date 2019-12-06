@@ -28,13 +28,14 @@ public class Application implements Comparable<Application>, Serializable
 		
 	}
 	
-	public Application(String studentId, String dormitoryName, String gender, int semesterCode, int choice)	//합격 알고리즘에 필요한 생성자임 터치 ㄴㄴ해
+	public Application(String studentId, String dormitoryName, String gender, int semesterCode, int choice, double score)	//합격 알고리즘에 필요한 생성자임 터치 ㄴㄴ해
 	{
 		this.studentId = studentId;
 		this.dormitoryName = dormitoryName;
 		this.gender = gender.toCharArray()[0];
 		this.semesterCode = semesterCode;
 		this.choice = choice;
+		this.score = score;
 	}
 	
 	public Application(int choice, String dormitoryName, int mealType)
