@@ -126,11 +126,7 @@ public class LoginPageController implements Initializable {
         Protocol login = new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_SERVER, Code1.NULL, Code2.NULL)
                 .body(ProtocolHelper.serialization(account)).build();
 
-        SocketHandler.INSTANCE.write(login);
-
-        ///////위 코드는 전송//////////////////아래 코드는 수신///////////
-
-        login = SocketHandler.INSTANCE.read();
+        login = SocketHandler.INSTANCE.request(login);
 
         return (Code2.LoginResult) login.code2;
     }

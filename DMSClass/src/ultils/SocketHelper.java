@@ -12,7 +12,7 @@ public class SocketHelper {
 
     private Socket socket = null;
 
-    SocketHelper(Socket socket){
+    public SocketHelper(Socket socket){
         this.socket = socket;
     }
 
