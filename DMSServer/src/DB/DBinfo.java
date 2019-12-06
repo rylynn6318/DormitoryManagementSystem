@@ -1,5 +1,4 @@
-
-
+package DB;
 public class DBinfo {
 	static final String DRIVER_NAME = "mysql";
 	static final String HOSTNAME = "wehatejava.czztgstzacsv.us-east-1.rds.amazonaws.com";
@@ -15,27 +14,5 @@ public class DBinfo {
 					DB_NAME + "?user=" + 
 					USER_NAME + "&password=" + 
 					PASSWORD; 
-	
-	public static String getDriverName() {
-		return DRIVER_NAME;
-	}
-	public static String getHostname() {
-		return HOSTNAME;
-	}
-	public static String getPort() {
-		return PORT;
-	}
-	public static String getDbName() {
-		return DB_NAME;
-	}
-	public static String getUserName() {
-		return USER_NAME;
-	}
-	public static String getPassword() {
-		return PASSWORD;
-	}
-	public static String getDbUrl() {
-		return DB_URL;
-	}
 	
 }

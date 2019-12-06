@@ -1,5 +1,11 @@
+import java.util.ArrayList;
+
+import DB.DormParser;
+import DB.StudentParser;
 import logic.ScheduleCheck;
 import protocol.ProtocolField;
+import shared.classes.Dormitory;
+import shared.enums.Gender;
 
 //디버깅용 클래스
 //대충 클라이언트에서 어떤 요청이 왔을때 그에 대한 반응(로직)을 모아둠.
@@ -59,12 +65,15 @@ public class Responser
 		String id = "20160469"; //수정 필요
 		
 		//3. 학생테이블에서 학번으로 조회하여 성별을 알아낸다.
-		StudentParser.getGender(id);
+		Gender g = StudentParser.getGender(id);
 		
 		//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
+		ArrayList<Dormitory> dList = new ArrayList<Dormitory>();
+		dList = DormParser.getDormList(g);
 		
 		//5. 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
 		//	 스케쥴 테이블에서 비고(안내사항)를 가져온다.
+		
 		
 		//6. 해당 정보를 객체화, 배열로 만들어 클라이언트에게 전송한다.
 	}

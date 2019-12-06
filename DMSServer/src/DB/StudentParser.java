@@ -1,8 +1,8 @@
+package DB;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
 import shared.enums.Gender;
 
 public class StudentParser {
