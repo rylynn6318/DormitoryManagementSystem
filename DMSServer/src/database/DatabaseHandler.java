@@ -26,6 +26,28 @@ public class DatabaseHandler
 					USER_NAME + "&password=" + 
 					PASSWORD; 
 	
+	public boolean connection()
+	{
+		boolean isSucceed = false;
+		Connection tmpConn = null;
+		Statement state = null;
+		
+		try
+		{
+			Class.forName(JDBC_DRIVER);
+			DriverManager.setLoginTimeout(TIMEOUT);								//타임아웃 설정
+			tmpConn = DriverManager.getConnection(DB_URL);	//각 정보를 전달하여 접속한 정보를 conn에 저장한다. 연결 실패시 SQLException 발생함.
+																				//여기서 timezone 문제가 뜬다면 mysql 서버 타임존 설정이 안된것. https://offbyone.tistory.com/318 참조할것.
+			state = tmpConn.createStatement();									//SQL문을 실행하기 위해 conn 연결정보를 state로 생성해야된다. 생성 성공 시 Statement의 executeQuery 메소드로 SQL문 실행 가능.
+
+		}
+		catch(Exception e)
+		{
+			//예외 발생 시 처리부분
+			IOHandler.getInstnace().printMsg(MsgType.ERROR, "connectionTest", e.getMessage());
+		}
+	}
+	
 	
 	//데이터베이스 접속 테스트 메소드
 	public boolean connectionTest()
