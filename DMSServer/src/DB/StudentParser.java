@@ -17,7 +17,6 @@ public class StudentParser {
 		String sql = "SELECT 성별 FROM " + DBinfo.DB_NAME + ".학생 WHERE 학번 = "+id;
 		ResultSet purs = state.executeQuery(sql);
 		
-		return purs.getString("성별").equals("M") ? Gender.M : Gender.F;
-		
+		return Gender.get(purs.getString("성별").charAt(0)); //.equals("M") ? Gender.Male : Gender.Female;
 	}
 }
