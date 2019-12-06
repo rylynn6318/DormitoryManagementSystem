@@ -1,9 +1,9 @@
-package protocol;
+package classes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import shared.enums.*;
+import enums.*;
 // 프로토콜 쓰는법 (계획)
 // 1. 보낼때 (로그인으로 예를 들겠음)
 // Socket socket = new Socket("127.0.0.1", 666);
