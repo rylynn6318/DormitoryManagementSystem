@@ -15,7 +15,9 @@ public enum Gender {
     public static Gender get(char g) {
         if (g == 'M')
             return Male;
-        else
+        else if(g == 'F')
             return Female;
+        else
+            return null;
     }
 }

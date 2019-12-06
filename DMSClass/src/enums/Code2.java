@@ -56,9 +56,10 @@ public class Code2 {
                 return STUDENT;
             case 0x02:
                 return ADMIN;
+            default:
+                return null;
             }
 
-            return null;
         }
     }
 
@@ -86,9 +87,10 @@ public class Code2 {
                 return UPLOAD_RESULT;
             case 0x04:
                 return DOWNLOAD;
+            default:
+                return null;
             }
 
-            return null;
         }
     }
 
@@ -133,9 +135,10 @@ public class Code2 {
             case 0x08:
                 // 입사자 등록 (방배정)
                 return ASSIGN;
+            default:
+                return null;
             }
 
-            return null;
         }
     }
 }

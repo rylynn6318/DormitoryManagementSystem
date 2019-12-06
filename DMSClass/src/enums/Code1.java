@@ -56,8 +56,9 @@ public class Code1 {
                 return OATH;
             case 0x03:
                 return CSV;
+            default:
+                return null;
             }
-            return null;
         }
     }
 
@@ -103,8 +104,9 @@ public class Code1 {
                 return 납부관리;
             case 0x0C:
                 return 서류관리;
+            default:
+                return null;
             }
-            return null;
         }
     }
 }

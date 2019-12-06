@@ -23,7 +23,8 @@ public enum Direction implements IGetCode {
             return TO_SERVER;
         case 0x01:
             return TO_CLIENT;
+        default:
+            return null;
         }
-        return null;
     }
 }

@@ -24,7 +24,8 @@ public enum ProtocolType implements IGetCode {
             return FILE;
         case 0x03:
             return EVENT;
+        default:
+            return null;
         }
-        return null;
     }
 }

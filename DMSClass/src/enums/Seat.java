@@ -23,7 +23,8 @@ public enum Seat {
             return THIRD;
         case 'D':
             return FOURTH;
+        default:
+            return null;
         }
-        return null;
     }
 }
