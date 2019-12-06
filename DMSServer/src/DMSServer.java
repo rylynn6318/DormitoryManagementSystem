@@ -1,15 +1,6 @@
 import database.DatabaseHandler;
 import io.*;
-import network.NetworkHandler;
-import protocol.Protocol;
-import protocol.ProtocolField;
-import protocol.ProtocolHelper;
-import shared.classes.Account;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.AccessibleObject;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -32,15 +23,15 @@ import java.net.Socket;
 
 public class DMSServer {
     public static void main(String[] args) throws Exception {
-		ServerSocket sSocket = new ServerSocket(666);
-		System.out.println("클라이언트 접속 대기중...");
-		DatabaseHandler db ;
-		db.connection();
+        ServerSocket sSocket = new ServerSocket(666);
+        System.out.println("클라이언트 접속 대기중...");
+        DatabaseHandler db = new DatabaseHandler();
+        db.connection();
         while (true) {
             Socket socket = sSocket.accept();
             System.out.println("클라이언트 접속");
-            new ServerTask(socket,db).start();	//반복수행
-            }
+            new ServerTask(socket, db).start();    //반복수행
         }
     }
+}
 }
