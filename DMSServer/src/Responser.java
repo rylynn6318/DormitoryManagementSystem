@@ -68,7 +68,7 @@ public class Responser
 		
 		//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
 		ArrayList<String> dList = new ArrayList<String>();	//이건 맨첨에 생활관명만 들고있는 Dormitory Arraylist로 처리했었는데 Dorm클래스가 구조가 바뀌면서 생성자 조건땜시 그냥 생활관명만 들고있는 String배열로 바꿈
-		dList = DormParser.getDormList(g);					//손이 이렇게 해놓으면 지가 나중에 Dorm타입을 바꾸겠다함 미1친놈임 그냥 생성자 하나 더만들면되는데 ㅇㅈ?
+		dList = DormParser.getDormList(g);					//내가 이러면 나중에 클라한테 보내줄때 타입 안맞지않냐고하니까 손이 이렇게 해놓으면 지가 나중에 Dorm타입을 바꾸겠다함 미1친놈임 그냥 생성자 하나 더만들면되는데 ㅇㅈ?
 		
 		//5. 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
 		//	 스케쥴 테이블에서 비고(안내사항)를 가져온다.
