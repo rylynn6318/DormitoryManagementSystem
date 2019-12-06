@@ -2,7 +2,6 @@ package ultils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.rmi.UnexpectedException;
 import java.util.Arrays;
 import enums.*;
 // 프로토콜 쓰는법 (계획)
@@ -76,7 +75,7 @@ public final class Protocol implements Comparable<Protocol> {
             return this;
         }
 
-        public Builder body(byte[] serialized) throws IOException {
+        public Builder body(byte[] serialized){
             body_bytes = serialized;
             this.length = (short) (HEADER_LENGTH + serialized.length);
             return this;

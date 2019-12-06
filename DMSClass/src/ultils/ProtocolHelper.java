@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 public class ProtocolHelper {
     public static byte[] serialization(Serializable obj) throws IOException {
@@ -23,6 +25,12 @@ public class ProtocolHelper {
                 Object obj = ois.readObject();
                 return (Serializable) obj;
             }
+        }
+    }
+
+    public static void splitBySize(List<byte[]> byte_list, byte[] bytes, int chunk_size) {
+        for (int i = 0; i < bytes.length; i += chunk_size) {
+            byte_list.add(Arrays.copyOfRange(bytes, i, Math.min(bytes.length, i + chunk_size)));
         }
     }
 }
