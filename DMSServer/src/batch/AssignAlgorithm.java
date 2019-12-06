@@ -730,7 +730,6 @@ public class AssignAlgorithm
 			state6.executeUpdate(sql6);
 		}
 		
-		
 	}
 	public static void main(String[] args) throws ClassNotFoundException, SQLException
 	{
