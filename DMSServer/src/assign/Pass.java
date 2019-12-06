@@ -36,25 +36,29 @@ public class Pass
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
+		Statement state1 = conn.createStatement();
 		Statement state2 = conn.createStatement();
-		
 		String sql = "SELECT ID, 납부여부, 합격여부, 최종결과 FROM " + DB_NAME + ".신청";
-		ResultSet purs = state.executeQuery(sql);		
+		ResultSet purs = state.executeQuery(sql);
 		while(purs.next())
 		{
 			boolean document = false; // 유효여부, 진단일, 서류유형이 적합하면 document = true
-			String sql1 = "SELECT 유효여부 FROM" + DB_NAME + ".서류(WHERE (서류유형 = 1 and 진단일 BETWEEN '19/01/01' and '19/09/01 ' and 학번 = " + purs.getString("ID")+")";
-			ResultSet purs2 = state.executeQuery(sql1);
-			if(purs2.getString("유효여부").equals("Y"))
+			String sql1 = "SELECT 확인여부 FROM " + DB_NAME + ".서류 WHERE 서류유형 = 1 and 진단일 BETWEEN '19/01/01' and '19/09/01 ' and 학생_ID = " + purs.getString("ID");
+			ResultSet purs2 = state1.executeQuery(sql1);
+
+			if(purs2.next())
 			{
-				document = true;
+				if(purs2.getString("확인여부").equals("Y"))
+				{
+					document = true;
+				}
+				if(purs.getString("납부여부").equals("Y") && purs.getString("합격여부").equals("Y") && document == true)
+				{
+					String sql2 = "update Prototype.신청  set 최종결과 = 'Y' WHERE (ID = " + purs.getString("학생_ID")+")";   // 납부여부 Y 결핵 통과 Y 합격여부 Y면 해당 ID의 최종결과 Y 
+					state2.executeUpdate(sql2);
+				} 
 			}
 			
-			if(purs.getString("납부여부").equals("Y") && purs.getString("합격여부").equals("Y") && document == true)
-			{
-				String query = "update Prototype.신청  set 최종결과 = 'Y' WHERE (ID = " + purs.getString("ID")+")";   // 납부여부 Y 결핵 통과 Y 합격여부 Y면 해당 ID의 최종결과 Y 
-				state2.executeUpdate(query);
-			} 
 		}
 		
 	}
@@ -62,14 +66,15 @@ public class Pass
 	public static void setCurrentSemester() throws ClassNotFoundException, SQLException
 	{
 		Connection conn = null;
-		Statement state = null;
+		Statement state3 = null;
 		
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
-		state = conn.createStatement();
+		state3 = conn.createStatement();
 		
-		String sql = "SELECT 학기 FROM" + DB_NAME + ".신청 ORDER BY 학기 DESC LIMIT1"; //신청테이블에서 하나만 가져와서 그 학기를 봄
-		ResultSet rcrs = state.executeQuery(sql);
+		String sql = "SELECT 학기 FROM " + DB_NAME + ".신청 ORDER BY 학기 DESC LIMIT 1"; //신청테이블에서 하나만 가져와서 그 학기를 봄
+		ResultSet rcrs = state3.executeQuery(sql);
+		rcrs.next();
 		currentSemester = rcrs.getInt("학기");
 	}
 	
@@ -138,12 +143,12 @@ public class Pass
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		String sql2 = "SELECT 호, 생활관명 FROM " + DB_NAME + ".호실정보";
-		ResultSet rurs2 = state.executeQuery(sql2);
+		ResultSet rurs3 = state.executeQuery(sql2);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// DB에 있는 생활관 호실 정보를 가져와서 서버 메모리 에 올림
-		while(rurs2.next())
+		while(rurs3.next())
 		{
-			switch (rurs2.getString("생활관명"))
+			switch (rurs3.getString("생활관명"))
 			{
 			case "오름1" :
 			{
@@ -151,8 +156,8 @@ public class Pass
 				{
 					if(O1[i].getRoomNumber() == "")
 					{
-						O1[i].setRoomNumber(rurs2.getString("호"));
-						O1[i + 1].setRoomNumber(rurs2.getString("호"));
+						O1[i].setRoomNumber(rurs3.getString("호"));
+						O1[i + 1].setRoomNumber(rurs3.getString("호"));
 						O1[i].setSemesterCode(currentSemester);
 						O1[i + 1].setSemesterCode(currentSemester);
 					}
@@ -165,8 +170,8 @@ public class Pass
 				{
 					if(O2[i].getRoomNumber() == "")
 					{
-						O2[i].setRoomNumber(rurs2.getString("호"));
-						O2[i + 1].setRoomNumber(rurs2.getString("호"));
+						O2[i].setRoomNumber(rurs3.getString("호"));
+						O2[i + 1].setRoomNumber(rurs3.getString("호"));
 						O2[i].setSemesterCode(currentSemester);
 						O2[i + 1].setSemesterCode(currentSemester);
 					}
@@ -179,8 +184,8 @@ public class Pass
 				{
 					if(O3[i].getRoomNumber() == "")
 					{
-						O3[i].setRoomNumber(rurs2.getString("호"));
-						O3[i + 1].setRoomNumber(rurs2.getString("호"));
+						O3[i].setRoomNumber(rurs3.getString("호"));
+						O3[i + 1].setRoomNumber(rurs3.getString("호"));
 						O3[i].setSemesterCode(currentSemester);
 						O3[i + 1].setSemesterCode(currentSemester);
 					}
@@ -193,8 +198,8 @@ public class Pass
 				{
 					if(P1[i].getRoomNumber() == "")
 					{
-						P1[i].setRoomNumber(rurs2.getString("호"));
-						P1[i + 1].setRoomNumber(rurs2.getString("호"));
+						P1[i].setRoomNumber(rurs3.getString("호"));
+						P1[i + 1].setRoomNumber(rurs3.getString("호"));
 						P1[i].setSemesterCode(currentSemester);
 						P1[i + 1].setSemesterCode(currentSemester);
 					}
@@ -206,8 +211,8 @@ public class Pass
 				{
 					if(P2[i].getRoomNumber() == "")
 					{
-						P2[i].setRoomNumber(rurs2.getString("호"));
-						P2[i + 1].setRoomNumber(rurs2.getString("호"));
+						P2[i].setRoomNumber(rurs3.getString("호"));
+						P2[i + 1].setRoomNumber(rurs3.getString("호"));
 						P2[i].setSemesterCode(currentSemester);
 						P2[i + 1].setSemesterCode(currentSemester);
 					}
@@ -220,10 +225,10 @@ public class Pass
 				{
 					if(P3[i].getRoomNumber() == "")
 					{
-						P3[i].setRoomNumber(rurs2.getString("호"));
-						P3[i + 1].setRoomNumber(rurs2.getString("호"));
-						P3[i + 2].setRoomNumber(rurs2.getString("호"));
-						P3[i + 3].setRoomNumber(rurs2.getString("호"));
+						P3[i].setRoomNumber(rurs3.getString("호"));
+						P3[i + 1].setRoomNumber(rurs3.getString("호"));
+						P3[i + 2].setRoomNumber(rurs3.getString("호"));
+						P3[i + 3].setRoomNumber(rurs3.getString("호"));
 						P3[i].setSemesterCode(currentSemester);
 						P3[i + 1].setSemesterCode(currentSemester);
 						P3[i + 2].setSemesterCode(currentSemester);
@@ -238,10 +243,10 @@ public class Pass
 				{
 					if(P4[i].getRoomNumber() == "")
 					{
-						P4[i].setRoomNumber(rurs2.getString("호"));
-						P4[i + 1].setRoomNumber(rurs2.getString("호"));
-						P4[i + 2].setRoomNumber(rurs2.getString("호"));
-						P4[i + 3].setRoomNumber(rurs2.getString("호"));
+						P4[i].setRoomNumber(rurs3.getString("호"));
+						P4[i + 1].setRoomNumber(rurs3.getString("호"));
+						P4[i + 2].setRoomNumber(rurs3.getString("호"));
+						P4[i + 3].setRoomNumber(rurs3.getString("호"));
 						P4[i].setSemesterCode(currentSemester);
 						P4[i + 1].setSemesterCode(currentSemester);
 						P3[i + 2].setSemesterCode(currentSemester);
@@ -256,8 +261,8 @@ public class Pass
 				{
 					if(SN[i].getRoomNumber() == "")
 					{
-						SN[i].setRoomNumber(rurs2.getString("호"));
-						SN[i + 1].setRoomNumber(rurs2.getString("호"));
+						SN[i].setRoomNumber(rurs3.getString("호"));
+						SN[i + 1].setRoomNumber(rurs3.getString("호"));
 						SN[i].setSemesterCode(currentSemester);
 						SN[i + 1].setSemesterCode(currentSemester);
 					}
@@ -270,8 +275,8 @@ public class Pass
 				{
 					if(SY[i].getRoomNumber() == "")
 					{
-						SY[i].setRoomNumber(rurs2.getString("호"));
-						SY[i + 1].setRoomNumber(rurs2.getString("호"));
+						SY[i].setRoomNumber(rurs3.getString("호"));
+						SY[i + 1].setRoomNumber(rurs3.getString("호"));
 						SY[i].setSemesterCode(currentSemester);
 						SY[i + 1].setSemesterCode(currentSemester);
 					}
@@ -282,20 +287,21 @@ public class Pass
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//배정내역을 불러와서 서버 메모리에 있는 해당 생활관 호실에 배정내역이 있으면 생활관 호실에 학번을 넣어줌
-		String sql3 = "SELECT 호, 생활관명, 자리, ID FROM " + DB_NAME + ".배정내역 WHERE 퇴사예정일 > "+ availablePeriod;// 여러 배정내역 (몇년 전꺼까지도) 중에서 아직 쓰고있는 방 예를들어 지금 2학기인데 1학기 1년 입사자
-		ResultSet rurs3 = state.executeQuery(sql3);
+		String sql3 = "SELECT 호실정보_호, 생활관명, 자리, ID FROM " + DB_NAME + ".배정내역 WHERE 퇴사예정일 > "+ availablePeriod;// 여러 배정내역 (몇년 전꺼까지도) 중에서 아직 쓰고있는 방 예를들어 지금 2학기인데 1학기 1년 입사자
+		Statement state4 = conn.createStatement();
+		ResultSet rurs4 = state4.executeQuery(sql3);
 		
-		while(rurs3.next())
+		while(rurs4.next())
 		{
-			switch (rurs3.getString("생활관명"))
+			switch (rurs4.getString("생활관명"))
 			{
 			case "오름1" :
 			{
 				for(int i = 1; i < O1.length; i++)
 				{
-					if(rurs3.getString("호") == O1[i].getRoomNumber() && rurs3.getString("자리") == O1[i].getSeat())
+					if(rurs4.getString("호") == O1[i].getRoomNumber() && rurs4.getString("자리") == O1[i].getSeat())
 					{
-						O1[i].setStudentId(rurs3.getString("ID"));
+						O1[i].setStudentId(rurs4.getString("ID"));
 					}
 				}
 				break;
@@ -304,9 +310,9 @@ public class Pass
 			{
 				for(int i = 1; i < O2.length; i++)
 				{
-					if(rurs3.getString("호") == O2[i].getRoomNumber() && rurs3.getString("자리") == O2[i].getSeat())
+					if(rurs4.getString("호") == O2[i].getRoomNumber() && rurs4.getString("자리") == O2[i].getSeat())
 					{
-						O2[i].setStudentId(rurs3.getString("ID"));
+						O2[i].setStudentId(rurs4.getString("ID"));
 					}
 				}
 				break;
@@ -315,9 +321,9 @@ public class Pass
 			{
 				for(int i = 1; i < O3.length; i++)
 				{
-					if(rurs3.getString("호") == O3[i].getRoomNumber() && rurs3.getString("자리") == O3[i].getSeat())
+					if(rurs4.getString("호") == O3[i].getRoomNumber() && rurs4.getString("자리") == O3[i].getSeat())
 					{
-						O3[i].setStudentId(rurs3.getString("ID"));
+						O3[i].setStudentId(rurs4.getString("ID"));
 					}
 				}
 				break;
@@ -326,9 +332,9 @@ public class Pass
 			{
 				for(int i = 1; i < P1.length; i++)
 				{
-					if(rurs3.getString("호") == P1[i].getRoomNumber() && rurs3.getString("자리") == P1[i].getSeat())
+					if(rurs4.getString("호") == P1[i].getRoomNumber() && rurs4.getString("자리") == P1[i].getSeat())
 					{
-						P1[i].setStudentId(rurs3.getString("ID"));
+						P1[i].setStudentId(rurs4.getString("ID"));
 					}
 				}
 				break;
@@ -337,9 +343,9 @@ public class Pass
 			{
 				for(int i = 1; i < P2.length; i++)
 				{
-					if(rurs3.getString("호") == P2[i].getRoomNumber() && rurs3.getString("자리") == P2[i].getSeat())
+					if(rurs4.getString("호") == P2[i].getRoomNumber() && rurs4.getString("자리") == P2[i].getSeat())
 					{
-						P2[i].setStudentId(rurs3.getString("ID"));
+						P2[i].setStudentId(rurs4.getString("ID"));
 					}
 				}
 				break;
@@ -348,9 +354,9 @@ public class Pass
 			{
 				for(int i = 1; i < P3.length; i++)
 				{
-					if(rurs3.getString("호") == P3[i].getRoomNumber() && rurs3.getString("자리") == P3[i].getSeat())
+					if(rurs4.getString("호") == P3[i].getRoomNumber() && rurs4.getString("자리") == P3[i].getSeat())
 					{
-						P3[i].setStudentId(rurs3.getString("ID"));
+						P3[i].setStudentId(rurs4.getString("ID"));
 					}
 				}
 				break;
@@ -359,9 +365,9 @@ public class Pass
 			{
 				for(int i = 1; i < P4.length; i++)
 				{
-					if(rurs3.getString("호") == P4[i].getRoomNumber() && rurs3.getString("자리") == P4[i].getSeat())
+					if(rurs4.getString("호") == P4[i].getRoomNumber() && rurs4.getString("자리") == P4[i].getSeat())
 					{
-						P4[i].setStudentId(rurs3.getString("ID"));
+						P4[i].setStudentId(rurs4.getString("ID"));
 					}
 				}
 				break;
@@ -370,9 +376,9 @@ public class Pass
 			{
 				for(int i = 1; i < SN.length; i++)
 				{
-					if(rurs3.getString("호") == SN[i].getRoomNumber() && rurs3.getString("자리") == SN[i].getSeat())
+					if(rurs4.getString("호") == SN[i].getRoomNumber() && rurs4.getString("자리") == SN[i].getSeat())
 					{
-						SN[i].setStudentId(rurs3.getString("ID"));
+						SN[i].setStudentId(rurs4.getString("ID"));
 					}
 				}
 				break;
@@ -381,9 +387,9 @@ public class Pass
 			{
 				for(int i = 1; i < SY.length; i++)
 				{
-					if(rurs3.getString("호") == SY[i].getRoomNumber() && rurs3.getString("자리") == SY[i].getSeat())
+					if(rurs4.getString("호") == SY[i].getRoomNumber() && rurs4.getString("자리") == SY[i].getSeat())
 					{
-						SY[i].setStudentId(rurs3.getString("ID"));
+						SY[i].setStudentId(rurs4.getString("ID"));
 					}
 				}
 				break;
@@ -392,12 +398,14 @@ public class Pass
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//신청자가 신청한 생활관을 가져와서 메모리에 있는 현재 배정된 내역과 대조하면서 방에 넣어줌
-		String sql4 = "SELECT ID, 생활관명 FROM, 지망 " + DB_NAME + ".신청 WHERE (퇴사예정일> "+ availablePeriod +" and 최종결과 = 'Y') order by 생활관명";  //학기 말고 누가 살고 있는 방인지로
-		ResultSet rurs4 = state.executeQuery(sql4);
 		
-		while(rurs4.next())
+		Statement state5 = conn.createStatement();
+		String sql5 = "SELECT ID, 생활관명 FROM 지망 " + DB_NAME + ".신청 WHERE (퇴사예정일> "+ availablePeriod +" and 최종결과 = 'Y') order by 생활관명";  //이미 누가 쓰고 있는방인가 알기위한 쿼리
+		ResultSet rurs5 = state5.executeQuery(sql5);
+		
+		while(rurs5.next())
 		{
-			switch (rurs4.getString("생활관명"))
+			switch (rurs5.getString("생활관명"))
 			{
 			case "오름1" :
 			{
@@ -405,8 +413,8 @@ public class Pass
 				{
 					if(O1[i].getStudentId() == "")
 					{
-						O1[i].setStudentId(rurs4.getString("ID"));
-						if(rurs4.getInt("지망") == 0)
+						O1[i].setStudentId(rurs5.getString("ID"));
+						if(rurs5.getInt("지망") == 0)
 						{
 							O1[i].setCheckout(checkOutDate2);
 						}
@@ -424,8 +432,8 @@ public class Pass
 				{
 					if(O2[i].getStudentId() == "")
 					{
-						O2[i].setStudentId(rurs4.getString("ID"));
-						if(rurs4.getInt("지망") == 0)
+						O2[i].setStudentId(rurs5.getString("ID"));
+						if(rurs5.getInt("지망") == 0)
 						{
 							O2[i].setCheckout(checkOutDate2);
 						}
@@ -443,8 +451,8 @@ public class Pass
 				{
 					if(O3[i].getStudentId() == "")
 					{
-						O3[i].setStudentId(rurs4.getString("ID"));
-						if(rurs4.getInt("지망") == 0)
+						O3[i].setStudentId(rurs5.getString("ID"));
+						if(rurs5.getInt("지망") == 0)
 						{
 							O3[i].setCheckout(checkOutDate2);
 						}
@@ -462,12 +470,12 @@ public class Pass
 				{
 					if(P1[i].getStudentId() == "")
 					{
-						P1[i].setStudentId(rurs4.getString("ID"));
+						P1[i].setStudentId(rurs5.getString("ID"));
 						if(P1[i].getSeat().equals("B") && P1[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣지마라는 뜻
 						{
 							P1[i].setStudentId("");
 						}
-						else if(rurs4.getInt("지망") == 0)
+						else if(rurs5.getInt("지망") == 0)
 						{
 							P1[i].setCheckout(checkOutDate2);
 						}
@@ -485,12 +493,12 @@ public class Pass
 				{
 					if(P2[i].getStudentId() == "")
 					{
-						P2[i].setStudentId(rurs4.getString("ID"));
+						P2[i].setStudentId(rurs5.getString("ID"));
 						if(P2[i].getSeat().equals("B") && P2[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣지마라는 뜻
 						{
 							P2[i].setStudentId("");
 						}
-						else if(rurs4.getInt("지망") == 0)
+						else if(rurs5.getInt("지망") == 0)
 						{
 							P2[i].setCheckout(checkOutDate2);
 						}
@@ -506,12 +514,12 @@ public class Pass
 			{
 				for (int i = 1; i < P3.length; i++)
 				{
-					P3[i].setStudentId(rurs4.getString("ID"));
+					P3[i].setStudentId(rurs5.getString("ID"));
 					if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣지마라는 뜻
 					{
 						P3[i].setStudentId("");
 					}
-					else if(rurs4.getInt("지망") == 0)
+					else if(rurs5.getInt("지망") == 0)
 					{
 						P3[i].setCheckout(checkOutDate2);
 					}
@@ -526,12 +534,12 @@ public class Pass
 			{
 				for (int i = 1; i < O1.length; i++)
 				{
-					P3[i].setStudentId(rurs4.getString("ID"));
+					P3[i].setStudentId(rurs5.getString("ID"));
 					if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣지마라는 뜻
 					{
 						P3[i].setStudentId("");
 					}
-					else if(rurs4.getInt("지망") == 0)
+					else if(rurs5.getInt("지망") == 0)
 					{
 						P3[i].setCheckout(checkOutDate2);
 					}
@@ -548,8 +556,8 @@ public class Pass
 				{
 					if(SN[i].getStudentId() == "")
 					{
-						SN[i].setStudentId(rurs4.getString("ID"));
-						if(rurs4.getInt("지망") == 0)
+						SN[i].setStudentId(rurs5.getString("ID"));
+						if(rurs5.getInt("지망") == 0)
 						{
 							SN[i].setCheckout(checkOutDate2);
 						}
@@ -567,8 +575,8 @@ public class Pass
 				{
 					if(SY[i].getStudentId() == "")
 					{
-						SY[i].setStudentId(rurs4.getString("ID"));
-						if(rurs4.getInt("지망") == 0)
+						SY[i].setStudentId(rurs5.getString("ID"));
+						if(rurs5.getInt("지망") == 0)
 						{
 							SY[i].setCheckout(checkOutDate2);
 						}
@@ -586,10 +594,10 @@ public class Pass
 				{
 					if(P1[i].getStudentId() == "")
 					{
-						P1[i].setStudentId(rurs4.getString("ID"));
+						P1[i].setStudentId(rurs5.getString("ID"));
 						if(P1[i].getSeat().equals("B") && P1[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣으라는 뜻
 						{
-							if(rurs4.getInt("지망") == 0)
+							if(rurs5.getInt("지망") == 0)
 							{
 								P1[i].setCheckout(checkOutDate2);
 							}
@@ -612,10 +620,10 @@ public class Pass
 				{
 					if(P2[i].getStudentId() == "")
 					{
-						P2[i].setStudentId(rurs4.getString("ID"));
+						P2[i].setStudentId(rurs5.getString("ID"));
 						if(P2[i].getSeat().equals("B") && P2[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣으라는 뜻
 						{
-							if(rurs4.getInt("지망") == 0)
+							if(rurs5.getInt("지망") == 0)
 							{
 								P2[i].setCheckout(checkOutDate2);
 							}
@@ -638,10 +646,10 @@ public class Pass
 				{
 					if(P3[i].getStudentId() == "")
 					{
-						P3[i].setStudentId(rurs4.getString("ID"));
+						P3[i].setStudentId(rurs5.getString("ID"));
 						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D")) && P2[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣으라는 뜻
 						{
-							if(rurs4.getInt("지망") == 0)
+							if(rurs5.getInt("지망") == 0)
 							{
 								P3[i].setCheckout(checkOutDate2);
 							}
@@ -664,10 +672,10 @@ public class Pass
 				{
 					if(P4[i].getStudentId() == "")
 					{
-						P4[i].setStudentId(rurs4.getString("ID"));
+						P4[i].setStudentId(rurs5.getString("ID"));
 						if((P4[i].getSeat().equals("B") || P4[i].getSeat().equals("D")) && P4[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣으라는 뜻
 						{
-							if(rurs4.getInt("지망") == 0)
+							if(rurs5.getInt("지망") == 0)
 							{
 								P4[i].setCheckout(checkOutDate2);
 							}
@@ -688,50 +696,52 @@ public class Pass
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//이제 업데이트
+		Statement state6 = conn.createStatement();
+		String sql6;
 		for(int i = 1; i < O1.length; i++)
 		{
-			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O1[i].getStudentId() + "', '" + O1[i].getSeat()+ "', '"+O1[i].getCheckOut()+ "', '오름1', '" + O1[i].getSemesterCode() + "', '" + O1[i].getRoomNumber() +"')";
-			state.executeQuery(sql5);
+			sql6 = "INSERT INTO " + DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O1[i].getStudentId() + "', '" + O1[i].getSeat()+ "', '"+O1[i].getCheckOut()+ "', '오름1', '" + O1[i].getSemesterCode() + "', '" + O1[i].getRoomNumber() +"')";
+			state6.executeQuery(sql6);
 		}
 		for(int i = 1; i < O2.length; i++)
 		{
-			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O2[i].getStudentId() + "', '" + O2[i].getSeat()+ "', '"+O2[i].getCheckOut()+ "', '오름2', '" + O2[i].getSemesterCode() + "', '" + O2[i].getRoomNumber() +"')";
-			state.executeQuery(sql5);
+			sql6 = "INSERT INTO " + DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O2[i].getStudentId() + "', '" + O2[i].getSeat()+ "', '"+O2[i].getCheckOut()+ "', '오름2', '" + O2[i].getSemesterCode() + "', '" + O2[i].getRoomNumber() +"')";
+			state6.executeQuery(sql6);
 		}
 		for(int i = 1; i < O3.length; i++)
 		{
-			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O3[i].getStudentId() + "', '" + O3[i].getSeat()+ "', '"+O3[i].getCheckOut()+ "', '오름3', '" + O3[i].getSemesterCode() + "', '" + O3[i].getRoomNumber() +"')";
-			state.executeQuery(sql5);
+			sql6 = "INSERT INTO " + DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O3[i].getStudentId() + "', '" + O3[i].getSeat()+ "', '"+O3[i].getCheckOut()+ "', '오름3', '" + O3[i].getSemesterCode() + "', '" + O3[i].getRoomNumber() +"')";
+			state6.executeQuery(sql6);
 		}
 		for(int i = 1; i < P1.length; i++)
 		{
-			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P1[i].getStudentId() + "', '" + P1[i].getSeat()+ "', '"+P1[i].getCheckOut()+ "', '푸름1', '" + P1[i].getSemesterCode() + "', '" + P1[i].getRoomNumber() +"')";
-			state.executeQuery(sql5);
+			sql6 = "INSERT INTO " + DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P1[i].getStudentId() + "', '" + P1[i].getSeat()+ "', '"+P1[i].getCheckOut()+ "', '푸름1', '" + P1[i].getSemesterCode() + "', '" + P1[i].getRoomNumber() +"')";
+			state6.executeQuery(sql6);
 		}
 		for(int i = 1; i < P2.length; i++)
 		{
-			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P2[i].getStudentId() + "', '" + P2[i].getSeat()+ "', '"+P2[i].getCheckOut()+ "', '푸름2', '" + P2[i].getSemesterCode() + "', '" + P2[i].getRoomNumber() +"')";
-			state.executeQuery(sql5);
+			sql6 = "INSERT INTO " + DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P2[i].getStudentId() + "', '" + P2[i].getSeat()+ "', '"+P2[i].getCheckOut()+ "', '푸름2', '" + P2[i].getSemesterCode() + "', '" + P2[i].getRoomNumber() +"')";
+			state6.executeQuery(sql6);
 		}
 		for(int i = 1; i < P3.length; i++)
 		{
-			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P3[i].getStudentId() + "', '" + P3[i].getSeat()+ "', '"+P3[i].getCheckOut()+ "', '푸름3', '" + P3[i].getSemesterCode() + "', '" + P3[i].getRoomNumber() +"')";
-			state.executeQuery(sql5);
+			sql6 = "INSERT INTO " + DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P3[i].getStudentId() + "', '" + P3[i].getSeat()+ "', '"+P3[i].getCheckOut()+ "', '푸름3', '" + P3[i].getSemesterCode() + "', '" + P3[i].getRoomNumber() +"')";
+			state6.executeQuery(sql6);
 		}
 		for(int i = 1; i < P4.length; i++)
 		{
-			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P4[i].getStudentId() + "', '" + P4[i].getSeat()+ "', '"+P4[i].getCheckOut()+ "', '푸름4', '" + P4[i].getSemesterCode() + "', '" + P4[i].getRoomNumber() +"')";
-			state.executeQuery(sql5);
+			sql6 = "INSERT INTO " + DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P4[i].getStudentId() + "', '" + P4[i].getSeat()+ "', '"+P4[i].getCheckOut()+ "', '푸름4', '" + P4[i].getSemesterCode() + "', '" + P4[i].getRoomNumber() +"')";
+			state.executeQuery(sql6);
 		}
 		for(int i = 1; i < SN.length; i++)
 		{
-			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + SN[i].getStudentId() + "', '" + SN[i].getSeat()+ "', '"+SN[i].getCheckOut()+ "', '신평남', '" + SN[i].getSemesterCode() + "', '" + SN[i].getRoomNumber() +"')";
-			state.executeQuery(sql5);
+			sql6 = "INSERT INTO " + DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + SN[i].getStudentId() + "', '" + SN[i].getSeat()+ "', '"+SN[i].getCheckOut()+ "', '신평남', '" + SN[i].getSemesterCode() + "', '" + SN[i].getRoomNumber() +"')";
+			state.executeQuery(sql6);
 		}
 		for(int i = 1; i < SY.length; i++)
 		{
-			String sql5 = "INSERT INTO " + DB_NAME + "배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + SY[i].getStudentId() + "', '" + SY[i].getSeat()+ "', '"+SY[i].getCheckOut()+ "', '신평여', '" + SY[i].getSemesterCode() + "', '" + SY[i].getRoomNumber() +"')";
-			state.executeQuery(sql5);
+			sql6 = "INSERT INTO " + DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + SY[i].getStudentId() + "', '" + SY[i].getSeat()+ "', '"+SY[i].getCheckOut()+ "', '신평여', '" + SY[i].getSemesterCode() + "', '" + SY[i].getRoomNumber() +"')";
+			state.executeQuery(sql6);
 		}
 		
 		
