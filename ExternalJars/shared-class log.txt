@@ -47,3 +47,8 @@ shared-class update log
 	Document에 무인생성자 추가.
 	Shared Class Export해서 적용함.
 	
+2019-12-07v2.0
+	내부적으로 Enum 적극적으로 사용하게 수정.
+	불필요한 getter setter 제거하고 final 변수로 고정
+	디렉터리 구조 수정
+	Shared Class Export해서 적용함.
