@@ -1,5 +1,6 @@
 package tableViewModel;
 
+import enums.Bool;
 import enums.Gender;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -20,7 +21,7 @@ public class DormitoryViewModel
 	
 	public DormitoryViewModel(String dormitoryName, Gender gender, int semesterCode, int capacity, boolean isMealDuty, int mealCost5, int mealCost7, int boardingFees)
 	{
-		dormitory = new Dormitory(dormitoryName, gender, semesterCode, capacity, isMealDuty, mealCost5, mealCost7, boardingFees);
+		dormitory = new Dormitory(dormitoryName, gender, semesterCode, capacity, Bool.get(isMealDuty), mealCost5, mealCost7, boardingFees);
 		
 		this.dormNameStr = new SimpleStringProperty(dormitoryName);
 		this.semesterStr = new SimpleStringProperty(Integer.toString(semesterCode));

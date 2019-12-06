@@ -3,13 +3,7 @@ import java.util.ArrayList;
 import DB.DormParser;
 import DB.StudentParser;
 import enums.Gender;
-import logic.ScheduleCheck;
-<<<<<<< HEAD
-import models.*;
-import enums.Gender;
-=======
 import models.Dormitory;
->>>>>>> f1faa357f596354ba5fa2e1e1fcdc5eedea24deb
 
 //디버깅용 클래스
 //대충 클라이언트에서 어떤 요청이 왔을때 그에 대한 반응(로직)을 모아둠.

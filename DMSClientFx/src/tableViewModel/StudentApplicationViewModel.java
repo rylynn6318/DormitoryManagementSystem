@@ -13,7 +13,7 @@ public class StudentApplicationViewModel extends Application
 	
 	public StudentApplicationViewModel(String studentId, String dormitoryName, String gender, int semesterCode, int choice)
 	{
-		super(studentId, dormitoryName, gender, semesterCode, choice);
+		super(studentId, dormitoryName, gender, semesterCode, choice, 0);
 	}
 	
 	//클라이언트 학생모드에서 '생활관 신청 조회' 페이지 테이블에서 사용함.

@@ -106,7 +106,7 @@ public class LoginPageController implements Initializable {
                     IOHandler.getInstance().showAlert("로그인 성공");
                     break;
                 case ADMIN:
-                    UserInfo.getInstance().account = new Account(account.accountId, account.password, UserType.ADMINISTRATOR);
+                    UserInfo.getInstance().account = new Account(account.accountId, account.password, UserType.ADMIN);
                     IOHandler.getInstance().showAlert("로그인 성공");
                     break;
             }

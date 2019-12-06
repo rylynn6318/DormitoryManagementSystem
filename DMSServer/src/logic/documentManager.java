@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import enums.Bool;
+import enums.Code1;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import models.Document;
@@ -43,7 +45,7 @@ public class documentManager {
         while (documents.next()) {
             java.util.Date submissionDate = new java.util.Date(documents.getDate("제출일").getTime());
             java.util.Date diagnosisDate = new java.util.Date(documents.getDate("진단일").getTime());
-            Document temp = new Document(documents.getString("학번"), documents.getInt("서류유형"), submissionDate, diagnosisDate, documents.getString("서류저장경로"), documents.getString("유효여부"));
+            Document temp = new Document(documents.getString("학번"), Code1.FileType.get((byte)documents.getInt("서류유형")), submissionDate, diagnosisDate, documents.getString("서류저장경로"), Bool.get( documents.getString("유효여부")));
             documentList.add(temp);
         }
     }

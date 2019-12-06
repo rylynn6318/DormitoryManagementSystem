@@ -26,7 +26,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import shared.enums.UserType;
+import enums.UserType;
 
 public class MainPageController implements Initializable 
 {
@@ -165,15 +165,12 @@ public class MainPageController implements Initializable
 		});
 		
 		//사용자 타입에 따른 메뉴 설정
-		switch(UserInfo.getInstance().getUserType())
+		switch(UserInfo.getInstance().account.userType)
 		{
 		case STUDENT:
 			addStudentNavigationTabs();
 			break;
-		case ADMINISTRATOR:
-			addAdminNavigationTabs();
-			break;
-		case TEACHER:
+		case ADMIN:
 			addAdminNavigationTabs();
 			break;
 		}
@@ -182,20 +179,17 @@ public class MainPageController implements Initializable
 	private void initializeWelcomeLabel()
 	{
 		String userStr = "";
-		switch(UserInfo.getInstance().getUserType())
+		switch(UserInfo.getInstance().account.userType)
 		{
 		case STUDENT:
 			userStr = "학생";
 			break;
-		case ADMINISTRATOR:
+		case ADMIN:
 			userStr = "관리자";	
-			break;
-		case TEACHER:
-			userStr = "선생님";
 			break;
 		}
 		
-		UserInfoLabel.setText("환영합니다! " + userStr + " " + UserInfo.getInstance().getAccountId() + " 님!");	
+		UserInfoLabel.setText("환영합니다! " + userStr + " " + UserInfo.getInstance().account.accountId + " 님!");
 	}
 	
 	private void addWelcomeTab()

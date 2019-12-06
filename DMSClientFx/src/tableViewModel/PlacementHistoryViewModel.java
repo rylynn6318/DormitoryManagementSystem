@@ -2,6 +2,7 @@ package tableViewModel;
 
 import java.util.Date;
 
+import enums.Seat;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import models.PlacementHistory;
