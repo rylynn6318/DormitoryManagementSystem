@@ -4,11 +4,13 @@ import java.util.Date;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import shared.classes.PlacementHistory;
+import models.PlacementHistory;
 
 //관리자 - 입사자 조회 및 관리 테이블뷰 모델
-public class PlacementHistoryViewModel extends PlacementHistory
+public class PlacementHistoryViewModel
 {
+	public final PlacementHistory placementHistory;
+
 	private StringProperty studentIdStr;
 	private StringProperty roomIdStr;
 	private StringProperty semesterStr;
@@ -18,13 +20,7 @@ public class PlacementHistoryViewModel extends PlacementHistory
 	
 	public PlacementHistoryViewModel(String studentId, int roomId, int semester, String dormitoryName, char seat, Date checkout)
 	{
-		
-		super.setStudentId(studentId);
-		super.setRoomId(roomId);
-		super.setSemester(semester);
-		super.setDormitoryName(dormitoryName);
-		super.setSeat(seat);
-		super.setCheckout(checkout);
+		placementHistory = new PlacementHistory(studentId, roomId, semester, dormitoryName, Seat.get(seat), checkout);
 		
 		this.studentIdStr = new SimpleStringProperty(studentId);
 		this.roomIdStr = new SimpleStringProperty(Integer.toString(roomId));

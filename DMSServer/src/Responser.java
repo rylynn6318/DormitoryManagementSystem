@@ -3,9 +3,8 @@ import java.util.ArrayList;
 import DB.DormParser;
 import DB.StudentParser;
 import logic.ScheduleCheck;
-import protocol.ProtocolField;
-import shared.classes.Dormitory;
-import shared.enums.Gender;
+import models.*;
+import enums.Gender;
 
 //디버깅용 클래스
 //대충 클라이언트에서 어떤 요청이 왔을때 그에 대한 반응(로직)을 모아둠.

@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import enums.Gender;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -122,8 +123,8 @@ public class DormitoryManageTabController implements Initializable
     	
     	
     	dormitoryList = FXCollections.observableArrayList(
-        		new DormitoryViewModel("오름관1동", 201903, 100, true, 150000, 200000, 700000),
-        		new DormitoryViewModel("오름관3동", 201903, 100, true, 150000, 230000, 800000)
+        		new DormitoryViewModel("오름관1동", Gender.F, 201903, 100, true, 150000, 200000, 700000),
+        		new DormitoryViewModel("오름관3동", Gender.M, 201903, 100, true, 150000, 230000, 800000)
         		);
     	
     	check_dormitory_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());

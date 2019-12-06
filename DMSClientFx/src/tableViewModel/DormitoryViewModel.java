@@ -1,12 +1,15 @@
 package tableViewModel;
 
+import enums.Gender;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import shared.classes.Dormitory;
+import models.Dormitory;
 
 //관리자 - 생활관 조회 및 관리 테이블뷰 모델
-public class DormitoryViewModel extends Dormitory
+public class DormitoryViewModel
 {
+	public final Dormitory dormitory;
+
 	private StringProperty dormNameStr;
 	private StringProperty semesterStr;
 	private StringProperty capacityStr;
@@ -15,15 +18,9 @@ public class DormitoryViewModel extends Dormitory
 	private StringProperty meal7Str;
 	private StringProperty boardingFee;
 	
-	public DormitoryViewModel(String dormitoryName, int semesterCode, int capacity, boolean isMealDuty, int mealCost5, int mealCost7, int boardingFees)
+	public DormitoryViewModel(String dormitoryName, Gender gender, int semesterCode, int capacity, boolean isMealDuty, int mealCost5, int mealCost7, int boardingFees)
 	{
-		super.setDormitoryName(dormitoryName);
-		super.setSemesterCode(semesterCode);
-		super.setCapacity(capacity);
-		super.setMealDuty(isMealDuty);
-		super.setMealCost5(mealCost5);
-		super.setMealCost7(mealCost7);
-		super.setBoardingFees(boardingFees);
+		dormitory = new Dormitory(dormitoryName, gender, semesterCode, capacity, isMealDuty, mealCost5, mealCost7, boardingFees);
 		
 		this.dormNameStr = new SimpleStringProperty(dormitoryName);
 		this.semesterStr = new SimpleStringProperty(Integer.toString(semesterCode));

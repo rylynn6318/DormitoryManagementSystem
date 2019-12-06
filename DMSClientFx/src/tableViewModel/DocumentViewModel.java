@@ -2,12 +2,16 @@ package tableViewModel;
 
 import java.util.Date;
 
+import enums.Bool;
+import enums.Code1;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import shared.classes.Document;
+import models.Document;
 
-public class DocumentViewModel extends Document
+public class DocumentViewModel
 {
+	public final Document document;
+
 	private StringProperty studentIdStr;
 	private StringProperty documentTypeStr;
 	private StringProperty submissionDateStr;
@@ -17,13 +21,8 @@ public class DocumentViewModel extends Document
 	
 	public DocumentViewModel(String studentId, int documentType, Date submissionDate, Date diagnosisDate, String documentStoragePath, boolean isValid)
 	{
-		super.setStudentId(studentId);
-		super.setDocumentType(documentType);
-		super.setSubmissionDate(submissionDate);
-		super.setDiagnosisDate(diagnosisDate);
-		super.setDocumentStoragePath(documentStoragePath);
-		super.setIsValid(isValid);
-		
+		document = new Document(studentId, Code1.FileType.get((byte)documentType), submissionDate, diagnosisDate, documentStoragePath, Bool.get(isValid));
+
 		this.studentIdStr = new SimpleStringProperty(studentId);
 		this.documentTypeStr = new SimpleStringProperty(convertDocumentType(documentType));
 		this.submissionDateStr = new SimpleStringProperty(submissionDate.toString());

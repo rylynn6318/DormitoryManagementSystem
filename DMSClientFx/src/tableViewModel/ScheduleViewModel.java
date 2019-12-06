@@ -4,11 +4,13 @@ import java.util.Date;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import shared.classes.Schedule;
+import models.Schedule;
 
 //관리자 - 선발 일정 조회 및 관리 테이블뷰 모델
-public class ScheduleViewModel extends Schedule
+public class ScheduleViewModel
 {
+	public final Schedule schedule;
+
 	private StringProperty scheduleIdStr;
 	private StringProperty codeStr;
 	private StringProperty startDateStr;
@@ -17,7 +19,7 @@ public class ScheduleViewModel extends Schedule
 	
 	public ScheduleViewModel(String scheduleId, int code, Date startDate, Date endDate, String description)
 	{
-		super(scheduleId, code, startDate, endDate, description);
+		schedule = new Schedule(scheduleId, code, startDate, endDate, description);
 		scheduleIdStr = new SimpleStringProperty(scheduleId);
 		codeStr = new SimpleStringProperty(String.valueOf(code));			//이거 스케쥴 할일 코드 가져와서 String 보여줘야됨.
 		startDateStr = new SimpleStringProperty(startDate.toString());

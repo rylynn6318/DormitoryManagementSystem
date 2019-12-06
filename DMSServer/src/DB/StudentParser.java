@@ -3,7 +3,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import shared.enums.Gender;
+import enums.Gender;
 
 public class StudentParser {
 	//3. 학생테이블에서 학번으로 조회하여 성별을 알아낸다.

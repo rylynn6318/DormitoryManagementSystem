@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import shared.classes.Document;
+import models.Document;
 
 public class documentManager {
     static final String DRIVER_NAME = "mysql";

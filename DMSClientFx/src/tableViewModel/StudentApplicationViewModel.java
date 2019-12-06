@@ -2,7 +2,7 @@ package tableViewModel;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import shared.classes.Application;
+import models.Application;
 
 //학생 - 생활관 신청 조회 - 생활관 입사지원 내역 테이블뷰 모델
 public class StudentApplicationViewModel extends Application

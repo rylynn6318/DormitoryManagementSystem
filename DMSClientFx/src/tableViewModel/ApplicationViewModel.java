@@ -2,7 +2,7 @@ package tableViewModel;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import shared.classes.Application;
+import models.Application;
 
 
 //관리자 - 입사 선발자 조회 및 관리, 납부 여부 조회 및 관리 테이블뷰 모델
