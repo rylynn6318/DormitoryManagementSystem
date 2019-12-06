@@ -52,3 +52,8 @@ shared-class update log
 	불필요한 getter setter 제거하고 final 변수로 고정
 	디렉터리 구조 수정
 	Shared Class Export해서 적용함.
+
+2019-12-07 08:00 v2.01
+	프로토콜 개선
+	프로토콜헬퍼 기능추가
+	Shared Class Export해서 적용함.
