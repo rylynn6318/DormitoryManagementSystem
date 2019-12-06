@@ -34,23 +34,31 @@ public class ResidentSelecter
 //	1은 true, 2는 false일 경우 -> ???
 //	1은 false, 2는 true일 경우 -> 1의 남은 capacity를 2에 합쳐서 선발
 //	둘 다 false일 경우 -> 그대로 진행
-	
-	public static void main(String[] args) throws ClassNotFoundException, SQLException
+		
+	public static void selectionByChoice() throws ClassNotFoundException, SQLException
 	{
-		passerSelection("푸름1");
-		passerSelection("푸름1_탑층");
-		passerSelection("푸름2");
-		passerSelection("푸름2_탑층");
-		passerSelection("푸름3");
-		passerSelection("푸름4");
-		passerSelection("오름1");
-		passerSelection("오름2");
-		passerSelection("오름3");
-		passerSelection("신평_남");
-		passerSelection("신평_여");
+		passerSelection("푸름1", 0);
+		passerSelection("푸름1_탑층", 0);
+		passerSelection("푸름2", 0);
+		passerSelection("푸름2_탑층", 0);
+		passerSelection("푸름3", 0);
+		for(int choice = 1; choice < 4; choice++)
+		{
+			passerSelection("푸름1", choice);
+			passerSelection("푸름1_탑층", choice);
+			passerSelection("푸름2", choice);
+			passerSelection("푸름2_탑층", choice);
+			passerSelection("푸름3", choice);
+			passerSelection("푸름4", choice);
+			passerSelection("오름1", choice);
+			passerSelection("오름2", choice);
+			passerSelection("오름3", choice);
+			passerSelection("신평_남", choice);
+			passerSelection("신평_여", choice);
+		}
 	}
 	
-	public static void passerSelection(String dormName) throws SQLException, ClassNotFoundException
+	public static void passerSelection(String dormName, int choice) throws SQLException, ClassNotFoundException
 	{
 		Connection conn = null;
 		Statement state = null;
@@ -59,19 +67,16 @@ public class ResidentSelecter
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-		for(int choice = 0; choice < 4; choice ++)
+		int leftCapacity = getNumOfLeftSeat(dormName);
+		TreeSet<Application> apps = getSortedApplications(dormName, choice);
+		
+		Iterator<Application> iterator = apps.iterator();
+		
+		for(int i = 0; i < leftCapacity; i++)
 		{
-			int leftCapacity = getNumOfLeftSeat(dormName);
-			TreeSet<Application> apps = getSortedApplications(dormName, choice);
-			
-			Iterator<Application> iterator = apps.iterator();
-			
-			for(int i = 0; i < leftCapacity; i++)
-			{
-				Application temp = iterator.next();
-				String updateQuery = "UPDATE 신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + " AND 생활관정보_생활관명=" + temp.getDormitoryName() + " AND 성별=" + temp.getGender() + " AND 학기=" + temp.getSemesterCode() + " AND 지망=" + temp.getChoice();
-				state.executeUpdate(updateQuery);
-			}
+			Application temp = iterator.next();
+			String updateQuery = "UPDATE 신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + " AND 생활관정보_생활관명=" + temp.getDormitoryName() + " AND 성별=" + temp.getGender() + " AND 학기=" + temp.getSemesterCode() + " AND 지망=" + temp.getChoice();
+			state.executeUpdate(updateQuery);
 		}
 	}
 	
