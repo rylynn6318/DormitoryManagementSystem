@@ -47,6 +47,7 @@ public class DormParser {
 		}
 		while(purs.next())
 		{			
+			//시원하게 보내라해서 일단 성별로 거른 생활관목록에 대한 모든 정보를 보냄
 			Dormitory d = new Dormitory(purs.getString("생활관명"), purs.getString("성별").charAt(0), purs.getInt("학기"), purs.getInt("수용인원"), Bool.get(purs.getString("식사의무")),purs.getInt("5일식_식비"),purs.getInt("7일식_식비"),purs.getInt("기숙사비"));
 			dorm.add(d);
 		}
