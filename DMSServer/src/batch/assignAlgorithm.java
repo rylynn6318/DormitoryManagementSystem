@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class Pass 
+public class assignAlgorithm 
 {
 	static final String DRIVER_NAME = "mysql";
 	static final String HOSTNAME = "wehatejava.czztgstzacsv.us-east-1.rds.amazonaws.com";
@@ -119,10 +119,7 @@ public class Pass
 
 		
 				
-				//여기에요 여기 여기부터 코딩 하시면 돼요
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public static void residenceUpdate() throws ClassNotFoundException, SQLException
@@ -144,6 +141,7 @@ public class Pass
 		state = conn.createStatement();
 		String sql2 = "SELECT 호, 생활관명 FROM " + DB_NAME + ".호실정보";
 		ResultSet rurs3 = state.executeQuery(sql2);
+		
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// DB에 있는 생활관 호실 정보를 가져와서 서버 메모리 에 올림
 		while(rurs3.next())
@@ -731,27 +729,27 @@ public class Pass
 		for(int i = 1; i < P4.length; i++)
 		{
 			sql6 = "INSERT INTO " + DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P4[i].getStudentId() + "', '" + P4[i].getSeat()+ "', '"+P4[i].getCheckOut()+ "', '푸름4', '" + P4[i].getSemesterCode() + "', '" + P4[i].getRoomNumber() +"')";
-			state.executeQuery(sql6);
+			state6.executeQuery(sql6);
 		}
 		for(int i = 1; i < SN.length; i++)
 		{
 			sql6 = "INSERT INTO " + DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + SN[i].getStudentId() + "', '" + SN[i].getSeat()+ "', '"+SN[i].getCheckOut()+ "', '신평남', '" + SN[i].getSemesterCode() + "', '" + SN[i].getRoomNumber() +"')";
-			state.executeQuery(sql6);
+			state6.executeQuery(sql6);
 		}
 		for(int i = 1; i < SY.length; i++)
 		{
 			sql6 = "INSERT INTO " + DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + SY[i].getStudentId() + "', '" + SY[i].getSeat()+ "', '"+SY[i].getCheckOut()+ "', '신평여', '" + SY[i].getSemesterCode() + "', '" + SY[i].getRoomNumber() +"')";
-			state.executeQuery(sql6);
+			state6.executeQuery(sql6);
 		}
 		
 		
 	}
-	public static void main(String[] args) throws ClassNotFoundException, SQLException
+	public static void batchStart() throws ClassNotFoundException, SQLException
 	{
+		passUpdate();
 		setCurrentSemester();
 		setAvailablePeriod();
 		setCheckOutPeriod();
-		passUpdate();
 		residenceUpdate();
 	}
 }
