@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+package network;
+
+import database.DatabaseHandler;
+
+>>>>>>> 747304a2197bf463c5cc307205030434e3caf072
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,6 +46,7 @@ public class ServerTask implements Runnable {
 
 
             switch (protocolType) {
+<<<<<<< HEAD
                 case 0x01:
                     // login 처리
                     break;
@@ -49,6 +57,18 @@ public class ServerTask implements Runnable {
                     //event 처리
                     break;
             }
+=======
+				case 0x01:
+					// login 처리
+					break;
+				case 0x02:
+					//file 처리
+					break;
+				case 0x03:
+					//event 처리
+					break;
+			}
+>>>>>>> 747304a2197bf463c5cc307205030434e3caf072
         }
     }
 
@@ -65,4 +85,8 @@ public class ServerTask implements Runnable {
         threadPool.shutdown();
         System.out.println("클라이언트스레드풀 종료됨");
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 747304a2197bf463c5cc307205030434e3caf072
