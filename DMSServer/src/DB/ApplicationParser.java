@@ -47,6 +47,11 @@ public class ApplicationParser {
 	public static int getNumOfLeftSeat(String dormName, int semester) throws SQLException
 	{
 		String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + ")";
+		if((semester%100) != 01)
+		{
+			//TODO 0지망 처리하시오
+			//String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + ")";
+		}
 		String getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + semester;
 
 		Connection connection = DBHandler.INSTANCE.getConnetion();
