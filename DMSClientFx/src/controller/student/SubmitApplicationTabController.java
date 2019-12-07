@@ -132,8 +132,9 @@ public class SubmitApplicationTabController implements Initializable
     //---------------------로직---------------------
     
     //사용자가 클릭한 콤보박스로 신청객체 배열을 만들어 반환하는 클래스
-    private ArrayList<Application> getApplicationList()
+    private ArrayList<Application> getApplicationList(Bool isSnore)
     {
+    	int choiceCnt = 1;
     	ArrayList<Application> applicationList = new ArrayList<Application>();
     	
     	String oneYearDorm = oneYear_dorm_combobox.getSelectionModel().getSelectedItem();
@@ -150,22 +151,31 @@ public class SubmitApplicationTabController implements Initializable
     	
     	if(oneYearDorm != null && oneYearMeal != null)
     	{
-    		applicationList.add(comboboxToApplication(0, oneYearDorm, oneYearMeal));
+    		Application app0 = comboboxToApplication(0, oneYearDorm, oneYearMeal);
+    		app0.setSnore(isSnore);
+    		applicationList.add(app0);
     	}
-    		
+    	
+    	// 1,2,3 중 2가 비면 3이 2순위됨.
     	if(firstDorm != null && firstMeal != null)
     	{
-    		applicationList.add(comboboxToApplication(1, firstDorm, firstMeal));
+    		Application app1 = comboboxToApplication(choiceCnt++, firstDorm, firstMeal);
+    		app1.setSnore(isSnore);
+    		applicationList.add(app1);
     	}
     		
     	if(secondDorm != null && secondMeal != null)
     	{
-    		applicationList.add(comboboxToApplication(2, secondDorm, secondMeal));
+    		Application app2 = comboboxToApplication(choiceCnt++, secondDorm, secondMeal);
+    		app2.setSnore(isSnore);
+    		applicationList.add(app2);
     	}
     	
     	if(thirdDorm != null && thirdMeal != null)
     	{
-    		applicationList.add(comboboxToApplication(3, thirdDorm, thirdMeal));
+    		Application app3 = comboboxToApplication(choiceCnt++, thirdDorm, thirdMeal);
+    		app3.setSnore(isSnore);
+    		applicationList.add(app3);
     	}
     	
     	return applicationList;
@@ -197,8 +207,8 @@ public class SubmitApplicationTabController implements Initializable
     	//대충 신청 전송하는 메소드
     	Bool isSnore = isSnore_checkbox.isSelected() ? Bool.TRUE : Bool.FALSE;
     	
-    	ArrayList<Application> applicationList = getApplicationList();
-    	String result = Responser.student_submitApplicationPage_onSubmit(isSnore, applicationList);
+    	ArrayList<Application> applicationList = getApplicationList(isSnore);
+    	String result = Responser.student_submitApplicationPage_onSubmit(applicationList);
     	
     	if(result == null)
         {
