@@ -1,4 +1,10 @@
 package DB;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class DBinfo {
 	public static final String DRIVER_NAME = "mysql";
 	public static final String HOSTNAME = "wehatejava.czztgstzacsv.us-east-1.rds.amazonaws.com";
@@ -14,5 +20,14 @@ public class DBinfo {
 					DB_NAME + "?user=" + 
 					USER_NAME + "&password=" + 
 					PASSWORD; 
-	
+	public static Statement connection() throws ClassNotFoundException, SQLException
+	{
+		Connection conn = null;
+		Statement state = null;
+		
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
+		state = conn.createStatement();
+		return state;
+	}
 }
