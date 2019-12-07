@@ -67,7 +67,7 @@ public class ResidentSelecter
 		int semester = ApplicationParser.getSemester();
 		
 		int leftCapacity = ApplicationParser.getNumOfLeftSeat(dormName, semester);
-		ArrayList<Application> apps = ApplicationParser.getSortedApps(dormName, choice, semester);
+		TreeSet<Application> apps = ApplicationParser.getSortedApps(dormName, choice, semester);
 		
 		Iterator<Application> iterator = apps.iterator();
 		
@@ -76,120 +76,6 @@ public class ResidentSelecter
 			Application temp = iterator.next();
 			ApplicationParser.updatePasser(temp);
 		}
-	}
-	
-	public static double getFinalScore(String studentId, int semester) throws ClassNotFoundException, SQLException
-	{	
-		ArrayList<Score> score = ApplicationParser.getScores(studentId, pastTwo(semester), pastOne(semester));
-
-		double sumOfTakenGrade = 0;
-		double sumOfTakenCredit = 0;
-		
-		Iterator<Score> scores = score.iterator();
-		while(scores.hasNext())
-		{
-			Score temp = scores.next();
-			sumOfTakenCredit += temp.credit;
-			
-			switch(temp.grade) 
-			{
-			case APLUS:
-				sumOfTakenGrade += 4.5 * temp.credit;
-				break;
-			case A:
-				sumOfTakenGrade += 4 * temp.credit;
-				break;
-			case BPLUS:
-				sumOfTakenGrade += 3.5 * temp.credit;
-				break;
-			case B:
-				sumOfTakenGrade += 3 * temp.credit;
-				break;
-			case CPLUS:
-				sumOfTakenGrade += 2.5 * temp.credit;
-				break;
-			case C:
-				sumOfTakenGrade += 2 * temp.credit;
-				break;
-			case DPLUS:
-				sumOfTakenGrade += 1.5 * temp.credit;
-				break;
-			case D:
-				sumOfTakenGrade += 1 * temp.credit;
-				break;
-			case F:
-				break;
-			}
-		}
-		
-		return (sumOfTakenGrade/sumOfTakenCredit + getDistanceScore(ApplicationParser.getZipCode(studentId)));
-	}
-	
-	public static double getDistanceScore(String s)
-	{
-		int a = Integer.parseInt(s);		
-		if(a/100 == 402) return 0.4;	//울릉도
-		
-		a = a/1000;
-		if(a==63) return 0.4;	//제주도
-		else if(35 <a && a<44) return 0.1;	//경북, 대구
-		else if(43 <a && a<54) return 0.2;	//울산, 부산, 경남
-		else if(33 <a && a<36) return 0.2;	//대전
-		else
-			return 0.3;
-	}
-
-	
-	public static int pastOne(int semester)
-	{
-		String pureSemester = String.valueOf(semester).substring(4);	//학기부분만 잘라냄 ex)201901에서 01
-		
-		switch(pureSemester)
-		{
-		case "01":				//1학기
-			semester -= 97;
-			break;
-		case "02":				//여름 계절
-			semester -= 98;
-			break;
-		case "03":				//여름 계절 이후
-			semester -= 99;
-			break;
-		case "04":				//2학기
-			semester -= 3;
-			break;
-		case "05":				//겨울 계절
-			semester -= 4;
-			break;
-		case "06":				//겨울 계절 이후
-			semester -= 5;
-			break;
-		}
-		
-		return semester;
-	}
-	
-	public static int pastTwo(int semester)
-	{
-		String pureSemester = String.valueOf(semester).substring(4);	//학기부분만 잘라냄 ex)201901에서 01
-		
-		switch(pureSemester)
-		{
-		case "01":
-		case "04":
-			semester -= 100;
-			break;
-		case "02":
-		case "05":
-			semester -= 101;
-			break;
-		case "03":
-		case "06":
-			semester -= 102;
-			break;
-		}
-		
-		return semester;
 	}
 	
 }

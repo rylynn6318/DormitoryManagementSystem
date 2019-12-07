@@ -56,8 +56,8 @@ public class Responser
 //		Networking(rs);
 //	}
 	
-	//서버에게 페이지 들어왔다고 알려주는 프로토콜 생성기
-	private static Protocol student_onEnter(Code1.Page page, Serializable sendData)
+	//이벤트 프로토콜 생성자
+	private static Protocol eventProtocolBuilder(Code1.Page page, Code2.Event event, Serializable sendData)
 	{
 		Protocol protocol = null;
 		try
@@ -66,7 +66,7 @@ public class Responser
 	        		ProtocolType.EVENT, 
 	        		Direction.TO_SERVER, 
 	        		page, 
-	        		Code2.Event.REFRESH
+	        		event
 	        		).body(ProtocolHelper.serialization(sendData)).build();
 		}
 		catch(Exception e)
@@ -81,7 +81,7 @@ public class Responser
 	{
 		//1. 입사 신청 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
 		//프로토콜 빌더를 사용해서 입사신청에 들어왔다고, 현 계정을 함께 보낸다(학번을 전달하기 위해)
-		Protocol protocol = student_onEnter(Code1.Page.입사신청, UserInfo.account);
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사신청, Code2.Event.REFRESH, UserInfo.account);
         
         //서버로 요청 및 응답을 받는다.
         Tuple<String, ArrayList<Dormitory>> resultTuple = null;
@@ -118,13 +118,33 @@ public class Responser
 		//3. 서버에서 받은 성공여부로 메세지를 표시한다.
 	}
 	
-	//학생 - 생활관 입사 신청 - 취소 버튼 클릭 시
-	public void student_submitApplicationPage_onCancel()
+	//학생 - 생활관 입사 신청 - 취소 버튼 클릭 시 (2019-12-08 명근 수정)
+	public String student_submitApplicationPage_onCancel()
 	{
 		//1. 서버에게 입사 신청 취소요청을 한다.
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사신청, Code2.Event.CANCEL, UserInfo.account);
+        
 		//(2. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역이 있는지 조회)
 		//(3. TRUE 이면 됬다고 클라이언트에게 알려줌, FALSE이면 클라이언트에게 내역 없다고 알려줌.)
-		//4. 서버에서 받은 성공여부로 메세지를 표시한다.
+		
+        //서버로 요청 및 응답을 받는다.
+        String result = null;
+        try 
+        {
+        	//서버에 요청하고나서 프로토콜 객체에 서버로부터 받은 정보를 담는다.
+            protocol = SocketHandler.INSTANCE.request(protocol);
+
+            //서버로부터 받은 body를 역직렬화한다.
+            result = (String) ProtocolHelper.deserialization(protocol.getBody());
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+        
+		//4. 서버에서 받은 성공여부로 메세지를 표시한다.		
+		return result;
+
 	}
 	
 	//------------------------------------------------------------------------
