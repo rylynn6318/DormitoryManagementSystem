@@ -76,15 +76,10 @@ public class Responser
 		return protocol;
 	}
 	
-	//학생 - 생활관 입사 신청 - 들어왔을 때
-	public static Tuple<String, ArrayList<Dormitory>> student_submitApplicationPage_onEnter() 
+	//protocol을 전송하고, 결과값을 반환한다.
+	private static Serializable sendAndReceive(Protocol protocol)
 	{
-		//1. 입사 신청 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-		//프로토콜 빌더를 사용해서 입사신청에 들어왔다고, 현 계정을 함께 보낸다(학번을 전달하기 위해)
-		Protocol protocol = eventProtocolBuilder(Code1.Page.입사신청, Code2.Event.REFRESH, UserInfo.account);
-        
-        //서버로 요청 및 응답을 받는다.
-        Tuple<String, ArrayList<Dormitory>> resultTuple = null;
+		Serializable result = null;
         try 
         {
         	//서버에 요청하고나서 프로토콜 객체에 서버로부터 받은 정보를 담는다.
@@ -92,14 +87,26 @@ public class Responser
 
             //서버로부터 받은 body를 역직렬화한다. 결과로는 배열이 나올수도, 객체가 나올수도 있다. 그래서 명시적 형변환을 해주어야 한다.
             //서버에서 스케쥴 체크에 성공했을 때는 String(안내사항)과 Dormitory 배열을 전송, 실패 시 메시지와 NULL을 전송한다.
-            resultTuple = (Tuple<String, ArrayList<Dormitory>>) ProtocolHelper.deserialization(protocol.getBody());
+            result =  ProtocolHelper.deserialization(protocol.getBody());
         } 
         catch (Exception e) 
         {
             e.printStackTrace();
         }
+        return result;
+	}
+	
+	//학생 - 생활관 입사 신청 - 들어왔을 때 (2019-12-08 명근 수정)
+	public static Tuple<String, ArrayList<Dormitory>> student_submitApplicationPage_onEnter() 
+	{
+		//1. 입사 신청 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
+		//프로토콜 빌더를 사용해서 입사신청에 들어왔다고, 현 계정을 함께 보낸다(학번을 전달하기 위해)
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사신청, Code2.Event.REFRESH, UserInfo.account);
         
-        //4. 클라이언트는 받은 안내사항 + 생활관목록을 표시한다.
+        //2. 서버로 요청 및 응답을 받는다.
+        Tuple<String, ArrayList<Dormitory>> resultTuple = (Tuple<String, ArrayList<Dormitory>>) sendAndReceive(protocol);
+        
+        //3. 클라이언트는 받은 안내사항 + 생활관목록을 표시한다.
         return resultTuple;
         
         //이후 동작은 이 함수 밖에서 한다. UI적인 부분이라.
@@ -107,15 +114,30 @@ public class Responser
 		//7. 사용자가 combobox 선택에 따라 각각 다른 정보가 표시될 수 있게 구현한다(Tree 쓰면 될것같기도함)
 	}
 	
-	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시
-	public void student_submitApplicationPage_onSubmit()
+	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시 (2019-12-08 명근 수정)
+	public static String student_submitApplicationPage_onSubmit(Bool isSnore, ArrayList<Application> applicationList)
 	{
 		//1. 사용자가 선택한 신청 + 코골이여부를 배열화한다.
 		//	 2, 3지망은 1지망, 2지망 선택하기 전에는 선택못하게 막기 or 비어있는 줄 무시하고 2,3지망만 쓰면 1,2지망으로 바꾸기
-		//1. 배열화한 데이터를 전송한다.
-		//2-1. 서버에서 이미 신청내역이 있다고 반환됬으면 중단한다.
-		//(2-2. 서버는 신청내역이 없으면 코골이여부+신청내역으로 신청 테이블에 INSERT 쿼리. 성공/실패여부 클라이언트에게 전송)
-		//3. 서버에서 받은 성공여부로 메세지를 표시한다.
+		//isSnore을 application에 미리 넣든가, 여기서 넣어라. 여기서 넣는다고 하고 코드짯음.
+		
+		//코골이여부를 Application에 하나씩 넣는다.
+		for(Application app : applicationList)
+		{
+			app.setSnore(isSnore);
+		}
+
+		//사용자 정보와 신청배열을 보내야하기때문에 튜플 사용함.
+		Tuple<Account, ArrayList<Application>> sendData = new Tuple<Account, ArrayList<Application>>(UserInfo.getInstance().account, applicationList);
+		
+		//2. 데이터를 보내기위해 프로토콜을 만든다.
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사신청, Code2.Event.SUBMIT, sendData);
+		
+		//3. 데이터를 서버로 보내고 성공여부 메시지를 받는다.
+		String result = (String) sendAndReceive(protocol);
+
+		//4. 서버에서 받은 성공여부로 메세지를 표시한다.
+		return result;
 	}
 	
 	//학생 - 생활관 입사 신청 - 취소 버튼 클릭 시 (2019-12-08 명근 수정)
@@ -128,19 +150,7 @@ public class Responser
 		//(3. TRUE 이면 됬다고 클라이언트에게 알려줌, FALSE이면 클라이언트에게 내역 없다고 알려줌.)
 		
         //서버로 요청 및 응답을 받는다.
-        String result = null;
-        try 
-        {
-        	//서버에 요청하고나서 프로토콜 객체에 서버로부터 받은 정보를 담는다.
-            protocol = SocketHandler.INSTANCE.request(protocol);
-
-            //서버로부터 받은 body를 역직렬화한다.
-            result = (String) ProtocolHelper.deserialization(protocol.getBody());
-        } 
-        catch (Exception e) 
-        {
-            e.printStackTrace();
-        }
+        String result = (String) sendAndReceive(protocol);
         
 		//4. 서버에서 받은 성공여부로 메세지를 표시한다.		
 		return result;
