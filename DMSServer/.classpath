@@ -2,7 +2,8 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="/WeHateJava/ExternalJars/mysql-connector-java-8.0.18.jar"/>
-	<classpathentry exported="true" kind="lib" path="/WeHateJava/ExternalJars/shared-class.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Seohee/git/WeHateJava/ExternalJars/mysql-connector-java-8.0.18.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Seohee/git/WeHateJava/ExternalJars/shared-class.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Seohee/git/WeHateJava/ExternalJars/shared-class-old.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

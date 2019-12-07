@@ -67,7 +67,6 @@ public final class ProtocolHelper {
             result.add(new Protocol.Builder(protocol.type, protocol.direction, protocol.code1, protocol.code2)
                     .body(body_chunks.get(seq)).sequence(seq, isLast).build());
         }
-
         return result;
     }
 

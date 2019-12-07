@@ -1,8 +1,8 @@
-package logic;
+package database;
 
 import java.util.Iterator;
 import java.util.TreeSet;
-import models.*;
+import shared.classes.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -34,31 +34,23 @@ public class ResidentSelecter
 //	1은 true, 2는 false일 경우 -> ???
 //	1은 false, 2는 true일 경우 -> 1의 남은 capacity를 2에 합쳐서 선발
 //	둘 다 false일 경우 -> 그대로 진행
-		
-	public static void selectionByChoice() throws ClassNotFoundException, SQLException
+	
+	public static void main(String[] args) throws ClassNotFoundException, SQLException
 	{
-		passerSelection("푸름1", 0);
-		passerSelection("푸름1_탑층", 0);
-		passerSelection("푸름2", 0);
-		passerSelection("푸름2_탑층", 0);
-		passerSelection("푸름3", 0);
-		for(int choice = 1; choice < 4; choice++)
-		{
-			passerSelection("푸름1", choice);
-			passerSelection("푸름1_탑층", choice);
-			passerSelection("푸름2", choice);
-			passerSelection("푸름2_탑층", choice);
-			passerSelection("푸름3", choice);
-			passerSelection("푸름4", choice);
-			passerSelection("오름1", choice);
-			passerSelection("오름2", choice);
-			passerSelection("오름3", choice);
-			passerSelection("신평_남", choice);
-			passerSelection("신평_여", choice);
-		}
+		passerSelection("푸름1");
+		passerSelection("푸름1_탑층");
+		passerSelection("푸름2");
+		passerSelection("푸름2_탑층");
+		passerSelection("푸름3");
+		passerSelection("푸름4");
+		passerSelection("오름1");
+		passerSelection("오름2");
+		passerSelection("오름3");
+		passerSelection("신평_남");
+		passerSelection("신평_여");
 	}
 	
-	public static void passerSelection(String dormName, int choice) throws SQLException, ClassNotFoundException
+	public static void passerSelection(String dormName) throws SQLException, ClassNotFoundException
 	{
 		Connection conn = null;
 		Statement state = null;
@@ -67,16 +59,19 @@ public class ResidentSelecter
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-		int leftCapacity = getNumOfLeftSeat(dormName);
-		TreeSet<Application> apps = getSortedApplications(dormName, choice);
-		
-		Iterator<Application> iterator = apps.iterator();
-		
-		for(int i = 0; i < leftCapacity; i++)
+		for(int choice = 0; choice < 4; choice ++)
 		{
-			Application temp = iterator.next();
-			String updateQuery = "UPDATE 신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + " AND 생활관정보_생활관명=" + temp.getDormitoryName() + " AND 성별=" + temp.getGender() + " AND 학기=" + temp.getSemesterCode() + " AND 지망=" + temp.getChoice();
-			state.executeUpdate(updateQuery);
+			int leftCapacity = getNumOfLeftSeat(dormName);
+			TreeSet<Application> apps = getSortedApplications(dormName, choice);
+			
+			Iterator<Application> iterator = apps.iterator();
+			
+			for(int i = 0; i < leftCapacity; i++)
+			{
+				Application temp = iterator.next();
+				String updateQuery = "UPDATE 신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + " AND 생활관정보_생활관명=" + temp.getDormitoryName() + " AND 성별=" + temp.getGender() + " AND 학기=" + temp.getSemesterCode() + " AND 지망=" + temp.getChoice();
+				state.executeUpdate(updateQuery);
+			}
 		}
 	}
 	
@@ -96,8 +91,8 @@ public class ResidentSelecter
 		
 		while(apps.next())
 		{
-			Application temp = new Application(apps.getString("학번"), apps.getString("생활관정보_생활관명"), apps.getString("생활관정보_성별"), apps.getInt("생활관정보_학기"), apps.getInt("지망"), getFinalScore(apps.getString("학번")));
-
+			Application temp = new Application(apps.getString("학번"), apps.getString("생활관정보_생활관명"), apps.getString("생활관정보_성별"), apps.getInt("생활관정보_학기"), apps.getInt("지망"));
+			setFinalScore(temp);
 			sortedApps.add(temp);
 		}
 		
@@ -128,7 +123,7 @@ public class ResidentSelecter
 		return leftCapacity;
 	}
 	
-	public static double getFinalScore(String studentId) throws ClassNotFoundException, SQLException
+	public static void setFinalScore(Application a) throws ClassNotFoundException, SQLException
 	{
 		Connection conn = null;
 		Statement state = null;
@@ -137,7 +132,7 @@ public class ResidentSelecter
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-		String getScoresQuery = "SELECT 학점,등급 FROM 점수 WHERE 학번=" + studentId + "AND 학기 BETWEEN '" + pastTwo(201901) + "' AND '" + pastOne(201901) + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
+		String getScoresQuery = "SELECT 학점,등급 FROM 점수 WHERE 학번=" + a.getStudentId() + "AND 학기 BETWEEN '" + pastTwo(a.getSemesterCode()) + "' AND '" + pastOne(a.getSemesterCode()) + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
 		ResultSet scores = state.executeQuery(getScoresQuery);
 		
 		double sumOfTakenGrade = 0;
@@ -178,11 +173,10 @@ public class ResidentSelecter
 		}
 		
 		Statement state2 = conn.createStatement();
-		String zipCodeQuery = "SELECT 보호자우편번호 FROM 학생 WHERE 학번=" + studentId;
+		String zipCodeQuery = "SELECT 보호자우편번호 FROM 학생 WHERE 학번=" + a.getStudentId();
 		ResultSet zipCode = state2.executeQuery(zipCodeQuery);
 		zipCode.next();
-		
-		return (sumOfTakenGrade/sumOfTakenCredit + getDistanceScore(zipCode.getString("보호자우편번호")));
+		a.setScore(sumOfTakenGrade/sumOfTakenCredit + getDistanceScore(zipCode.getString("보호자우편번호")));
 	}
 	
 	public static double getDistanceScore(String s)
