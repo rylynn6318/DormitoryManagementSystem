@@ -1,5 +1,7 @@
 package DB;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -14,7 +16,14 @@ public class DormParser {
 	{
 		String sql = "SELECT 생활관명 FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 성별 = "+ g.gender;
 
-		ResultSet resultSet = DBHandler.INSTANCE.excuteSelect(sql);
+		// ResultSet resultSet = DBHandler.INSTANCE.excuteSelect(sql);
+		// 현재 두가지 경우가 있다.
+		// 1. DBHandler.INSTANCE.excuteSelect 쓰는 경우
+		// 2. 기존의, DB 커넥션 만들어서 쓰는 경우
+		// 이 경우엔 1.번 경우로 아래와 같이 수정한다
+		Connection connection = DBHandler.INSTANCE.getConnetion();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet resultSet = state.executeQuery();
 
 		ArrayList<String> dlist = new ArrayList<String>();
 		while(resultSet.next())
@@ -22,6 +31,11 @@ public class DormParser {
 			String s = resultSet.getString("생활관명");
 			dlist.add(s);
 		}
+
+		// 로직이 끝났으면 반환한다.
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+
 		return dlist;
 	}
 	//5. 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비
@@ -34,6 +48,7 @@ public class DormParser {
 		{
 			String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 생활관명 = "+ dList.get(i);
 			resultSet = DBHandler.INSTANCE.excuteSelect(sql);
+			// TODO : 이 경우는 로직이 잘못된거 아닌가? while 구문이 for 안으로 들어와야 하는거 아님?
 		}
 		while(resultSet.next())
 		{			
@@ -56,10 +71,12 @@ public class DormParser {
 	public static ArrayList<Dormitory> getDormitoryList(String semester, Gender gender) throws Exception
 	{
 		ArrayList<Dormitory> dorm = new ArrayList<Dormitory>();
-		ResultSet resultSet = null;
 
 		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 성별 = " + gender.gender + " AND 학기 = " + semester;
-		resultSet = DBHandler.INSTANCE.excuteSelect(sql);
+		Connection connection = DBHandler.INSTANCE.getConnetion();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet resultSet = state.executeQuery();
+
 		while(resultSet.next())
 		{			
 			//시원하게 보내라해서 일단 성별로 거른 생활관목록에 대한 모든 정보를 보냄
@@ -74,6 +91,10 @@ public class DormParser {
 					resultSet.getInt("기숙사비"));
 			dorm.add(d);
 		}
+
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+
 		return dorm;
 	}
 }

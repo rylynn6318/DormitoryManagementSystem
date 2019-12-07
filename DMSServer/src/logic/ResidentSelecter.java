@@ -1,17 +1,11 @@
 package logic;
 
 import DB.ApplicationParser;
-import enums.Grade;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.TreeSet;
 import models.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public class ResidentSelecter 
 {
@@ -62,7 +56,7 @@ public class ResidentSelecter
 		}
 	}
 	
-	public static void passerSelection(String dormName, int choice) throws SQLException, ClassNotFoundException
+	public static void passerSelection(String dormName, int choice) throws ClassNotFoundException, SQLException
 	{
 		int semester = ApplicationParser.getSemester();
 		
