@@ -14,7 +14,7 @@ public class ScheduleParser
 	public static boolean isAdmissible(Page page) throws ClassNotFoundException, SQLException
 	{
 		// 지금 DB가 datetime 타입이 아니라 시분초설정이 오전9시로 고정되어있음 ㅇㅇ 그거 수정하고 다시 검사필요
-		Date day = new Date(119,0,1,8,59,59); //2019-01-01
+		Date day = new Date(); //현재시간
 		Date start = null;
 		Date end = null;
 		
