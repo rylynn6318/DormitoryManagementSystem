@@ -2,14 +2,12 @@ package enums;
 
 //몇지망인지 나타내는 ENUM
 public enum Choice {
-    ONEYEAR(0, (byte) 0x00), FIRST(1, (byte) 0x01), SECOND(2, (byte) 0x02), THIRD(3, (byte) 0x03);
+    ONEYEAR(0), FIRST(1), SECOND(2), THIRD(3);
 
     public final int choice;
-    public final byte bit;
 
-    Choice(int choice, byte bit) {
+    Choice(int choice) {
         this.choice = choice;
-        this.bit = bit;
     }
 
     public static Choice get(int choice) {

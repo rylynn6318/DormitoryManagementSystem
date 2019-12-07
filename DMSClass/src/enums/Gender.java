@@ -2,22 +2,22 @@ package enums;
 
 //남학생인지 여학생인지를 나타내는 ENUM
 public enum Gender {
-    Male('M', (byte) 0x00), Female('F', (byte) 0x01);
+    Male("M"), Female("F");
 
-    public final char gender;
-    public final byte bit;
+    public final String gender;
 
-    Gender(char gender, byte bit) {
+    Gender(String gender) {
         this.gender = gender;
-        this.bit = bit;
     }
 
-    public static Gender get(char g) {
-        if (g == 'M')
+    public static Gender get(String g) {
+        switch (g) {
+        case "M":
             return Male;
-        else if(g == 'F')
+        case "F":
             return Female;
-        else
+        default:
             return null;
+        }
     }
 }

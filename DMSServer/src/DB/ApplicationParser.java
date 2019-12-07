@@ -10,9 +10,8 @@ import models.Application;
 public class ApplicationParser {
 	public static Boolean isExist(String studentID) throws ClassNotFoundException, SQLException
 	{
-		Statement state = DBinfo.connection();
-		String sql = "SELECT 학번 FROM " + DBinfo.DB_NAME + ".신청 WHERE 학번 = "+ studentID;
-		ResultSet rs = state.executeQuery(sql);
+		String sql = "SELECT 학번 FROM " + DBHandler.INSTANCE.DB_NAME + ".신청 WHERE 학번 = "+ studentID;
+		ResultSet rs = DBHandler.INSTANCE.excuteSelect(sql);
 		
 		if(rs.next())
 		{

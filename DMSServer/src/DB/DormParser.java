@@ -12,13 +12,13 @@ public class DormParser {
 	//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
 	public static ArrayList<String> getDormList(Gender g) throws Exception
 	{
-		Statement state = DBinfo.connection();
-		String sql = "SELECT 생활관명 FROM " + DBinfo.DB_NAME + ".생활관정보  WHERE 성별 = "+ g.toString();
-		ResultSet purs = state.executeQuery(sql);
+		String sql = "SELECT 생활관명 FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 성별 = "+ g.gender;
+		ResultSet resultSet = DBHandler.INSTANCE.excuteSelect(sql);
+
 		ArrayList<String> dlist = new ArrayList<String>();
-		while(purs.next())
+		while(resultSet.next())
 		{
-			String s = purs.getString("생활관명");			
+			String s = resultSet.getString("생활관명");
 			dlist.add(s);
 		}
 		return dlist;
@@ -28,17 +28,24 @@ public class DormParser {
 	public static ArrayList<Dormitory> getDormInfo(ArrayList<String> dList) throws Exception
 	{
 		ArrayList<Dormitory> dorm = new ArrayList<Dormitory>();
-		ResultSet purs = null;
+		ResultSet resultSet = null;
 		for(int i=0;i<dList.size();i++)
 		{
-			Statement state = DBinfo.connection();
-			String sql = "SELECT * FROM " + DBinfo.DB_NAME + ".생활관정보  WHERE 생활관명 = "+ dList.get(i);
-			purs = state.executeQuery(sql);			
+			String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 생활관명 = "+ dList.get(i);
+			resultSet = DBHandler.INSTANCE.excuteSelect(sql);
 		}
-		while(purs.next())
+		while(resultSet.next())
 		{			
 			//시원하게 보내라해서 일단 성별로 거른 생활관목록에 대한 모든 정보를 보냄
-			Dormitory d = new Dormitory(purs.getString("생활관명"), Gender.get(purs.getString("성별").charAt(0)), purs.getInt("학기"), purs.getInt("수용인원"), Bool.get(purs.getString("식사의무")),purs.getInt("5일식_식비"),purs.getInt("7일식_식비"),purs.getInt("기숙사비"));
+			Dormitory d = new Dormitory(
+					resultSet.getString("생활관명"),
+					Gender.get(resultSet.getString("성별")),
+					resultSet.getInt("학기"),
+					resultSet.getInt("수용인원"),
+					Bool.get(resultSet.getString("식사의무")),
+					resultSet.getInt("5일식_식비"),
+					resultSet.getInt("7일식_식비"),
+					resultSet.getInt("기숙사비"));
 			dorm.add(d);
 		}
 		return dorm;
@@ -48,15 +55,22 @@ public class DormParser {
 	public static ArrayList<Dormitory> getDormitoryList(String semester, Gender gender) throws Exception
 	{
 		ArrayList<Dormitory> dorm = new ArrayList<Dormitory>();
-		ResultSet purs = null;
-		
-		Statement state = DBinfo.connection();
-		String sql = "SELECT * FROM " + DBinfo.DB_NAME + ".생활관정보  WHERE 성별 = " + gender.toString() + " AND 학기 = " + semester;
-		purs = state.executeQuery(sql);	
-		while(purs.next())
+		ResultSet resultSet = null;
+
+		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 성별 = " + gender.gender + " AND 학기 = " + semester;
+		resultSet = DBHandler.INSTANCE.excuteSelect(sql);
+		while(resultSet.next())
 		{			
 			//시원하게 보내라해서 일단 성별로 거른 생활관목록에 대한 모든 정보를 보냄
-			Dormitory d = new Dormitory(purs.getString("생활관명"), Gender.get(purs.getString("성별").charAt(0)), purs.getInt("학기"), purs.getInt("수용인원"), Bool.get(purs.getString("식사의무")),purs.getInt("5일식_식비"),purs.getInt("7일식_식비"),purs.getInt("기숙사비"));
+			Dormitory d = new Dormitory(
+					resultSet.getString("생활관명"),
+					Gender.get(resultSet.getString("성별")),
+					resultSet.getInt("학기"),
+					resultSet.getInt("수용인원"),
+					Bool.get(resultSet.getString("식사의무")),
+					resultSet.getInt("5일식_식비"),
+					resultSet.getInt("7일식_식비"),
+					resultSet.getInt("기숙사비"));
 			dorm.add(d);
 		}
 		return dorm;
