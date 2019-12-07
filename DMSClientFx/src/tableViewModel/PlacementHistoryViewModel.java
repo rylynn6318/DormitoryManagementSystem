@@ -21,7 +21,7 @@ public class PlacementHistoryViewModel
 	
 	public PlacementHistoryViewModel(String studentId, int roomId, int semester, String dormitoryName, char seat, Date checkout)
 	{
-		placementHistory = new PlacementHistory(studentId, roomId, semester, dormitoryName, Seat.get(seat), checkout);
+		placementHistory = new PlacementHistory(studentId, roomId, semester, dormitoryName, Seat.get(String.valueOf(seat)), checkout);
 		
 		this.studentIdStr = new SimpleStringProperty(studentId);
 		this.roomIdStr = new SimpleStringProperty(Integer.toString(roomId));

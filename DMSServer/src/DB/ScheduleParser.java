@@ -17,15 +17,14 @@ public class ScheduleParser
 		Date day = new Date(119,0,1,8,59,59); //2019-01-01
 		Date start = null;
 		Date end = null;
-		
-		Statement state = DBinfo.connection();
 
 		// String.valueOf((int)page)를 String.valueOf((int)page.getCode())로 수정함. by ssm
-		String sql = "SELECT 시작일, 종료일 FROM " + DBinfo.DB_NAME + ".스케쥴  WHERE (`스케쥴 할일 코드_ID` =" + String.valueOf((int)page.getCode()) + ")";
-		ResultSet purs = state.executeQuery(sql);
-		purs.next();
-		start = purs.getDate("시작일");
-		end = purs.getDate("종료일");
+		String sql = "SELECT 시작일, 종료일 FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE (`스케쥴 할일 코드_ID` =" + String.valueOf((int)page.getCode()) + ")";
+		ResultSet resultSet = DBHandler.INSTANCE.excuteSelect(sql);
+		resultSet.next();
+
+		start = resultSet.getDate("시작일");
+		end = resultSet.getDate("종료일");
 		
 		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
 		String time1 = format1.format(start);		

@@ -2,16 +2,14 @@ package enums;
 
 //몇지망인지 나타내는 ENUM
 public enum UserType{
-	UNDEFINED(0, (byte)0x00),
-    STUDENT(1, (byte)0x01),
-	ADMIN(2, (byte)0x02);
+	UNDEFINED(0),
+    STUDENT(1),
+	ADMIN(2);
 
     public final int type;
-    public final byte bit;
 
-    UserType(int type, byte bit){
+    UserType(int type){
         this.type = type;
-        this.bit = bit;
     }
 
     public static UserType get(Code2.LoginResult result){
