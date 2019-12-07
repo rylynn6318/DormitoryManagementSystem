@@ -6,6 +6,7 @@ import utils.*;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -35,28 +36,22 @@ public class ServerTask implements Runnable {
 
         switch (protocol.type) {
             case LOGIN:
-                Account result = LoginChecker.check((Account) ProtocolHelper.deserialization(protocol.getBody()));
-                socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.ADMIN).build());
-
+                Account result = null;
                 try {
-                    if (((Account) ProtocolHelper.deserialization(protocol.getBody())).accountId.equals("admin")) {
-                        try {
-                            socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.ADMIN).build());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        try {
-                            socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.STUDENT).build());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    result = LoginChecker.check((Account) ProtocolHelper.deserialization(protocol.getBody()));
                 } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (SQLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                try {
+                    socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.get(result.userType)).build());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 break;
             case FILE:
                 //file 처리

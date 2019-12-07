@@ -59,7 +59,19 @@ public class Code2 {
             default:
                 return null;
             }
+        }
 
+        public static LoginResult get(UserType type) {
+            switch (type) {
+            case UNDEFINED:
+                return FAIL;
+            case STUDENT:
+                return STUDENT;
+            case ADMIN:
+                return ADMIN;
+            default:
+                return null;
+            }
         }
     }
 

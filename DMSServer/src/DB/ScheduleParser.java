@@ -1,8 +1,6 @@
 package DB;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -20,7 +18,9 @@ public class ScheduleParser
 
 		// String.valueOf((int)page)를 String.valueOf((int)page.getCode())로 수정함. by ssm
 		String sql = "SELECT 시작일, 종료일 FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE (`스케쥴 할일 코드_ID` =" + String.valueOf((int)page.getCode()) + ")";
-		ResultSet resultSet = DBHandler.INSTANCE.excuteSelect(sql);
+		Connection connection = DBHandler.INSTANCE.getConnetion();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet resultSet = state.executeQuery();
 		resultSet.next();
 
 		start = resultSet.getDate("시작일");
@@ -31,7 +31,10 @@ public class ScheduleParser
 		System.out.println(time1);
 		int result1 = day.compareTo(start);
 		int result2 = day.compareTo(end);
-		
+
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+
 		if(result1 == -1)//시작일 보다 빠르면
 		{
 			System.out.println("해당 기간 아님");

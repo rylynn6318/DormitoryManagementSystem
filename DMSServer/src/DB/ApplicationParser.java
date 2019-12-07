@@ -1,8 +1,6 @@
 package DB;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -14,9 +12,14 @@ public class ApplicationParser {
 	public static Boolean isExist(String studentID) throws ClassNotFoundException, SQLException
 	{
 		String sql = "SELECT 학번 FROM " + DBHandler.INSTANCE.DB_NAME + ".신청 WHERE 학번 = "+ studentID;
-		ResultSet rs = DBHandler.INSTANCE.excuteSelect(sql);
-		
-		if(rs.next())
+		Connection connection = DBHandler.INSTANCE.getConnetion();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+		boolean isNext = rs.next();
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+
+		if(isNext)
 		{
 			return true;
 		}
@@ -24,6 +27,7 @@ public class ApplicationParser {
 		{
 			return false;
 		}
+
 	}
 
 	public static int getSemester() throws ClassNotFoundException, SQLException 

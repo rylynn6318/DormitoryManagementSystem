@@ -13,6 +13,7 @@ public class DormParser {
 	public static ArrayList<String> getDormList(Gender g) throws Exception
 	{
 		String sql = "SELECT 생활관명 FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 성별 = "+ g.gender;
+
 		ResultSet resultSet = DBHandler.INSTANCE.excuteSelect(sql);
 
 		ArrayList<String> dlist = new ArrayList<String>();
