@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import DB.*;
@@ -137,7 +138,7 @@ public class Responser
 						).body(ProtocolHelper.serialization("성공.")).build());
 				return;
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 		}
 	}
