@@ -73,11 +73,11 @@ public class DormParser {
 	}
 	
 	//제대로 동작하는지 모르겠음. 현재 학기에서 성별로 생활관 조회, 모든 결과값을 Dormitory 객체 배열로 반환함. 
-	public static ArrayList<Dormitory> getDormitoryList(String semester, Gender gender) throws Exception
+	public static ArrayList<Dormitory> getDormitoryList(int semester, Gender gender) throws Exception
 	{
 		ArrayList<Dormitory> dorm = new ArrayList<Dormitory>();
 
-		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 성별 = " + gender.gender + " AND 학기 = " + semester;
+		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 성별 = " + gender.gender + " AND 학기 = " + String.valueOf(semester);
 		Connection connection = DBHandler.INSTANCE.getConnetion();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet resultSet = state.executeQuery();
