@@ -1,7 +1,5 @@
+import database.DatabaseHandler;
 
-import ultils.SocketHelper;
-
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -23,31 +21,15 @@ import java.net.Socket;
 //할 수 있는게 좋다고 판단하였다.
 
 public class DMSServer {
-    public static void main(String[] args){
-        ServerSocket sSocket = null;
-        try {
-            sSocket = new ServerSocket(SocketHelper.port);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void main(String[] args) throws Exception {
+        ServerSocket sSocket = new ServerSocket(666);
         System.out.println("클라이언트 접속 대기중...");
-        //DatabaseHandler db = new DatabaseHandler();
-        //db.connection();
+        DatabaseHandler db = new DatabaseHandler();
+        db.connection();
         while (true) {
-            Socket socket = null;
-            try {
-                socket = sSocket.accept();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            SocketHelper socketHelper = new SocketHelper(socket);
+            Socket socket = sSocket.accept();
             System.out.println("클라이언트 접속");
-            new ServerTask(socketHelper).run();    //반복수행
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            new ServerTask(socket, db).run();    //반복수행
         }
     }
 }
