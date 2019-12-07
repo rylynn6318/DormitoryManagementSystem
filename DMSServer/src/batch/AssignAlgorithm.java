@@ -680,7 +680,6 @@ public class AssignAlgorithm
 		{
 			updateAssignInfo(SY[i].getStudentId(), SY[i].getSeat(), SY[i].getCheckOut(), SY[i].getSemesterCode(),SY[i].getRoomNumber());
 		}
-		
 	}
 	public static void batchStart() throws ClassNotFoundException, SQLException
 	{
