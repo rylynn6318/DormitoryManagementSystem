@@ -26,8 +26,9 @@ public class SocketHelper {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[sendbuffer_size];
 
-        while (socket.getInputStream().read(buffer) != -1) {
-            output.write(buffer);
+        int readed = 0;
+        while ((readed = socket.getInputStream().read(buffer)) != -1) {
+            output.write(buffer, 0, readed);
         }
 
         return new Protocol.Builder(output.toByteArray()).build();

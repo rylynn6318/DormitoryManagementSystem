@@ -33,8 +33,8 @@ public final class ProtocolHelper {
 
     public static byte[] shortToByte(short input){
         byte[] result = new byte[2];
-        result[0] = (byte) ((input >> 8) & 0xff);
-        result[1] = (byte) (input & 0xff);
+        result[0] = (byte) ((input >> 8) & 0xFF);
+        result[1] = (byte) (input & 0xFF);
         return result;
     }
     public static short bytesToShort(byte[] input){
