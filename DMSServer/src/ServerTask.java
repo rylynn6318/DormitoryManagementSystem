@@ -58,6 +58,23 @@ public class ServerTask implements Runnable {
                 break;
             case EVENT:
                 //event 처리
+            	switch((Code1.Page) protocol.code1)
+            	{
+            	case 입사신청:
+            		switch((Code2.Event) protocol.code2)
+            		{
+            		case REFRESH:
+            			try
+						{
+        					Responser.student_submitApplicationPage_onEnter(protocol, socketHelper);
+						} catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+            			break;
+            		}
+            		break;
+            	}
                 break;
         }
 
