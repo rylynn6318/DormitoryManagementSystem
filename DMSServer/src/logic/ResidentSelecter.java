@@ -1,6 +1,9 @@
 package logic;
 
 import DB.ApplicationParser;
+import enums.Grade;
+
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 import models.*;
@@ -63,8 +66,8 @@ public class ResidentSelecter
 	{
 		int semester = ApplicationParser.getSemester();
 		
-		int leftCapacity = getNumOfLeftSeat(dormName, semester);
-		TreeSet<Application> apps = ApplicationParser.getUnsortedApps(dormName, choice, semester);
+		int leftCapacity = ApplicationParser.getNumOfLeftSeat(dormName, semester);
+		ArrayList<Application> apps = ApplicationParser.getSortedApps(dormName, choice, semester);
 		
 		Iterator<Application> iterator = apps.iterator();
 		
@@ -75,97 +78,51 @@ public class ResidentSelecter
 		}
 	}
 	
-	public static int getNumOfLeftSeat(String dormName, int semester) throws ClassNotFoundException, SQLException	//생활관 이름과 학기를 넣으면 남은 자리의 수를 리턴하는 함수
-	{
-		Connection conn = null;
-		Statement state = null;
-		
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
-		state = conn.createStatement();
-		
-		String pureSemester = String.valueOf(semester).substring(4);
-		String getNumOfPassedAppsQuery;
-		String getCapacityQuery;
-		ResultSet passed;
-		ResultSet capacity;
-		if(pureSemester.equals("01") || pureSemester.equals("04") || pureSemester.equals("02") || pureSemester.equals("05"))
-		{
-			getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM 배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + ")";			
-			getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + semester;
-		}
-		else
-		{
-			getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM 배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + (semester - 1) + ")";
-			getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + (semester - 1);
-		}
-		passed = state.executeQuery(getNumOfPassedAppsQuery);
-		Statement state2 = conn.createStatement();
-		capacity = state2.executeQuery(getCapacityQuery);
-		
-		capacity.next();
-		passed.next();
-		
-		int leftCapacity = capacity.getInt("수용인원") - passed.getInt("COUNT(*)");
-		
-		return leftCapacity;
-	}
-	
 	public static double getFinalScore(String studentId, int semester) throws ClassNotFoundException, SQLException
-	{
-		Connection conn = null;
-		Statement state = null;
-		
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
-		state = conn.createStatement();
-		
-		String getScoresQuery = "SELECT 학점,등급 FROM 점수 WHERE 학번=" + studentId + "AND 학기 BETWEEN '" + pastTwo(semester) + "' AND '" + pastOne(semester) + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
-		ResultSet scores = state.executeQuery(getScoresQuery);
-		
+	{	
+		ArrayList<Score> score = ApplicationParser.getScores(studentId, pastTwo(semester), pastOne(semester));
+
 		double sumOfTakenGrade = 0;
 		double sumOfTakenCredit = 0;
 		
-		while(scores.next())
+		Iterator<Score> scores = score.iterator();
+		while(scores.hasNext())
 		{
-			sumOfTakenCredit += scores.getInt("학점");
-			switch(scores.getString("성적등급")) 
+			Score temp = scores.next();
+			sumOfTakenCredit += temp.credit;
+			
+			switch(temp.grade) 
 			{
-			case "A+":
-				sumOfTakenGrade += 4.5 * scores.getInt("학점");
+			case APLUS:
+				sumOfTakenGrade += 4.5 * temp.credit;
 				break;
-			case "A":
-				sumOfTakenGrade += 4 * scores.getInt("학점");
+			case A:
+				sumOfTakenGrade += 4 * temp.credit;
 				break;
-			case "B+":
-				sumOfTakenGrade += 3.5 * scores.getInt("학점");
+			case BPLUS:
+				sumOfTakenGrade += 3.5 * temp.credit;
 				break;
-			case "B":
-				sumOfTakenGrade += 3 * scores.getInt("학점");
+			case B:
+				sumOfTakenGrade += 3 * temp.credit;
 				break;
-			case "C+":
-				sumOfTakenGrade += 2.5 * scores.getInt("학점");
+			case CPLUS:
+				sumOfTakenGrade += 2.5 * temp.credit;
 				break;
-			case "C":
-				sumOfTakenGrade += 2 * scores.getInt("학점");
+			case C:
+				sumOfTakenGrade += 2 * temp.credit;
 				break;
-			case "D+":
-				sumOfTakenGrade += 1.5 * scores.getInt("학점");
+			case DPLUS:
+				sumOfTakenGrade += 1.5 * temp.credit;
 				break;
-			case "D":
-				sumOfTakenGrade += 1 * scores.getInt("학점");
+			case D:
+				sumOfTakenGrade += 1 * temp.credit;
 				break;
-			case "F":
+			case F:
 				break;
 			}
 		}
 		
-		Statement state2 = conn.createStatement();
-		String zipCodeQuery = "SELECT 보호자우편번호 FROM 학생 WHERE 학번=" + studentId;
-		ResultSet zipCode = state2.executeQuery(zipCodeQuery);
-		zipCode.next();
-		
-		return (sumOfTakenGrade/sumOfTakenCredit + getDistanceScore(zipCode.getString("보호자우편번호")));
+		return (sumOfTakenGrade/sumOfTakenCredit + getDistanceScore(ApplicationParser.getZipCode(studentId)));
 	}
 	
 	public static double getDistanceScore(String s)
