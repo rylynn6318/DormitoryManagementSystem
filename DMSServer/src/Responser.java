@@ -6,9 +6,9 @@ import DB.StudentParser;
 import enums.*;
 import models.Dormitory;
 //import models.Tuple;
-import ultils.Protocol;
-import ultils.ProtocolHelper;
-import ultils.SocketHelper;
+import utils.Protocol;
+import utils.ProtocolHelper;
+import utils.SocketHelper;
 
 //디버깅용 클래스
 //대충 클라이언트에서 어떤 요청이 왔을때 그에 대한 반응(로직)을 모아둠.
