@@ -81,15 +81,15 @@ public class Responser
 		
 		//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
 		//	 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
-		String semester = "201901";
-//		semester = Utils.getCurrentSemester();											//나중에 이런 코드 만들어서 쓰게해야됨.
+		int semester;
+		semester = CurrentSemesterParser.getCurrentSemester();											//나중에 이런 코드 만들어서 쓰게해야됨.
 		ArrayList<Dormitory> dormitoryList = DormParser.getDormitoryList(semester, gender);
 		
 		//5. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
-//		String description = ScheduleParser.getDescription(Code1.Page.입사신청);
+		String description = ScheduleParser.getDescription(Code1.Page.입사신청);
 		
 		//6. 해당 정보를 객체화, 배열로 만들어 클라이언트에게 전송한다.
-		Tuple<String, ArrayList<Dormitory>> resultTuple = new Tuple("description", dormitoryList);
+		Tuple<String, ArrayList<Dormitory>> resultTuple = new Tuple(description, dormitoryList);
 		
 		//전송한다.
 		socketHelper.write(new Protocol.Builder(
