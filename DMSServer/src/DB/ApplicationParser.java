@@ -8,7 +8,7 @@ import java.util.TreeSet;
 import models.Application;
 
 public class ApplicationParser {
-	public static Boolean isExist(int studentID) throws ClassNotFoundException, SQLException
+	public static Boolean isExist(String studentID) throws ClassNotFoundException, SQLException
 	{
 		Statement state = DBinfo.connection();
 		String sql = "SELECT 학번 FROM " + DBinfo.DB_NAME + ".신청 WHERE 학번 = "+ studentID;
