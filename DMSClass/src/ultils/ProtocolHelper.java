@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,20 +31,20 @@ public final class ProtocolHelper {
         }
     }
 
-    public static byte[] shortToByte(short input){
+    static byte[] shortToByte(short input){
         byte[] result = new byte[2];
         result[0] = (byte) ((input >> 8) & 0xFF);
         result[1] = (byte) (input & 0xFF);
         return result;
     }
-    public static short bytesToShort(byte[] input){
+    static short bytesToShort(byte[] input){
         return (short) (input[0] << 8 | (input[1] & 0xFF));
     }
-    public static short bytesToShort(byte a, byte b){
+    static short bytesToShort(byte a, byte b){
         return (short) (a << 8 | (b & 0xFF));
     }
 
-    public static List<byte[]> splitBySize(final byte[] bytes, final int chunk_size) {
+    static List<byte[]> splitBySize(final byte[] bytes, final int chunk_size) {
         final List<byte[]> result = new ArrayList<>();
         for (int i = 0; i < bytes.length; i += chunk_size) {
             result.add(Arrays.copyOfRange(bytes, i, Math.min(bytes.length, i + chunk_size)));
@@ -53,7 +52,7 @@ public final class ProtocolHelper {
         return result;
     }
 
-    public static List<Protocol> split(final Protocol protocol, final int size_to_split) throws IOException {
+    static List<Protocol> split(final Protocol protocol, final int size_to_split) throws IOException {
         List<Protocol> result = new ArrayList<>();
         byte[] tmp = protocol.getBody();
         List<byte[]> body_chunks = splitBySize(tmp, size_to_split - Protocol.HEADER_LENGTH);
@@ -73,7 +72,7 @@ public final class ProtocolHelper {
     }
 
     // 테스트 안됨!
-    public static Protocol merge(final byte[] packet) throws IOException, Exception {
+    static Protocol merge(final byte[] packet) throws IOException, Exception {
         List<Protocol> tmp = new ArrayList<>();
 
         int chunk_size = 0;
@@ -85,7 +84,7 @@ public final class ProtocolHelper {
         return merge(tmp);
     }
 
-    public static Protocol merge(List<Protocol> protocols) throws IOException {
+    static Protocol merge(List<Protocol> protocols) throws IOException {
         protocols.sort(null);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
