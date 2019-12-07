@@ -86,13 +86,18 @@ public class SubmitApplicationTabController implements Initializable
         }
         
         //안내사항 표시
-        //info_textarea.setText(resultTuple.obj1);
-		
+        if(resultTuple != null)
+        	info_textarea.setText(resultTuple.obj1);
 		
 		//TODO 테스트용, 콤보박스 아이템 추가. 나중에 클래스든, String이든, 네트워크에서 받아와 처리해야됨.
 		//그리고, 요청받아올때 서버에서 남자인지 여자인지 알아내서 그에 맞는 생활관구분, 기간구분, 식사구분, 생활관비 가져와야댐.
 		//(추가)그냥 서버에서 생활관정보테이블->이번학기->성별에 맞게-> 다 긁어와서 객체 배열로 만들고, 클라이언트로 전송하면됨.
+		setCombobox(resultTuple.obj2);
 		
+	}
+	
+	private void debug_comboboxView()
+	{
 		//남자라고 가정, 사실 남자인지 여자인지도 서버에서 알아서 판단해서 클라이언트에게 보냄. 클라이언트는 이게 남자껀지 여자껀지 몰라야함.
 		//일반학기라고 가정, 클라이언트는 일반학기인지, 방학인지는 모름. 이것도 서버에서 알아서 판단해서 알아서 보내줌.
 		oneYear_dorm_combobox.getItems().addAll("선택", "푸름관 1,2동");
@@ -232,34 +237,13 @@ public class SubmitApplicationTabController implements Initializable
         
         IOHandler.getInstance().showAlert(result);
     }
+    
+    private void setCombobox(ArrayList<Dormitory> dormList)
+    {
+    	for(Dormitory dorm : dormList)
+    	{
+    		
+    	}
+    }
 
-}
-
-//콤보박스 값이 변경되었을때 작동하는 리스너
-//사용자가 선택한 콤보박스에 맞게 cost label에 금액이 찍혀야함.
-//값이 비어있는 콤보박스가 있으면 안띄워야함.
-//서버로부터 사실상 성별로만 구분한 
-class ComboboxChangeListener implements ChangeListener<String>
-{
-	ComboBox<String> dorm; 
-	ComboBox<String> period;
-	ComboBox<String> meal;
-	Label cost;
-	
-	public ComboboxChangeListener(ComboBox<String> dorm, ComboBox<String> period, ComboBox<String> meal, Label cost)
-	{
-		
-	}
-	
-	public ComboboxChangeListener(Label cost)
-	{
-		this.cost = cost;
-	}
-	
-	@Override
-	public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue)
-	{
-		
-	}
-	
 }
