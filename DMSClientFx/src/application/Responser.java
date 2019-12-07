@@ -91,6 +91,7 @@ public class Responser
         } 
         catch (Exception e) 
         {
+        	System.out.println("서버 연결 실패!");
             e.printStackTrace();
         }
         return result;
@@ -141,7 +142,7 @@ public class Responser
 	}
 	
 	//학생 - 생활관 입사 신청 - 취소 버튼 클릭 시 (2019-12-08 명근 수정)
-	public String student_submitApplicationPage_onCancel()
+	public static String student_submitApplicationPage_onCancel()
 	{
 		//1. 서버에게 입사 신청 취소요청을 한다.
 		Protocol protocol = eventProtocolBuilder(Code1.Page.입사신청, Code2.Event.CANCEL, UserInfo.account);

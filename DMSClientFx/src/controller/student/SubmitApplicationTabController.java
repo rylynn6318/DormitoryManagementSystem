@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import application.IOHandler;
 import application.Responser;
+import enums.Bool;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -87,14 +88,14 @@ public class SubmitApplicationTabController implements Initializable
 		System.out.println("생활관 입사 신청 새로고침됨");
 		
 		//네트워킹
-		Tuple<String, ArrayList<Dormitory>> resultTuple = null;
-		
-        try {
-        	resultTuple = Responser.student_submitApplicationPage_onEnter();
-        	
-		} catch (Exception e) {
-			IOHandler.getInstance().showAlert(resultTuple.obj1);
-		}
+		Tuple<String, ArrayList<Dormitory>> resultTuple = Responser.student_submitApplicationPage_onEnter();
+        
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	//여기서 페이지 닫게 해주자.. 아직 코드 몰라서 구현안함.
+        	return;
+        }
         
         //스케쥴 때문에 진입 불가인 경우 tuple의 두번째 항목이 null로 반환된다.
         if(resultTuple.obj2 == null)
@@ -104,6 +105,7 @@ public class SubmitApplicationTabController implements Initializable
         	return;
         }
         
+        //안내사항 표시
         info_textarea.setText(resultTuple.obj1);
 		
 		
@@ -134,9 +136,7 @@ public class SubmitApplicationTabController implements Initializable
 //		oneYear_cost_label.setText("만원");
 //		firstChoice_cost_label.setText("만원");
 //		secondChoice_cost_label.setText("만원");
-//		thirdChoice_cost_label.setText("만원");
-        
-		
+//		thirdChoice_cost_label.setText("만원");	
 	}
 	
 	//---------------------이벤트---------------------
@@ -145,7 +145,7 @@ public class SubmitApplicationTabController implements Initializable
     void on_application_button_actioned(ActionEvent event) 
     {
 		System.out.println("생활관 입사 신청 : 신청 클릭됨");
-		sendApplication();
+		submitApplication();
     }
 
     @FXML
@@ -157,14 +157,43 @@ public class SubmitApplicationTabController implements Initializable
     
     //---------------------로직---------------------
     
-    private void sendApplication()
+    //사용자가 클릭한 콤보박스로 신청객체 배열을 만들어 반환하는 클래스
+    private ArrayList<Application> getApplicationList()
+    {
+    	ArrayList<Application> applicationList = new ArrayList<Application>();
+    	
+    	return applicationList;
+    }
+    
+    private void submitApplication()
     {
     	//대충 신청 전송하는 메소드
+    	Bool isSnore = isSnore_checkbox.isSelected() ? Bool.TRUE : Bool.FALSE;
+    	
+    	ArrayList<Application> applicationList = getApplicationList();
+    	String result = Responser.student_submitApplicationPage_onSubmit(isSnore, applicationList);
+    	
+    	if(result == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        IOHandler.getInstance().showAlert(result);
     }
     
     private void cancelApplication()
     {
     	//대충 취소 전송하는 메소드
+    	String result = Responser.student_submitApplicationPage_onCancel();
+    	
+    	if(result == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        IOHandler.getInstance().showAlert(result);
     }
 
 }
