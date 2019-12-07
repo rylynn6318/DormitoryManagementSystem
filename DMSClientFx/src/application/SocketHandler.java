@@ -1,6 +1,6 @@
 package application;
 
-import ultils.*;
+import utils.*;
 
 import java.net.Socket;
 
