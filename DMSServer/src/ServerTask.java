@@ -72,6 +72,13 @@ public class ServerTask implements Runnable {
 							e.printStackTrace();
 						}
             			break;
+            		case CANCEL:
+            			try {
+            				Responser.student_submitApplicationPage_onCancel(protocol, socketHelper);
+            			} catch(Exception e) {
+            				e.printStackTrace();
+            			}
+            			break;
             		}
             		break;
             	}

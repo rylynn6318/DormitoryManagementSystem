@@ -1,8 +1,7 @@
+import java.io.IOException;
 import java.util.ArrayList;
 
-import DB.DormParser;
-import DB.ScheduleParser;
-import DB.StudentParser;
+import DB.*;
 import enums.*;
 import models.*;
 import utils.*;
@@ -59,46 +58,46 @@ public class Responser
 	public static void student_submitApplicationPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴을 확인하고 입사 신청 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-				boolean isAdmissible = ScheduleParser.isAdmissible(Code1.Page.입사신청);
-				System.out.println("스케쥴 체크됨");
-				if(!isAdmissible)
-				{
-					//이렇게 튜플로 보내주는 이유는, 아래에서 스케쥴 체크에서 성공했을때 튜플로 보내기 때문임.
-					Tuple<String, String> failMessage = new Tuple<String, String>("현재 생활관 입사 신청 기간이 아닙니다.", null);
-					socketHelper.write(new Protocol.Builder(
-							ProtocolType.EVENT, 
-							Direction.TO_CLIENT, 
-							Code1.NULL, 
-							Code2.NULL
-							).body(ProtocolHelper.serialization(failMessage)).build());
-					return;
-				}
-				
-				//2. 받은 요청의 헤더에서 학번을 알아낸다.
-				String id = (String) ProtocolHelper.deserialization(protocol.getBody());
-				
-				//3. 학생테이블에서 학번으로 조회하여 성별을 알아낸다.
-				Gender gender = StudentParser.getGender(id);
-				
-				//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
-				//	 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
-				String semester = "201901";
-//				semester = Utils.getCurrentSemester();											//나중에 이런 코드 만들어서 쓰게해야됨.
-				ArrayList<Dormitory> dormitoryList = DormParser.getDormitoryList(semester, gender);
-				
-				//5. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
-//				String description = ScheduleParser.getDescription(Code1.Page.입사신청);
-				
-				//6. 해당 정보를 객체화, 배열로 만들어 클라이언트에게 전송한다.
-				Tuple<String, ArrayList<Dormitory>> resultTuple = new Tuple("description", dormitoryList);
-				
-				//전송한다.
-				socketHelper.write(new Protocol.Builder(
-						ProtocolType.EVENT, 
-						Direction.TO_CLIENT, 
-						Code1.NULL, 
-						Code2.NULL
-						).body(ProtocolHelper.serialization(resultTuple)).build());
+		boolean isAdmissible = ScheduleParser.isAdmissible(Code1.Page.입사신청);
+		System.out.println("스케쥴 체크됨");
+		if(!isAdmissible)
+		{
+			//이렇게 튜플로 보내주는 이유는, 아래에서 스케쥴 체크에서 성공했을때 튜플로 보내기 때문임.
+			Tuple<String, String> failMessage = new Tuple<String, String>("현재 생활관 입사 신청 기간이 아닙니다.", null);
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization(failMessage)).build());
+			return;
+		}
+		
+		//2. 받은 요청의 헤더에서 학번을 알아낸다.
+		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
+		
+		//3. 학생테이블에서 학번으로 조회하여 성별을 알아낸다.
+		Gender gender = StudentParser.getGender(id);
+		
+		//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
+		//	 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
+		String semester = "201901";
+//		semester = Utils.getCurrentSemester();											//나중에 이런 코드 만들어서 쓰게해야됨.
+		ArrayList<Dormitory> dormitoryList = DormParser.getDormitoryList(semester, gender);
+		
+		//5. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
+//		String description = ScheduleParser.getDescription(Code1.Page.입사신청);
+		
+		//6. 해당 정보를 객체화, 배열로 만들어 클라이언트에게 전송한다.
+		Tuple<String, ArrayList<Dormitory>> resultTuple = new Tuple("description", dormitoryList);
+		
+		//전송한다.
+		socketHelper.write(new Protocol.Builder(
+				ProtocolType.EVENT, 
+				Direction.TO_CLIENT, 
+				Code1.NULL, 
+				Code2.NULL
+				).body(ProtocolHelper.serialization(resultTuple)).build());
 	}
 	
 	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시
@@ -111,14 +110,31 @@ public class Responser
 		//5. 클라이언트에게 성공 여부를 알려준다.(성공/DB연결 오류로 인한 실패/DB사망/알수없는오류 등등...)
 	}
 	
-	//학생 - 생활관 입사 신청 - 취소 버튼 클릭 시
-	public void student_submitApplicationPage_onCancel()
-	{
-		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역이 있는지 조회 -> TRUE 이면 다음으로, FALSE이면 클라이언트에게 내역 없다고 알려줌.
-		//3. DB에 삭제 요청을 한다.
-		//4. 클라이언트에게 삭제 성공 여부를 알려준다.
-	}
+	//학생 - 생활관 입사 신청 - 취소 버튼 클릭 시 (2019-12-08 명근 수정)
+		public static void student_submitApplicationPage_onCancel(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException
+		{
+			//1. 받은 요청의 헤더에서 학번을 알아낸다. 
+			String id = (String) ProtocolHelper.deserialization(protocol.getBody());
+			
+			//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역이 있는지 조회 -> TRUE 이면 다음으로, FALSE이면 클라이언트에게 내역 없다고 알려줌.
+			boolean isExist = false;
+			try {
+				isExist = ApplicationParser.isExist(id);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			if(!isExist)
+			{
+				//없다고 알려줌
+				return;
+			}
+			
+			//-미구현-
+			
+			//3. DB에 삭제 요청을 한다.
+			//4. 클라이언트에게 삭제 성공 여부를 알려준다.
+		}
 	
 	//------------------------------------------------------------------------
 	
