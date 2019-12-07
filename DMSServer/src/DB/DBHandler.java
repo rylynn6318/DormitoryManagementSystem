@@ -50,10 +50,22 @@ public enum DBHandler {
         pool.add(connection);
     }
 
+    // select 할때 사용
     public ResultSet excuteSelect(String query) throws SQLException {
         Connection connection = DBHandler.INSTANCE.getConnetion();
-        Statement state = connection.prepareStatement(query);
-        ResultSet result = state.executeQuery(query);
+        PreparedStatement state = connection.prepareStatement(query);
+        ResultSet result = state.executeQuery();
+        state.close();
+        DBHandler.INSTANCE.returnConnection(connection);
+
+        return result;
+    }
+
+    // Update, Delete, Insert 할때 사용
+    public int excuteQuery(String query) throws SQLException {
+        Connection connection = DBHandler.INSTANCE.getConnetion();
+        PreparedStatement state = connection.prepareStatement(query);
+        int result = state.executeUpdate();
         state.close();
         DBHandler.INSTANCE.returnConnection(connection);
 
