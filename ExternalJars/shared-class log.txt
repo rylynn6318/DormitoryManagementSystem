@@ -62,3 +62,7 @@ shared-class update log
 	프로토콜 개선
 	Tuple 추가
 	Shared Class Export해서 적용함.
+
+2019-12-07 20:50 v2.02
+	ultils 패키지 오타 utils로 수정.
+	Shared Class Export해서 적용함.
