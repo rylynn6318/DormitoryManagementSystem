@@ -1,5 +1,6 @@
 import database.DatabaseHandler;
 import enums.*;
+import interfaces.ICode1;
 import interfaces.ICode2;
 import models.*;
 import ultils.Protocol;
@@ -46,6 +47,7 @@ public class ServerTask implements Runnable {
             	e.printStackTrace();
             }
              	ProtocolType protocolType = protocol.type;
+             	Code1 code1 = (Code1) protocol.code1; 
             switch (protocolType) {
 				case LOGIN :
 					String id;
@@ -72,7 +74,11 @@ public class ServerTask implements Runnable {
 					}
 					break;
 				case FILE:
-					//file 처리
+					switch(code1) {
+					case MEDICAL_REPORT :
+						
+					}
+					
 					break;
 				case EVENT:
 					//event 처리

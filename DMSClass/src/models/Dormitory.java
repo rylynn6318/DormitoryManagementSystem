@@ -20,7 +20,7 @@ public final class Dormitory implements Serializable {
 	public final int boardingFees; // 기숙사비
 
 	public Dormitory(String dormitoryName, Gender gender, int semesterCode, int capacity, Bool isMealDuty,
-			int mealCost5, int mealCost7, int boardingFees) {
+		int mealCost5, int mealCost7, int boardingFees) {
 		this.dormitoryName = dormitoryName;
 		this.gender = gender;
 		this.semesterCode = semesterCode;

@@ -1,6 +1,6 @@
 package enums;
 
-//몇지망인지 나타내는 ENUM
+//유저타입이 무엇인지 나타내는 ENUM
 public enum UserType{
 	UNDEFINED(0, (byte)0x00),
     STUDENT(1, (byte)0x01),
