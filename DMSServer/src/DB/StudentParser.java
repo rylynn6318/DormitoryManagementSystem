@@ -13,7 +13,9 @@ public class StudentParser {
         Connection connection = DBHandler.INSTANCE.getConnetion();
         PreparedStatement state = connection.prepareStatement(sql);
         ResultSet resultSet = state.executeQuery();
+
         Gender gender = Gender.get(resultSet.getString("성별"));
+
         state.close();
         DBHandler.INSTANCE.returnConnection(connection);
 

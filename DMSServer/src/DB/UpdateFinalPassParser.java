@@ -12,5 +12,7 @@ public class UpdateFinalPassParser {
         Connection connection = DBHandler.INSTANCE.getConnetion();
         PreparedStatement state = connection.prepareStatement(sql);
         state.executeUpdate();
+        state.close();
+        DBHandler.INSTANCE.returnConnection(connection);
     }
 }
