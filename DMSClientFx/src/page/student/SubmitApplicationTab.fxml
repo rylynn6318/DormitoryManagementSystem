@@ -6,7 +6,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -119,12 +118,6 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="휴대전화번호">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Label>
-            <TextField fx:id="contact_textfield" promptText="01012341234 형식으로 입력해주세요." GridPane.columnIndex="1" />
             <CheckBox fx:id="isSnore_checkbox" mnemonicParsing="false" text="코골이여부" GridPane.columnIndex="2">
                <font>
                   <Font name="System Bold" size="12.0" />
