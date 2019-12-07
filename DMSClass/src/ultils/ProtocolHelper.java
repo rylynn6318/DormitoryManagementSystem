@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,6 +72,7 @@ public final class ProtocolHelper {
         return result;
     }
 
+    // 테스트 안됨!
     public static Protocol merge(final byte[] packet) throws IOException, Exception {
         List<Protocol> tmp = new ArrayList<>();
 
@@ -80,13 +82,17 @@ public final class ProtocolHelper {
             tmp.add(new Protocol.Builder(Arrays.copyOfRange(packet, cursor, chunk_size)).build());
         }
 
-        tmp.sort(null);
+        return merge(tmp);
+    }
+
+    public static Protocol merge(List<Protocol> protocols) throws IOException {
+        protocols.sort(null);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        for (Protocol protocol : tmp) {
+        for (Protocol protocol : protocols) {
             output.write(protocol.getBody());
         }
 
-        return new Protocol.Builder(tmp.get(0).type, tmp.get(0).direction, tmp.get(0).code1, tmp.get(0).code2).body(output.toByteArray()).build();
+        return new Protocol.Builder(protocols.get(0).type, protocols.get(0).direction, protocols.get(0).code1, protocols.get(0).code2).body(output.toByteArray()).build();
     }
 }

@@ -11,6 +11,8 @@ import interfaces.*;
 // 2. SocketHelper를 통해 통신한다
 // 3. profit!
 
+// TODO : 큰걸 넣었을때 최종적으론 길이가 short로 전송되더라도 그 중간에 할당받았을때 오버플로가 발생함. 고쳐야 한다.
+
 public final class Protocol implements Comparable<Protocol> {
     // 프로토콜 생성시 Builder 이용할 것
     public static class Builder {
@@ -24,7 +26,7 @@ public final class Protocol implements Comparable<Protocol> {
                                               // 실제 프로토콜에선 필수 정보지만 헤더길이는 10으로 고정되어 있으니
                                               // body 받고나면 길이 계산 가능해서 Builder에선 옵션임.
         private Bool is_splitted = Bool.FALSE; // 1바이트, 프로토콜 분리 여부
-        private Bool is_last = Bool.FALSE; // 1바이트, 마지막 프로토콜인지 여부
+        private Bool is_last = Bool.TRUE; // 1바이트, 마지막 프로토콜인지 여부
         private short sequence = 0; // 2바이트, 시퀀스 넘버
         private byte[] body_bytes = null; // body가 직렬화 된것
 
@@ -42,7 +44,7 @@ public final class Protocol implements Comparable<Protocol> {
             return this;
         }
 
-        public Builder body(byte[] serialized){
+        public Builder body(byte[] serialized) {
             body_bytes = serialized;
             this.length = (short) (HEADER_LENGTH + serialized.length);
             return this;
@@ -53,14 +55,14 @@ public final class Protocol implements Comparable<Protocol> {
                 throw new Exception("패킷 길이가 먼가 짧다!!!");
 
             // 빅 엔디안으로 읽음
-            this.length = ProtocolHelper.bytesToShort(packet[0], packet[1]); // (short) (packet[0] << 8 | (packet[1] & 0xFF));
+            this.length = ProtocolHelper.bytesToShort(packet[0], packet[1]);
             this.type = ProtocolType.get(packet[2]);
             this.direction = Direction.get(packet[3]);
             this.code1 = Code1.get(this.type, packet[4]);
             this.code2 = Code2.get(this.type, packet[5]);
             this.is_splitted = Bool.get(packet[6]);
             this.is_last = Bool.get(packet[7]);
-            this.sequence = ProtocolHelper.bytesToShort(packet[8], packet[9]); //(short) (packet[8] << 8 | (packet[9] & 0xFF));
+            this.sequence = ProtocolHelper.bytesToShort(packet[8], packet[9]);
 
             this.body_bytes = Arrays.copyOfRange(packet, HEADER_LENGTH, packet.length);
         }
@@ -112,17 +114,14 @@ public final class Protocol implements Comparable<Protocol> {
     // 순서는 변수 선언 순서와 같음
     public byte[] getPacket() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        // short 타입은 Big Endian으로 변환
-        baos.write(ProtocolHelper.shortToByte(length)[0]); // (byte) ((length >> 8) & 0xff)
-        baos.write(ProtocolHelper.shortToByte(length)[1]); // (byte) (length & 0xff)
+        baos.write(ProtocolHelper.shortToByte(length));
         baos.write(type.getCode());
         baos.write(direction.getCode());
         baos.write(code1.getCode());
         baos.write(code2.getCode());
         baos.write(is_splitted.bit);
         baos.write(is_last.bit);
-        baos.write(ProtocolHelper.shortToByte(length)[0]); // (byte) ((sequence >> 8) & 0xff)
-        baos.write(ProtocolHelper.shortToByte(length)[1]); // (byte) (sequence & 0xff)
+        baos.write(ProtocolHelper.shortToByte(length));
         baos.write(body_bytes);
         return baos.toByteArray();
     }

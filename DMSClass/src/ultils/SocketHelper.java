@@ -3,6 +3,10 @@ package ultils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
+import enums.Bool;
 
 // 프로토콜을 이용한 소켓 통신을 쉽게 해주는 wrapper 클래스
 public class SocketHelper {
@@ -12,25 +16,30 @@ public class SocketHelper {
 
     private Socket socket = null;
 
-    public SocketHelper(Socket socket){
+    public SocketHelper(Socket socket) {
         this.socket = socket;
     }
 
     public void write(Protocol p) throws IOException {
-        for(Protocol protocol : ProtocolHelper.split(p, sendbuffer_size)){
-            socket.getOutputStream().write(protocol.getPacket());
+        List<Protocol> protocols = ProtocolHelper.split(p, sendbuffer_size);
+        for (Protocol protocol : protocols) {
+            byte[] packet = protocol.getPacket();
+            socket.getOutputStream().write(packet);
         }
     }
 
     public Protocol read() throws Exception {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        List<Protocol> protocols = new ArrayList<>();
         byte[] buffer = new byte[sendbuffer_size];
 
-        int readed = 0;
-        while ((readed = socket.getInputStream().read(buffer)) != -1) {
-            output.write(buffer, 0, readed);
+        Bool isLast = Bool.FALSE;
+        while (!isLast.bool) {
+            socket.getInputStream().read(buffer);
+            Protocol tmp = new Protocol.Builder(buffer).build();
+            protocols.add(tmp);
+            isLast = tmp.is_last;
         }
 
-        return new Protocol.Builder(output.toByteArray()).build();
+        return ProtocolHelper.merge(protocols);
     }
 }

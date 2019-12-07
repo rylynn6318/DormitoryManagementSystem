@@ -17,8 +17,6 @@ public class ServerTask implements Runnable {
     SocketHelper socketHelper;
     private static ExecutorService threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-    private boolean stop = false;
-
     public ServerTask(SocketHelper socketHelper) {
         this.socketHelper = socketHelper;
     }
@@ -26,51 +24,47 @@ public class ServerTask implements Runnable {
     @Override
     public void run() {
         //NetworkHandler 에서 종료요청이 오기전까지 계속 클라이언트의 요청을 받아들인다.
-        while (!stop) {
-            Protocol protocol = null;
-            try {
-                protocol = socketHelper.read();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-            switch (protocol.type) {
-                case LOGIN:
-                    try {
-                        if (((Account) ProtocolHelper.deserialization(protocol.getBody())).accountId.equals("admin")) {
-                            try {
-                                socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.ADMIN).build());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        else {
-                            try {
-                                socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.STUDENT).build());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case FILE:
-                    //file 처리
-                    break;
-                case EVENT:
-                    //event 처리
-                    break;
-            }
+        Protocol protocol = null;
+        try {
+            protocol = socketHelper.read();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        switch (protocol.type) {
+            case LOGIN:
+                try {
+                    if (((Account) ProtocolHelper.deserialization(protocol.getBody())).accountId.equals("admin")) {
+                        try {
+                            socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.ADMIN).build());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.STUDENT).build());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case FILE:
+                //file 처리
+                break;
+            case EVENT:
+                //event 처리
+                break;
+        }
+
     }
 
     public void close() {
         System.out.println("클라이언트스레드풀 종료 시작");
-        stop = true;
 
         threadPool.shutdown();
         System.out.println("클라이언트스레드풀 종료됨");

@@ -101,10 +101,12 @@ public class LoginPageController implements Initializable {
                 case STUDENT:
                     UserInfo.getInstance().account = new Account(account.accountId, account.password, UserType.STUDENT);
                     IOHandler.getInstance().showAlert("로그인 성공");
+                    moveToMain();
                     break;
                 case ADMIN:
                     UserInfo.getInstance().account = new Account(account.accountId, account.password, UserType.ADMIN);
                     IOHandler.getInstance().showAlert("로그인 성공");
+                    moveToMain();
                     break;
             }
         }
