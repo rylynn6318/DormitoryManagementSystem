@@ -39,14 +39,14 @@ public enum DBHandler {
         }
     }
 
-    private synchronized Connection getConnetion() throws SQLException {
+    public synchronized Connection getConnetion() throws SQLException {
         if (pool.isEmpty())
             pool.add(DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD));
         
         return pool.poll();
     }
 
-    private synchronized void returnConnection(Connection connection){
+    public synchronized void returnConnection(Connection connection){
         pool.add(connection);
     }
 

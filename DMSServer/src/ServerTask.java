@@ -1,4 +1,6 @@
 import enums.*;
+
+import logic.LoginChecker;
 import models.Account;
 import utils.*;
 
@@ -33,6 +35,9 @@ public class ServerTask implements Runnable {
 
         switch (protocol.type) {
             case LOGIN:
+                Account result = LoginChecker.check((Account) ProtocolHelper.deserialization(protocol.getBody()));
+                socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.ADMIN).build());
+
                 try {
                     if (((Account) ProtocolHelper.deserialization(protocol.getBody())).accountId.equals("admin")) {
                         try {

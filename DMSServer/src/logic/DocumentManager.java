@@ -12,7 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import models.Document;
 
-public class documentManager {
+public class DocumentManager {
     static final String DRIVER_NAME = "mysql";
     static final String HOSTNAME = "wehatejava.czztgstzacsv.us-east-1.rds.amazonaws.com";
     static final String PORT = "3306";

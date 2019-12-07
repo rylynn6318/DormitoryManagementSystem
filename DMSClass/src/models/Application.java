@@ -2,6 +2,8 @@ package models;
 
 import java.io.Serializable;
 
+import enums.Bool;
+
 //신청
 public class Application implements Comparable<Application>, Serializable
 {
@@ -14,10 +16,10 @@ public class Application implements Comparable<Application>, Serializable
 	
 	//키가 아닌 컬럼
 	private int mealType;			//몇일식				0이면 안함, 5이면 5일식, 7이면 7일식
-	private boolean isPaid;			//납부여부
-	private boolean isPassed;		//합격여부
-	private boolean isLastPassed;	//결과, 최종합격여부
-	private boolean isSnore;		//코골이여부
+	private Bool isPaid;			//납부여부
+	private Bool isPassed;		//합격여부
+	private Bool isLastPassed;	//결과, 최종합격여부
+	private Bool isSnore;		//코골이여부
 	
 	//로컬 변수
 	private double score;			//평균점수 + 가산점
@@ -99,38 +101,38 @@ public class Application implements Comparable<Application>, Serializable
 		this.mealType = mealType;
 	}
 	
-	public boolean isPaid()
+	public Bool isPaid()
 	{
 		return isPaid;
 	}
-	public void setPaid(boolean isPaid)
+	public void setPaid(Bool isPaid)
 	{
 		this.isPaid = isPaid;
 	}
 	
-	public boolean isPassed()
+	public Bool isPassed()
 	{
 		return isPassed;
 	}
-	public void setPassed(boolean isPassed)
+	public void setPassed(Bool isPassed)
 	{
 		this.isPassed = isPassed;
 	}
 	
-	public boolean isLastPassed()
+	public Bool isLastPassed()
 	{
 		return isLastPassed;
 	}
-	public void setLastPassed(boolean isLastPassed)
+	public void setLastPassed(Bool isLastPassed)
 	{
 		this.isLastPassed = isLastPassed;
 	}
 	
-	public boolean isSnore()
+	public Bool isSnore()
 	{
 		return isSnore;
 	}
-	public void setSnore(boolean isSnore)
+	public void setSnore(Bool isSnore)
 	{
 		this.isSnore = isSnore;
 	}
