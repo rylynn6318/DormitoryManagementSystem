@@ -61,3 +61,7 @@ shared-class update log
 2019-12-07 20:00 v2.04
 	복구
 	Shared Class Export해서 적용함.
+
+2019-12-08 00:10 v2.05
+	DMSClass Enum에 불필요한 생성자와 멤버변수들을 정리함.
+	Shared Class Export해서 적용함.
