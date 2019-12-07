@@ -2,6 +2,7 @@ package DB;
 
 import java.sql.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Function;
 
 public enum DBHandler {
     INSTANCE;
@@ -49,4 +50,9 @@ public enum DBHandler {
     public void returnConnection(Connection connection){
         pool.add(connection);
     }
+
+    //public static void select(Function<ISelect, T> function){
+    //    Connection connection = DBHandler.INSTANCE.getConnetion();
+    //    PreparedStatement preparedStatement = connection.prepareStatement();
+    //}
 }

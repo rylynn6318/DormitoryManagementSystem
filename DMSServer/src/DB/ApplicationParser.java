@@ -11,7 +11,7 @@ import models.Score;
 public class ApplicationParser {
 	public static Boolean isExist(String studentID) throws ClassNotFoundException, SQLException
 	{
-		String sql = "SELECT 학번 FROM " + DBHandler.INSTANCE.DB_NAME + ".신청 WHERE 학번 = "+ studentID;
+		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ studentID;
 		Connection connection = DBHandler.INSTANCE.getConnetion();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
@@ -32,12 +32,16 @@ public class ApplicationParser {
 
 	public static int getSemester() throws ClassNotFoundException, SQLException 
 	{
-		Statement state = DBinfo.connection();
-		String sql = "SELECT * FROM " + DBinfo.DB_NAME + ".신청 WHERE 학기 = (SELECT max(학기) FROM " + DBinfo.DB_NAME + ".신청)";
-		ResultSet purs = state.executeQuery(sql);
-		purs.next();
-		
-		return purs.getInt("학기");
+		String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 학기 = (SELECT max(학기) FROM " + DBHandler.DB_NAME + ".신청)";
+		Connection connection = DBHandler.INSTANCE.getConnetion();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+		rs.next();
+		int result = rs.getInt("학기");
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+
+		return result;
 	}
 	
 	public static int getNumOfLeftSeat(String dormName, int semester) throws ClassNotFoundException, SQLException
@@ -52,12 +56,12 @@ public class ApplicationParser {
 		ResultSet capacity;
 		if(pureSemester.equals("01") || pureSemester.equals("04") || pureSemester.equals("02") || pureSemester.equals("05"))
 		{
-			getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBinfo.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + ")";			
+			getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + ")";
 			getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + semester;
 		}
 		else
 		{
-			getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM " + DBinfo.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + (semester - 1) + ")";
+			getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM " + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + (semester - 1) + ")";
 			getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + (semester - 1);
 		}
 		passed = state.executeQuery(getNumOfPassedAppsQuery);
@@ -75,7 +79,7 @@ public class ApplicationParser {
 		
 		ArrayList<Application> sortedApps = new ArrayList<Application>();
 		
-		String getUnsortedAppsQuery = "SELECT * FROM " + DBinfo.DB_NAME + ".신청 WHERE 생활관명=" + dormName + " AND 지망=" + choice + "학기=201901 AND 합격여부=N";
+		String getUnsortedAppsQuery = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 생활관명=" + dormName + " AND 지망=" + choice + "학기=201901 AND 합격여부=N";
 		ResultSet apps = state.executeQuery(getUnsortedAppsQuery);
 		
 		while(apps.next())
@@ -91,7 +95,7 @@ public class ApplicationParser {
 	{
 		Statement state = DBinfo.connection();
 		
-		String getScoresQuery = "SELECT 학점,등급 FROM " + DBinfo.DB_NAME + ".점수 WHERE 학번=" + studentId + "AND 학기 BETWEEN '" + twoSemesterBefore + "' AND '" + lastSemester + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
+		String getScoresQuery = "SELECT 학점,등급 FROM " + DBHandler.DB_NAME + ".점수 WHERE 학번=" + studentId + "AND 학기 BETWEEN '" + twoSemesterBefore + "' AND '" + lastSemester + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
 		ResultSet scores = state.executeQuery(getScoresQuery);
 		
 		ArrayList<Score> score = new ArrayList<Score>();
@@ -107,7 +111,7 @@ public class ApplicationParser {
 	{
 		Statement state = DBinfo.connection();
 		
-		String zipCodeQuery = "SELECT 보호자우편번호 FROM " + DBinfo.DB_NAME + ".학생 WHERE 학번=" + studentId;
+		String zipCodeQuery = "SELECT 보호자우편번호 FROM " + DBHandler.DB_NAME + ".학생 WHERE 학번=" + studentId;
 		ResultSet zipCode = state.executeQuery(zipCodeQuery);
 		zipCode.next();
 		
