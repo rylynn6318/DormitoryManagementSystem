@@ -31,19 +31,19 @@ public class CurrentSemesterParser
 		PreparedStatement state1 = connection.prepareStatement(sql1);
 		ResultSet rs1 = state1.executeQuery();
 		rs1.next();		
-		PreparedStatement state2 = connection.prepareStatement(sql1);
+		PreparedStatement state2 = connection.prepareStatement(sql2);
 		ResultSet rs2 = state2.executeQuery();
 		rs2.next();		
-		PreparedStatement state3 = connection.prepareStatement(sql1);
+		PreparedStatement state3 = connection.prepareStatement(sql3);
 		ResultSet rs3 = state3.executeQuery();
 		rs3.next();		
-		PreparedStatement state4 = connection.prepareStatement(sql1);
+		PreparedStatement state4 = connection.prepareStatement(sql4);
 		ResultSet rs4 = state4.executeQuery();
 		rs4.next();		
-		PreparedStatement state5 = connection.prepareStatement(sql1);
+		PreparedStatement state5 = connection.prepareStatement(sql5);
 		ResultSet rs5 = state5.executeQuery();
 		rs5.next();		
-		PreparedStatement state6 = connection.prepareStatement(sql1);
+		PreparedStatement state6 = connection.prepareStatement(sql6);
 		ResultSet rs6 = state6.executeQuery();
 		rs6.next();		
 		
