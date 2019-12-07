@@ -1,5 +1,7 @@
 import database.DatabaseHandler;
 import enums.*;
+import enums.Code1.FileType;
+import enums.Code1.Page;
 import interfaces.ICode1;
 import interfaces.ICode2;
 import models.*;
@@ -47,7 +49,8 @@ public class ServerTask implements Runnable {
             	e.printStackTrace();
             }
              	ProtocolType protocolType = protocol.type;
-             	Code1 code1 = (Code1) protocol.code1; 
+             	
+             	
             switch (protocolType) {
 				case LOGIN :
 					String id;
@@ -74,14 +77,52 @@ public class ServerTask implements Runnable {
 					}
 					break;
 				case FILE:
-					switch(code1) {
+					FileType fileCode = (FileType) protocol.code1; 
+					switch(fileCode) {
 					case MEDICAL_REPORT :
 						
+						
+						break;
+					case OATH:
+						
+						
+						break;
+					case CSV:
+						
+						
+						break;
 					}
 					
 					break;
 				case EVENT:
-					//event 처리
+					Page pageCode = (Page) protocol.code1; 
+					switch(pageCode)
+					{
+						case 입사신청 :
+							break;
+						case 신청조회 :
+							break;
+						case 고지서조회 :
+							break;
+						case 호실조회 :
+							break;
+						case 서류제출 :
+							break;
+						case 서류조회 :
+							break;
+						case 선발일정관리 :
+							break;
+						case 생활관관리 :
+							break;
+						case 입사선발자관리 :
+							break;
+						case 입사자관리 :
+							break;
+						case 납부관리 :
+							break;
+						case 서류관리 : 
+							break;
+					}
 					break;
 			}
         }
