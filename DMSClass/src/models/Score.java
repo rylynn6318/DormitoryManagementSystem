@@ -22,4 +22,13 @@ public final class Score implements Serializable {
 		this.credit = credit;
 		this.grade = grade;
 	}
+	
+	public Score(int credit, Grade grade)
+	{
+		this.credit = credit;
+		this.grade = grade;
+		this.subjectName = null;
+		this.studentId = null;
+		this.semesterCode = 0;
+	}
 }
