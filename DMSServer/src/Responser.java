@@ -1,9 +1,9 @@
 import java.util.ArrayList;
 
 import DB.DormParser;
+import DB.ScheduleParser;
 import DB.StudentParser;
 import enums.*;
-import logic.ScheduleCheck;
 import models.Dormitory;
 import ultils.Protocol;
 import ultils.ProtocolHelper;
@@ -61,7 +61,7 @@ public class Responser
 	public void student_submitApplicationPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴을 확인하고 입사 신청 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-		boolean isAdmissible = ScheduleCheck.check(Code1.Page.입사신청);
+		boolean isAdmissible = ScheduleParser.isAdmissible(Code1.Page.입사신청);
 		
 		if(!isAdmissible)
 		{
