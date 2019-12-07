@@ -1,5 +1,7 @@
 package batch;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -107,13 +109,13 @@ public class AssignAlgorithm
 		AssignRoomInfo[] SY = MakeAllRoomInfo.getSY();
 		Statement state1 = DBinfo.connection();
 		String sql = "SELECT 호, 생활관명 FROM " + DBinfo.DB_NAME + ".호실정보";
-		ResultSet rurs1 = state1.executeQuery(sql);
+		ResultSet rurs = state1.executeQuery(sql);
 		
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// DB에 있는 생활관 호실 정보를 가져와서 서버 메모리 에 올림
-		while(rurs1.next())
+		while(rurs.next())
 		{
-			switch (rurs1.getString("생활관명"))
+			switch (rurs.getString("생활관명"))
 			{
 			case "오름1" :
 			{
@@ -121,8 +123,8 @@ public class AssignAlgorithm
 				{
 					if(O1[i].getRoomNumber() == null)
 					{
-						O1[i].setRoomNumber(rurs1.getString("호"));
-						O1[i + 1].setRoomNumber(rurs1.getString("호"));
+						O1[i].setRoomNumber(rurs.getString("호"));
+						O1[i + 1].setRoomNumber(rurs.getString("호"));
 						O1[i].setSemesterCode(currentSemester);
 						O1[i + 1].setSemesterCode(currentSemester);
 					}
@@ -135,8 +137,8 @@ public class AssignAlgorithm
 				{
 					if(O2[i].getRoomNumber() == null)
 					{
-						O2[i].setRoomNumber(rurs1.getString("호"));
-						O2[i + 1].setRoomNumber(rurs1.getString("호"));
+						O2[i].setRoomNumber(rurs.getString("호"));
+						O2[i + 1].setRoomNumber(rurs.getString("호"));
 						O2[i].setSemesterCode(currentSemester);
 						O2[i + 1].setSemesterCode(currentSemester);
 					}
@@ -149,8 +151,8 @@ public class AssignAlgorithm
 				{
 					if(O3[i].getRoomNumber() == null)
 					{
-						O3[i].setRoomNumber(rurs1.getString("호"));
-						O3[i + 1].setRoomNumber(rurs1.getString("호"));
+						O3[i].setRoomNumber(rurs.getString("호"));
+						O3[i + 1].setRoomNumber(rurs.getString("호"));
 						O3[i].setSemesterCode(currentSemester);
 						O3[i + 1].setSemesterCode(currentSemester);
 					}
@@ -163,8 +165,8 @@ public class AssignAlgorithm
 				{
 					if(P1[i].getRoomNumber() == null)
 					{
-						P1[i].setRoomNumber(rurs1.getString("호"));
-						P1[i + 1].setRoomNumber(rurs1.getString("호"));
+						P1[i].setRoomNumber(rurs.getString("호"));
+						P1[i + 1].setRoomNumber(rurs.getString("호"));
 						P1[i].setSemesterCode(currentSemester);
 						P1[i + 1].setSemesterCode(currentSemester);
 					}
@@ -176,8 +178,8 @@ public class AssignAlgorithm
 				{
 					if(P2[i].getRoomNumber() == null)
 					{
-						P2[i].setRoomNumber(rurs1.getString("호"));
-						P2[i + 1].setRoomNumber(rurs1.getString("호"));
+						P2[i].setRoomNumber(rurs.getString("호"));
+						P2[i + 1].setRoomNumber(rurs.getString("호"));
 						P2[i].setSemesterCode(currentSemester);
 						P2[i + 1].setSemesterCode(currentSemester);
 					}
@@ -190,10 +192,10 @@ public class AssignAlgorithm
 				{
 					if(P3[i].getRoomNumber() == null)
 					{
-						P3[i].setRoomNumber(rurs1.getString("호"));
-						P3[i + 1].setRoomNumber(rurs1.getString("호"));
-						P3[i + 2].setRoomNumber(rurs1.getString("호"));
-						P3[i + 3].setRoomNumber(rurs1.getString("호"));
+						P3[i].setRoomNumber(rurs.getString("호"));
+						P3[i + 1].setRoomNumber(rurs.getString("호"));
+						P3[i + 2].setRoomNumber(rurs.getString("호"));
+						P3[i + 3].setRoomNumber(rurs.getString("호"));
 						P3[i].setSemesterCode(currentSemester);
 						P3[i + 1].setSemesterCode(currentSemester);
 						P3[i + 2].setSemesterCode(currentSemester);
@@ -208,10 +210,10 @@ public class AssignAlgorithm
 				{
 					if(P4[i].getRoomNumber() == null)
 					{
-						P4[i].setRoomNumber(rurs1.getString("호"));
-						P4[i + 1].setRoomNumber(rurs1.getString("호"));
-						P4[i + 2].setRoomNumber(rurs1.getString("호"));
-						P4[i + 3].setRoomNumber(rurs1.getString("호"));
+						P4[i].setRoomNumber(rurs.getString("호"));
+						P4[i + 1].setRoomNumber(rurs.getString("호"));
+						P4[i + 2].setRoomNumber(rurs.getString("호"));
+						P4[i + 3].setRoomNumber(rurs.getString("호"));
 						P4[i].setSemesterCode(currentSemester);
 						P4[i + 1].setSemesterCode(currentSemester);
 						P4[i + 2].setSemesterCode(currentSemester);
@@ -226,8 +228,8 @@ public class AssignAlgorithm
 				{
 					if(SN[i].getRoomNumber() == null)
 					{
-						SN[i].setRoomNumber(rurs1.getString("호"));
-						SN[i + 1].setRoomNumber(rurs1.getString("호"));
+						SN[i].setRoomNumber(rurs.getString("호"));
+						SN[i + 1].setRoomNumber(rurs.getString("호"));
 						SN[i].setSemesterCode(currentSemester);
 						SN[i + 1].setSemesterCode(currentSemester);
 					}
@@ -240,8 +242,8 @@ public class AssignAlgorithm
 				{
 					if(SY[i].getRoomNumber() == null)
 					{
-						SY[i].setRoomNumber(rurs1.getString("호"));
-						SY[i + 1].setRoomNumber(rurs1.getString("호"));
+						SY[i].setRoomNumber(rurs.getString("호"));
+						SY[i + 1].setRoomNumber(rurs.getString("호"));
 						SY[i].setSemesterCode(currentSemester);
 						SY[i + 1].setSemesterCode(currentSemester);
 					}
