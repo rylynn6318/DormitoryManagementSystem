@@ -42,12 +42,15 @@ public class DormParser {
 	// 일단 싹다 보내주고 클라이언트에서 알아서 거르는걸로
 	public static ArrayList<Dormitory> getDormInfo(ArrayList<String> dList) throws Exception
 	{
+		Connection connection = DBHandler.INSTANCE.getConnetion();
 		ArrayList<Dormitory> dorm = new ArrayList<Dormitory>();
 		ResultSet resultSet = null;
+		PreparedStatement state = null;
 		for(int i=0;i<dList.size();i++)
 		{
 			String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 생활관명 = "+ dList.get(i);
-			resultSet = DBHandler.INSTANCE.excuteSelect(sql);
+			state = connection.prepareStatement(sql);
+			resultSet = state.executeQuery();
 			// TODO : 이 경우는 로직이 잘못된거 아닌가? while 구문이 for 안으로 들어와야 하는거 아님?
 		}
 		while(resultSet.next())
