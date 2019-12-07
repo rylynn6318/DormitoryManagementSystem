@@ -91,25 +91,8 @@ public class ResidentSelecter
 		
 		TreeSet<Application> sortedApps = new TreeSet<Application>();
 		
-		
-		String getSemester = "SELECT 학기 FROM 신청 WHERE 생활관정보_학기 = (SELECT max(생활관정보_학기) FROM 신청)";
-		ResultSet semester = state.executeQuery(getSemester);
-		semester.next();
-		String pureSemester = String.valueOf(semester.getInt("학기")).substring(4);
-		
-		ResultSet apps;
-		if(pureSemester.equals("01") || pureSemester.equals("04") || pureSemester.equals("03") || pureSemester.equals("05"))
-		{
-			Statement state2 = conn.createStatement();
-			String getUnsortedAppsQuery = "SELECT * FROM 신청 WHERE 생활관명=" + dormName + " AND 지망=" + choice + "학기=" + semester.getInt("학기") + " AND 합격여부=N";
-			apps = state2.executeQuery(getUnsortedAppsQuery);
-		}
-		else
-		{
-			Statement state2 = conn.createStatement();
-			String getUnsortedAppsQuery = "SELECT * FROM 신청 WHERE 생활관명=" + dormName + " AND 지망=" + choice + "학기 BETEWEEN '" + (semester.getInt("학기") - 1) + "' AND '" + semester.getInt("학기") + "' AND 합격여부=N";
-			apps = state2.executeQuery(getUnsortedAppsQuery);
-		}
+		String getUnsortedAppsQuery = "SELECT * FROM 신청 WHERE 생활관명=" + dormName + " AND 지망=" + choice + "학기=201901 AND 합격여부=N";
+		ResultSet apps = state.executeQuery(getUnsortedAppsQuery);
 		
 		while(apps.next())
 		{
@@ -223,16 +206,16 @@ public class ResidentSelecter
 		
 		switch(pureSemester)
 		{
-		case "01":				//1학기
+		case "01":
 			semester -= 98;
 			break;
-		case "02":				//여름 계절
+		case "02":
 			semester -= 99;
 			break;
-		case "03":				//2학기
+		case "03":
 			semester -= 2;
 			break;
-		case "04":				//겨울계절
+		case "04":
 			semester -= 3;
 			break;
 		}
