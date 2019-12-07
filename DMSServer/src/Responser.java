@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import DB.*;
@@ -15,10 +16,8 @@ import utils.*;
 //학기코드
 //201901 : 1학기
 //201902 : 여름계절
-//201903 : 여름계절이후까지
-//201904 : 2학기
-//201905 : 겨울계절
-//201906 : 겨울계절이후까지
+//201903 : 2학기
+//201904 : 겨울계절
 
 public class Responser
 {
@@ -139,7 +138,7 @@ public class Responser
 						).body(ProtocolHelper.serialization("성공.")).build());
 				return;
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 		}
 	}
