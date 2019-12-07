@@ -46,19 +46,8 @@ public class ApplicationParser {
 	
 	public static int getNumOfLeftSeat(String dormName, int semester) throws SQLException
 	{
-		String pureSemester = String.valueOf(semester).substring(4);
-		String getNumOfPassedAppsQuery;
-		String getCapacityQuery;
-		if(pureSemester.equals("01") || pureSemester.equals("04") || pureSemester.equals("02") || pureSemester.equals("05"))
-		{
-			getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + ")";
-			getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + semester;
-		}
-		else
-		{
-			getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM " + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + (semester - 1) + ")";
-			getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + (semester - 1);
-		}
+		String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + ")";
+		String getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + semester;
 
 		Connection connection = DBHandler.INSTANCE.getConnetion();
 		PreparedStatement passedState = connection.prepareStatement(getNumOfPassedAppsQuery);
@@ -170,23 +159,18 @@ public class ApplicationParser {
 		switch(pureSemester)
 		{
 		case "01":				//1학기
-			semester -= 97;
-			break;
-		case "02":				//여름 계절
 			semester -= 98;
 			break;
-		case "03":				//여름 계절 이후
+		case "02":				//여름 계절
 			semester -= 99;
 			break;
-		case "04":				//2학기
+		case "03":				//2학기
+			semester -= 2;
+			break;
+		case "04":				//겨울 계절
 			semester -= 3;
 			break;
-		case "05":				//겨울 계절
-			semester -= 4;
-			break;
-		case "06":				//겨울 계절 이후
-			semester -= 5;
-			break;
+
 		}
 		
 		return semester;
@@ -199,16 +183,12 @@ public class ApplicationParser {
 		switch(pureSemester)
 		{
 		case "01":
-		case "04":
+		case "03":
 			semester -= 100;
 			break;
 		case "02":
-		case "05":
+		case "04":
 			semester -= 101;
-			break;
-		case "03":
-		case "06":
-			semester -= 102;
 			break;
 		}
 		
