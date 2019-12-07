@@ -116,17 +116,10 @@ public class Responser
 	}
 	
 	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시 (2019-12-08 명근 수정)
-	public static String student_submitApplicationPage_onSubmit(Bool isSnore, ArrayList<Application> applicationList)
+	public static String student_submitApplicationPage_onSubmit(ArrayList<Application> applicationList)
 	{
 		//1. 사용자가 선택한 신청 + 코골이여부를 배열화한다.
 		//	 2, 3지망은 1지망, 2지망 선택하기 전에는 선택못하게 막기 or 비어있는 줄 무시하고 2,3지망만 쓰면 1,2지망으로 바꾸기
-		//isSnore을 application에 미리 넣든가, 여기서 넣어라. 여기서 넣는다고 하고 코드짯음.
-		
-		//코골이여부를 Application에 하나씩 넣는다.
-		for(Application app : applicationList)
-		{
-			app.setSnore(isSnore);
-		}
 
 		//사용자 정보와 신청배열을 보내야하기때문에 튜플 사용함.
 		Tuple<Account, ArrayList<Application>> sendData = new Tuple<Account, ArrayList<Application>>(UserInfo.getInstance().account, applicationList);

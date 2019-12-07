@@ -50,6 +50,24 @@ public class ScheduleParser
 		{
 			System.out.println("해당 기간 맞음 ㅇㅇ");
 			return true;
-		}			
+		}	
+		
+	}
+	
+
+	public static String getDescription(Page page) throws Exception 
+	{
+		//5. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
+		String sql = "SELECT 비고 FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE (`스케쥴 할일 코드_ID` =" + String.valueOf(page.getCode()) + ")";
+		Connection connection = DBHandler.INSTANCE.getConnetion();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet resultSet = state.executeQuery();
+		resultSet.next();
+		String result;
+		result = resultSet.getString("비고");
+		resultSet.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		
+		return result;
 	}
 }

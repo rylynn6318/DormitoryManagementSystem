@@ -47,8 +47,6 @@
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -72,37 +70,19 @@
                   <Font name="System Bold" size="15.0" />
                </font>
             </Label>
-            <Label text="기간구분" GridPane.columnIndex="2">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font>
-            </Label>
-            <Label text="식사구분" GridPane.columnIndex="3">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font>
-            </Label>
-            <Label text="생활관비" GridPane.columnIndex="4">
+            <Label text="식사구분" GridPane.columnIndex="2">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
             </Label>
             <ComboBox fx:id="oneYear_dorm_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <ComboBox fx:id="oneYear_period_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <ComboBox fx:id="oneYear_meal_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <Label fx:id="oneYear_cost_label" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <ComboBox fx:id="oneYear_meal_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <ComboBox fx:id="firstChoice_dorm_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <ComboBox fx:id="firstChoice_period_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <ComboBox fx:id="firstChoice_meal_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <ComboBox fx:id="firstChoice_meal_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <ComboBox fx:id="secondChoice_dorm_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <ComboBox fx:id="secondChoice_period_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <ComboBox fx:id="secondChoice_meal_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <ComboBox fx:id="secondChoice_meal_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="2" GridPane.rowIndex="3" />
             <ComboBox fx:id="thirdChoice_dorm_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <ComboBox fx:id="thirdChoice_period_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <ComboBox fx:id="thirdChoice_meal_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-            <Label fx:id="firstChoice_cost_label" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-            <Label fx:id="secondChoice_cost_label" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-            <Label fx:id="thirdChoice_cost_label" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+            <ComboBox fx:id="thirdChoice_meal_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="2" GridPane.rowIndex="4" />
          </children>
          <VBox.margin>
             <Insets bottom="10.0" top="10.0" />
