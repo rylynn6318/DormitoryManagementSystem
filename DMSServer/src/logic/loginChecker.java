@@ -1,23 +1,16 @@
 package logic;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import DB.DBinfo;
 
 public class loginChecker {
 	public static int check(String id, String pw) throws ClassNotFoundException, SQLException
 	{
 		int result = 0;
-		Connection conn = null;
-		Statement state = null;
-			
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		conn = DriverManager.getConnection(DBinfo.DB_URL, DBinfo.DB_NAME, DBinfo.PASSWORD);		
-		state = conn.createStatement();
+		Statement state = DBinfo.connection();
 		String sql = "SELECT PW, 계정 타입_코드 FROM " + DBinfo.DB_NAME + ".계정 WHERE ID = "+ id;			//받아온 id pw를 db에서 조회
 		ResultSet loginRs = state.executeQuery(sql);
 		if(loginRs.next())																		//조회된게 있으면
