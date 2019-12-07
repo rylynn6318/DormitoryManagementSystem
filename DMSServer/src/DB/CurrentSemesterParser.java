@@ -1,6 +1,7 @@
 package DB;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,27 +18,33 @@ public class CurrentSemesterParser
 		String time1 = format1.format(time);
 		int result;
 		
-		String sql1 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DBinfo.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 1학기"; //신청테이블에서 하나만 가져와서 그 학기를 봄
-		String sql2 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DBinfo.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 여름계절"; //신청테이블에서 하나만 가져와서 그 학기를 봄
-		String sql3 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DBinfo.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 여름계절이후"; //신청테이블에서 하나만 가져와서 그 학기를 봄
-		String sql4 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DBinfo.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 2학기"; //신청테이블에서 하나만 가져와서 그 학기를 봄
-		String sql5 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DBinfo.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 겨울계절"; //신청테이블에서 하나만 가져와서 그 학기를 봄
-		String sql6 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DBinfo.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 겨울계절이후"; //신청테이블에서 하나만 가져와서 그 학기를 봄
+		String sql1 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 1학기"; //신청테이블에서 하나만 가져와서 그 학기를 봄
+		String sql2 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 여름계절"; //신청테이블에서 하나만 가져와서 그 학기를 봄
+		String sql3 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 여름계절이후"; //신청테이블에서 하나만 가져와서 그 학기를 봄
+		String sql4 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 2학기"; //신청테이블에서 하나만 가져와서 그 학기를 봄
+		String sql5 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 겨울계절"; //신청테이블에서 하나만 가져와서 그 학기를 봄
+		String sql6 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 겨울계절이후"; //신청테이블에서 하나만 가져와서 그 학기를 봄
 		
 //		String sql = "SELECT `스케쥴 할일 코드`, 비고 FROM " + DBinfo.DB_NAME + ".스케쥴 <![CDATA[ WHERE 시작일 <="+time1+" and "+time1 + "<= 종료일   ]]>"; //만약 위 방법이 안되면 사용할것		 
 
 		Connection connection = DBHandler.INSTANCE.getConnetion();
-		ResultSet rs1 = DBHandler.INSTANCE.excuteSelect(sql1);
+		PreparedStatement state1 = connection.prepareStatement(sql1);
+		ResultSet rs1 = state1.executeQuery();
 		rs1.next();		
-		ResultSet rs2 = DBHandler.INSTANCE.excuteSelect(sql2);
+		PreparedStatement state2 = connection.prepareStatement(sql1);
+		ResultSet rs2 = state2.executeQuery();
 		rs2.next();		
-		ResultSet rs3 = DBHandler.INSTANCE.excuteSelect(sql3);
+		PreparedStatement state3 = connection.prepareStatement(sql1);
+		ResultSet rs3 = state3.executeQuery();
 		rs3.next();		
-		ResultSet rs4 = DBHandler.INSTANCE.excuteSelect(sql4);
+		PreparedStatement state4 = connection.prepareStatement(sql1);
+		ResultSet rs4 = state4.executeQuery();
 		rs4.next();		
-		ResultSet rs5 = DBHandler.INSTANCE.excuteSelect(sql5);
+		PreparedStatement state5 = connection.prepareStatement(sql1);
+		ResultSet rs5 = state5.executeQuery();
 		rs5.next();		
-		ResultSet rs6 = DBHandler.INSTANCE.excuteSelect(sql6);
+		PreparedStatement state6 = connection.prepareStatement(sql1);
+		ResultSet rs6 = state6.executeQuery();
 		rs6.next();		
 		
 		if(rs1.getDate("시작일").before(time)&& time.before(rs1.getDate("종료일")))
