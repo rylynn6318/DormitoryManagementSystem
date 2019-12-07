@@ -1,14 +1,12 @@
 package application;
 
-import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-import enums.Code1;
-import enums.Code2;
-import enums.Direction;
-import enums.ProtocolType;
-import models.Account;
-import utils.Protocol;
-import utils.ProtocolHelper;
+import enums.*;
+import enums.Code1.Page;
+import models.*;
+import utils.*;
 
 //디버깅용 클래스
 //대충 클라이언트에서 어떤 요청을 했을때 그에 대한 반응(로직)을 모아둠.
@@ -58,49 +56,53 @@ public class Responser
 //		Networking(rs);
 //	}
 	
-	//학생 - 생활관 입사 신청 - 들어왔을 때
-	public void student_submitApplicationPage_onEnter(Protocol protocol)
+	//서버에게 페이지 들어왔다고 알려주는 프로토콜 생성기
+	private static Protocol student_onEnter(Code1.Page page, Serializable sendData)
 	{
-		//통신하는부분때문에 길어보이는데, 통신하는부분은 나중에 클래스로 바꾸던가 해야지...
-		
+		Protocol protocol = null;
+		try
+		{
+	        protocol = new Protocol.Builder(
+	        		ProtocolType.EVENT, 
+	        		Direction.TO_SERVER, 
+	        		page, 
+	        		Code2.Event.REFRESH
+	        		).body(ProtocolHelper.serialization(sendData)).build();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return protocol;
+	}
+	
+	//학생 - 생활관 입사 신청 - 들어왔을 때
+	public static Tuple<String, ArrayList<Dormitory>> student_submitApplicationPage_onEnter() 
+	{
 		//1. 입사 신청 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-        try 
-        {
-        	//프로토콜 빌더를 사용해서, 이벤트 타입, 서버에게, 입사신청페이지에, 들어왔다고, 현 계정을 보낸다(학번을 전달하기 위해)
-        	Account currentAccount = UserInfo.getInstance().account;
-            protocol = new Protocol.Builder(
-            		ProtocolType.EVENT, 
-            		Direction.TO_SERVER, 
-            		Code1.Page.입사신청, 
-            		Code2.Event.REFRESH
-            		).body(ProtocolHelper.serialization(currentAccount)).build();
-        }
-        catch (IOException e) 
-        {
-            e.printStackTrace();
-        }
+		//프로토콜 빌더를 사용해서 입사신청에 들어왔다고, 현 계정을 함께 보낸다(학번을 전달하기 위해)
+		Protocol protocol = student_onEnter(Code1.Page.입사신청, UserInfo.account);
         
-        //서버로부터 응답을 받는다.
-        String resultMsg = "";
+        //서버로 요청 및 응답을 받는다.
+        Tuple<String, ArrayList<Dormitory>> resultTuple = null;
         try 
         {
-        	//프로토콜 객체에 서버로부터 받은 정보를 담는다.
+        	//서버에 요청하고나서 프로토콜 객체에 서버로부터 받은 정보를 담는다.
             protocol = SocketHandler.INSTANCE.request(protocol);
 
             //서버로부터 받은 body를 역직렬화한다. 결과로는 배열이 나올수도, 객체가 나올수도 있다. 그래서 명시적 형변환을 해주어야 한다.
-            //현 코드에서는 성공/실패 메시지를 받았다고 가정하겠음.
-            //resultMsg = ProtocolHelper.deserialization(protocol.getBody());
+            //서버에서 스케쥴 체크에 성공했을 때는 String(안내사항)과 Dormitory 배열을 전송, 실패 시 메시지와 NULL을 전송한다.
+            resultTuple = (Tuple<String, ArrayList<Dormitory>>) ProtocolHelper.deserialization(protocol.getBody());
         } 
         catch (Exception e) 
         {
             e.printStackTrace();
         }
         
+        //4. 클라이언트는 받은 안내사항 + 생활관목록을 표시한다.
+        return resultTuple;
         
-		//(2. 서버는 생활관 테이블에서 생활관명, 기간구분(없으면패스), 식사구분, 5일식 식비, 7일식 식비, 관리비를,
-		//	  스케쥴 테이블에서 비고(안내사항)을 가져온다.)
-		//(3. 서버가 클라이언트에게 위에서 얻은 정보들을 보낸다)
-		//4. 클라이언트는 받은 정보 중에서 비고(안내사항)을 화면에 표시한다.
+        //이후 동작은 이 함수 밖에서 한다. UI적인 부분이라.
 		//6. 생활관 테이블에서 받은 정보들은 사용자가 combobox 선택함에 따라 표시할수 있게 끔 따로 표시 및 저장한다.
 		//7. 사용자가 combobox 선택에 따라 각각 다른 정보가 표시될 수 있게 구현한다(Tree 쓰면 될것같기도함)
 	}

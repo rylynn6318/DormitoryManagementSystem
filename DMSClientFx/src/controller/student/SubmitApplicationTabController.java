@@ -1,8 +1,11 @@
 package controller.student;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import application.IOHandler;
+import application.Responser;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -13,7 +16,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import models.*;
+import utils.*;
 
 public class SubmitApplicationTabController implements Initializable 
 {
@@ -83,7 +87,24 @@ public class SubmitApplicationTabController implements Initializable
 		System.out.println("생활관 입사 신청 새로고침됨");
 		
 		//네트워킹
-		info_textarea.setText("서버에서 받아온 안내사항입니다.");
+		Tuple<String, ArrayList<Dormitory>> resultTuple = null;
+		
+        try {
+        	resultTuple = Responser.student_submitApplicationPage_onEnter();
+        	
+		} catch (Exception e) {
+			IOHandler.getInstance().showAlert(resultTuple.obj1);
+		}
+        
+        //스케쥴 때문에 진입 불가인 경우 tuple의 두번째 항목이 null로 반환된다.
+        if(resultTuple.obj2 == null)
+        {
+        	IOHandler.getInstance().showAlert(resultTuple.obj1);
+        	//여기서 페이지 닫게 해주자.. 아직 코드 몰라서 구현안함.
+        	return;
+        }
+        
+        info_textarea.setText(resultTuple.obj1);
 		
 		
 		//TODO 테스트용, 콤보박스 아이템 추가. 나중에 클래스든, String이든, 네트워크에서 받아와 처리해야됨.
@@ -114,6 +135,7 @@ public class SubmitApplicationTabController implements Initializable
 //		firstChoice_cost_label.setText("만원");
 //		secondChoice_cost_label.setText("만원");
 //		thirdChoice_cost_label.setText("만원");
+        
 		
 	}
 	
@@ -138,7 +160,6 @@ public class SubmitApplicationTabController implements Initializable
     private void sendApplication()
     {
     	//대충 신청 전송하는 메소드
-    	
     }
     
     private void cancelApplication()
