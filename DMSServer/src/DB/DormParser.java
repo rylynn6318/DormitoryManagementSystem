@@ -14,11 +14,7 @@ public class DormParser {
 	//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
 	public static ArrayList<String> getDormList(Gender g) throws Exception
 	{
-		Connection conn = null;
-		Statement state = null;
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		conn = DriverManager.getConnection(DBinfo.DB_URL, DBinfo.USER_NAME, DBinfo.PASSWORD);		
-		state = conn.createStatement();	
+		Statement state = DBinfo.connection();
 		String sql = "SELECT 생활관명 FROM " + DBinfo.DB_NAME + ".생활관정보  WHERE 성별 = "+ g.toString();
 		ResultSet purs = state.executeQuery(sql);
 		ArrayList<String> dlist = new ArrayList<String>();
@@ -37,11 +33,7 @@ public class DormParser {
 		ResultSet purs = null;
 		for(int i=0;i<dList.size();i++)
 		{
-			Connection conn = null;
-			Statement state = null;
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			conn = DriverManager.getConnection(DBinfo.DB_URL, DBinfo.USER_NAME, DBinfo.PASSWORD);		
-			state = conn.createStatement();	
+			Statement state = DBinfo.connection();
 			String sql = "SELECT * FROM " + DBinfo.DB_NAME + ".생활관정보  WHERE 생활관명 = "+ dList.get(i);
 			purs = state.executeQuery(sql);			
 		}
@@ -60,11 +52,7 @@ public class DormParser {
 		ArrayList<Dormitory> dorm = new ArrayList<Dormitory>();
 		ResultSet purs = null;
 		
-		Connection conn = null;
-		Statement state = null;
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		conn = DriverManager.getConnection(DBinfo.DB_URL, DBinfo.USER_NAME, DBinfo.PASSWORD);		
-		state = conn.createStatement();	
+		Statement state = DBinfo.connection();
 		String sql = "SELECT * FROM " + DBinfo.DB_NAME + ".생활관정보  WHERE 성별 = " + gender.toString() + " AND 학기 = " + semester;
 		purs = state.executeQuery(sql);	
 		while(purs.next())

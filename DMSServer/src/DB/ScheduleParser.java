@@ -1,7 +1,5 @@
 package DB;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -20,11 +18,7 @@ public class ScheduleParser
 		Date start = null;
 		Date end = null;
 		
-		Connection conn = null;
-		Statement state = null;
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		conn = DriverManager.getConnection(DBinfo.DB_URL, DBinfo.USER_NAME, DBinfo.PASSWORD);		
-		state = conn.createStatement();	
+		Statement state = DBinfo.connection();
 
 		// String.valueOf((int)page)를 String.valueOf((int)page.getCode())로 수정함. by ssm
 		String sql = "SELECT 시작일, 종료일 FROM " + DBinfo.DB_NAME + ".스케쥴  WHERE (`스케쥴 할일 코드_ID` =" + String.valueOf((int)page.getCode()) + ")";
