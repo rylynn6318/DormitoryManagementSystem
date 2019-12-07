@@ -15,10 +15,7 @@ import java.util.concurrent.Executors;
 //해당 클라이언트에게 새 ReceiveThread와 SendThread를 만들어 준다.
 
 public class ServerTask implements Runnable {
-    private int port;
-    ServerSocket serverSocket;
     SocketHelper socketHelper;
-    private static ExecutorService threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     public ServerTask(SocketHelper socketHelper) {
         this.socketHelper = socketHelper;
@@ -26,7 +23,6 @@ public class ServerTask implements Runnable {
 
     @Override
     public void run() {
-        //NetworkHandler 에서 종료요청이 오기전까지 계속 클라이언트의 요청을 받아들인다.
         Protocol protocol = null;
         try {
             protocol = socketHelper.read();
@@ -84,13 +80,5 @@ public class ServerTask implements Runnable {
             	}
                 break;
         }
-
-    }
-
-    public void close() {
-        System.out.println("클라이언트스레드풀 종료 시작");
-
-        threadPool.shutdown();
-        System.out.println("클라이언트스레드풀 종료됨");
     }
 }

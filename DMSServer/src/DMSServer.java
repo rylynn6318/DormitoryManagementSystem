@@ -4,6 +4,8 @@ import utils.SocketHelper;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 //기숙사 관리 시스템(Dormitory Management System)
 
@@ -24,16 +26,18 @@ import java.net.Socket;
 
 public class DMSServer {
     public static void main(String[] args){
+        boolean running = true;
         ServerSocket sSocket = null;
+        ExecutorService threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
         try {
             sSocket = new ServerSocket(SocketHelper.port);
         } catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println("클라이언트 접속 대기중...");
-        //DatabaseHandler db = new DatabaseHandler();
-        //db.connection();
-        while (true) {
+
+        while (running) {
             Socket socket = null;
             try {
                 socket = sSocket.accept();
@@ -42,12 +46,15 @@ public class DMSServer {
             }
             SocketHelper socketHelper = new SocketHelper(socket);
             System.out.println("클라이언트 접속");
-            new ServerTask(socketHelper).run();    //반복수행
+            threadPool.execute(new ServerTask(socketHelper));
+
             try {
                 socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
+        threadPool.shutdown();
     }
 }
