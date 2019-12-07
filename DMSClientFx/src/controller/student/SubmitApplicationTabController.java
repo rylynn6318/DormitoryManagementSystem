@@ -72,9 +72,6 @@ public class SubmitApplicationTabController implements Initializable
     private Label thirdChoice_cost_label;
 
     @FXML
-    private TextField contact_textfield;
-
-    @FXML
     private CheckBox isSnore_checkbox;
 
     @FXML
@@ -95,22 +92,22 @@ public class SubmitApplicationTabController implements Initializable
 		
 		//남자라고 가정, 사실 남자인지 여자인지도 서버에서 알아서 판단해서 클라이언트에게 보냄. 클라이언트는 이게 남자껀지 여자껀지 몰라야함.
 		//일반학기라고 가정, 클라이언트는 일반학기인지, 방학인지는 모름. 이것도 서버에서 알아서 판단해서 알아서 보내줌.
-		oneYear_dorm_combobox.getItems().addAll("푸름관 1,2동");
-		firstChoice_dorm_combobox.getItems().addAll("푸름관 1,2동", "푸름관 4동", "오름관 2,3동");
-		secondChoice_dorm_combobox.getItems().addAll("푸름관 1,2동", "푸름관 4동", "오름관 2,3동");
-		thirdChoice_dorm_combobox.getItems().addAll("푸름관 1,2동", "푸름관 4동", "오름관 2,3동");
+		oneYear_dorm_combobox.getItems().addAll("선택", "푸름관 1,2동");
+		firstChoice_dorm_combobox.getItems().addAll("선택", "푸름관 1,2동", "푸름관 4동", "오름관 2,3동");
+		secondChoice_dorm_combobox.getItems().addAll("선택", "푸름관 1,2동", "푸름관 4동", "오름관 2,3동");
+		thirdChoice_dorm_combobox.getItems().addAll("선택", "푸름관 1,2동", "푸름관 4동", "오름관 2,3동");
 		
 		//이건 계절학기때는 전기간, 계절수업으로 나뉨
-		oneYear_period_combobox.getItems().addAll("전기간");
-		firstChoice_period_combobox.getItems().addAll("전기간");
-		secondChoice_period_combobox.getItems().addAll("전기간");
-		thirdChoice_period_combobox.getItems().addAll("전기간");
+		oneYear_period_combobox.getItems().addAll("선택", "전기간");
+		firstChoice_period_combobox.getItems().addAll("선택", "전기간");
+		secondChoice_period_combobox.getItems().addAll("선택", "전기간");
+		thirdChoice_period_combobox.getItems().addAll("선택", "전기간");
 		
 		//식사구분은 기숙사에따라서, 식사의무가 T인지 F인지에 따라 서버가 알아서 보내줘야함.
-		oneYear_meal_combobox.getItems().addAll("5일식", "7일식", "식사안함");
-		firstChoice_meal_combobox.getItems().addAll("5일식", "7일식", "식사안함");
-		secondChoice_meal_combobox.getItems().addAll("5일식", "7일식", "식사안함");
-		thirdChoice_meal_combobox.getItems().addAll("5일식", "7일식", "식사안함");
+		oneYear_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
+		firstChoice_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
+		secondChoice_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
+		thirdChoice_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
 		
 		//이건 사용자 선택에 따라 결정, 변경되야함. 물론 서버에서 기본 정보는 다 받아오고, 사용자 선택에 맞는 값을 표시해줘야함.
 //		oneYear_cost_label.setText("만원");

@@ -1,5 +1,6 @@
 package logic;
 
+import DB.ApplicationParser;
 import java.util.Iterator;
 import java.util.TreeSet;
 import models.*;
@@ -60,27 +61,21 @@ public class ResidentSelecter
 	
 	public static void passerSelection(String dormName, int choice) throws SQLException, ClassNotFoundException
 	{
-		Connection conn = null;
-		Statement state = null;
+		int semester = ApplicationParser.getSemester();
 		
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
-		state = conn.createStatement();
-		
-		int leftCapacity = getNumOfLeftSeat(dormName);
-		TreeSet<Application> apps = getSortedApplications(dormName, choice);
+		int leftCapacity = getNumOfLeftSeat(dormName, semester);
+		TreeSet<Application> apps = ApplicationParser.getUnsortedApps(dormName, choice, semester);
 		
 		Iterator<Application> iterator = apps.iterator();
 		
 		for(int i = 0; i < leftCapacity; i++)
 		{
 			Application temp = iterator.next();
-			String updateQuery = "UPDATE 신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + " AND 생활관정보_생활관명=" + temp.getDormitoryName() + " AND 성별=" + temp.getGender() + " AND 학기=" + temp.getSemesterCode() + " AND 지망=" + temp.getChoice();
-			state.executeUpdate(updateQuery);
+			ApplicationParser.updatePasser(temp);
 		}
 	}
 	
-	public static TreeSet<Application> getSortedApplications(String dormName, int choice) throws SQLException, ClassNotFoundException
+	public static int getNumOfLeftSeat(String dormName, int semester) throws ClassNotFoundException, SQLException	//생활관 이름과 학기를 넣으면 남은 자리의 수를 리턴하는 함수
 	{
 		Connection conn = null;
 		Statement state = null;
@@ -89,36 +84,24 @@ public class ResidentSelecter
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-		TreeSet<Application> sortedApps = new TreeSet<Application>();
-		
-		String getUnsortedAppsQuery = "SELECT * FROM 신청 WHERE 생활관명=" + dormName + " AND 지망=" + choice + "학기=201901 AND 합격여부=N";
-		ResultSet apps = state.executeQuery(getUnsortedAppsQuery);
-		
-		while(apps.next())
+		String pureSemester = String.valueOf(semester).substring(4);
+		String getNumOfPassedAppsQuery;
+		String getCapacityQuery;
+		ResultSet passed;
+		ResultSet capacity;
+		if(pureSemester.equals("01") || pureSemester.equals("04") || pureSemester.equals("02") || pureSemester.equals("05"))
 		{
-			Application temp = new Application(apps.getString("학번"), apps.getString("생활관정보_생활관명"), apps.getString("생활관정보_성별"), apps.getInt("생활관정보_학기"), apps.getInt("지망"), getFinalScore(apps.getString("학번")));
-
-			sortedApps.add(temp);
+			getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM 배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + ")";			
+			getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + semester;
 		}
-		
-		return sortedApps;
-	}
-	
-	public static int getNumOfLeftSeat(String dormName) throws ClassNotFoundException, SQLException	//생활관 이름을 넣으면 남은 자리의 수를 리턴하는 함수
-	{
-		Connection conn = null;
-		Statement state = null;
-		
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
-		state = conn.createStatement();
-		
-		String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM 배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + 201901 + ")";
-		ResultSet passed = state.executeQuery(getNumOfPassedAppsQuery);
-		
+		else
+		{
+			getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM 배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + (semester - 1) + ")";
+			getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + (semester - 1);
+		}
+		passed = state.executeQuery(getNumOfPassedAppsQuery);
 		Statement state2 = conn.createStatement();
-		String getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + 201901;
-		ResultSet capacity = state2.executeQuery(getCapacityQuery);
+		capacity = state2.executeQuery(getCapacityQuery);
 		
 		capacity.next();
 		passed.next();
@@ -128,7 +111,7 @@ public class ResidentSelecter
 		return leftCapacity;
 	}
 	
-	public static double getFinalScore(String studentId) throws ClassNotFoundException, SQLException
+	public static double getFinalScore(String studentId, int semester) throws ClassNotFoundException, SQLException
 	{
 		Connection conn = null;
 		Statement state = null;
@@ -137,7 +120,7 @@ public class ResidentSelecter
 		conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);		
 		state = conn.createStatement();
 		
-		String getScoresQuery = "SELECT 학점,등급 FROM 점수 WHERE 학번=" + studentId + "AND 학기 BETWEEN '" + pastTwo(201901) + "' AND '" + pastOne(201901) + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
+		String getScoresQuery = "SELECT 학점,등급 FROM 점수 WHERE 학번=" + studentId + "AND 학기 BETWEEN '" + pastTwo(semester) + "' AND '" + pastOne(semester) + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
 		ResultSet scores = state.executeQuery(getScoresQuery);
 		
 		double sumOfTakenGrade = 0;
@@ -206,17 +189,23 @@ public class ResidentSelecter
 		
 		switch(pureSemester)
 		{
-		case "01":
+		case "01":				//1학기
+			semester -= 97;
+			break;
+		case "02":				//여름 계절
 			semester -= 98;
 			break;
-		case "02":
+		case "03":				//여름 계절 이후
 			semester -= 99;
 			break;
-		case "03":
-			semester -= 2;
-			break;
-		case "04":
+		case "04":				//2학기
 			semester -= 3;
+			break;
+		case "05":				//겨울 계절
+			semester -= 4;
+			break;
+		case "06":				//겨울 계절 이후
+			semester -= 5;
 			break;
 		}
 		
@@ -230,12 +219,16 @@ public class ResidentSelecter
 		switch(pureSemester)
 		{
 		case "01":
-		case "03":
+		case "04":
 			semester -= 100;
 			break;
 		case "02":
-		case "04":
+		case "05":
 			semester -= 101;
+			break;
+		case "03":
+		case "06":
+			semester -= 102;
 			break;
 		}
 		
