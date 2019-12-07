@@ -97,7 +97,7 @@ public final class Protocol implements Comparable<Protocol> {
     // Body
     private final byte[] body_bytes;
 
-    byte[] getBody() {
+    public byte[] getBody() {
         return body_bytes;
     }
 
