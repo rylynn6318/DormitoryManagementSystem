@@ -21,7 +21,7 @@ import javafx.stage.Stage;
 
 import models.*;
 import enums.*;
-import ultils.*;
+import utils.*;
 
 public class LoginPageController implements Initializable {
     @FXML
