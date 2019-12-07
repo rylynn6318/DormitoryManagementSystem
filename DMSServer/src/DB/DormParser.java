@@ -67,6 +67,8 @@ public class DormParser {
 					resultSet.getInt("기숙사비"));
 			dorm.add(d);
 		}
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
 		return dorm;
 	}
 	
