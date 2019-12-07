@@ -90,8 +90,8 @@ public class LoginPageController implements Initializable {
 
         try {
             //테스트용으로 네트워킹 주석처리하고 패스함.
-            loginResult = login(account);
-            // loginResult = Code2.LoginResult.ADMIN;
+//            loginResult = login(account);
+             loginResult = Code2.LoginResult.ADMIN;
 
             switch (loginResult){
                 case FAIL:
@@ -110,14 +110,6 @@ public class LoginPageController implements Initializable {
                     break;
             }
         }
-//        catch(ConnectException ce)
-//        {
-//        	IOHandler.getInstance().showAlert("서버 연결에 실패했습니다.");
-//        }
-//        catch(IOException ie)
-//        {
-//        	IOHandler.getInstance().showAlert("서버와의 연결이 끊여졌습니다.");
-//        }
         catch (Exception e) {
             IOHandler.getInstance().showAlert("알 수 없는 이유로 로그인에 실패했습니다.");
         }
