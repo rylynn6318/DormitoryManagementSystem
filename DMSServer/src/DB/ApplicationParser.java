@@ -3,6 +3,9 @@ package DB;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.TreeSet;
+
+import models.Application;
 
 public class ApplicationParser {
 	public static Boolean isExist(int studentID) throws ClassNotFoundException, SQLException
@@ -19,6 +22,21 @@ public class ApplicationParser {
 		{
 			return false;
 		}
+	}
+
+	public static int getSemester() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public static TreeSet<Application> getUnsortedApps(String dormName, int choice, int semester) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static void updatePasser(Application temp) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
