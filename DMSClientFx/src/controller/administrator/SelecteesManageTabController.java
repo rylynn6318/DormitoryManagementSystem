@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import enums.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -114,10 +115,10 @@ public class SelecteesManageTabController implements Initializable
     	//서버랑 통신했다 치고 Application 객체 받아옴.
     	//물론 실제로 받아왔을때 받아온 Application 배열목록을 ApplicationViewModel로 변환하고 넣어야됨.
     	applicationList = FXCollections.observableArrayList(
-    			new ApplicationViewModel("20161234", "오름관 2동", 201901, 1, 7, true, true, true, true),
-    			new ApplicationViewModel("20161235", "오름관 3동", 201901, 2, 5, true, true, true, false),
-    			new ApplicationViewModel("20161236", "푸름관 2동", 201901, 0, 7, false, true, false, true),
-    			new ApplicationViewModel("20161237", "오름관 2동", 201901, 1, 5, false, true, true, true)
+    			new ApplicationViewModel("20161234", "오름관 2동", 201901, 1, 7, Bool.TRUE, Bool.TRUE, Bool.TRUE, Bool.TRUE),
+    			new ApplicationViewModel("20161235", "오름관 3동", 201901, 2, 5, Bool.TRUE, Bool.TRUE, Bool.TRUE, Bool.FALSE),
+    			new ApplicationViewModel("20161236", "푸름관 2동", 201901, 0, 7, Bool.FALSE, Bool.TRUE, Bool.FALSE, Bool.TRUE),
+    			new ApplicationViewModel("20161237", "오름관 2동", 201901, 1, 5, Bool.FALSE, Bool.TRUE, Bool.TRUE, Bool.TRUE)
         		);
     	
     	//서버에서 받아온거 표시하게 만듬.

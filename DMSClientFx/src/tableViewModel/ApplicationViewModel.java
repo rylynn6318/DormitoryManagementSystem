@@ -1,5 +1,6 @@
 package tableViewModel;
 
+import enums.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import models.Application;
@@ -19,7 +20,7 @@ public class ApplicationViewModel extends Application
 	private StringProperty isSnoreStr;
 	
 	public ApplicationViewModel(String studentId, String dormNameStr, int semester, int choice, int mealType, 
-			boolean isPaid, boolean isPassed, boolean isLastPassed, boolean isSnore)
+			Bool isPaid, Bool isPassed, Bool isLastPassed, Bool isSnore)
 	{
 		//생성자로 묶을수있을거같은데, 일단 보류
 		super.setStudentId(studentId);
@@ -37,10 +38,10 @@ public class ApplicationViewModel extends Application
 		this.semesterStr = new SimpleStringProperty(Integer.toString(semester));
 		this.choiceStr = new SimpleStringProperty(Integer.toString(choice));
 		this.mealTypeStr = new SimpleStringProperty(Integer.toString(mealType));
-		this.isPaidStr = new SimpleStringProperty(isPaid ? "T" : "F");
-		this.isPassedStr = new SimpleStringProperty(isPassed ? "T" : "F");
-		this.isLastPassedStr = new SimpleStringProperty(isLastPassed ? "T" : "F");
-		this.isSnoreStr = new SimpleStringProperty(isSnore ? "T" : "F");
+		this.isPaidStr = new SimpleStringProperty(isPaid.bool ? "T" : "F");
+		this.isPassedStr = new SimpleStringProperty(isPassed.bool ? "T" : "F");
+		this.isLastPassedStr = new SimpleStringProperty(isLastPassed.bool ? "T" : "F");
+		this.isSnoreStr = new SimpleStringProperty(isSnore.bool ? "T" : "F");
 	}
 	
 	public StringProperty studentIdProperty()

@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import application.IOHandler;
+import enums.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -135,10 +136,10 @@ public class PaymentManageTabController implements Initializable
     	//서버랑 통신했다 치고 Application 객체 받아옴.
     	//물론 실제로 받아왔을때 받아온 Application 배열목록을 ApplicationViewModel로 변환하고 넣어야됨.
     	applicationList = FXCollections.observableArrayList(
-    			new ApplicationViewModel("20160001", "오름관 1동", 201901, 1, 7, true, true, false, true),
-    			new ApplicationViewModel("20160002", "오름관 2동", 201901, 2, 5, true, true, false, false),
-    			new ApplicationViewModel("20160003", "푸름관 3동", 201901, 0, 7, false, true, false, false),
-    			new ApplicationViewModel("20160004", "푸름관 4동", 201901, 1, 5, false, false, false, true)
+    			new ApplicationViewModel("20160001", "오름관 1동", 201901, 1, 7, Bool.TRUE, Bool.TRUE, Bool.FALSE, Bool.TRUE),
+    			new ApplicationViewModel("20160002", "오름관 2동", 201901, 2, 5, Bool.TRUE, Bool.TRUE, Bool.FALSE, Bool.FALSE),
+    			new ApplicationViewModel("20160003", "푸름관 3동", 201901, 0, 7, Bool.FALSE, Bool.TRUE, Bool.FALSE, Bool.FALSE),
+    			new ApplicationViewModel("20160004", "푸름관 4동", 201901, 1, 5, Bool.FALSE, Bool.FALSE, Bool.FALSE, Bool.TRUE)
         		);
     	
     	//서버에서 받아온거 표시하게 만듬.
