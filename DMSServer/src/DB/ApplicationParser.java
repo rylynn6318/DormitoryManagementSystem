@@ -10,7 +10,7 @@ import models.Score;
 import sun.security.x509.DNSName;
 
 public class ApplicationParser {
-	public static Boolean isExist(String studentID) throws ClassNotFoundException, SQLException
+	public static Boolean isExist(String studentID) throws SQLException
 	{
 		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ studentID;
 		Connection connection = DBHandler.INSTANCE.getConnetion();
@@ -31,7 +31,7 @@ public class ApplicationParser {
 
 	}
 
-	public static int getSemester() throws ClassNotFoundException, SQLException 
+	public static int getSemester() throws SQLException 
 	{
 		String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 학기 = (SELECT max(학기) FROM " + DBHandler.DB_NAME + ".신청)";
 		Connection connection = DBHandler.INSTANCE.getConnetion();
@@ -45,7 +45,7 @@ public class ApplicationParser {
 		return result;
 	}
 	
-	public static int getNumOfLeftSeat(String dormName, int semester) throws ClassNotFoundException, SQLException
+	public static int getNumOfLeftSeat(String dormName, int semester) throws SQLException
 	{
 		String pureSemester = String.valueOf(semester).substring(4);
 		String getNumOfPassedAppsQuery;
@@ -80,7 +80,7 @@ public class ApplicationParser {
 		return result;
 	}
 
-	public static TreeSet<Application> getSortedApps(String dormName, int choice, int semester) throws ClassNotFoundException, SQLException 
+	public static TreeSet<Application> getSortedApps(String dormName, int choice, int semester) throws SQLException, ClassNotFoundException 
 	{
 		TreeSet<Application> sortedApps = new TreeSet<Application>();
 		
@@ -148,7 +148,6 @@ public class ApplicationParser {
 		
 		return (sumOfTakenGrade/sumOfTakenCredit + getDistanceScore(ApplicationParser.getZipCode(studentId)));
 	}
-//	여기까지--------------------------------------------------------는 getSortedApps를 위한 로직임
 	
 	public static double getDistanceScore(String s)
 	{
@@ -216,8 +215,9 @@ public class ApplicationParser {
 		
 		return semester;
 	}
+//	여기까지--------------------------------------------------------는 getSortedApps를 위한 로직임
 	
-	public static TreeSet<Score> getScores(String studentId, int twoSemesterBefore, int lastSemester) throws ClassNotFoundException, SQLException
+	public static TreeSet<Score> getScores(String studentId, int twoSemesterBefore, int lastSemester) throws SQLException
 	{
 		String getScoresQuery = "SELECT 학점,등급 FROM " + DBHandler.DB_NAME + ".점수 WHERE 학번=" + studentId + "AND 학기 BETWEEN '" + twoSemesterBefore + "' AND '" + lastSemester + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
 		Connection connection = DBHandler.INSTANCE.getConnetion();
@@ -236,7 +236,7 @@ public class ApplicationParser {
 		return score;
 	}
 	
-	public static String getZipCode(String studentId) throws ClassNotFoundException, SQLException
+	public static String getZipCode(String studentId) throws SQLException
 	{
 		String zipCodeQuery = "SELECT 보호자우편번호 FROM " + DBHandler.DB_NAME + ".학생 WHERE 학번=" + studentId;
 		Connection connection = DBHandler.INSTANCE.getConnetion();
@@ -253,7 +253,7 @@ public class ApplicationParser {
 		return zipcode;
 	}
 
-	public static void updatePasser(Application temp) throws ClassNotFoundException, SQLException 
+	public static void updatePasser(Application temp) throws SQLException 
 	{
 		String setPassed = "UPDATE " + DBHandler.DB_NAME + ".신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + "지망=" + temp.getChoice() + "학기=" + temp.getSemesterCode();
 		Connection connection = DBHandler.INSTANCE.getConnetion();
