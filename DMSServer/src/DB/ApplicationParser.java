@@ -7,7 +7,6 @@ import java.util.TreeSet;
 import enums.Grade;
 import models.Application;
 import models.Score;
-import sun.security.x509.DNSName;
 
 public class ApplicationParser {
 	public static Boolean isExist(String studentID) throws SQLException
