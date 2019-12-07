@@ -1,9 +1,14 @@
 import java.util.ArrayList;
 
 import DB.DormParser;
+import DB.ScheduleParser;
 import DB.StudentParser;
-import enums.Gender;
+import enums.*;
 import models.Dormitory;
+//import models.Tuple;
+import ultils.Protocol;
+import ultils.ProtocolHelper;
+import ultils.SocketHelper;
 
 //디버깅용 클래스
 //대충 클라이언트에서 어떤 요청이 왔을때 그에 대한 반응(로직)을 모아둠.
@@ -14,10 +19,10 @@ import models.Dormitory;
 //학기코드
 //201901 : 1학기
 //201902 : 여름계절
-//201903 : 여름계절이후
+//201903 : 여름계절이후까지
 //201904 : 2학기
-//201905: 겨울계절
-//201906 : 겨울계절이후
+//201905 : 겨울계절
+//201906 : 겨울계절이후까지
 
 public class Responser
 {
@@ -54,27 +59,47 @@ public class Responser
 //	}
 	
 	//학생 - 생활관 입사 신청 - 들어왔을 때
-	public void student_submitApplicationPage_onEnter() throws Exception
+	public void student_submitApplicationPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴을 확인하고 입사 신청 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-		//boolean isPassed = ScheduleCheck.check(ProtocolField.Code1.Page.입사신청);
+		boolean isAdmissible = ScheduleParser.isAdmissible(Code1.Page.입사신청);
+		
+		if(!isAdmissible)
+		{
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization("현재 생활관 입사 신청 기간이 아닙니다.")).build());
+			return;
+		}
 		
 		//2. 받은 요청의 헤더에서 학번을 알아낸다.
-		String id = "20160469"; //수정 필요
+		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
 		
 		//3. 학생테이블에서 학번으로 조회하여 성별을 알아낸다.
-		Gender g = StudentParser.getGender(id);
+		Gender gender = StudentParser.getGender(id);
 		
 		//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
-		ArrayList<String> dList = new ArrayList<String>();	//이건 맨첨에 생활관명만 들고있는 Dormitory Arraylist로 처리했었는데 Dorm클래스가 구조가 바뀌면서 생성자 조건땜시 그냥 생활관명만 들고있는 String배열로 바꿈
-		dList = DormParser.getDormList(g);					//내가 이러면 나중에 클라한테 보내줄때 타입 안맞지않냐고하니까 손이 이렇게 해놓으면 지가 나중에 Dorm타입을 바꾸겠다함 미1친놈임 그냥 생성자 하나 더만들면되는데 ㅇㅈ?
+		//	 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
+		String semester = "201901";
+		//semester = Utils.getCurrentSemester();											//나중에 이런 코드 만들어서 쓰게해야됨.
+		ArrayList<Dormitory> dormitoryList = DormParser.getDormitoryList(semester, gender);
 		
-		//5. 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
-		//	 스케쥴 테이블에서 비고(안내사항)를 가져온다.
-		ArrayList<Dormitory> dormList = new ArrayList<Dormitory>();
-		dormList = DormParser.getDormInfo(dList);
+		//5. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
+		//String description = ScheduleParser.getDescription(Code1.Page.입사신청);
 		
 		//6. 해당 정보를 객체화, 배열로 만들어 클라이언트에게 전송한다.
+//		Tuple<String, ArrayList<Dormitory>> resultTuple = new Tuple("description", dormitoryList);
+		
+		//전송한다.
+//		socketHelper.write(new Protocol.Builder(
+//				ProtocolType.EVENT, 
+//				Direction.TO_CLIENT, 
+//				Code1.NULL, 
+//				Code2.NULL
+//				).body(ProtocolHelper.serialization(resultTuple)).build());
 	}
 	
 	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시
@@ -111,7 +136,8 @@ public class Responser
 	public void student_CheckApplicationPage_onCheck()
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회. (클라이언트의 '생활관 입사지원 내역' 테이블뷰에 표시할 것임)
+		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회. 
+		//	 (클라이언트의 '생활관 입사지원 내역' 테이블뷰에 표시할 것임)
 		//3. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역의 지망, 생활관명, 식사구분, 합격여부, 납부여부를 조회.
 		//	 (클라이언트의 '생활관 선발 결과' 테이블뷰에 표시할 것임)
 		//4. 조회된 내역을 객체화, 배열에 담아 클라이언트에게 반환한다.
@@ -189,7 +215,7 @@ public class Responser
 		//(2. 클라이언트는 받은 배열을 역직렬화하여 서류유형 combobox에 표시한다)
 	}
 	
-	//학생 - 서류 제출 - 조회 버튼 클릭 시
+	//학생 - 서류 조회 - 조회 버튼 클릭 시
 	public void student_checkDocumentPage_onCheck()
 	{
 		//1. 받은 요청의 헤더에서 학번, 서류유형을 알아낸다. 
@@ -198,7 +224,7 @@ public class Responser
 		//4. 클라이언트에게 전송한다.
 	}
 	
-	//학생 - 서류 제출 - 다운로드 버튼 클릭 시(파일 다운로드)
+	//학생 - 서류 조회 - 다운로드 버튼 클릭 시(파일 다운로드)
 	public void student_checkDocumentPage_onDownlaod()
 	{
 		//(1. 클라이언트는 자기 남은 용량이 10MB 이상인지 체크한다)
@@ -496,3 +522,6 @@ public class Responser
 
 //2019-12-07 v1.03
 //	관리자 페이지 기본 로직 완성 -명근
+
+//2019-12-07 v1.04
+//	사용자 페이지 오타 수정 -명근

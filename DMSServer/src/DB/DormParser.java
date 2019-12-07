@@ -1,7 +1,5 @@
 package DB;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -14,11 +12,7 @@ public class DormParser {
 	//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
 	public static ArrayList<String> getDormList(Gender g) throws Exception
 	{
-		Connection conn = null;
-		Statement state = null;
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		conn = DriverManager.getConnection(DBinfo.DB_URL, DBinfo.USER_NAME, DBinfo.PASSWORD);		
-		state = conn.createStatement();	
+		Statement state = DBinfo.connection();
 		String sql = "SELECT 생활관명 FROM " + DBinfo.DB_NAME + ".생활관정보  WHERE 성별 = "+ g.toString();
 		ResultSet purs = state.executeQuery(sql);
 		ArrayList<String> dlist = new ArrayList<String>();
@@ -37,14 +31,28 @@ public class DormParser {
 		ResultSet purs = null;
 		for(int i=0;i<dList.size();i++)
 		{
-			Connection conn = null;
-			Statement state = null;
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			conn = DriverManager.getConnection(DBinfo.DB_URL, DBinfo.USER_NAME, DBinfo.PASSWORD);		
-			state = conn.createStatement();	
+			Statement state = DBinfo.connection();
 			String sql = "SELECT * FROM " + DBinfo.DB_NAME + ".생활관정보  WHERE 생활관명 = "+ dList.get(i);
 			purs = state.executeQuery(sql);			
 		}
+		while(purs.next())
+		{			
+			//시원하게 보내라해서 일단 성별로 거른 생활관목록에 대한 모든 정보를 보냄
+			Dormitory d = new Dormitory(purs.getString("생활관명"), Gender.get(purs.getString("성별").charAt(0)), purs.getInt("학기"), purs.getInt("수용인원"), Bool.get(purs.getString("식사의무")),purs.getInt("5일식_식비"),purs.getInt("7일식_식비"),purs.getInt("기숙사비"));
+			dorm.add(d);
+		}
+		return dorm;
+	}
+	
+	//제대로 동작하는지 모르겠음. 현재 학기에서 성별로 생활관 조회, 모든 결과값을 Dormitory 객체 배열로 반환함. 
+	public static ArrayList<Dormitory> getDormitoryList(String semester, Gender gender) throws Exception
+	{
+		ArrayList<Dormitory> dorm = new ArrayList<Dormitory>();
+		ResultSet purs = null;
+		
+		Statement state = DBinfo.connection();
+		String sql = "SELECT * FROM " + DBinfo.DB_NAME + ".생활관정보  WHERE 성별 = " + gender.toString() + " AND 학기 = " + semester;
+		purs = state.executeQuery(sql);	
 		while(purs.next())
 		{			
 			//시원하게 보내라해서 일단 성별로 거른 생활관목록에 대한 모든 정보를 보냄
