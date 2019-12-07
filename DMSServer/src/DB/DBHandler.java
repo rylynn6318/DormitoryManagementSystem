@@ -9,9 +9,9 @@ public enum DBHandler {
     static final String DRIVER_NAME = "mysql";
     static final String HOSTNAME = "wehatejava.czztgstzacsv.us-east-1.rds.amazonaws.com";
     static final String PORT = "3306";
-    static final String DB_NAME = "Prototype";													//DB이름
-    static final String USER_NAME = "admin"; 													//DB에 접속할 사용자 이름을 상수로 정의
-    static final String PASSWORD = "En2i3oHKLGh9UlnbYFP1"; 										//사용자의 비밀번호를 상수로 정의
+    static final String DB_NAME = "Prototype";
+    static final String USER_NAME = "admin";
+    static final String PASSWORD = "En2i3oHKLGh9UlnbYFP1";
     static final String DB_URL =
             "jdbc:" +
                     DRIVER_NAME + "://" +
@@ -39,14 +39,14 @@ public enum DBHandler {
         }
     }
 
-    public synchronized Connection getConnetion() throws SQLException {
+    public Connection getConnetion() throws SQLException {
         if (pool.isEmpty())
             pool.add(DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD));
         
         return pool.poll();
     }
 
-    public synchronized void returnConnection(Connection connection){
+    public void returnConnection(Connection connection){
         pool.add(connection);
     }
 }
