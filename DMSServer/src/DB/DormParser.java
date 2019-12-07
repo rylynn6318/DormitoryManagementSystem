@@ -47,7 +47,7 @@ public class DormParser {
 		for(int i=0;i<dList.size();i++)
 		{
 			String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 생활관명 = "+ dList.get(i);
-			resultSet = DBHandler.INSTANCE.excuteSelect(sql);
+			// resultSet = DBHandler.INSTANCE.excuteSelect(sql);
 			// TODO : 이 경우는 로직이 잘못된거 아닌가? while 구문이 for 안으로 들어와야 하는거 아님?
 		}
 		while(resultSet.next())
