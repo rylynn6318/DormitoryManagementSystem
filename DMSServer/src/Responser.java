@@ -427,16 +427,44 @@ public class Responser
 	public static void admin_selecteesManagePage_onSelection(Protocol protocol, SocketHelper socketHelper)
 	{
 		//입사자 선발 버튼은 신청 목록에서 합격여부를 Y로 바꾸는 역할을 한다
-		//ex) 100명을 뽑아야되면 성적순으로 정렬 뒤 총 신청자 중에서 상위 100명까지 합격여부를 Y로 바꾼다?
+		//ex) 100명을 뽑아야되면 성적순으로 정렬 뒤 총 신청자 중에서 상위 100명까지 합격여부를 Y로 바꾼다? - 맞음
 		//이건 선발 짜놓은 친구들이 구현해놨으니 거기에 맞게 로직 고치면 됨.(로직 주석 구체적으로 달아주셈, 어떻게 돌아가는지 다른애들도 알수있게)
 		
 		//1. 클라이언트에게 입사자 선발 요청을 받는다. (바디에는 딱히 아무것도 없다. 요청을 위한 통신)
 		//2. 선발 알고리즘을 시행한다. (대충 생각해본것임. 더 나은 알고리즘, 이미 구현한 알고리즘 사용해도 됨. 그 경우 아래 알고리즘을 고쳐주셈)
-		//		1) 신청 내역에서 생활관별로 묶는다.
-		//		2) 학생 한명당 평균성적을 계산한다.
-		//		3) 평균성적순으로 정렬한다.
-		//		4) 남은 자리가 n이면 n명까지 합격여부를 Y로 UPDATE
-		//3. 결과를 클라이언트에게 알려준다(성공/실패?)
+		boolean isSucceed = true;
+		try {
+			logic.ResidentSelecter.selectionByChoice();
+		} catch (ClassNotFoundException | SQLException e1) {
+			isSucceed = false;
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		//이것만 부르면 1, 2, 3, 4 전부 처리함
+				//		1) 신청 내역에서 생활관별로 묶는다. - 정확히는 생활관별, 지망별로 묶어서 생활관별 0지망 -> 생활관별 1지망 -> 생활관별 2지망 -> 생활관별 3지망 순으로 뽑음
+				//		2) 학생 한명당 평균성적을 계산한다.
+				//		3) 평균성적순으로 정렬한다. - 정렬하는동안 그 학번으로 이미 합격한 신청이 있는지 확인하고 이미 있으면 정렬 대상에서 제외함
+				//		4) 남은 자리가 n이면 n명까지 합격여부를 Y로 UPDATE - 맞워요
+				//3. 결과를 클라이언트에게 알려준다(성공/실패?) - 이건 어케하노
+		Tuple<Bool,String> result;
+		if(isSucceed)
+			result = new Tuple<Bool,String>(Bool.TRUE, "성공했습니다");
+		else
+			result = new Tuple<Bool,String>(Bool.FALSE, "실패했습니다");
+		
+		try {
+			
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization(result)).build());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return;
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 조회 버튼 클릭 시
