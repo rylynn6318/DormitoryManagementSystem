@@ -4,6 +4,8 @@ import java.sql.*;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import enums.Bool;
+import enums.Gender;
 import enums.Grade;
 import models.Application;
 import models.Score;
@@ -246,4 +248,15 @@ public class ApplicationParser {
 		preparedStatement.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
+	 
+	public static void insertApplication(int choice, int mealType, Bool isSnore, String dormitoryName, char gender , int semesterCode, String id) throws SQLException
+	{
+		String sql = "INSERT INTO `Prototype`.`신청` (`지망`, `몇일식`, `코골이여부`, `생활관명`, `성별`, `학기`, `학생_ID`) VALUES ('"+ choice + "', '" + mealType + "', '" + isSnore + "', '" + dormitoryName + "', '"+ gender +"', '" + semesterCode + "', '" + id +"')";
+		Connection connection = DBHandler.INSTANCE.getConnetion();
+		PreparedStatement state = connection.prepareStatement(sql);
+		state.executeUpdate(sql);
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+	}
+
 }

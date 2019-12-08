@@ -100,7 +100,7 @@ public class Responser
 	}
 	
 	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시
-	public void student_submitApplicationPage_onSubmit(Protocol protocol, SocketHelper socketHelper)
+	public void student_submitApplicationPage_onSubmit(Protocol protocol, SocketHelper socketHelper) throws SQLException, ClassNotFoundException, IOException
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
@@ -122,9 +122,9 @@ public class Responser
 		//3. 받은 데이터를 역직렬화한다. ([생활관구분, 기간구분, 식사구분] x4 와 휴대전화번호, 코골이여부가 나옴)
 		Application[] A = (Application[])ProtocolHelper.deserialization(protocol.getBody());
 		//4. 해당 배열을 신청 데이트에 INSERT한다.
-		for(int i = 0; i < A.length; i++)  //(int choice, String mealType, Bool isSnore, String dormitoryName, Gender gender, int semesterCode, String id)
+		for(int i = 0; i < A.length; i++)  
 		{
-			InsertApplicationParser.InsertApplication(A[i].getChoice(), A[i].getMealType(), A[i].isSnore(), A[i].getDormitoryName(), A[i].getGender(), A[i].getSemesterCode(), id); //이거 풀하고 다시 짤거에요
+			ApplicationParser.insertApplication(A[i].getChoice(), A[i].getMealType(), A[i].isSnore(), A[i].getDormitoryName(), A[i].getGender(), A[i].getSemesterCode(), id); //이거 풀하고 다시 짤거에요
 		}
 		//5. 클라이언트에게 성공 여부를 알려준다.(성공/DB연결 오류로 인한 실패/DB사망/알수없는오류 등등...)
 		try {
