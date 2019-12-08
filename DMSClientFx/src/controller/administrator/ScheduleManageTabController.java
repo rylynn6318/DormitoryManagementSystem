@@ -2,10 +2,12 @@ package controller.administrator;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import application.Responser;
 import controller.InnerPageController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +20,8 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import models.*;
+import enums.*;
 import tableViewModel.ScheduleViewModel;
 
 //선발 일정 조회 및 관리
@@ -73,6 +77,8 @@ public class ScheduleManageTabController extends InnerPageController
 		//네트워킹 후 유형을 서버에서 가져와야한다.
 		insert_type_combobox.getItems().addAll("생활관 입사 신청", "생활관 관배정 및 합격자 발표", "생활관비 납부", 
 				"결핵진단서 제출 기간", "생활관 추가합격자 발표", "생활관 추가합격자 생활관비 납부");
+		
+		onEnter();
 	}
 	
 	//---------------------이벤트---------------------
@@ -99,23 +105,48 @@ public class ScheduleManageTabController extends InnerPageController
     }
 	
 	//---------------------로직---------------------
+    
+    //스케쥴 할일 코드를 받아온다.
+    private void onEnter()
+    {
+    	ArrayList<ScheduleCode> resultList = Responser.admin_scheduleManagePage_onEnter();
+    	
+    	//서버랑 통신이 됬는가?
+        if(resultList == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultList != null)
+        {
+        	//서버에게서 받아온 스케쥴 할일 코드 목록을 콤보박스에 추가한다.
+        	
+        }
+    }
 
     private void checkSchdules()
     {
     	//네트워킹해서 스케쥴 테이블 쫙 긁어와야됨.
     	//긁어올때 스케쥴 할일 코드 테이블도 긁어와야됨.
+//    	Tuple<Bool, ArrayList<Schedule>> resultTuple = Responser.admin_scheduleManagePage_onEnter();
     	
-    	ObservableList<ScheduleViewModel> list = FXCollections.observableArrayList(
+    	ObservableList<ScheduleViewModel> scheduleViewModels = FXCollections.observableArrayList(
     			new ScheduleViewModel("1234", 3, new Date(2019, 3, 2), new Date(219, 7, 13), "입사 기간"),	//귀찮아서 대충 때려박음. 꼬우면 RG?
     			new ScheduleViewModel("1235", 77, new Date(2019, 3, 1), new Date(219, 3, 2), "배정")
     			);
     	
+    	setTableView(scheduleViewModels);
+    }
+    
+    private void setTableView(ObservableList<ScheduleViewModel> scheduleViewModels)
+    {
     	check_schedule_column_id.setCellValueFactory(cellData -> cellData.getValue().scheduleIdProperty());
     	check_schedule_column_type.setCellValueFactory(cellData -> cellData.getValue().codeProperty());
     	check_schedule_column_startDay.setCellValueFactory(cellData -> cellData.getValue().startDateProperty());
     	check_schedule_column_endDay.setCellValueFactory(cellData -> cellData.getValue().endDateProperty());
     	check_schedule_column_description.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
-    	check_schedule_tableview.setItems(list);
+    	check_schedule_tableview.setItems(scheduleViewModels);
     }
     
     private void deleteSchedule()

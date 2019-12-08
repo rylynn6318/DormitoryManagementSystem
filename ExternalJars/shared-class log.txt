@@ -65,3 +65,6 @@ shared-class update log
 2019-12-08 00:10 v2.05
 	DMSClass Enum에 불필요한 생성자와 멤버변수들을 정리함.
 	Shared Class Export해서 적용함.
+	
+2019-12-08 19:23 v2.06
+	DMSClass Model에 ScheduleCode 추가함.

@@ -71,22 +71,6 @@ public class SubmitApplicationTabController extends InnerPageController
 		checkSchedule();
 	}
 	
-	private void debug_comboboxView()
-	{
-		//남자라고 가정, 사실 남자인지 여자인지도 서버에서 알아서 판단해서 클라이언트에게 보냄. 클라이언트는 이게 남자껀지 여자껀지 몰라야함.
-		//일반학기라고 가정, 클라이언트는 일반학기인지, 방학인지는 모름. 이것도 서버에서 알아서 판단해서 알아서 보내줌.
-		oneYear_dorm_combobox.getItems().addAll("선택", "푸름관 1,2동");
-		firstChoice_dorm_combobox.getItems().addAll("선택", "푸름관 1,2동", "푸름관 4동", "오름관 2,3동");
-		secondChoice_dorm_combobox.getItems().addAll("선택", "푸름관 1,2동", "푸름관 4동", "오름관 2,3동");
-		thirdChoice_dorm_combobox.getItems().addAll("선택", "푸름관 1,2동", "푸름관 4동", "오름관 2,3동");
-		
-		//식사구분은 기숙사에따라서, 식사의무가 T인지 F인지에 따라 서버가 알아서 보내줘야함.
-		oneYear_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
-		firstChoice_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
-		secondChoice_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
-		thirdChoice_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
-	}
-	
 	//---------------------이벤트---------------------
 	
 	@FXML
@@ -123,7 +107,7 @@ public class SubmitApplicationTabController extends InnerPageController
         }
         
         //스케쥴 체크가 됬는가?
-    	//스케쥴 때문에 진입 불가인 경우 String에는 메시지가, 배열에는 null이 반환된다.
+    	//스케쥴/이미 신청한 학생이라 진입 불가인 경우 String에는 메시지가, 배열에는 null이 반환된다.
         if(resultTuple != null)
         {
         	if(resultTuple.obj2 == null)

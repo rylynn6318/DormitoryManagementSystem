@@ -307,11 +307,15 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 선발 일정 조회 및 관리 - 들어왔을 때
-	public void admin_scheduleManagePage_onEnter()
+	public static ArrayList<ScheduleCode> admin_scheduleManagePage_onEnter()
 	{
 		//1. 서버에게 선발 일정 조회 및 관리 들어왔다고 알려준다.
 		//(2. 서버는 스케쥴 유형을 객체화 배열화하여 클라이언트로 전송한다.)
 		//3. 받은 배열을 역직렬화하여 스케쥴유형 combobox에 표시한다
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.선발일정관리, Code2.Event.REFRESH, null);
+		ArrayList<ScheduleCode> result = (ArrayList<ScheduleCode>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 선발 일정 조회 및 관리 - 조회 버튼 클릭 시
