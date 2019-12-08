@@ -220,7 +220,7 @@ public class Responser
 		//3. 결과를 메시지로 띄운다.
 		//TODO 미완성임.
 		
-		Protocol protocol = fileProtocolBuilder(fileType, FileCode.UPLOAD, data);
+		Protocol protocol = null;
 		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
 		return result;
 	}

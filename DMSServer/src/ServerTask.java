@@ -40,7 +40,7 @@ public class ServerTask implements Runnable {
                 switch ((Code2.FileCode) protocol.code2) {
                     case UPLOAD:
                         try {
-                            ProtocolHelper.download(protocol);
+                            ProtocolHelper.downloadFileFrom(protocol);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
