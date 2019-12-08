@@ -257,9 +257,30 @@ public class Responser
 	//------------------------------------------------------------------------
 	
 	//학생 - 생활관 고지서 조회 - 들어왔을 때
-	public static void student_CheckBillPage_onEnter(Protocol protocol, SocketHelper socketHelper)
+	public static void student_CheckBillPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴을 확인하고 고지서 조회 가능한 날짜인지 조회 -> TRUE이면 괜찮다고 클라이언트에게 전송, FALSE이면 못들어가게 막음
+		boolean accessible;
+		if(ScheduleParser.isAdmissible((Page)protocol.code1))
+		{
+			accessible = true;
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization(accessible)).build());
+		}
+		else
+		{
+			accessible = false;
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization(accessible)).build());
+		}
 	}
 	
 	//학생 - 생활관 고지서 조회 - 조회 버튼 클릭 시
@@ -435,7 +456,7 @@ public class Responser
 		//1. 스케쥴 할일 코드 테이블에서 목록을 객체로 만들어 배열로 가져온다. (ID, 할일코드, 시작일, 종료일, 비고)
 		ArrayList<Schedule> schedule = ScheduleParser.getAllSchedule();
 		//2. 스케쥴 테이블에서 목록을 객체로 만들어 배열로 가져온다. (코드, 이름)
-		
+			
 		//3. 스케쥴 객체 배열을 클라이언트로 전송한다.
 		socketHelper.write(new Protocol.Builder(
 				ProtocolType.EVENT, 
