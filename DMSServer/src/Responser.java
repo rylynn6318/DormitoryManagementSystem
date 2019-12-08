@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+import org.w3c.dom.DocumentType;
+
 import DB.ApplicationParser;
 import DB.AssignAlgorithm;
 import DB.CurrentSemesterParser;
+import DB.DocumentParser;
 import DB.DormParser;
 import DB.PlacementHistoryParser;
 import DB.ScheduleParser;
@@ -22,6 +25,7 @@ import enums.ProtocolType;
 import models.Account;
 import models.Application;
 import models.Bill;
+import models.Document;
 import models.Dormitory;
 import models.PlacementHistory;
 import models.Schedule;
@@ -357,7 +361,6 @@ public class Responser
 	//학생 - 생활관 호실 조회 - 조회 버튼 클릭 시
 	public static void student_checkRoomPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
 	{
-		///////////////////제가 만드는중 ★ ㅡ서희ㅡ////////////////////////////
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
 		String id = a.accountId;
@@ -428,9 +431,36 @@ public class Responser
 	public static void student_checkDocumentPage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 받은 요청의 헤더에서 학번, 서류유형을 알아낸다. 
-		//2. 서류 테이블에서 해당 학번이 이번 학기에 제출한 내역 중 서류유형이 일치하는 것을 찾는다. -> 있으면 진행, 없으면 없다고 알려줌
-		//3. 서류 테이블에서 서류유형, 제출일시, 진단일시, 파일경로를 알아내어 객체화한다.
-		//4. 클라이언트에게 전송한다.
+				String studentId;
+				Code1.FileType fileType;
+				Document document = null;
+				try {
+					@SuppressWarnings("unchecked")
+					Tuple<Account, Code1.FileType> temp = (Tuple<Account, Code1.FileType>) ProtocolHelper.deserialization(protocol.getBody());
+					studentId = temp.obj1.accountId;
+					fileType = temp.obj2;
+					document = DocumentParser.findDocument(studentId, fileType);
+				} catch (ClassNotFoundException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//2. 서류 테이블에서 해당 학번이 이번 학기에 제출한 내역 중 서류유형이 일치하는 것을 찾는다. -> 있으면 진행, 없으면 없다고 알려줌
+				//3. 서류 테이블에서 서류유형, 제출일시, 진단일시, 파일경로를 알아내어 객체화한다.
+				//4. 클라이언트에게 전송한다.
+				try {
+					socketHelper.write(new Protocol.Builder(
+							ProtocolType.EVENT, 
+							Direction.TO_CLIENT, 
+							Code1.NULL, 
+							Code2.NULL
+							).body(ProtocolHelper.serialization(document)).build());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 	}
 	
 	//학생 - 서류 조회 - 다운로드 버튼 클릭 시(파일 다운로드)
@@ -737,12 +767,21 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 서류 조회 및 제출 - 들어왔을 때
-	public static void admin_documentManagePage_onEnter(Protocol protocol, SocketHelper socketHelper)
+	public static void admin_documentManagePage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 서류유형 ENUM을 배열화해서 목록을 만든다.
+		ArrayList<FileType> docuTypeList = new ArrayList<>();
+		docuTypeList.add(FileType.CSV);
+		docuTypeList.add(FileType.MEDICAL_REPORT);
+		docuTypeList.add(FileType.OATH);
 		//2. 배열화한 목록을 직렬화해서 클라이언트로 전송한다.
+		socketHelper.write(new Protocol.Builder(
+				ProtocolType.EVENT, 
+				Direction.TO_CLIENT, 
+				Code1.NULL, 
+				Code2.NULL
+				).body(ProtocolHelper.serialization(docuTypeList)).build());
 		//(3. 클라이언트는 받은 ENUM 배열을 역직렬화하여 서류유형 combobox에 표시한다)
-		
 		//[ENUM 배열화 예시]
 		//arrayList<DocumentType> data = new arrayList<DocumentType>(DocumentType.MEDICAL, DocumentType.OATH);
 	}
