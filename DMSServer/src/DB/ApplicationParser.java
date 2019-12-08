@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import org.omg.CORBA.StringHolder;
+
 import enums.Bool;
 import enums.Grade;
 import models.Application;
@@ -309,8 +311,8 @@ public class ApplicationParser {
 	{
 		//19.12.09 지금 디비가 안바껴서 안돌아감 -동현-
 		System.out.println(gender);
-		String sql = "INSERT INTO " +DBHandler.INSTANCE.DB_NAME+".신청 VALUES('1', '"+String.valueOf(choice)+"','"+String.valueOf(mealType)+"','N','N','N','N','"+dormitoryName+"','"+ String.valueOf(gender)+"','"+String.valueOf(semesterCode)+"','"+id+"')";
-//원래  			String sql = "INSERT INTO " +DBHandler.INSTANCE.DB_NAME+".신청 VALUES( "+id+","+dormitoryName+","+String.valueOf(gender)+","+String.valueOf(semesterCode)+","+ String.valueOf(choice)+","+String.valueOf(mealType)+","+"N , N, N ,"+ String.valueOf(isSnore)+")";
+		String sql = "INSERT INTO " +DBHandler.INSTANCE.DB_NAME+".신청 VALUES("+id+"','"+dormitoryName+"','"+String.valueOf(gender)+"','"+ String.valueOf(semesterCode)+"','"+String.valueOf(choice)+"','"+String.valueOf(mealType)+"','N','N','N'+'"+String.valueOf(isSnore)+"')";
+//원래  	String sql = "INSERT INTO " +DBHandler.INSTANCE.DB_NAME+".신청 VALUES( "+id+","+dormitoryName+","+String.valueOf(gender)+","+String.valueOf(semesterCode)+","+ String.valueOf(choice)+","+String.valueOf(mealType)+","+"N , N, N ,"+ String.valueOf(isSnore)+")";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		System.out.println(sql);
