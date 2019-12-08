@@ -292,7 +292,11 @@ public class Responser
 	public static void student_checkRoomPage_onEnter(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 스케쥴을 확인하고 호실 조회 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-		
+		//만드는 중 -서희-
+		if(ScheduleParser.isAdmissible((Page)protocol.code1))
+		{
+			
+		}
 		//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
 		//3. 스케쥴 객체를 클라이언트에게 전송한다.
 		//(4. 클라이언트에서는 받은 비고(안내사항)을 표시한다)
@@ -301,6 +305,7 @@ public class Responser
 	//학생 - 생활관 호실 조회 - 조회 버튼 클릭 시
 	public static void student_checkRoomPage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
+		
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 최종합격여부가 T인 내역 조회 
 		//3-1. 내역이 없는 경우 불합격이라고 클라이언트에게 알려준다.(객체 만들던지, String 보내던 알아서 해야될듯. 전용 객체가 있는게 바람직하겠다.)
