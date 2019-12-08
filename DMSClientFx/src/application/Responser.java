@@ -562,8 +562,8 @@ public class Responser
 	
 	//-------------------------------------------------------------------------
 	
-	//관리자 - 서류 조회 및 제출 - 들어왔을 때
-	public void admin_documentManagePage_onEnter()
+	//관리자 - 서류 조회 및 제출(관리) - 들어왔을 때
+	public static ArrayList<Code1.FileType> admin_documentManagePage_onEnter()
 	{
 		//1. 서류유형 ENUM을 배열화해서 목록을 만든다.
 		//2. 배열화한 목록을 직렬화해서 클라이언트로 전송한다.
@@ -571,15 +571,21 @@ public class Responser
 		
 		//[ENUM 배열화 예시]
 		//arrayList<DocumentType> data = new arrayList<DocumentType>(DocumentType.MEDICAL, DocumentType.OATH);
+		Protocol protocol = eventProtocolBuilder(Code1.Page.서류관리, Code2.Event.REFRESH, null);
+		ArrayList<Code1.FileType> result = (ArrayList<Code1.FileType>) sendAndReceive(protocol);
+		return result;
 	}
 	
-	//관리자 - 서류 조회 및 제출 - 조회 버튼 클릭 시
-	public void admin_documentManagePage_onCheck()
+	//관리자 - 서류 조회 및 제출(관리) - 조회 버튼 클릭 시
+	public static ArrayList<Document> admin_documentManagePage_onCheck()
 	{
 		//1. 서류 테이블에서 이번 학기 서류제출내역 목록을 가져와 객체화한다. (학번, 서류유형, 제출일, 진단일, 서류저장경로, 유효여부)
 		//2. 배열화한다.
 		//3. 직렬화해서 클라이언트에 전송한다.
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
+		Protocol protocol = eventProtocolBuilder(Code1.Page.서류관리, Code2.Event.CHECK, null);
+		ArrayList<Document> result = (ArrayList<Document>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 삭제 버튼 클릭 시

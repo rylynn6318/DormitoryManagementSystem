@@ -10,12 +10,15 @@ import java.util.ResourceBundle;
 
 import enums.Code1;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import models.Application;
+import models.Document;
 import models.Schedule;
 import models.ScheduleCode;
 import tableViewModel.ApplicationViewModel;
+import tableViewModel.DocumentViewModel;
 import tableViewModel.ScheduleViewModel;
 
 //Login, Main을 제외한 페이지가 공통적으로 가지는 메소드를 가짐.
@@ -133,12 +136,26 @@ public class InnerPageController implements Initializable
     	}
     	return code;
     }
+    
+    public void setComboboxByFileType(ComboBox<String> combobox, ArrayList<Code1.FileType> fileTypeList)
+    {
+    	for(Code1.FileType fileType : fileTypeList)
+    	{
+    		combobox.getItems().add(fileTypeToString(fileType));
+    	}
+    }
 	
 	public ApplicationViewModel applicationToViewModel(Application application)
     {
     	return new ApplicationViewModel(application.getStudentId(), application.getDormitoryName(), application.getSemesterCode(), 
     			application.getChoice(), application.getMealType(), application.isPaid(), application.isPassed(), 
     			application.isLastPassed(), application.isSnore());
+    }
+	
+	public DocumentViewModel documentToViewModel(Document document)
+    {
+    	return new DocumentViewModel(document.studentId, document.documentType, document.submissionDate, document.diagnosisDate,
+    			document.documentStoragePath, document.isValid);
     }
 	
 	//스케쥴 객체를 뷰모델로 바꾸는 메소드

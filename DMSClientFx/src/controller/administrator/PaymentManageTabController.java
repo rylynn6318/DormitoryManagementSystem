@@ -284,6 +284,7 @@ public class PaymentManageTabController extends InnerPageController
 				IOHandler.getInstance().showAlert("은행 파일이 업로드 되었습니다.");
 				
 				//TODO 여기서 전송해라!
+				Responser.admin_paymentManagePage_onUpload();
 				
 				file_directory_label.setText("N/A");
 			}

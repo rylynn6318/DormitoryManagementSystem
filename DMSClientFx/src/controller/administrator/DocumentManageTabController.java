@@ -3,13 +3,16 @@ package controller.administrator;
 import java.io.File;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import application.IOHandler;
+import application.Responser;
 import controller.InnerPageController;
+import enums.Code1;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,6 +25,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import models.Application;
+import models.Document;
 import tableViewModel.*;
 
 //서류 조회 및 제출
@@ -98,8 +103,6 @@ public class DocumentManageTabController extends InnerPageController
     
 	private final String[] comboboxItem_boolean = {null, "T", "F"};
 	
-	private ObservableList<DocumentViewModel> documentList;
-	
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
@@ -108,9 +111,10 @@ public class DocumentManageTabController extends InnerPageController
 		update_isValid_combobox.getItems().addAll(comboboxItem_boolean);
 		
 		//네트워킹해서 서류유형 콤보박스 아이템 받아와라.
-		delete_documentType_combobox.getItems().addAll("결핵진단서", "서약서");
-		upload_documentType_combobox.getItems().addAll("결핵진단서", "서약서");
-		update_documentType_combobox.getItems().addAll("결핵진단서", "서약서");
+		
+//		delete_documentType_combobox.getItems().addAll("결핵진단서", "서약서");
+//		upload_documentType_combobox.getItems().addAll("결핵진단서", "서약서");
+//		update_documentType_combobox.getItems().addAll("결핵진단서", "서약서");
 	}
 	
 	//---------------------이벤트---------------------
@@ -153,16 +157,56 @@ public class DocumentManageTabController extends InnerPageController
     
     //---------------------로직---------------------
     
+    private void onEnter()
+    {
+    	ArrayList<Code1.FileType> resultList = Responser.admin_documentManagePage_onEnter();
+    	
+    	//서버랑 통신이 됬는가?
+        if(resultList == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultList != null)
+        {
+        	setComboboxByFileType(delete_documentType_combobox, resultList);
+        	setComboboxByFileType(upload_documentType_combobox, resultList);
+        	setComboboxByFileType(update_documentType_combobox, resultList);
+        }
+    }
+    
+    
+    
     private void checkDocuments()
     {
-    	//네트워킹으로 서류 조회
-    	documentList = FXCollections.observableArrayList(
-    			new DocumentViewModel("20161234", 0, new Date(2019,7,1), new Date(2019,8,1), "C:\\와샌즈1", true),
-    			new DocumentViewModel("20161235", 1, new Date(2019,7,1), new Date(2019,8,1), "C:\\와샌즈2", false),
-    			new DocumentViewModel("20161236", 2, new Date(2019,7,1), new Date(2019,8,1), "C:\\와샌즈3", true),
-    			new DocumentViewModel("20161236", 3, new Date(2019,7,1), new Date(2019,8,1), "C:\\와샌즈4", false)
-        		);
+    	//서버에서 신청테이블->이번학기->객체 배열 쫙 긁어와서 tableview에 보여줌
+    	ArrayList<Document> resultList = Responser.admin_documentManagePage_onCheck();
     	
+    	//서버랑 통신이 됬는가?
+        if(resultList == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultList != null)
+        {
+        	//객체를 테이블뷰 모델로 변환
+        	ObservableList<DocumentViewModel> documentList = FXCollections.observableArrayList();
+        	
+        	for(Document document : resultList)
+        	{
+        		documentList.add(documentToViewModel(document));
+        	}
+        	
+            //테이블뷰에 추가
+        	setDocumentTableView(documentList);
+        }
+    }
+    
+    private void setDocumentTableView(ObservableList<DocumentViewModel> documentList)
+    {
     	//서버에서 받아온거 표시하게 만듬.
     	check_document_column_studentId.setCellValueFactory(cellData -> cellData.getValue().studentIdProperty());
     	check_document_column_docType.setCellValueFactory(cellData -> cellData.getValue().documentTypeProperty());

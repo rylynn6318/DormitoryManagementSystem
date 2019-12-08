@@ -19,31 +19,31 @@ public class DocumentViewModel
 	private StringProperty documentStoragePathStr;
 	private StringProperty isValidStr;
 	
-	public DocumentViewModel(String studentId, int documentType, Date submissionDate, Date diagnosisDate, String documentStoragePath, boolean isValid)
+	public DocumentViewModel(String studentId, Code1.FileType documentType, Date submissionDate, Date diagnosisDate, String documentStoragePath, Bool isValid)
 	{
-		document = new Document(studentId, Code1.FileType.get((byte)documentType), submissionDate, diagnosisDate, documentStoragePath, Bool.get(isValid));
+		document = new Document(studentId, documentType, submissionDate, diagnosisDate, documentStoragePath, isValid);
 
 		this.studentIdStr = new SimpleStringProperty(studentId);
 		this.documentTypeStr = new SimpleStringProperty(convertDocumentType(documentType));
 		this.submissionDateStr = new SimpleStringProperty(submissionDate.toString());
 		this.diagnosisDateStr = new SimpleStringProperty(diagnosisDate.toString());
 		this.documentStoragePathStr = new SimpleStringProperty(documentStoragePath);
-		this.isValidStr = new SimpleStringProperty(isValid ? "T" : "F");
+		this.isValidStr = new SimpleStringProperty(isValid == Bool.TRUE ? "T" : "F");
 	}
 	
 	//파일 유형의 인덱스가 1, 2, 3이면 switch 고치세요.
-	private String convertDocumentType(int type)
+	private String convertDocumentType(Code1.FileType type)
 	{
 		switch(type)
 		{
-		case 0:
+		case MEDICAL_REPORT:
 			return "결핵진단서";
-		case 1:
+		case OATH:
 			return "서약서";
-		case 2:
+		case CSV:
 			return "은행 파일";
 		default:
-			return "알 수 없음";
+			return "알수없음";
 		}
 	}
 	
