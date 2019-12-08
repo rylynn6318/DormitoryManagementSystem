@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import DB.ApplicationParser;
 import DB.AssignAlgorithm;
@@ -15,8 +16,8 @@ import enums.Code2;
 import enums.Direction;
 import enums.Gender;
 import enums.ProtocolType;
-import models.Account;
 import models.Application;
+import models.Bill;
 import models.Dormitory;
 import models.Tuple;
 import utils.Protocol;
@@ -274,8 +275,15 @@ public class Responser
 		//3. 합격한 신청 내역에 관한 납부해야 할 비용을 저장
 		cost = DormParser.getCheckBillCost(id);
 		//4. 랜덤 생성한 계좌번호와, 은행 명, 계산한 비용을 객체화해서 클라이언트에게 전송한다.
-		String bankName = "농협";
-		   
+		Random rand = new Random();
+		int accountNum = rand.nextInt(100)+1000;
+		Bill bill = new Bill("농협",accountNum,cost);
+		socketHelper.write(new Protocol.Builder(
+				ProtocolType.EVENT, 
+				Direction.TO_CLIENT, 
+				Code1.NULL, 
+				Code2.NULL
+				).body(ProtocolHelper.serialization(bill)).build());
 		//(. 클라이언트는 이걸 받아서 대충 메모장으로 띄워준다.)
 	}
 	//------------------------------------------------------------------------
