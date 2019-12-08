@@ -78,6 +78,14 @@ public class Application implements Comparable<Application>, Serializable
 		this.choice = choice;
 	}
 	
+	public Application(Bool isLastPassed, Bool isPaid, int mealType, String dormitoryName)
+	{
+		this.isLastPassed = isLastPassed;
+		this.isPaid = isPaid;
+		this.mealType = mealType;
+		this.dormitoryName = dormitoryName;
+	}
+	
 	public Application(int mealType, Bool isSnore)
 	{
 		this.mealType = mealType;

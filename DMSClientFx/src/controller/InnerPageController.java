@@ -11,6 +11,8 @@ import enums.Code1;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import models.Application;
+import tableViewModel.ApplicationViewModel;
 
 //Login, Main을 제외한 페이지가 공통적으로 가지는 메소드를 가짐.
 public class InnerPageController implements Initializable 
@@ -93,4 +95,11 @@ public class InnerPageController implements Initializable
     		return -1;
     	}
 	}
+	
+	public ApplicationViewModel applicationToViewModel(Application application)
+    {
+    	return new ApplicationViewModel(application.getStudentId(), application.getDormitoryName(), application.getSemesterCode(), 
+    			application.getChoice(), application.getMealType(), application.isPaid(), application.isPassed(), 
+    			application.isLastPassed(), application.isSnore());
+    }
 }

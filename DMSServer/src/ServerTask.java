@@ -14,30 +14,46 @@ public class ServerTask implements Runnable {
 
     @Override
     public void run() {
-		Logger.INSTANCE.print(socketHelper.getInetAddress(), "연결");
+        Logger.INSTANCE.print(socketHelper.getInetAddress(), "연결");
 
-		Protocol protocol = null;
-		try {
-			protocol = socketHelper.read();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        Protocol protocol = null;
+        try {
+            protocol = socketHelper.read();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		Logger.INSTANCE.print(socketHelper.getInetAddress(), protocol.type);
+        Logger.INSTANCE.print(socketHelper.getInetAddress(), protocol.type);
 
-		switch (protocol.type) {
-			case LOGIN:
-				try {
-					Account result = LoginChecker.check((Account) ProtocolHelper.deserialization(protocol.getBody()));
-					socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.get(result.userType)).build());
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				break;
+        switch (protocol.type) {
+            case LOGIN:
+                try {
+                    Account result = LoginChecker.check((Account) ProtocolHelper.deserialization(protocol.getBody()));
+                    socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.get(result.userType)).build());
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             case FILE:
-                //file 처리
+                switch ((Code2.FileCode) protocol.code2) {
+                    case UPLOAD:
+                        try {
+                            ProtocolHelper.downloadFileFrom(protocol);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case REQUEST_DOWNLOAD:
+
+                        break;
+                    case UPLOAD_RESULT:
+                    case DOWNLOAD:
+                    default:
+                        // 이 경우는 클라이언트에서 올일 없다!
+                        break;
+                }
                 break;
             case EVENT:
                 //event 처리
@@ -324,12 +340,12 @@ public class ServerTask implements Runnable {
                 }
         }
 
-		try {
-			socketHelper.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        try {
+            socketHelper.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-		Logger.INSTANCE.print(socketHelper.getInetAddress(), "요청 반환, 연결 종료");
+        Logger.INSTANCE.print(socketHelper.getInetAddress(), "요청 반환, 연결 종료");
     }
 }

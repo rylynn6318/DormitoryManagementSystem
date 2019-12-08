@@ -81,11 +81,14 @@ shared-class update log
 	ProtocolHelper에 파일 업/다운로드 기능 추가
 	Shared Class Export해서 적용함.
 	
-
 2019-12-08 23:19 v2.10
 	Shared Class에 PlacementHistory에 키로만 구성된 생성자 추가함.
 	Shared Class Export해서 적용함.
 	
 2019-12-08 23:35 v2.11
 	Shared Class에 Application에 mealType, isSnore로만 구성된 생성자 추가함.
+	Shared Class Export해서 적용함.
+
+2019-12-08 23:40 v2.12
+	ProtocolHelper에 파일 업/다운로드 기능 개선
 	Shared Class Export해서 적용함.
