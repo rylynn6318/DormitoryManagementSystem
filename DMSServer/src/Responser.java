@@ -302,8 +302,10 @@ public class Responser
 	//학생 - 생활관 호실 조회 - 들어왔을 때
 	public static void student_checkRoomPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
+		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
+		String id = a.accountId;
 		//1. 스케쥴을 확인하고 호실 조회 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-		if(ScheduleParser.isAdmissible((Page)protocol.code1))
+		if(ScheduleParser.isAdmissible((Page)protocol.code1) && ApplicationParser.isExistLastPass(id))
 		{
 			//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
 			String notice = ScheduleParser.getDescription((Page)protocol.code1);
@@ -324,7 +326,7 @@ public class Responser
 					Direction.TO_CLIENT, 
 					Code1.NULL, 
 					Code2.NULL
-					).body(ProtocolHelper.serialization("신청조회기간이 아닙니다.")).build());
+					).body(ProtocolHelper.serialization("합격 내역이 없습니다.")).build());
 		}
 	}
 	

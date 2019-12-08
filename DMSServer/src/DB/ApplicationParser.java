@@ -368,5 +368,22 @@ public class ApplicationParser {
 		DBHandler.INSTANCE.returnConnection(connection);
 		return application;
 	}
+	
+	public static Boolean isExistLastPass(String id) throws SQLException, ClassNotFoundException
+	{
+		String sql = "SELECT 최종합격여부" + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ id + "생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+		if(rs.next())
+		{
+			state.close();
+			DBHandler.INSTANCE.returnConnection(connection);
+			return true;
+		}
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		return false;
+	}
 
 }
