@@ -1,11 +1,11 @@
 package DB;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 import enums.Bool;
-import enums.Gender;
 import enums.Grade;
 import models.Application;
 import models.Score;
@@ -260,7 +260,7 @@ public class ApplicationParser {
 		String setPassed = "UPDATE " + DBHandler.DB_NAME + ".신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + "지망=" + temp.getChoice() + "학기=" + temp.getSemesterCode();
 		Connection connection = DBHandler.INSTANCE.getConnetion();
 		PreparedStatement preparedStatement = connection.prepareStatement(setPassed);
-		ResultSet scores = preparedStatement.executeQuery();
+		preparedStatement.executeUpdate();
 		preparedStatement.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
