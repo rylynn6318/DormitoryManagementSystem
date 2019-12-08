@@ -70,6 +70,14 @@ public class Application implements Comparable<Application>, Serializable
 		this.isPaid = isPaid;
 	}
 	
+	public Application(String studentId, String dormitoryName, int semesterCode, int choice)	//클라이언트->서버에게 입사선발자 삭제 요청에 필요
+	{
+		this.studentId = studentId;
+		this.dormitoryName = dormitoryName;
+		this.semesterCode = semesterCode;
+		this.choice = choice;
+	}
+	
 	public String getStudentId()
 	{
 		return studentId;

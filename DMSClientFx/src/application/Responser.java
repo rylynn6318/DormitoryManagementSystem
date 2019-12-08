@@ -400,7 +400,7 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 입사자 선발 버튼 클릭 시
-	public void admin_selecteesManagePage_onSelection()
+	public static Tuple<Bool, String> admin_selecteesManagePage_onSelection()
 	{
 		//입사자 선발 버튼은 신청 목록에서 합격여부를 Y로 바꾸는 역할을 한다
 		//ex) 100명을 뽑아야되면 성적순으로 정렬 뒤 총 신청자 중에서 상위 100명까지 합격여부를 Y로 바꾼다?
@@ -413,16 +413,24 @@ public class Responser
 		//		3) 평균성적순으로 정렬한다.
 		//		4) 남은 자리가 n이면 n명까지 합격여부를 Y로 UPDATE
 		//3. 결과를 클라이언트에게 알려준다(성공/실패?)
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사선발자관리, Code2.Event.SELECTION, null);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 조회 버튼 클릭 시
-	public void admin_selecteesManagePage_onCheck()
+	public static ArrayList<Application> admin_selecteesManagePage_onCheck()
 	{
 		//1. 신청 테이블에서 이번 학기 신청 목록을 가져와 객체화한다. (학번, 생활관명, 학기, 지망, 몇일식, 납부여부, 합격여부, 최종결과, 코골이여부)
 		//   (합격여부 Y, N인거 관계없이 가져와야될듯. 그래야 사실상 여기서 관리자가 신청내역 조회가능함)
 		//2. 배열화한다.
 		//3. 직렬화해서 클라이언트에 전송한다.
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사선발자관리, Code2.Event.CHECK, null);
+		ArrayList<Application> result = (ArrayList<Application>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 삭제 버튼 클릭 시

@@ -72,3 +72,7 @@ shared-class update log
 2019-12-08 19:48 v2.07
 	minor update
 	Shared Class Export해서 적용함.
+	
+2019-12-08 22:34 v2.08
+	minor update
+	Shared Class에 Application 모델에 생성자 하나 추가함(클라이언트->서버에서 신청 삭제할때 사용하는 생성자)
