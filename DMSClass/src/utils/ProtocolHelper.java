@@ -3,6 +3,7 @@ package utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -36,26 +37,32 @@ public final class ProtocolHelper {
         }
     }
 
-    public static Tuple<String, byte[]> fileToTuple(String id, File file) throws IOException {
-        byte[] filebytes = Files.readAllBytes(file.toPath());
-
-        return new Tuple<>(id, filebytes);
-    }
-
     public static void download(Protocol fileProtocol) throws Exception {
         if (fileProtocol.type != ProtocolType.FILE)
             throw new Exception("파일 프로토콜이 아닌것을 ProtocolHelper.download() 인자로 넘김!");
 
-        
+        Tuple<String, byte[]> filedata = (Tuple<String, byte[]>) deserialization(fileProtocol.getBody());
 
-        switch ((Code1.FileType) fileProtocol.code1) {
-        case CSV:
-            break;
-        case MEDICAL_REPORT:
-            break;
-        case OATH:
-            break;
-        }
+        Code1.FileType type = (Code1.FileType) fileProtocol.code1;
+
+        write(type.name(), filedata.obj1 + "." + type.extension, filedata.obj2);
+    }
+
+    static Tuple<String, byte[]> fileToTuple(String id, int semester, File file) throws IOException {
+        byte[] filebytes = Files.readAllBytes(file.toPath());
+
+        String idsem = semester + "_" + id;
+
+        return new Tuple<>(idsem, filebytes);
+    }
+
+    static void write(String path, String filename, byte[] bytes) throws IOException {
+        File file = new File(path, filename);
+        // 해당 파일이 있을경우 삭제
+        file.delete();
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(bytes);
+        fos.close();
     }
 
     static byte[] shortToByte(short input) {

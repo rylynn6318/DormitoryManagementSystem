@@ -35,17 +35,19 @@ public class Code1 {
     }
 
     public static enum FileType implements ICode1 {
-        MEDICAL_REPORT((byte) 0x01), OATH((byte) 0x02), CSV((byte) 0x03);
+        MEDICAL_REPORT((byte) 0x01, "jpg"), OATH((byte) 0x02, "jpg"), CSV((byte) 0x03, "csv");
 
         private final byte code;
+        public final String extension;
 
         @Override
         public byte getCode() {
             return code;
         }
 
-        FileType(byte code) {
+        FileType(byte code, String extension) {
             this.code = code;
+            this.extension = extension;
         }
 
         public static FileType get(byte code) {
