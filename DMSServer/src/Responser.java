@@ -128,7 +128,7 @@ public class Responser
 						Direction.TO_CLIENT, 
 						Code1.NULL, 
 						Code2.NULL
-						).body(ProtocolHelper.serialization("이전 신청 정보를 삭제해 주세요.")).build());
+						).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.FALSE, "이전 신청 정보를 삭제해 주세요."))).build());
 				return;
 			}
 		} catch (SQLException e) {
@@ -150,7 +150,7 @@ public class Responser
 						Direction.TO_CLIENT, 
 						Code1.NULL, 
 						Code2.NULL
-						).body(ProtocolHelper.serialization("성공.")).build());
+						).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.TRUE, "등록 신청이 완료되었습니다."))).build());
 				return;
 			}
 		} catch (SQLException | IOException e) {
