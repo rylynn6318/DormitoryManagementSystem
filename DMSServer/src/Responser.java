@@ -131,9 +131,9 @@ public class Responser
 	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시
 	public static void student_submitApplicationPage_onSubmit(Protocol protocol, SocketHelper socketHelper) throws IOException, SQLException, ClassNotFoundException
 	{
-		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
-		String id = a.accountId;
+		//1. 받은 요청의 헤더에서 학번을 알아낸다.
+		Tuple<Account, ArrayList<Application>> t =  (Tuple<Account, ArrayList<Application>>) ProtocolHelper.deserialization(protocol.getBody());
+		String id = t.obj1.accountId;
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역이 있는지 조회 -> TRUE 이면 내역 취소하고 하라고 클라이언트에게 알려줌. FALSE이면 다음으로
 		try {
 			if(ApplicationParser.isExist(id))
@@ -151,7 +151,7 @@ public class Responser
 		}
 		//3. 받은 데이터를 역직렬화한다. ([생활관구분, 기간구분, 식사구분] x4 와 휴대전화번호, 코골이여부가 나옴)
 		@SuppressWarnings("unchecked")
-		ArrayList<Application> A = (ArrayList<Application>)ProtocolHelper.deserialization(protocol.getBody());
+		ArrayList<Application> A = t.obj2;
 		//4. 해당 배열을 신청 데이트에 INSERT한다.
 		Iterator<Application> appIter = A.iterator();
 		while(appIter.hasNext())  //(int choice, String mealType, Bool isSnore, String dormitoryName, Gender gender, int semesterCode, String id)
