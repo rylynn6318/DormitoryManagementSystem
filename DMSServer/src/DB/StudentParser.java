@@ -13,11 +13,18 @@ public class StudentParser {
         Connection connection = DBHandler.INSTANCE.getConnection();
         PreparedStatement state = connection.prepareStatement(sql);
         ResultSet resultSet = state.executeQuery();
-
-        Gender gender = Gender.get(resultSet.getString("성별"));
+        
+        String result = null;
+        while(resultSet.next())
+        {
+        	result = resultSet.getString("성별");
+        }
 
         state.close();
         DBHandler.INSTANCE.returnConnection(connection);
+        
+//        Gender gender = result.equals("M") ? Gender.Male : Gender.Female;
+        Gender gender = Gender.get(result);
 
         return gender; //.equals("M") ? Gender.Male : Gender.Female;
     }
