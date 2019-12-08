@@ -1,6 +1,7 @@
 package controller.administrator;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -77,10 +78,7 @@ public class ScheduleManageTabController extends InnerPageController
 	{
 		System.out.println("선발 일정 조회 및 관리 새로고침됨");
 		
-		//네트워킹 후 유형을 서버에서 가져와야한다.
-		insert_type_combobox.getItems().addAll("생활관 입사 신청", "생활관 관배정 및 합격자 발표", "생활관비 납부", 
-				"결핵진단서 제출 기간", "생활관 추가합격자 발표", "생활관 추가합격자 생활관비 납부");
-		
+		//네트워킹 후 유형을 서버에서 가져온다.		
 		onEnter();
 	}
 	
@@ -119,6 +117,12 @@ public class ScheduleManageTabController extends InnerPageController
         if(scheduleCodeList == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+        	{
+        		//여기서 페이지 닫게 해주자.
+        		close();
+        		return;
+        	}
         	return;
         }
         
@@ -163,6 +167,7 @@ public class ScheduleManageTabController extends InnerPageController
         }
     }
     
+    //스케쥴 객체를 뷰모델로 바꾸는 메소드
     private ScheduleViewModel scheduleToViewModel(Schedule schedule)
     {
     	return new ScheduleViewModel(schedule.scheduleId, codeToTodoStr(schedule, scheduleCodeList), 
@@ -251,8 +256,6 @@ public class ScheduleManageTabController extends InnerPageController
     	String type = insert_type_combobox.getSelectionModel().getSelectedItem();
     	LocalDate startDate_l = insert_startDate_datepicker.getValue();
     	LocalDate endDate_l = insert_endDate_datepicker.getValue();
-    	Date startDate = Date.from(startDate_l.atStartOfDay(ZoneId.systemDefault()).toInstant());
-    	Date endDate = Date.from(endDate_l.atStartOfDay(ZoneId.systemDefault()).toInstant());
     	String etc = insert_etc_textfield.getText();
     	
     	if(type == null || type.isEmpty())
@@ -261,42 +264,60 @@ public class ScheduleManageTabController extends InnerPageController
     		IOHandler.getInstance().showAlert("유형이 비어있습니다.");
     		return;
     	}
-    	else if(startDate == null || startDate.toString().equals(""))
+    	else if(startDate_l == null || startDate_l.toString().equals(""))
     	{
     		//시작일 비어있음
     		IOHandler.getInstance().showAlert("시작일이 비어있습니다.");
     		return;
     	}
-    	else if(endDate == null || endDate.toString().equals(""))
+    	else if(endDate_l == null || endDate_l.toString().equals(""))
     	{
     		//종료일이 없음
     		IOHandler.getInstance().showAlert("종료일이 비어있습니다.");
     		return;
     	}
+
+    	Date startDate = localDateToDate(startDate_l);
+    	Date endDate = localDateToDate(endDate_l);
     	
+    	//서버에서 받아온 스케쥴 유형 코드 목록이 있어야한다. 없으면 없다고 알려주고 막자.
+    	if(scheduleCodeList == null)
+    	{
+    		IOHandler.getInstance().showAlert("서버에서 받아온 스케쥴 유형이 없습니다. 페이지를 새로고침하고 다시 시도해주세요.");
+    		return;
+    	}
     	int code = todoStrToCode(type, scheduleCodeList);
+    		
     	
     	//스케쥴 객체 생성.
     	Schedule schedule = new Schedule("-1", code, startDate, endDate, etc);
     	
     	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-    	Tuple<Bool, String> resultList = Responser.admin_scheduleManagePage_onInsert(schedule);
+    	Tuple<Bool, String> resultTuple = Responser.admin_scheduleManagePage_onInsert(schedule);
     	
-    	//서버에 등록 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-		boolean isSucceed = true;
-		if(isSucceed)
-		{
-			IOHandler.getInstance().showAlert("일정 등록에 성공하였습니다.");
-			
-			//전송
-			//TODO 미구현
-			//admin_scheduleManagePage_onInsert
-			clearInserts();
-		}
-		else
-		{
-			IOHandler.getInstance().showAlert("일정 등록에 실패하였습니다.");
-		}
+    	if(resultTuple == null)
+    	{
+    		IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+    	}
+    	
+    	if(resultTuple != null)
+    	{
+    		if(resultTuple.obj1 == Bool.TRUE)
+    		{
+    			//입력했던 항목들 클리어
+    			clearInserts();
+    		}
+    		//성공/실패 메시지 표시
+    		IOHandler.getInstance().showAlert(resultTuple.obj2);
+    	}
+    }
+    
+    private Date localDateToDate(LocalDate local)
+    {
+    	Instant instant = Instant.from(local.atStartOfDay(ZoneId.systemDefault()));
+    	Date date = Date.from(instant);
+    	return date;
     }
     
     private void clearInserts()
