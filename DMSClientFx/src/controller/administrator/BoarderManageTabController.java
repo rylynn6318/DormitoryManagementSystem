@@ -155,6 +155,8 @@ public class BoarderManageTabController extends InnerPageController
         }
     }
     
+    //-------------------------------------------
+    
     private void checkBoarders()
     {
     	//배정내역 테이블 조회 요청
@@ -201,6 +203,8 @@ public class BoarderManageTabController extends InnerPageController
     	check_placementHistory_tableview.setItems(historyList);
     }
     
+    //-------------------------------------------
+    
     private void deleteBoarder()
     {
     	String id = delete_id_textfield.getText();
@@ -232,24 +236,42 @@ public class BoarderManageTabController extends InnerPageController
     		IOHandler.getInstance().showAlert("생활관명이 비어있습니다.");
     		return;
     	}
+
     	
-    	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-		boolean isSucceed = true;
-		if(isSucceed)
-		{
-			IOHandler.getInstance().showAlert("입사자 삭제에 성공하였습니다.");
-			
-			//선택한 항목들 클리어
-			delete_id_textfield.setText(null);
-			delete_roomNumber_textfield.setText(null);
-			delete_semester_textfield.setText(null);
-			delete_dormName_textfield.setText(null);
-		}
-		else
-		{
-			IOHandler.getInstance().showAlert("서류 삭제에 실패하였습니다.");
-		}
+//    	Tuple<Bool, String> resultTuple = Responser.admin_boarderManagePage_onDelete();
+//    	
+//    	//서버랑 통신이 됬는가?
+//        if(resultTuple == null)
+//        {
+//        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+//        	return;
+//        }
+//        
+//        if(resultTuple != null)
+//        {
+//        	//객체를 테이블뷰 모델로 변환
+//        	ObservableList<PlacementHistoryViewModel> historyList = FXCollections.observableArrayList();
+//        	
+//        	for(PlacementHistory history : resultTuple)
+//        	{
+//        		historyList.add(placementHistoryToViewModel(history));
+//        	}
+//        	
+//            //테이블뷰에 추가
+//            setPlacementHistoryTableView(historyList);
+//        }
     }
+    
+    private void clearDeleteInfo()
+    {
+    	//선택한 항목들 클리어
+		delete_id_textfield.setText(null);
+		delete_roomNumber_textfield.setText(null);
+		delete_semester_textfield.setText(null);
+		delete_dormName_textfield.setText(null);
+    }
+    
+    //-------------------------------------------
     
     private void insertBoarder()
     {

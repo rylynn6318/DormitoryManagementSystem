@@ -18,13 +18,24 @@ public final class PlacementHistory implements Serializable
 	public final Seat seat;					//자리
 	public final Date checkout;				//퇴사 예정일
 
-	public PlacementHistory(String studentId, int roomId, int semester, String dormitoryName, Seat seat,
-			Date checkout) {
+	public PlacementHistory(String studentId, int roomId, int semester, String dormitoryName, Seat seat, Date checkout) 
+	{
 		this.studentId = studentId;
 		this.roomId = roomId;
 		this.semester = semester;
 		this.dormitoryName = dormitoryName;
 		this.seat = seat;
 		this.checkout = checkout;
+	}
+	
+	//키값으로만 구성된 생성자. 클라이언트에서 삭제요청할때 사용함.
+	public PlacementHistory(String studentId, int roomId, int semester, String dormitoryName) 
+	{
+		this.studentId = studentId;
+		this.roomId = roomId;
+		this.semester = semester;
+		this.dormitoryName = dormitoryName;
+		seat = null;
+		checkout = null;
 	}
 }
