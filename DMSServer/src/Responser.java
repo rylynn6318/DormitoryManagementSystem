@@ -395,7 +395,7 @@ public class Responser
 	public static void admin_scheduleManagePage_onCheck(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴 할일 코드 테이블에서 목록을 객체로 만들어 배열로 가져온다. (ID, 할일코드, 시작일, 종료일, 비고)
-		Schedule[] schedule = ScheduleParser.getAllSchedule();
+		ArrayList<Schedule> schedule = ScheduleParser.getAllSchedule();
 		//2. 스케쥴 테이블에서 목록을 객체로 만들어 배열로 가져온다. (코드, 이름)
 		
 		//3. 스케쥴 객체 배열을 클라이언트로 전송한다.
