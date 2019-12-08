@@ -49,11 +49,6 @@ public class ApplicationParser {
 	public static int getNumOfLeftSeat(String dormName, int semester) throws SQLException
 	{
 		String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + ")";
-		if((semester%100) != 01)
-		{
-			//TODO 0지망 처리하시오
-			//String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + ")";
-		}
 		String getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + semester;
 
 		Connection connection = DBHandler.INSTANCE.getConnetion();
@@ -67,6 +62,16 @@ public class ApplicationParser {
 		passed.next();
 
 		int result = capacity.getInt("수용인원") - passed.getInt("COUNT(*)");
+		
+		if((semester%10) != 01)		//0지망 처리 구문
+		{
+			int firstSemester = (semester / 10) * 10 + 1;
+			String getNumOfZeroChoiceQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + firstSemester + "AND 지망=0)";
+			PreparedStatement passedZeroState = connection.prepareStatement(getNumOfZeroChoiceQuery);
+			ResultSet passedZero = passedZeroState.executeQuery();
+			passedZero.next();
+			result -= passedZero.getInt("COUNT(*)");
+		}
 
 		passedState.close();
 		capacityState.close();
