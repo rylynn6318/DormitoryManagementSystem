@@ -2,15 +2,19 @@ package utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import enums.Bool;
+import enums.Code1;
+import enums.ProtocolType;
 import models.Tuple;
 
 public final class ProtocolHelper {
@@ -32,24 +36,40 @@ public final class ProtocolHelper {
         }
     }
 
-    public static Tuple<String, byte[]> fileToTuple(){
-        return new Tuple(new String(), new byte[]{(byte)1, (byte)2});
+    public static Tuple<String, byte[]> fileToTuple(String id, File file) throws IOException {
+        byte[] filebytes = Files.readAllBytes(file.toPath());
+
+        return new Tuple<>(id, filebytes);
     }
 
-    public static void download(String path, byte[] filebytes){
+    public static void download(Protocol fileProtocol) throws Exception {
+        if (fileProtocol.type != ProtocolType.FILE)
+            throw new Exception("파일 프로토콜이 아닌것을 ProtocolHelper.download() 인자로 넘김!");
 
+        
+
+        switch ((Code1.FileType) fileProtocol.code1) {
+        case CSV:
+            break;
+        case MEDICAL_REPORT:
+            break;
+        case OATH:
+            break;
+        }
     }
 
-    static byte[] shortToByte(short input){
+    static byte[] shortToByte(short input) {
         byte[] result = new byte[2];
         result[0] = (byte) ((input >> 8) & 0xFF);
         result[1] = (byte) (input & 0xFF);
         return result;
     }
-    static short bytesToShort(byte[] input){
+
+    static short bytesToShort(byte[] input) {
         return (short) (input[0] << 8 | (input[1] & 0xFF));
     }
-    static short bytesToShort(byte a, byte b){
+
+    static short bytesToShort(byte a, byte b) {
         return (short) (a << 8 | (b & 0xFF));
     }
 
@@ -85,7 +105,7 @@ public final class ProtocolHelper {
         List<Protocol> tmp = new ArrayList<>();
 
         int chunk_size = 0;
-        for(int cursor = 0; cursor < packet.length; cursor += chunk_size){
+        for (int cursor = 0; cursor < packet.length; cursor += chunk_size) {
             chunk_size = bytesToShort(packet[cursor], packet[cursor + 1]);
             tmp.add(new Protocol.Builder(Arrays.copyOfRange(packet, cursor, chunk_size)).build());
         }
@@ -101,6 +121,7 @@ public final class ProtocolHelper {
             output.write(protocol.getBody());
         }
 
-        return new Protocol.Builder(protocols.get(0).type, protocols.get(0).direction, protocols.get(0).code1, protocols.get(0).code2).body(output.toByteArray()).build();
+        return new Protocol.Builder(protocols.get(0).type, protocols.get(0).direction, protocols.get(0).code1,
+                protocols.get(0).code2).body(output.toByteArray()).build();
     }
 }
