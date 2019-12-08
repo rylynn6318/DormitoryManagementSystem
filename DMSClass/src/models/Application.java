@@ -47,6 +47,16 @@ public class Application implements Comparable<Application>, Serializable
 		this.mealType = mealType;
 	}
 	
+	public Application(int choice, String dormitoryName, int mealType, String gender, Bool isPassed, Bool isPaid)
+	{
+		this.choice = choice;
+		this.dormitoryName = dormitoryName;
+		this.mealType = mealType;
+		this.gender = gender.toCharArray()[0];
+		this.isPassed = isPassed;
+		this.isPaid = isPaid;
+	}
+	
 	public String getStudentId()
 	{
 		return studentId;

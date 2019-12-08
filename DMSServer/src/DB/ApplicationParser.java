@@ -280,14 +280,35 @@ public class ApplicationParser {
 	{
 		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번=" + id + "and 합격여부 = 'Y' and 생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
 		Connection connection = DBHandler.INSTANCE.getConnetion();
-		PreparedStatement preparedStatement = connection.prepareStatement(sql);
-		ResultSet rs = preparedStatement.executeQuery();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
 		
 		if(rs.next())
 		{
+			state.close();
+			DBHandler.INSTANCE.returnConnection(connection);
 			return true;
 		}
+		state.close();		
+		DBHandler.INSTANCE.returnConnection(connection);
 		return false;
+	}
+	
+	public static ArrayList<Application> getApplicationResult(String id) throws ClassNotFoundException, SQLException
+	{
+		ArrayList<Application> dorm = new ArrayList<>();
+		String sql = "SELECT 지망, 생활관명, 몇일식 FROM" + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ id + "생활관정보_학기 = " +CurrentSemesterParser.getCurrentSemester();
+		Connection connection = DBHandler.INSTANCE.getConnetion();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+		
+		while(rs.next())
+		{
+			dorm.add(new Application(rs.getInt("지망"), rs.getString("생활관명"), rs.getInt("몇일식")));
+		}
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		return dorm;
 	}
 
 }
