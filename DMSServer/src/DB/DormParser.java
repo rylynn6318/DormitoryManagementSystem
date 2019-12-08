@@ -77,7 +77,9 @@ public class DormParser {
 	{
 		ArrayList<Dormitory> dorm = new ArrayList<Dormitory>();
 
-		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 성별 = " + gender.gender + " AND 학기 = " + String.valueOf(semester);
+		System.out.println(gender.gender);
+		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 성별 = '" + gender.gender + "' AND 학기 = " + String.valueOf(semester);
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet resultSet = state.executeQuery();
@@ -85,15 +87,18 @@ public class DormParser {
 		while(resultSet.next())
 		{			
 			//시원하게 보내라해서 일단 성별로 거른 생활관목록에 대한 모든 정보를 보냄
-			Dormitory d = new Dormitory(
-					resultSet.getString("생활관명"),
-					Gender.get(resultSet.getString("성별")),
-					resultSet.getInt("학기"),
-					resultSet.getInt("수용인원"),
-					Bool.get(resultSet.getString("식사의무")),
-					resultSet.getInt("5일식_식비"),
-					resultSet.getInt("7일식_식비"),
-					resultSet.getInt("기숙사비"));
+			String dormName = resultSet.getString("생활관명");
+			Gender gender2 = Gender.get(resultSet.getString("성별"));
+			int semester2 = resultSet.getInt("학기");
+			int capacity = resultSet.getInt("수용인원");
+			Bool isMealDuty = Bool.get(resultSet.getString("식사의무"));
+			int meal5 = resultSet.getInt("5일식_식비");
+			int meal7 = resultSet.getInt("7일식_식비");
+			int boardingFee = resultSet.getInt("기숙사비");
+			
+			System.out.println(dormName);
+			
+			Dormitory d = new Dormitory(dormName, gender2, semester2, capacity, isMealDuty, meal5, meal7, boardingFee);
 			dorm.add(d);
 		}
 
