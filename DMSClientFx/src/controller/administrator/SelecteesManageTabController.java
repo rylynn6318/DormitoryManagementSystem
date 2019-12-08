@@ -1,9 +1,11 @@
 package controller.administrator;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import application.Responser;
 import controller.InnerPageController;
 import enums.*;
 import javafx.collections.FXCollections;
@@ -15,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import models.*;
 import tableViewModel.ApplicationViewModel;
 
 //입사 선발자 조회 및 관리
@@ -70,8 +73,6 @@ public class SelecteesManageTabController extends InnerPageController
 
     @FXML
     private TextField delete_semester_textfield;
-    
-    ObservableList<ApplicationViewModel> applicationList;
     	
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
@@ -107,21 +108,58 @@ public class SelecteesManageTabController extends InnerPageController
     private void selection()
     {
     	//서버에 입사자 선발 쿼리 요청
+    	Tuple<Bool, String> resultTuple = Responser.admin_selecteesManagePage_onSelection();
+    	
+    	//서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultTuple != null)
+        {
+        	//이건 성공/실패 여부에 따른 동작이 똑같음.
+        	IOHandler.getInstance().showAlert(resultTuple.obj2);
+        }
     }
-    
+
+	//서버에서 신청테이블->이번학기->객체 배열 쫙 긁어와서 tableview에 보여줌
     private void checkApplications()
     {
-    	//서버에서 신청테이블->이번학기->객체 배열 쫙 긁어와서 tableview에 보여줌
+    	//서버에 쿼리 요청.
+    	ArrayList<Application> resultList = Responser.admin_selecteesManagePage_onCheck();
     	
-    	//서버랑 통신했다 치고 Application 객체 받아옴.
-    	//물론 실제로 받아왔을때 받아온 Application 배열목록을 ApplicationViewModel로 변환하고 넣어야됨.
-    	applicationList = FXCollections.observableArrayList(
-    			new ApplicationViewModel("20161234", "오름관 2동", 201901, 1, 7, Bool.TRUE, Bool.TRUE, Bool.TRUE, Bool.TRUE),
-    			new ApplicationViewModel("20161235", "오름관 3동", 201901, 2, 5, Bool.TRUE, Bool.TRUE, Bool.TRUE, Bool.FALSE),
-    			new ApplicationViewModel("20161236", "푸름관 2동", 201901, 0, 7, Bool.FALSE, Bool.TRUE, Bool.FALSE, Bool.TRUE),
-    			new ApplicationViewModel("20161237", "오름관 2동", 201901, 1, 5, Bool.FALSE, Bool.TRUE, Bool.TRUE, Bool.TRUE)
-        		);
+    	//서버랑 통신이 됬는가?
+        if(resultList == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultList != null)
+        {
+        	ObservableList<ApplicationViewModel> applicationViewModels = FXCollections.observableArrayList();
+        	
+        	for(Application app : resultList)
+        	{
+        		applicationViewModels.add(applicationToViewModel(app));
+        	}
+        	
+        	setApplicationTableView(applicationViewModels);
+        }
     	
+    }
+    
+    private ApplicationViewModel applicationToViewModel(Application application)
+    {
+    	return new ApplicationViewModel(application.getStudentId(), application.getDormitoryName(), application.getSemesterCode(), 
+    			application.getChoice(), application.getMealType(), application.isPaid(), application.isPassed(), 
+    			application.isLastPassed(), application.isSnore());
+    }
+    
+    private void setApplicationTableView(ObservableList<ApplicationViewModel> applicationViewModels)
+    {
     	//서버에서 받아온거 표시하게 만듬.
     	check_application_column_id.setCellValueFactory(cellData -> cellData.getValue().studentIdProperty());
     	check_application_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
@@ -132,7 +170,7 @@ public class SelecteesManageTabController extends InnerPageController
     	check_application_column_isPassed.setCellValueFactory(cellData -> cellData.getValue().isPassedProperty());
     	check_application_column_isLastPassed.setCellValueFactory(cellData -> cellData.getValue().isLastPassedProperty());
     	check_application_column_isSnore.setCellValueFactory(cellData -> cellData.getValue().isSnoreProperty());
-    	check_application_tableview.setItems(applicationList);
+    	check_application_tableview.setItems(applicationViewModels);
     }
     
     private void deleteSelectee()
@@ -167,21 +205,33 @@ public class SelecteesManageTabController extends InnerPageController
     		return;
     	}
     	
-    	//서버에 Update 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-		boolean isSucceed = true;
-		if(isSucceed)
-		{
-			IOHandler.getInstance().showAlert("입사 선발자 삭제에 성공하였습니다.");
-			
-			//선택한 항목들 클리어
-			delete_id_textfield.setText(null);
-			delete_dormName_textfield.setText(null);
-			delete_semester_textfield.setText(null);
-			delete_choice_textfield.setText(null);
-		}
-		else
-		{
-			IOHandler.getInstance().showAlert("입사 선발자 삭제에 실패하였습니다.");
-		}
+    	//서버에 쿼리 요청.
+    	Application data = new Application(id, dormName, Integer.parseInt(semester), Integer.parseInt(choice));
+    	Tuple<Bool, String> resultTuple = Responser.admin_selecteesManagePage_onDelete(data);
+    	
+    	//서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultTuple != null)
+        {
+        	if(resultTuple.obj1 == Bool.TRUE)
+        	{
+        		clearDeleteInfo();
+        	}
+        	IOHandler.getInstance().showAlert(resultTuple.obj2);
+        }
+    }
+    
+    private void clearDeleteInfo()
+    {
+    	//선택한 항목들 클리어
+		delete_id_textfield.setText(null);
+		delete_dormName_textfield.setText(null);
+		delete_semester_textfield.setText(null);
+		delete_choice_textfield.setText(null);
     }
 }

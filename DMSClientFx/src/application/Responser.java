@@ -370,28 +370,37 @@ public class Responser
 	}
 	
 	//관리자 - 생활관 조회 및 관리 - 삭제 버튼 클릭 시
-	public void admin_dormitoryManagePage_onDelete()
+	public static Tuple<Bool, String> admin_dormitoryManagePage_onDelete(String dormName, String semester)
 	{
 		//1. 클라이언트로부터 받은 생활관명, 학기로 생활관 정보 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
+		
+		Tuple<String, String> data = new Tuple<String, String>(dormName, semester);
+		Protocol protocol = eventProtocolBuilder(Code1.Page.생활관관리, Code2.Event.DELETE, data);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 생활관 조회 및 관리 - 등록 버튼 클릭 시
-	public void admin_dormitoryManagePage_onInsert()
+	public static Tuple<Bool, String> admin_dormitoryManagePage_onInsert(Dormitory data)
 	{
 		//1. 클라이언트에게서 생활관명, 학기, 수용인원, 식사의무, 5일식 식비, 7일식 식비, 기숙사비를 받는다.
 		//2. 생활관 정보 테이블에서 생활관명, 학기로 탐색, 중복되는 값이 있는지 체크한다.
 		//3-1. 기존 값이 존재하면 기존 값 삭제하라고 클라이언트에게 알려준다.
 		//3-2. 기존 값이 존재하지 않으면 INSERT한다.
 		//4. INSERT 수행에 대한 결과를 클라이언트에게 알려준다 (성공/실패/아마존사망...etc)
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.생활관관리, Code2.Event.SUBMIT, data);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 입사자 선발 버튼 클릭 시
-	public void admin_selecteesManagePage_onSelection()
+	public static Tuple<Bool, String> admin_selecteesManagePage_onSelection()
 	{
 		//입사자 선발 버튼은 신청 목록에서 합격여부를 Y로 바꾸는 역할을 한다
 		//ex) 100명을 뽑아야되면 성적순으로 정렬 뒤 총 신청자 중에서 상위 100명까지 합격여부를 Y로 바꾼다?
@@ -404,25 +413,37 @@ public class Responser
 		//		3) 평균성적순으로 정렬한다.
 		//		4) 남은 자리가 n이면 n명까지 합격여부를 Y로 UPDATE
 		//3. 결과를 클라이언트에게 알려준다(성공/실패?)
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사선발자관리, Code2.Event.SELECTION, null);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 조회 버튼 클릭 시
-	public void admin_selecteesManagePage_onCheck()
+	public static ArrayList<Application> admin_selecteesManagePage_onCheck()
 	{
 		//1. 신청 테이블에서 이번 학기 신청 목록을 가져와 객체화한다. (학번, 생활관명, 학기, 지망, 몇일식, 납부여부, 합격여부, 최종결과, 코골이여부)
 		//   (합격여부 Y, N인거 관계없이 가져와야될듯. 그래야 사실상 여기서 관리자가 신청내역 조회가능함)
 		//2. 배열화한다.
 		//3. 직렬화해서 클라이언트에 전송한다.
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사선발자관리, Code2.Event.CHECK, null);
+		ArrayList<Application> result = (ArrayList<Application>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 삭제 버튼 클릭 시
-	public void admin_selecteesManagePage_onDelete()
+	public static Tuple<Bool, String> admin_selecteesManagePage_onDelete(Application data)
 	{
 		//1. 클라이언트로부터 받은 학번, 생활관명, 학기, 지망으로 신청 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사선발자관리, Code2.Event.DELETE, data);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//-------------------------------------------------------------------------
@@ -593,7 +614,8 @@ public class Responser
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			System.out.println("[Exception.eventProtocolBuilder] Page:" + page.toString() + ", Event:" + event.toString() + 
+					", DataType:" + sendData.getClass().getName());
 		}
 		return protocol;
 	}
@@ -612,7 +634,8 @@ public class Responser
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			System.out.println("[Exception.fileProtocolBuilder] FileType:" + fileType.toString() + ", fileCode:" + fileCode.toString() + 
+					", DataType:" + sendData.getClass().getName());
 		}
 		return protocol;
 	}
@@ -632,8 +655,8 @@ public class Responser
         } 
         catch (Exception e) 
         {
-        	System.out.println("서버 연결 실패!");
-            e.printStackTrace();
+        	System.out.println("[Exception.sendAndReceive] protocolType:" + protocol.type.toString() + ", Code1:" + protocol.code1.toString() + 
+        			", Code2:" + protocol.code2.toString());
         }
         return result;
 	}

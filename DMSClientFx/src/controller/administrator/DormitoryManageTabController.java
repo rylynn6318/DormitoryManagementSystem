@@ -88,13 +88,15 @@ public class DormitoryManageTabController extends InnerPageController
     @FXML
     private ComboBox<String> insert_mealDuty_combobox;
     
+    private final String[] comboboxItem_boolean = {null, "T", "F"};
+    
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
 		System.out.println("생활관 조회 및 관리 새로고침됨");
 		
 		//네트워크 통신 후 식사의무칸 가져와야하나? 어짜피 모든 기숙사엔 5일식 7일식 식사안함밖에없으니까.
-		insert_mealDuty_combobox.getItems().addAll(null, "T", "F");
+		insert_mealDuty_combobox.getItems().addAll(comboboxItem_boolean);
 	}
 	
 	//---------------------이벤트---------------------
@@ -186,92 +188,124 @@ public class DormitoryManageTabController extends InnerPageController
     	}
     	
     	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-		boolean isSucceed = true;
-		if(isSucceed)
-		{
-			IOHandler.getInstance().showAlert("생활관 삭제에 성공하였습니다.");
-			
-			//선택한 항목들 클리어
-			delete_dormName_textfield.setText(null);
-			delete_semester_textfield.setText(null);
-		}
-		else
-		{
-			IOHandler.getInstance().showAlert("생활관 삭제에 실패하였습니다.");
-		}
+    	Tuple<Bool, String> resultTuple = Responser.admin_dormitoryManagePage_onDelete(dormName, semester);
+    	
+    	if(resultTuple == null)
+    	{
+    		IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+    	}
+    	
+    	if(resultTuple != null)
+    	{
+    		if(resultTuple.obj1 == Bool.TRUE)
+    		{
+    			clearDeleteInfo();    			
+    		}
+    		IOHandler.getInstance().showAlert(resultTuple.obj2);
+    	}
+    	
+    }
+    
+    private void clearDeleteInfo()
+    {
+		//선택한 항목들 클리어
+		delete_dormName_textfield.setText(null);
+		delete_semester_textfield.setText(null);
     }
     
     private void insertDormitory()
     {
-    	String dormName = insert_dormName_textfield.getText();
-    	String semester = insert_semester_textfield.getText();
-    	String capacity = insert_capacity_textfield.getText();
-    	String mealDuty = insert_mealDuty_combobox.getSelectionModel().getSelectedItem();
-    	String mealCost5 = insert_mealCost5_textfield.getText();
-    	String mealCost7 = insert_mealCost7_textfield.getText();
-    	String boardingFees = insert_boradingFees_textfield.getText();
+    	String dormNameStr = insert_dormName_textfield.getText();
+    	String genderStr = "";
+    	String semesterStr = insert_semester_textfield.getText();
+    	String capacityStr = insert_capacity_textfield.getText();
+    	String mealDutyStr = insert_mealDuty_combobox.getSelectionModel().getSelectedItem();
+    	String mealCost5Str = insert_mealCost5_textfield.getText();
+    	String mealCost7Str = insert_mealCost7_textfield.getText();
+    	String boardingFeesStr = insert_boradingFees_textfield.getText();
     	
-    	if(dormName == null || dormName.isEmpty())
+    	if(dormNameStr == null || dormNameStr.isEmpty())
     	{
     		//생활관명 비어있음
     		IOHandler.getInstance().showAlert("생활관명이 비어있습니다.");
     		return;
     	}
-    	else if(semester == null || semester.isEmpty())
+    	else if(semesterStr == null || semesterStr.isEmpty())
     	{
     		//학기가 없음
     		IOHandler.getInstance().showAlert("학기가 비어있습니다.");
     		return;
     	}
-    	else if(capacity == null || capacity.isEmpty())
+    	else if(capacityStr == null || capacityStr.isEmpty())
     	{
     		//수용인원이 없음
     		IOHandler.getInstance().showAlert("수용인원이 비어있습니다.");
     		return;
     	}
-    	else if(mealDuty == null || mealDuty.isEmpty())
+    	else if(mealDutyStr == null || mealDutyStr.isEmpty())
     	{
     		//식사의무가 비어있음
     		IOHandler.getInstance().showAlert("식사의무가 비어있습니다.");
     		return;
     	}
-    	else if(mealCost5 == null || mealCost5.isEmpty())
+    	else if(mealCost5Str == null || mealCost5Str.isEmpty())
     	{
     		//5일식 식비가 없음
     		IOHandler.getInstance().showAlert("5일식 식비가 비어있습니다.");
     		return;
     	}
-    	else if(mealCost7 == null || mealCost7.isEmpty())
+    	else if(mealCost7Str == null || mealCost7Str.isEmpty())
     	{
     		//7일식 식비가 없음
     		IOHandler.getInstance().showAlert("7일식 식비가 비어있습니다.");
     		return;
     	}
-    	else if(boardingFees == null || boardingFees.isEmpty())
+    	else if(boardingFeesStr == null || boardingFeesStr.isEmpty())
     	{
     		//기숙사비가 없음
     		IOHandler.getInstance().showAlert("기숙사비가 비어있습니다.");
     		return;
     	}
     	
-    	//서버에 등록 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-		boolean isSucceed = true;
-		if(isSucceed)
-		{
-			IOHandler.getInstance().showAlert("생활관 등록에 성공하였습니다.");
-			
-			//선택한 항목들 클리어
-			insert_dormName_textfield.setText(null);
-			insert_semester_textfield.setText(null);
-			insert_capacity_textfield.setText(null);
-			insert_mealDuty_combobox.getSelectionModel().select(-1);
-			insert_mealCost5_textfield.setText(null);
-			insert_mealCost7_textfield.setText(null);
-			insert_boradingFees_textfield.setText(null);
-		}
-		else
-		{
-			IOHandler.getInstance().showAlert("생활관 등록에 실패하였습니다.");
-		}
+    	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
+    	Gender gender = genderStr.equals("M") ? Gender.Male : Gender.Female;
+    	int semester = Integer.parseInt(semesterStr);
+    	int capacity = Integer.parseInt(capacityStr);
+    	Bool isMealDuty = mealDutyStr.equals("T") ? Bool.TRUE : Bool.FALSE;
+    	int mealCost5 = Integer.parseInt(mealCost5Str);
+    	int mealCost7 = Integer.parseInt(mealCost7Str);
+    	int boardingFees = Integer.parseInt(boardingFeesStr);
+    	
+    	Dormitory data = new Dormitory(dormNameStr, gender, semester, capacity, isMealDuty, mealCost5, mealCost7, boardingFees);
+    	Tuple<Bool, String> resultTuple = Responser.admin_dormitoryManagePage_onInsert(data);
+    	
+    	if(resultTuple == null)
+    	{
+    		IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+    	}
+    	
+    	if(resultTuple != null)
+    	{
+    		if(resultTuple.obj1 == Bool.TRUE)
+    		{
+    			clearInsertInfo();    			
+    		}
+    		IOHandler.getInstance().showAlert(resultTuple.obj2);
+    	}
+    	
+    }
+    
+    private void clearInsertInfo()
+    {
+    	//선택한 항목들 클리어
+		insert_dormName_textfield.setText(null);
+		insert_semester_textfield.setText(null);
+		insert_capacity_textfield.setText(null);
+		insert_mealDuty_combobox.getSelectionModel().select(-1);
+		insert_mealCost5_textfield.setText(null);
+		insert_mealCost7_textfield.setText(null);
+		insert_boradingFees_textfield.setText(null);
     }
 }
