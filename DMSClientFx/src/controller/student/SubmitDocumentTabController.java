@@ -162,18 +162,19 @@ public class SubmitDocumentTabController extends InnerPageController
     	Code1.FileType fileType = stringToFileType(selectedItemStr);
     	
     	//TODO : 손, 이거 file이 Serializable 되는지 에러 안뜨는데, 확인바람 -명근
-    	Tuple<Bool, String> resultTuple = Responser.student_submitDocumentPage_onSubmit(fileType, file);
-    	
-    	if(resultTuple == null)
-    	{
-    		IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-    		return;
-    	}
-    	else
-    	{
-    		//성공/실패 메시지 표시
-    		IOHandler.getInstance().showAlert(resultTuple.obj2);
-    	}
+		// TODO 성공 실패만 반환하게 함.
+		Bool result = null;
+		try {
+			result = Responser.student_submitDocumentPage_onSubmit(fileType, file);
+
+			if(result.bool)
+				IOHandler.getInstance().showAlert("파일 전송 완료");
+			else
+				IOHandler.getInstance().showAlert("파일 전송 실패");
+		} catch (Exception e) {
+			IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+			e.printStackTrace();
+		}
     }
 
 }

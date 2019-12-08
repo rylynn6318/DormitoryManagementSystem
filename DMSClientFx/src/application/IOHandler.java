@@ -1,6 +1,9 @@
 package application;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import javax.swing.JFileChooser;
@@ -100,4 +103,11 @@ public class IOHandler
 		}
 		return null;
     }
+
+	public void write(Path path, byte[] bytes) throws IOException {
+		File file = path.toFile();
+		FileOutputStream fos = new FileOutputStream(file);
+		fos.write(bytes);
+		fos.close();
+	}
 }

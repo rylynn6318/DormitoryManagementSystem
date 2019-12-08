@@ -1,7 +1,9 @@
 package application;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 import enums.*;
@@ -209,20 +211,25 @@ public class Responser
 	}
 	
 	//학생 - 서류 제출 - 제출 버튼 클릭 시(파일 업로드) (2019-12-08 명근 수정)
-	public static Tuple<Bool, String> student_submitDocumentPage_onSubmit(Code1.FileType fileType, File file)
-	{
-		//TODO 바로 파일을 업로드할지, 이벤트 한번 보내고 해야하는지 모름.
+	public static Bool student_submitDocumentPage_onSubmit(Code1.FileType fileType, File file) throws Exception {
 		//이대로 보내면 누가보내는지 모른다!!!
 		//1. 서버로 파일을 업로드한다.
 		//(2. 서버는 컴퓨터 내 저장할 공간에 빈공간이 10MB보다 큰지 확인한다. -> 빈공간이 10MB보다 크면 진행, 작으면 클라이언트에게 안된다고 알려줌.)
 		//(3. 서버는파일 저장 성공/실패 여부를 클라이언트에게 알려준다.)
 		
 		//3. 결과를 메시지로 띄운다.
-		//TODO 미완성임.
-		
-		Protocol protocol = null;
-		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
-		return result;
+		// TODO 성공 실패만 반환한다. 테스트는 안해봤는데 될것같음.
+		Tuple<String, byte[]> idWithFile = new Tuple<>(UserInfo.account.accountId, Files.readAllBytes(file.toPath()));
+		Protocol protocol = new Protocol
+				.Builder(ProtocolType.FILE, Direction.TO_SERVER, fileType, FileCode.UPLOAD)
+				.body(ProtocolHelper.serialization(idWithFile))
+				.build();
+		protocol = SocketHandler.INSTANCE.request(protocol);
+
+		if (FileCode.SUCCESS == (Code2.FileCode)protocol.code2)
+			return Bool.TRUE;
+		else
+			return Bool.FALSE;
 	}
 	
 	//------------------------------------------------------------------------
