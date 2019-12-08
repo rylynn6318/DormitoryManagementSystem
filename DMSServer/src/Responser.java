@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 import DB.ApplicationParser;
@@ -138,13 +139,17 @@ public class Responser
 			e.printStackTrace();
 		}
 		//3. 받은 데이터를 역직렬화한다. ([생활관구분, 기간구분, 식사구분] x4 와 휴대전화번호, 코골이여부가 나옴)
-		Application[] A = (Application[])ProtocolHelper.deserialization(protocol.getBody());
+		@SuppressWarnings("unchecked")
+		ArrayList<Application> A = (ArrayList<Application>)ProtocolHelper.deserialization(protocol.getBody());
 		//4. 해당 배열을 신청 데이트에 INSERT한다.
-		for(int i = 0; i < A.length; i++)  //(int choice, String mealType, Bool isSnore, String dormitoryName, Gender gender, int semesterCode, String id)
+		Iterator<Application> appIter = A.iterator();
+		while(appIter.hasNext())  //(int choice, String mealType, Bool isSnore, String dormitoryName, Gender gender, int semesterCode, String id)
 		{
-			ApplicationParser.insertApplication(A[i].getChoice(), A[i].getMealType(), A[i].isSnore(), A[i].getDormitoryName(), A[i].getGender(), A[i].getSemesterCode(), id); //이거 풀하고 다시 짤거에요
+			Application temp = appIter.next();
+			ApplicationParser.insertApplication(temp.getChoice(), temp.getMealType(), temp.isSnore(), temp.getDormitoryName(), temp.getGender(), temp.getSemesterCode(), id); //이거 풀하고 다시 짤거에요
 		}
 		//5. 클라이언트에게 성공 여부를 알려준다.(성공/DB연결 오류로 인한 실패/DB사망/알수없는오류 등등...)
+		// 여기 있는 모든 배열 = ArrayList 진짜 []로 짜시면 안돼요 / 배열을 ArrayList로 대체함 진짜 대체만 했으니 나머지 알고리즘은 완성해주세요
 		try {
 			if(ApplicationParser.isExist(id))
 			{
