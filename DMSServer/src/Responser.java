@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+import org.w3c.dom.DocumentType;
+
 import DB.ApplicationParser;
 import DB.AssignAlgorithm;
 import DB.CurrentSemesterParser;
@@ -357,7 +359,6 @@ public class Responser
 	//학생 - 생활관 호실 조회 - 조회 버튼 클릭 시
 	public static void student_checkRoomPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
 	{
-		///////////////////제가 만드는중 ★ ㅡ서희ㅡ////////////////////////////
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
 		String id = a.accountId;
@@ -737,12 +738,21 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 서류 조회 및 제출 - 들어왔을 때
-	public static void admin_documentManagePage_onEnter(Protocol protocol, SocketHelper socketHelper)
+	public static void admin_documentManagePage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 서류유형 ENUM을 배열화해서 목록을 만든다.
+		ArrayList<FileType> docuTypeList = new ArrayList<>();
+		docuTypeList.add(FileType.CSV);
+		docuTypeList.add(FileType.MEDICAL_REPORT);
+		docuTypeList.add(FileType.OATH);
 		//2. 배열화한 목록을 직렬화해서 클라이언트로 전송한다.
+		socketHelper.write(new Protocol.Builder(
+				ProtocolType.EVENT, 
+				Direction.TO_CLIENT, 
+				Code1.NULL, 
+				Code2.NULL
+				).body(ProtocolHelper.serialization(docuTypeList)).build());
 		//(3. 클라이언트는 받은 ENUM 배열을 역직렬화하여 서류유형 combobox에 표시한다)
-		
 		//[ENUM 배열화 예시]
 		//arrayList<DocumentType> data = new arrayList<DocumentType>(DocumentType.MEDICAL, DocumentType.OATH);
 	}
