@@ -2,6 +2,7 @@ package controller.administrator;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -164,9 +165,17 @@ public class ScheduleManageTabController extends InnerPageController
     
     private ScheduleViewModel scheduleToViewModel(Schedule schedule)
     {
+    	return new ScheduleViewModel(schedule.scheduleId, codeToTodoStr(schedule, scheduleCodeList), 
+    			schedule.startDate, schedule.endDate, schedule.description);
+    }
+    
+    //인자로 받은 스케쥴의 유형 이름을 얻어내는 메소드(code->문자)
+    //서버에서 받은 유형 코드를 유형 문자로 바꾸어 tableView에 보여주기 위함임.
+    private String codeToTodoStr(Schedule schedule, ArrayList<ScheduleCode> scList)
+    {
     	//스케쥴 할일 목록에서, code와 이 스케쥴의 code가 같으면, 해당 스케쥴 할일 목록의 이름을 가져온다.
     	String toDoString = "알 수 없음";
-    	for(ScheduleCode sc : scheduleCodeList)
+    	for(ScheduleCode sc : scList)
     	{
     		if(sc.code == schedule.code)
     		{
@@ -174,7 +183,24 @@ public class ScheduleManageTabController extends InnerPageController
     			break;
     		}
     	}
-    	return new ScheduleViewModel(schedule.scheduleId, toDoString, schedule.startDate, schedule.endDate, schedule.description);
+    	return toDoString;
+    }
+    
+    //인자로 받은 스케쥴 유형 이름을 코드로 바꿔주는 메소드(문자->code)
+    //사용자가 입력한 유형(String)을 Code로 바꾸어 서버로 보내기 위함임.
+    private int todoStrToCode(String todoStr, ArrayList<ScheduleCode> scList)
+    {
+    	//사용자가 선택한 콤보박스가 스케쥴 할일 목록의 이름과 같으면 해당 코드 반환
+    	int code = -1;
+    	for(ScheduleCode sc : scList)
+    	{
+    		if(sc.name.equals(todoStr))
+    		{
+    			code = sc.code;
+    			break;
+    		}
+    	}
+    	return code;
     }
     
     private void setTableView(ObservableList<ScheduleViewModel> scheduleViewModels)
@@ -223,8 +249,10 @@ public class ScheduleManageTabController extends InnerPageController
     private void insertSchedule()
     {
     	String type = insert_type_combobox.getSelectionModel().getSelectedItem();
-    	LocalDate startDate = insert_startDate_datepicker.getValue();
-    	LocalDate endDate = insert_endDate_datepicker.getValue();
+    	LocalDate startDate_l = insert_startDate_datepicker.getValue();
+    	LocalDate endDate_l = insert_endDate_datepicker.getValue();
+    	Date startDate = Date.from(startDate_l.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    	Date endDate = Date.from(endDate_l.atStartOfDay(ZoneId.systemDefault()).toInstant());
     	String etc = insert_etc_textfield.getText();
     	
     	if(type == null || type.isEmpty())
@@ -246,6 +274,14 @@ public class ScheduleManageTabController extends InnerPageController
     		return;
     	}
     	
+    	int code = todoStrToCode(type, scheduleCodeList);
+    	
+    	//스케쥴 객체 생성.
+    	Schedule schedule = new Schedule("-1", code, startDate, endDate, etc);
+    	
+    	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
+    	Tuple<Bool, String> resultList = Responser.admin_scheduleManagePage_onInsert(schedule);
+    	
     	//서버에 등록 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
 		boolean isSucceed = true;
 		if(isSucceed)
@@ -254,6 +290,7 @@ public class ScheduleManageTabController extends InnerPageController
 			
 			//전송
 			//TODO 미구현
+			//admin_scheduleManagePage_onInsert
 			clearInserts();
 		}
 		else

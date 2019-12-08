@@ -209,7 +209,7 @@ public class SubmitApplicationTabController extends InnerPageController
     	Bool isSnore = isSnore_checkbox.isSelected() ? Bool.TRUE : Bool.FALSE;
     	
     	ArrayList<Application> applicationList = getApplicationList(isSnore);
-    	String result = Responser.student_submitApplicationPage_onSubmit(applicationList);
+    	Tuple<Bool, String> result = Responser.student_submitApplicationPage_onSubmit(applicationList);
     	
     	if(result == null)
         {
@@ -217,13 +217,13 @@ public class SubmitApplicationTabController extends InnerPageController
         	return;
         }
         
-        IOHandler.getInstance().showAlert(result);
+        IOHandler.getInstance().showAlert(result.obj2);
     }
     
     private void cancelApplication()
     {
     	//대충 취소 전송하는 메소드
-    	String result = Responser.student_submitApplicationPage_onCancel();
+    	Tuple<Bool, String> result = Responser.student_submitApplicationPage_onCancel();
     	
     	if(result == null)
         {
@@ -231,7 +231,7 @@ public class SubmitApplicationTabController extends InnerPageController
         	return;
         }
         
-        IOHandler.getInstance().showAlert(result);
+        IOHandler.getInstance().showAlert(result.obj2);
     }
     
     //서버에게서 받은 기숙사 목록을 1년과 반년으로 나누고, 콤보박스 내 아이템을 설정함.
