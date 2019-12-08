@@ -307,11 +307,12 @@ public class ApplicationParser {
 	}
 	
 	 
-	public static void insertApplication(int choice, int mealType, Bool isSnore, String dormitoryName, char gender , int semesterCode, String id) throws SQLException
+	public static void insertApplication(int choice, int mealType, Boolean isSnore, String dormitoryName, char gender , int semesterCode, String id) throws SQLException
 	{
 		//19.12.09 지금 디비가 안바껴서 안돌아감 -동현-
 		System.out.println(gender);
-		String sql = "INSERT INTO " +DBHandler.INSTANCE.DB_NAME+".신청 VALUES("+id+"','"+dormitoryName+"','"+String.valueOf(gender)+"','"+ String.valueOf(semesterCode)+"','"+String.valueOf(choice)+"','"+String.valueOf(mealType)+"','N','N','N'+'"+String.valueOf(isSnore)+"')";
+		String snore = Bool.get(isSnore)==Bool.TRUE ?"Y" : "N";
+		String sql = "INSERT INTO " +DBHandler.INSTANCE.DB_NAME+".신청 VALUES("+id+"','"+dormitoryName+"','"+String.valueOf(gender)+"','"+ String.valueOf(semesterCode)+"','"+String.valueOf(choice)+"','"+String.valueOf(mealType)+"','N','N','N'+'"+snore+"')";
 //원래  	String sql = "INSERT INTO " +DBHandler.INSTANCE.DB_NAME+".신청 VALUES( "+id+","+dormitoryName+","+String.valueOf(gender)+","+String.valueOf(semesterCode)+","+ String.valueOf(choice)+","+String.valueOf(mealType)+","+"N , N, N ,"+ String.valueOf(isSnore)+")";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
