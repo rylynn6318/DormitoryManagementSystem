@@ -90,8 +90,8 @@ public class LoginPageController implements Initializable {
 
         try {
             //테스트용으로 네트워킹 주석처리하고 패스함.
-//            loginResult = login(account);
-            loginResult = Code2.LoginResult.STUDENT;
+            loginResult = login(account);
+            //loginResult = Code2.LoginResult.STUDENT;
 
             switch (loginResult){
                 case FAIL:

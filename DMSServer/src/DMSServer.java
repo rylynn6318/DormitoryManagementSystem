@@ -45,14 +45,7 @@ public class DMSServer {
                 e.printStackTrace();
             }
             SocketHelper socketHelper = new SocketHelper(socket);
-            System.out.println("클라이언트 접속");
             threadPool.execute(new ServerTask(socketHelper));
-
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
 
         threadPool.shutdown();

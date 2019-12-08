@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import enums.Bool;
+import models.Tuple;
 
 public final class ProtocolHelper {
     public static byte[] serialization(final Serializable obj) throws IOException {
@@ -29,6 +30,14 @@ public final class ProtocolHelper {
                 return (Serializable) obj;
             }
         }
+    }
+
+    public static Tuple<String, byte[]> fileToTuple(){
+        return new Tuple(new String(), new byte[]{(byte)1, (byte)2});
+    }
+
+    public static void download(String path, byte[] filebytes){
+
     }
 
     static byte[] shortToByte(short input){
