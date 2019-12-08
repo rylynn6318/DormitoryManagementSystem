@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import enums.*;
 import enums.Code1.Page;
+import enums.Code2.FileCode;
 import models.*;
 import utils.*;
 
@@ -56,46 +57,9 @@ public class Responser
 //		Networking(rs);
 //	}
 	
-	//이벤트 프로토콜 생성자
-	private static Protocol eventProtocolBuilder(Code1.Page page, Code2.Event event, Serializable sendData)
-	{
-		Protocol protocol = null;
-		try
-		{
-	        protocol = new Protocol.Builder(
-	        		ProtocolType.EVENT, 
-	        		Direction.TO_SERVER, 
-	        		page, 
-	        		event
-	        		).body(ProtocolHelper.serialization(sendData)).build();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		return protocol;
-	}
-	
-	//protocol을 전송하고, 결과값을 반환한다.
-	private static Serializable sendAndReceive(Protocol protocol)
-	{
-		Serializable result = null;
-        try 
-        {
-        	//서버에 요청하고나서 프로토콜 객체에 서버로부터 받은 정보를 담는다.
-            protocol = SocketHandler.INSTANCE.request(protocol);
-
-            //서버로부터 받은 body를 역직렬화한다. 결과로는 배열이 나올수도, 객체가 나올수도 있다. 그래서 명시적 형변환을 해주어야 한다.
-            //서버에서 스케쥴 체크에 성공했을 때는 String(안내사항)과 Dormitory 배열을 전송, 실패 시 메시지와 NULL을 전송한다.
-            result =  ProtocolHelper.deserialization(protocol.getBody());
-        } 
-        catch (Exception e) 
-        {
-        	System.out.println("서버 연결 실패!");
-            e.printStackTrace();
-        }
-        return result;
-	}
+	//-------------------------------------------------------------------------------
+	//-------------------------------------로직--------------------------------------
+	//-------------------------------------------------------------------------------
 	
 	//학생 - 생활관 입사 신청 - 들어왔을 때 (2019-12-08 명근 수정)
 	public static Tuple<String, ArrayList<Dormitory>> student_submitApplicationPage_onEnter() 
@@ -241,21 +205,28 @@ public class Responser
 	//------------------------------------------------------------------------
 	
 	//학생 - 서류 제출 - 들어왔을 때
-	public void student_submitDocumentPage_onEnter()
+	public static ArrayList<Code1.FileType> student_submitDocumentPage_onEnter()
 	{
 		//실제 원스톱을 기반으로, 학생이 서류 제출하는건 아무때나 할 수 있다고 하였다.
 		//1. 서버에게 서류 제출 페이지 들어왔다고 알려준다.
 		//(2. 서버는 서류 유형을 객체화 배열화하여 클라이언트로 전송한다.)
 		//3. 서버로부터 받은 배열을 역직렬화하여 서류유형 combobox에 표시한다
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.서류제출, Code2.Event.REFRESH, null);
+		ArrayList<Code1.FileType> result = (ArrayList<Code1.FileType>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//학생 - 서류 제출 - 제출 버튼 클릭 시(파일 업로드)
-	public void student_submitDocumentPage_onSubmit()
+	public static Tuple<Bool, String> student_submitDocumentPage_onSubmit(Code1.FileType fileType, Serializable data)
 	{
 		//1. 서버로 파일을 업로드한다.
+		Protocol protocol = fileProtocolBuilder(fileType, FileCode.UPLOAD, data);
 		//(2. 서버는 컴퓨터 내 저장할 공간에 빈공간이 10MB보다 큰지 확인한다. -> 빈공간이 10MB보다 크면 진행, 작으면 클라이언트에게 안된다고 알려줌.)
 		//(3. 서버는파일 저장 성공/실패 여부를 클라이언트에게 알려준다.)
 		//3. 결과를 메시지로 띄운다. 
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//------------------------------------------------------------------------
@@ -565,6 +536,70 @@ public class Responser
 		//	   (유효여부를 클라이언트에게서 받은 T/F로 UPDATE한다)
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. UPDATE 쿼리 결과를 클라이언트에게 알려준다.
+	}
+	
+	//-------------------------------------------------------------------------------
+	//--------------------------------프로토콜 빌더----------------------------------
+	//-------------------------------------------------------------------------------
+	
+	//이벤트 프로토콜 생성자
+	private static Protocol eventProtocolBuilder(Code1.Page page, Code2.Event event, Serializable sendData)
+	{
+		Protocol protocol = null;
+		try
+		{
+	        protocol = new Protocol.Builder(
+	        		ProtocolType.EVENT, 
+	        		Direction.TO_SERVER, 
+	        		page, 
+	        		event
+	        		).body(ProtocolHelper.serialization(sendData)).build();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return protocol;
+	}
+	
+	private static Protocol fileProtocolBuilder(Code1.FileType fileType, Code2.FileCode fileCode, Serializable sendData)
+	{
+		Protocol protocol = null;
+		try
+		{
+	        protocol = new Protocol.Builder(
+	        		ProtocolType.EVENT, 
+	        		Direction.TO_SERVER, 
+	        		fileType, 
+	        		fileCode
+	        		).body(ProtocolHelper.serialization(sendData)).build();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return protocol;
+	}
+	
+	//protocol을 전송하고, 결과값을 반환한다.
+	private static Serializable sendAndReceive(Protocol protocol)
+	{
+		Serializable result = null;
+        try 
+        {
+        	//서버에 요청하고나서 프로토콜 객체에 서버로부터 받은 정보를 담는다.
+            protocol = SocketHandler.INSTANCE.request(protocol);
+
+            //서버로부터 받은 body를 역직렬화한다. 결과로는 배열이 나올수도, 객체가 나올수도 있다. 그래서 명시적 형변환을 해주어야 한다.
+            //서버에서 스케쥴 체크에 성공했을 때는 String(안내사항)과 Dormitory 배열을 전송, 실패 시 메시지와 NULL을 전송한다.
+            result =  ProtocolHelper.deserialization(protocol.getBody());
+        } 
+        catch (Exception e) 
+        {
+        	System.out.println("서버 연결 실패!");
+            e.printStackTrace();
+        }
+        return result;
 	}
 	
 }

@@ -2,6 +2,7 @@ package controller.student;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
@@ -9,6 +10,9 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import application.IOHandler;
+import application.Responser;
+import enums.Bool;
+import enums.Code1;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,6 +22,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert.AlertType;
+import models.Tuple;
 
 public class SubmitDocumentTabController implements Initializable 
 {
@@ -50,10 +55,7 @@ public class SubmitDocumentTabController implements Initializable
 		year_label.setText(String.valueOf(thisYear));
 		
 		//TODO 네트워킹
-		info_textarea.setText("서류는 10MB를 넘지 않는 jpg 이미지 파일로 올려주시기 바랍니다. 재제출시 파일은 덮어씌워지니 주의하시기 바랍니다.");
-		
-		//TODO 테스트용, 서류 콤보박스 추가. 나중에 서류구분 ENUM을 쓰든 String을 쓰든, 네트워크에서 받아와 처리해야됨.
-		document_type_combobox.getItems().addAll("결핵진단서", "서약서");
+		setCombobox();
 	}
 	
 	//---------------------이벤트---------------------
@@ -73,6 +75,33 @@ public class SubmitDocumentTabController implements Initializable
     }
 	
 	//---------------------로직---------------------
+    
+    private void setCombobox()
+	{
+    	//서버로부터 FileType enum이 담긴 ArrayList를 받는다.
+    	ArrayList<Code1.FileType> resultList = Responser.student_submitDocumentPage_onEnter();
+		
+		//서버랑 통신이 됬는가?
+        if(resultList == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	//return;
+        }
+        else
+        {
+        	//안내사항 표기
+        	info_textarea.setText("서류는 10MB를 넘지 않는 jpg 이미지 파일로 올려주시기 바랍니다. 재제출시 파일은 덮어씌워지니 주의하시기 바랍니다.");	//이건 걍 통신안하기로 함
+        	
+        	//서버에게서 받아온 파일타입 목록을 콤보박스에 추가한다.
+        	ArrayList<String> fileTypeList = new ArrayList<String>();
+        	for(Code1.FileType fileType : resultList)
+        	{
+        		String fileTypeStr = fileTypeToString(fileType);
+        		fileTypeList.add(fileTypeStr);
+        	}
+    		document_type_combobox.getItems().addAll(fileTypeList);
+        }
+	}
     
     private void selectFile()
     {
@@ -118,11 +147,61 @@ public class SubmitDocumentTabController implements Initializable
 		if(file.exists())
 		{
 			//파일전송하는 프로토콜
+			sendFile(comboboxItem, file);
 			IOHandler.getInstance().showAlert("서류가 제출되었습니다.");    			
 		}
 		else
 		{
 			IOHandler.getInstance().showAlert("파일이 존재하지 않습니다!");
+		}
+    }
+    
+    private void sendFile(String selectedItemStr, File file)
+    {
+    	Code1.FileType fileType = stringToFileType(selectedItemStr);
+    	
+    	//TODO : 손, 이거 file이 Serializable 되는지 에러 안뜨는데, 확인바람 -명근
+    	Tuple<Bool, String> resultTuple = Responser.student_submitDocumentPage_onSubmit(fileType, file);
+    	
+    	if(resultTuple == null)
+    	{
+    		IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+    		return;
+    	}
+    	else
+    	{
+    		//성공/실패 메시지 표시
+    		IOHandler.getInstance().showAlert(resultTuple.obj2);
+    	}
+    }
+    
+    //--------------------유틸리티--------------------
+    
+    private Code1.FileType stringToFileType(String str)
+    {
+    	switch(str)
+    	{
+    	case "결핵진단서":
+    		return Code1.FileType.MEDICAL_REPORT;
+    	case "서약서":
+    		return Code1.FileType.OATH;
+    	default:
+    		System.out.println("알 수 없는 파일 유형입니다!");
+    		return null;
+    	}
+    }
+    
+    private String fileTypeToString(Code1.FileType fileType)
+    {
+    	switch(fileType)
+		{
+		case MEDICAL_REPORT:
+			return "결핵진단서";
+		case OATH:
+			return "서약서";
+		default:
+			System.out.println("알 수 없는 파일 유형입니다!");
+			return null;
 		}
     }
 
