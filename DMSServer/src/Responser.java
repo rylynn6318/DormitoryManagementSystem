@@ -531,7 +531,35 @@ public class Responser
 	//관리자 - 입사 선발자 조회 및 관리 - 삭제 버튼 클릭 시
 	public static void admin_selecteesManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
+		Bool isSucceed = Bool.TRUE;
 		//1. 클라이언트로부터 받은 학번, 생활관명, 학기, 지망으로 신청 테이블에서 조회한다.
+		try {
+			Application temp = (Application) ProtocolHelper.deserialization(protocol.getBody());	//받은 객체를 temp에 저장
+			isSucceed = DB.ApplicationParser.deleteApplication(temp);	//여기서 조회 및 삭제를 함
+		} catch (ClassNotFoundException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Tuple<Bool,String> result;
+		if(isSucceed == Bool.TRUE)
+			result = new Tuple<Bool,String>(Bool.TRUE, "성공했습니다");
+		else
+			result = new Tuple<Bool,String>(Bool.FALSE, "실패했습니다");
+		
+		try {
+			
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization(result)).build());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return;
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
