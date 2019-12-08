@@ -100,6 +100,7 @@ public class Responser
 		
 		//3. 학생테이블에서 학번으로 조회하여 성별을 알아낸다.
 		Gender gender = StudentParser.getGender(account.accountId);
+		System.out.println("성별 불러옴 : " + gender.toString() );
 		
 		//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
 		//	 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
