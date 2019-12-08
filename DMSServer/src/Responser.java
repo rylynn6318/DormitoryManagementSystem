@@ -700,7 +700,6 @@ public class Responser
 			result = new Tuple<Bool,String>(Bool.FALSE, "실패했습니다");
 		
 		try {
-			
 			socketHelper.write(new Protocol.Builder(
 					ProtocolType.EVENT, 
 					Direction.TO_CLIENT, 
@@ -748,7 +747,33 @@ public class Responser
 	{
 		//1. 배정내역 테이블에서 이번 학기 배정내역 목록을 가져와 객체화한다. (학번, 호, 학기, 생활관명, 자리, 퇴사예정일)
 		//2. 배열화한다.
+		Bool isSucceed = Bool.TRUE;
+		try {
+			ArrayList<PlacementHistory> ph = PlacementHistoryParser.getAllResidence();
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			isSucceed = Bool.FALSE;
+			e.printStackTrace();
+		}
 		//3. 직렬화해서 클라이언트에 전송한다.
+		
+		Tuple<Bool,String> result;
+		if(isSucceed == Bool.TRUE)
+			result = new Tuple<Bool,String>(Bool.TRUE, "성공했습니다");
+		else
+			result = new Tuple<Bool,String>(Bool.FALSE, "실패했습니다");
+		try {
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization(result)).build());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return;
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 	}
 	
