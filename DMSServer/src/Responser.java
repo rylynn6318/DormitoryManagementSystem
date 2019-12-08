@@ -293,9 +293,15 @@ public class Responser
 	{
 		//1. 스케쥴을 확인하고 호실 조회 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
 		//만드는 중 -서희-
-		if(ScheduleParser.isAdmissible((Page)protocol.code1))
-		{
-			
+		try {
+			if(ScheduleParser.isAdmissible((Page)protocol.code1))
+			{
+
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
 		//3. 스케쥴 객체를 클라이언트에게 전송한다.
@@ -660,7 +666,7 @@ public class Responser
 		//1. 서버 컴퓨터 내 저장할 공간에 빈공간이 10MB보다 큰지 확인한다. -> 빈공간이 10MB보다 크면 진행, 작으면 클라이언트에게 안된다고 알려줌.
 		//2. 헤더에서 파일 유형이 결핵진단서인지, 서약서인지 확인한다.
 		//3. 현재 날짜로부터 학기를 특정한다. (학기는 201901 ~ 201906)
-		//4. 어느폴더\학번\학기\학번+결핵진단서or서약서.jpg 와 같은 형식으로 저장된다.
+		//4. /파일타입/학기_학번.jpg 와 같은 형식으로 저장된다.
 		//	 (학기가 겹치면 덮어씌워진다. 즉, 한학기에 한 파일만 유효함)
 		//5. 파일 저장 성공/실패 여부를 클라이언트에게 알려준다.
 	}
@@ -694,3 +700,6 @@ public class Responser
 
 //2019-12-08 v1.05
 // static붙이고 인자 모두 추가 - 서희
+
+//2019-12-08 v1.06
+// 파일 경로에 대한 주석 수정 - ㅅㅁ
