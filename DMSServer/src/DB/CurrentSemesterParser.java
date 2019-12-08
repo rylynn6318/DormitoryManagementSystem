@@ -16,16 +16,16 @@ public class CurrentSemesterParser
 		String time1 = format1.format(time);
 		int result;
 		
-		String sql1 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 1학기"; 
-		String sql2 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 여름계절";
-		String sql3 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 2학기"; 
-		String sql4 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 겨울계절"; 
+		String sql1 = "SELECT `스케쥴 할일 코드_ID`, 시작일, 종료일, 비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID` = 6"; 
+		String sql2 = "SELECT `스케쥴 할일 코드_ID`, 시작일, 종료일 , 비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID` = 7";
+		String sql3 = "SELECT `스케쥴 할일 코드_ID`, 시작일, 종료일 , 비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID` = 8"; 
+		String sql4 = "SELECT `스케쥴 할일 코드_ID`, 시작일, 종료일 , 비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID` = 9"; 
 		
 //		String sql = "SELECT `스케쥴 할일 코드`, 비고 FROM " + DBinfo.DB_NAME + ".스케쥴 <![CDATA[ WHERE 시작일 <="+time1+" and "+time1 + "<= 종료일   ]]>"; //만약 위 방법이 안되면 사용할것		 
 
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state1 = connection.prepareStatement(sql1);
-		ResultSet rs1 = state1.executeQuery();
+		ResultSet rs1 = state1.executeQuery();	
 		rs1.next();		
 		PreparedStatement state2 = connection.prepareStatement(sql2);
 		ResultSet rs2 = state2.executeQuery();
@@ -38,7 +38,7 @@ public class CurrentSemesterParser
 		rs4.next();		
 		
 		
-		if(rs1.getDate("시작일").before(time)&& time.before(rs1.getDate("종료일")))
+		if(rs1.getDate("시작일").before(time) && time.before(rs1.getDate("종료일")))
 		{
 			result = rs1.getInt("비고"); //1학기
 			rs1.close();
@@ -70,7 +70,11 @@ public class CurrentSemesterParser
 		{
 			System.out.println("CurrentSemesterParser 오류");
 			return 0;
-		}
-		//return result;
+		}			
 	}
+//	public static void main(String args[]) throws ClassNotFoundException, SQLException	//테스트용 Main문
+//	{
+//		int a = getCurrentSemester();
+//		System.out.println(a);
+//	}
 }
