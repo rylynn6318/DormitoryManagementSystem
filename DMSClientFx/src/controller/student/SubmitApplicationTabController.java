@@ -109,6 +109,7 @@ public class SubmitApplicationTabController implements Initializable
     
     private void checkSchedule()
     {
+    	//안내사항/콤보박스에 넣을 기숙사정보배열 을 서버로부터 받음
     	Tuple<String, ArrayList<Dormitory>> resultTuple = Responser.student_submitApplicationPage_onEnter();
         
 		//서버랑 통신이 됬는가?
@@ -116,17 +117,17 @@ public class SubmitApplicationTabController implements Initializable
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
         	//여기서 페이지 닫게 해주자.
-        	//return;
+        	return;
         }
         else
         {
         	//스케쥴 체크가 됬는가?
-        	//스케쥴 때문에 진입 불가인 경우 tuple의 두번째 항목이 null로 반환된다.
+        	//스케쥴 때문에 진입 불가인 경우 String에는 메시지가, 배열에는 null이 반환된다.
             if(resultTuple.obj2 == null)
             {
             	IOHandler.getInstance().showAlert(resultTuple.obj1);
             	//여기서 페이지 닫게 해주자.
-            	//return;
+            	return;
             }
             else
             {
@@ -247,10 +248,24 @@ public class SubmitApplicationTabController implements Initializable
     
     private void setCombobox(ArrayList<Dormitory> dormList)
     {
+    	ArrayList<Dormitory> oneYear = new ArrayList<Dormitory>();
+    	ArrayList<Dormitory> halfYear = new ArrayList<Dormitory>();
+    	
+    	//서버에서 받아온 기숙사 목록에서 1년짜리와 반년짜리를 분리함.
     	for(Dormitory dorm : dormList)
     	{
-    		
+    		if(dorm.dormitoryName.contains("1년"))
+    		{
+    			oneYear.add(dorm);
+    		}
+    		else
+    		{
+    			halfYear.add(dorm);
+    		}
     	}
+    	
+    	//TODO 여기 해야됨 미완성.
+    	
     }
 
 }
