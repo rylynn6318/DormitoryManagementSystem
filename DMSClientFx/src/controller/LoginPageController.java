@@ -99,12 +99,8 @@ public class LoginPageController implements Initializable {
                     IDField.requestFocus();
                     break;
                 case STUDENT:
-                    UserInfo.getInstance().account = new Account(account.accountId, account.password, UserType.STUDENT);
-                    IOHandler.getInstance().showAlert("로그인 성공");
-                    moveToMain();
-                    break;
                 case ADMIN:
-                    UserInfo.getInstance().account = new Account(account.accountId, account.password, UserType.ADMIN);
+                    UserInfo.getInstance().account = new Account(account.accountId, account.password, UserType.get(loginResult));
                     IOHandler.getInstance().showAlert("로그인 성공");
                     moveToMain();
                     break;

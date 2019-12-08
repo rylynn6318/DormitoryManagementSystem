@@ -1,9 +1,11 @@
 
+import DB.DBHandler;
 import utils.SocketHelper;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,12 +32,22 @@ public class DMSServer {
         ServerSocket sSocket = null;
         ExecutorService threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
+        Logger.INSTANCE.print("서버 초기화 중...");
+
         try {
             sSocket = new ServerSocket(SocketHelper.port);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("클라이언트 접속 대기중...");
+        try {
+            DBHandler.INSTANCE.init();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        Logger.INSTANCE.print("서버 초기화 완료");
 
         while (running) {
             Socket socket = null;
