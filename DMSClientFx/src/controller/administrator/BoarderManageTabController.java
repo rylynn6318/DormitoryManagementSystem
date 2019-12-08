@@ -330,28 +330,30 @@ public class BoarderManageTabController extends InnerPageController
     	PlacementHistory history = new PlacementHistory(id, Integer.parseInt(roomNumber), Integer.parseInt(semester), dormName, 
     			Seat.get(seat), checkout);
     	
-//    	Application application = new Application
+    	//신청 객체 생성
+    	Application application = new Application(Integer.parseInt(mealType), isSnore);
     	
-//    	Tuple<Bool, String> resultTuple = Responser.admin_boarderManagePage_onDelete(data)
-//    	Tuple<PlacementHistory, Application> data = ;
+    	Tuple<PlacementHistory, Application> data = new Tuple<PlacementHistory, Application>(history, application);
     	
-    	//서버랑 통신이 됬는가?
-//        if(resultTuple == null)
-//        {
-//        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-//        	return;
-//        }
-//        
-//        if(resultTuple != null)
-//        {
-//        	//성공/실패 메시지 표시
-//        	if(resultTuple.obj1 == Bool.TRUE)
-//        	{
-//        		clearInsertInfo();
-//        	}
-//        	IOHandler.getInstance().showAlert(resultTuple.obj2);
-//        	
-//        }
+    	Tuple<Bool, String> resultTuple = Responser.admin_boarderManagePage_onInsert(data);
+    	
+//    	서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultTuple != null)
+        {
+        	//성공/실패 메시지 표시
+        	if(resultTuple.obj1 == Bool.TRUE)
+        	{
+        		clearInsertInfo();
+        	}
+        	IOHandler.getInstance().showAlert(resultTuple.obj2);
+        	
+        }
     	
     } 
     private void clearInsertInfo()

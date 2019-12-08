@@ -493,11 +493,14 @@ public class Responser
 		//	   (신청 테이블에서 최종합격여부를 N으로 UPDATE해야할지는 모르겠음...)
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
-		return null;
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사자관리, Code2.Event.DELETE, data);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 등록 버튼 클릭 시
-	public void admin_boarderManagePage_onInsert()
+	public static Tuple<Bool, String> admin_boarderManagePage_onInsert(Tuple<PlacementHistory, Application> data)
 	{
 		//배정내역에 학생을 임의로 추가하기 위한 기능
 		//배정내역에 학생을 넣고, 신청 테이블에도 몇일식인지, 코골이여부를 기록하기 위해 INSERT해야됨.
@@ -508,6 +511,9 @@ public class Responser
 		//3-2. 기존 값이 존재하지 않으면 INSERT한다.
 		//	   신청 테이블에도 몇일식, 코골이여부 넣어주기위해 INSERT해줘야 한다.
 		//4. INSERT 수행에 대한 결과를 클라이언트에게 알려준다 (성공/실패/아마존사망...etc)
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사자관리, Code2.Event.SUBMIT, data);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//-------------------------------------------------------------------------
