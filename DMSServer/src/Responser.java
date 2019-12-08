@@ -218,16 +218,28 @@ public class Responser
 	}
 	
 	//학생 - 생활관 신청 조회 - 조회 버튼 클릭 시
-	public static void student_CheckApplicationPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException
+
+	public static void student_CheckApplicationPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
 	{
+		ArrayList<Application> applicationResult = new ArrayList<>();
+		ArrayList<Application> passedApplicationResult = new ArrayList<>();
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
-		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회. 
-		applications = ApplicationParser.getApplicationResult(id);
+		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회.
+		applicationResult = ApplicationParser.getApplicationResult(id);
 		//	 (클라이언트의 '생활관 입사지원 내역' 테이블뷰에 표시할 것임)
 		//3. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역의 지망, 생활관명, 식사구분, 합격여부, 납부여부를 조회.
+		// 구현중
+		passedApplicationResult = ApplicationParser.getPassedApplication(id);
 		//	 (클라이언트의 '생활관 선발 결과' 테이블뷰에 표시할 것임)
 		//4. 조회된 내역을 객체화, 배열에 담아 클라이언트에게 반환한다.
+		Tuple<ArrayList<Application>, ArrayList<Application>> resultTuple = new Tuple(applicationResult, passedApplicationResult);
+		socketHelper.write(new Protocol.Builder(
+				ProtocolType.EVENT, 
+				Direction.TO_CLIENT, 
+				Code1.NULL, 
+				Code2.NULL
+				).body(ProtocolHelper.serialization(resultTuple)).build());
 	}
 	
 	//------------------------------------------------------------------------

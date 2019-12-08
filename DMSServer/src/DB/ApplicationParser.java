@@ -327,5 +327,23 @@ public class ApplicationParser {
 		DBHandler.INSTANCE.returnConnection(connection);
 		return dorm;
 	}
+	
+	public static ArrayList<Application> getPassedApplication(String id) throws SQLException
+	{
+		ArrayList<Application> applications = new ArrayList<>();
+		String sql = "SELECT 지망, 생활관명, 몇일식, 합격여부, 납부여부 FROM" + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ id + "생활관정보_학기 = " +CurrentSemesterParser.getCurrentSemester();
+		Connection connection = DBHandler.INSTANCE.getConnetion();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+		
+		while(rs.next())
+		{
+			applications.add(new Application(rs.getInt("지망"), rs.getString("생활관명"), rs.getInt("몇일식"), Bool.get(rs.getString("합격여부")), Bool.get(rs.getString("납부여부")));
+	
+		}
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		return applications;
+	}
 
 }
