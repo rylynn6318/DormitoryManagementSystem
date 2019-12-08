@@ -1,7 +1,6 @@
 package tableViewModel;
 
-import enums.Bool;
-import enums.Gender;
+import enums.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import models.Dormitory;
@@ -12,6 +11,7 @@ public class DormitoryViewModel
 	public final Dormitory dormitory;
 
 	private StringProperty dormNameStr;
+	private StringProperty genderStr;
 	private StringProperty semesterStr;
 	private StringProperty capacityStr;
 	private StringProperty mealDutyStr;
@@ -24,6 +24,7 @@ public class DormitoryViewModel
 		dormitory = new Dormitory(dormitoryName, gender, semesterCode, capacity, isMealDuty, mealCost5, mealCost7, boardingFees);
 		
 		this.dormNameStr = new SimpleStringProperty(dormitoryName);
+		this.genderStr = new SimpleStringProperty(gender == Gender.Male ? "M" : "F");
 		this.semesterStr = new SimpleStringProperty(Integer.toString(semesterCode));
 		this.capacityStr = new SimpleStringProperty(Integer.toString(capacity));
 		this.mealDutyStr = new SimpleStringProperty(isMealDuty.bool ? "필수" : "선택");
@@ -35,6 +36,11 @@ public class DormitoryViewModel
 	public StringProperty dormNameProperty()
 	{
 		return dormNameStr;
+	}
+	
+	public StringProperty genderProperty()
+	{
+		return genderStr;
 	}
 	
 	public StringProperty semesterProperty()
