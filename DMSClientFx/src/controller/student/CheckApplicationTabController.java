@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import application.IOHandler;
 import application.Responser;
+import controller.InnerPageController;
 import enums.Bool;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,7 +22,7 @@ import models.Dormitory;
 import models.Tuple;
 import tableViewModel.*;
 
-public class CheckApplicationTabController implements Initializable
+public class CheckApplicationTabController extends InnerPageController
 {
 	@FXML
     private Button check_button;
@@ -88,10 +89,15 @@ public class CheckApplicationTabController implements Initializable
         if(resultTuple == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-        	//여기서 페이지 닫게 해주자.
-        	//return;
+        	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+        	{
+        		//여기서 페이지 닫게 해주자.
+        		close();
+        		return;
+        	}
         }
-        else
+        
+        if(resultTuple != null)
         {
         	//스케쥴 체크가 됬는가?
         	//스케쥴 때문에 진입 불가인 경우 tuple의 첫번째 항목이 false로 반환된다.
@@ -135,8 +141,8 @@ public class CheckApplicationTabController implements Initializable
 		//지망, 생활관명, 식비구분, 합격여부, 납부여부를 받아와야한다.
         ObservableList<StudentApplicationResultViewModel> selections = appListToResultViewModel(receivedApplicationList2);
     	
-    	refreshApplicationTable(appHistory);
-    	refreshApplicationResultTable(selections);
+    	setApplicationTable(appHistory);
+    	setApplicationResultTable(selections);
     }
     
     //서버에서 Application 객체를 가져오면, StudentApplicationViewModel로 형변환해서 반환 
@@ -161,7 +167,7 @@ public class CheckApplicationTabController implements Initializable
     	return selections;
     }
     
-    private void refreshApplicationTable(ObservableList<StudentApplicationViewModel> appHistory)
+    private void setApplicationTable(ObservableList<StudentApplicationViewModel> appHistory)
     {
     	application_history_column_choice.setCellValueFactory(cellData -> cellData.getValue().choiceProperty());
     	application_history_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
@@ -169,7 +175,7 @@ public class CheckApplicationTabController implements Initializable
     	application_history_tableview.setItems(appHistory);
     }
     
-    private void refreshApplicationResultTable(ObservableList<StudentApplicationResultViewModel> selections)
+    private void setApplicationResultTable(ObservableList<StudentApplicationResultViewModel> selections)
     {
     	selection_result_column_choice.setCellValueFactory(cellData -> cellData.getValue().choiceProperty());
     	selection_result_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
@@ -177,29 +183,5 @@ public class CheckApplicationTabController implements Initializable
     	selection_result_column_isPassed.setCellValueFactory(cellData -> cellData.getValue().isPassedProperty());
     	selection_result_column_isPaid.setCellValueFactory(cellData -> cellData.getValue().isPaidProperty());
     	selection_result_tableview.setItems(selections);
-    }
-    
-    //---------------------디버깅용---------------------
-    
-    //디버깅용 
-    private ObservableList<StudentApplicationViewModel> debug_getTestAppViewModel()
-    {
-      ObservableList<StudentApplicationViewModel> appHistory = FXCollections.observableArrayList(
-				new StudentApplicationViewModel(1, "오름관2동", 5),
-				new StudentApplicationViewModel(2, "푸름관1동", 7),
-				new StudentApplicationViewModel(3, "푸름관4동", 0)
-				);
-      return appHistory;
-    }
-    
-    //디버깅용 
-    private ObservableList<StudentApplicationResultViewModel> debug_getTestResultViewModel()
-    {
-      ObservableList<StudentApplicationResultViewModel> selections = FXCollections.observableArrayList(
-				new StudentApplicationResultViewModel(1, "오름관2동", 5, Bool.TRUE, Bool.TRUE),
-				new StudentApplicationResultViewModel(2, "푸름관1동", 7, Bool.TRUE, Bool.FALSE),
-				new StudentApplicationResultViewModel(3, "푸름관4동", 0, Bool.TRUE, Bool.FALSE)
-				);
-      return selections;
     }
 }

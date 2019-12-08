@@ -2,10 +2,13 @@ package controller.administrator;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import application.Responser;
+import controller.InnerPageController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,10 +20,12 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import models.*;
+import enums.*;
 import tableViewModel.ScheduleViewModel;
 
 //선발 일정 조회 및 관리
-public class ScheduleManageTabController implements Initializable 
+public class ScheduleManageTabController extends InnerPageController 
 {
 	@FXML
     private Button check_button;
@@ -63,6 +68,8 @@ public class ScheduleManageTabController implements Initializable
 
     @FXML
     private TextField insert_etc_textfield;
+    
+    ArrayList<ScheduleCode> scheduleCodeList = null;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
@@ -72,6 +79,8 @@ public class ScheduleManageTabController implements Initializable
 		//네트워킹 후 유형을 서버에서 가져와야한다.
 		insert_type_combobox.getItems().addAll("생활관 입사 신청", "생활관 관배정 및 합격자 발표", "생활관비 납부", 
 				"결핵진단서 제출 기간", "생활관 추가합격자 발표", "생활관 추가합격자 생활관비 납부");
+		
+		onEnter();
 	}
 	
 	//---------------------이벤트---------------------
@@ -98,23 +107,84 @@ public class ScheduleManageTabController implements Initializable
     }
 	
 	//---------------------로직---------------------
+    
+    //서버에게서 받아온 스케쥴 할일 코드 목록을 콤보박스에 추가한다.
+    private void onEnter()
+    {
+    	//서버에게서 스케쥴 코드 목록을 받아 저장해둔다.
+    	scheduleCodeList = Responser.admin_scheduleManagePage_onEnter();
+    	
+    	//서버랑 통신이 됬는가?
+        if(scheduleCodeList == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(scheduleCodeList != null)
+        {
+        	//스케쥴 할일 코드 목록을 유형 콤보박스에 추가
+        	setCombobox(insert_type_combobox, scheduleCodeList);
+        }
+    }
+    
+    private void setCombobox(ComboBox<String> combobox, ArrayList<ScheduleCode> list)
+    {
+    	for(ScheduleCode sc : list)
+    	{
+    		combobox.getItems().add(sc.name);
+    	}
+    }
 
     private void checkSchdules()
     {
     	//네트워킹해서 스케쥴 테이블 쫙 긁어와야됨.
     	//긁어올때 스케쥴 할일 코드 테이블도 긁어와야됨.
+    	ArrayList<Schedule> resultList = Responser.admin_scheduleManagePage_onCheck();
     	
-    	ObservableList<ScheduleViewModel> list = FXCollections.observableArrayList(
-    			new ScheduleViewModel("1234", 3, new Date(2019, 3, 2), new Date(219, 7, 13), "입사 기간"),	//귀찮아서 대충 때려박음. 꼬우면 RG?
-    			new ScheduleViewModel("1235", 77, new Date(2019, 3, 1), new Date(219, 3, 2), "배정")
-    			);
-    	
+    	//서버랑 통신이 됬는가?
+        if(scheduleCodeList == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(scheduleCodeList != null)
+        {
+        	ObservableList<ScheduleViewModel> scheduleViewModels = FXCollections.observableArrayList();
+        	
+        	for(Schedule sc : resultList)
+        	{
+        		scheduleViewModels.add(scheduleToViewModel(sc));
+        	}
+        	
+        	setTableView(scheduleViewModels);
+        }
+    }
+    
+    private ScheduleViewModel scheduleToViewModel(Schedule schedule)
+    {
+    	//스케쥴 할일 목록에서, code와 이 스케쥴의 code가 같으면, 해당 스케쥴 할일 목록의 이름을 가져온다.
+    	String toDoString = "알 수 없음";
+    	for(ScheduleCode sc : scheduleCodeList)
+    	{
+    		if(sc.code == schedule.code)
+    		{
+    			toDoString = sc.name;
+    			break;
+    		}
+    	}
+    	return new ScheduleViewModel(schedule.scheduleId, toDoString, schedule.startDate, schedule.endDate, schedule.description);
+    }
+    
+    private void setTableView(ObservableList<ScheduleViewModel> scheduleViewModels)
+    {
     	check_schedule_column_id.setCellValueFactory(cellData -> cellData.getValue().scheduleIdProperty());
     	check_schedule_column_type.setCellValueFactory(cellData -> cellData.getValue().codeProperty());
     	check_schedule_column_startDay.setCellValueFactory(cellData -> cellData.getValue().startDateProperty());
     	check_schedule_column_endDay.setCellValueFactory(cellData -> cellData.getValue().endDateProperty());
     	check_schedule_column_description.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
-    	check_schedule_tableview.setItems(list);
+    	check_schedule_tableview.setItems(scheduleViewModels);
     }
     
     private void deleteSchedule()
@@ -129,17 +199,24 @@ public class ScheduleManageTabController implements Initializable
     	}
     	
     	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-		boolean isSucceed = true;
-		if(isSucceed)
+    	Tuple<Bool, String> resultList = Responser.admin_scheduleManagePage_onDelete(id);
+		
+		if(resultList == null)
 		{
-			IOHandler.getInstance().showAlert("일정 삭제에 성공하였습니다.");
-			
-			//선택한 항목들 클리어
-			delete_id_textfield.setText(null);
+			IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
 		}
-		else
+		
+		if(resultList != null)
 		{
-			IOHandler.getInstance().showAlert("일정 삭제에 실패하였습니다.");
+			if(resultList.obj1 == Bool.TRUE)
+			{
+				//입력했던 항목들 클리어
+				delete_id_textfield.setText(null);
+			}
+			
+			//성공/실패 메시지 표시
+			IOHandler.getInstance().showAlert(resultList.obj2);
 		}
     }
     
@@ -176,17 +253,22 @@ public class ScheduleManageTabController implements Initializable
 			IOHandler.getInstance().showAlert("일정 등록에 성공하였습니다.");
 			
 			//전송
-			
-			//선택한 항목들 클리어
-			insert_type_combobox.getSelectionModel().select(-1);
-			insert_startDate_datepicker.setValue(null);
-			insert_endDate_datepicker.setValue(null);
-			insert_etc_textfield.setText("");
+			//TODO 미구현
+			clearInserts();
 		}
 		else
 		{
 			IOHandler.getInstance().showAlert("일정 등록에 실패하였습니다.");
 		}
+    }
+    
+    private void clearInserts()
+    {
+    	//선택한 항목들 클리어
+		insert_type_combobox.getSelectionModel().select(-1);
+		insert_startDate_datepicker.setValue(null);
+		insert_endDate_datepicker.setValue(null);
+		insert_etc_textfield.setText("");
     }
 }
 

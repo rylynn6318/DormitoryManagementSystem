@@ -43,11 +43,15 @@ public class MainPageController implements Initializable
     @FXML
     private Label UserInfoLabel;
     
+    public static TabPane _MainTabPane;		//다른 페이지 컨트롤러에서 해당 페이지를 닫기 위해 사용함.
+    
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
 		//생성자 확인
 		System.out.println("메인 페이지 생성됨");
+		
+		_MainTabPane = MainTabPane;
 		
 		//네비게이션 탭 초기화
 		initializeNavigationTabs();

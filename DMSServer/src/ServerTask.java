@@ -7,6 +7,7 @@ import utils.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,6 +24,8 @@ public class ServerTask implements Runnable {
 
     @Override
     public void run() {
+        Logger.INSTANCE.print(socketHelper.getInetAddress(), "연결");
+
         Protocol protocol = null;
         try {
             protocol = socketHelper.read();
@@ -30,14 +33,14 @@ public class ServerTask implements Runnable {
             e.printStackTrace();
         }
 
+        Logger.INSTANCE.print(socketHelper.getInetAddress(), protocol.type);
+
         switch (protocol.type) {
             case LOGIN:
                 Account result = null;
                 try {
                     result = LoginChecker.check((Account) ProtocolHelper.deserialization(protocol.getBody()));
                 } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (SQLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -80,5 +83,13 @@ public class ServerTask implements Runnable {
             	}
                 break;
         }
+
+        try {
+            socketHelper.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Logger.INSTANCE.print(socketHelper.getInetAddress(), "요청 반환, 연결 종료");
     }
 }

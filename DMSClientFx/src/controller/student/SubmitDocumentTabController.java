@@ -11,6 +11,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import application.IOHandler;
 import application.Responser;
+import controller.InnerPageController;
 import enums.Bool;
 import enums.Code1;
 import javafx.event.ActionEvent;
@@ -24,7 +25,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert.AlertType;
 import models.Tuple;
 
-public class SubmitDocumentTabController implements Initializable 
+public class SubmitDocumentTabController extends InnerPageController 
 {
 	@FXML
     private Button submit_button;
@@ -173,36 +174,6 @@ public class SubmitDocumentTabController implements Initializable
     		//성공/실패 메시지 표시
     		IOHandler.getInstance().showAlert(resultTuple.obj2);
     	}
-    }
-    
-    //--------------------유틸리티--------------------
-    
-    private Code1.FileType stringToFileType(String str)
-    {
-    	switch(str)
-    	{
-    	case "결핵진단서":
-    		return Code1.FileType.MEDICAL_REPORT;
-    	case "서약서":
-    		return Code1.FileType.OATH;
-    	default:
-    		System.out.println("알 수 없는 파일 유형입니다!");
-    		return null;
-    	}
-    }
-    
-    private String fileTypeToString(Code1.FileType fileType)
-    {
-    	switch(fileType)
-		{
-		case MEDICAL_REPORT:
-			return "결핵진단서";
-		case OATH:
-			return "서약서";
-		default:
-			System.out.println("알 수 없는 파일 유형입니다!");
-			return null;
-		}
     }
 
 }

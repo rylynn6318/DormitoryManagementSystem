@@ -3,9 +3,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import DB.ApplicationParser;
+import DB.AssignAlgorithm;
 import DB.CurrentSemesterParser;
 import DB.DormParser;
-import DB.InsertApplicationParser;
 import DB.ScheduleParser;
 import DB.StudentParser;
 import enums.Bool;
@@ -115,7 +115,7 @@ public class Responser
 	}
 	
 	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시
-	public static void student_submitApplicationPage_onSubmit(Protocol protocol, SocketHelper socketHelper)
+	public static void student_submitApplicationPage_onSubmit(Protocol protocol, SocketHelper socketHelper) throws IOException, SQLException, ClassNotFoundException
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
@@ -139,7 +139,7 @@ public class Responser
 		//4. 해당 배열을 신청 데이트에 INSERT한다.
 		for(int i = 0; i < A.length; i++)  //(int choice, String mealType, Bool isSnore, String dormitoryName, Gender gender, int semesterCode, String id)
 		{
-			InsertApplicationParser.InsertApplication(A[i].getChoice(), A[i].getMealType(), A[i].isSnore(), A[i].getDormitoryName(), A[i].getGender(), A[i].getSemesterCode(), id); //이거 풀하고 다시 짤거에요
+			ApplicationParser.insertApplication(A[i].getChoice(), A[i].getMealType(), A[i].isSnore(), A[i].getDormitoryName(), A[i].getGender(), A[i].getSemesterCode(), id); //이거 풀하고 다시 짤거에요
 		}
 		//5. 클라이언트에게 성공 여부를 알려준다.(성공/DB연결 오류로 인한 실패/DB사망/알수없는오류 등등...)
 		try {
@@ -217,10 +217,12 @@ public class Responser
 	}
 	
 	//학생 - 생활관 신청 조회 - 조회 버튼 클릭 시
-	public static void student_CheckApplicationPage_onCheck(Protocol protocol, SocketHelper socketHelper)
+	public static void student_CheckApplicationPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
+		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회. 
+		
 		//	 (클라이언트의 '생활관 입사지원 내역' 테이블뷰에 표시할 것임)
 		//3. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역의 지망, 생활관명, 식사구분, 합격여부, 납부여부를 조회.
 		//	 (클라이언트의 '생활관 선발 결과' 테이블뷰에 표시할 것임)
@@ -236,13 +238,30 @@ public class Responser
 	}
 	
 	//학생 - 생활관 고지서 조회 - 조회 버튼 클릭 시
-	public static void student_CheckBillPage_onCheck(Protocol protocol, SocketHelper socketHelper)
+	public void student_CheckBillPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
 	{
+		int cost;
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
+		String id = (String) ProtocolHelper.deserialization(protocol.getBody()); //이 부분 확인해주세요
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역 조회 -> 내역 있으면 다음으로, 없으면 없다고 클라이언트에게 알려줌
-		//3. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역의 식사구분, 생활관구분을 알아낸다.
-		//4. 해당 생활관, 해당 식비로 총 금액을 알아낸다.
-		//5. 랜덤 생성한 계좌번호와, 은행 명, 계산한 식비를 객체화해서 클라이언트에게 전송한다.
+		try {
+			if(ApplicationParser.isExistPassState(id))
+			{
+				socketHelper.write(new Protocol.Builder(
+						ProtocolType.EVENT, 
+						Direction.TO_CLIENT, 
+						Code1.NULL, 
+						Code2.NULL
+						).body(ProtocolHelper.serialization("고지서 내역이 없습니다.")).build());
+				return;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//3. 합격한 신청 내역에 관한 납부해야 할 비용을 저장
+		cost = DormParser.getCheckBillCost(id);
+		//5. 랜덤 생성한 계좌번호와, 은행 명, 계산한 비용을 객체화해서 클라이언트에게 전송한다.
+		///////////////////////////////////누가 5번좀 해주세요 제가하면 너무 막연하게 할 듯
 		//(6. 클라이언트는 이걸 받아서 대충 메모장으로 띄워준다.)
 	}
 	
@@ -334,14 +353,8 @@ public class Responser
 	{
 		//1. 스케쥴 할일 코드 테이블에서 목록을 객체로 만들어 배열로 가져온다. (ID, 할일코드, 시작일, 종료일, 비고)
 		//2. 스케쥴 테이블에서 목록을 객체로 만들어 배열로 가져온다. (코드, 이름)
-		//3. 2가지 방법이 있다.
-		//3-1. 스케쥴 할일 코드와 스케쥴을 묶는 viewModel 클래스를 만들어 클라이언트로 보낸다.
-		//3-2. 스케쥴 할일 코드 배열과 스케쥴 배열을 각각 보낸다.
+		//3. 스케쥴 객체 배열을 클라이언트로 전송한다.
 		//(4. 클라이언트는 받아서 tableView에 표시한다. 클라이언트에는 ID, 할일이름, 시작일, 종료일, 비고가 표시된다)
-		
-		//* 클라이언트 UI에서 유형 코드를 보여주는게 아니라, 유형 이름을 보여줘야 하기때문에
-		//  코드와 이름 둘다 전송하는 것. 결국 스케쥴 테이블과 스케쥴 할일 코드 테이블 조인 
-		//  하거나 둘다 가져와서 섞어야함.
 	}
 	
 	//관리자 - 선발 일정 조회 및 관리 - 삭제 버튼 클릭 시
@@ -446,21 +459,25 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 입사자 조회 및 관리 - 입사자 등록(배정) 버튼 클릭 시
-	public static void admin_boarderManagePage_onAllocate(Protocol protocol, SocketHelper socketHelper)
+	public static void admin_boarderManagePage_onAllocate(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, SQLException
 	{
 		//입사자 등록(배정) 버튼은 신청 목록에서 합격여부를 Y, 납부내역 Y, 결핵진단서 Y인 신청의 최종합격여부를 Y로 바꾼다.
+		
+		//이거 AssignAlgorithm.passUpdate(); 하시면 위 내용대로 동작합니다.
 		//그리고나서 배정내역에 최종합격여부가 Y인 학생들을 배정한다.
+		
+		//AssignAlgorithm.batchStart();
 		//이것도 로직 짜놓은 친구들이 구현해놨으니 거기에 맞게 로직 고치면 됨.(로직 주석 구체적으로 달아주셈, 어떻게 돌아가는지 다른애들도 알수있게)
 		
 		//1. 클라이언트에게 입사자 등록(배정) 요청을 받는다. (바디에는 딱히 아무것도 없다. 요청을 위한 통신)
-		
 		//2. 등록(배정) 알고리즘을 시행한다.
-		//   등록 배정 알고리즘 상세설명(대충 생각해본것임. 더 나은 알고리즘, 이미 구현한 알고리즘 사용해도 됨. 그 경우 아래 알고리즘을 고쳐주셈)
-		//		1) 신청 테이블에서 이번학기에 합격여부 Y, 납부내역 Y인 것 중 학번, 코골이여부 등을 가져온다.
-		//		2) 서류 테이블에서 결핵진단서 유효여부가 Y인걸 체크해서, 위에서 가져온것과 조인.
-		//		3) 같은 생활관끼리 신청내역을 묶는다?
-		//		4) 배정이 된 학생들은 최종합격여부를 Y로 고친다?
-		//		5) 배정내역 알고리즘(배정내역 테이블에 학생 한명 한명 INSERT ?)을 돌린다.
+		// 1.디비에서 생활관 정보를 가져와서 생활관별로 수용인원만큼 자리를 만듬 호실. 자리 ABCD고려해서
+		// 2. 그 자리에 이미 살고있는 학생들의 ID를 넣음
+		// 3. 없는 자리에 생활관 신청 합격자들의 ID, 퇴사일을 넣음
+		// 4.그 정보에 맞게 DB에 업데이트
+		
+		//이걸 batchStart로 묶어놨으니 그냥 이것만 실행하면 됨
+		AssignAlgorithm.batchStart();
 		
 		//3. 결과를 클라이언트에게 알려준다(성공/실패?)
 	}

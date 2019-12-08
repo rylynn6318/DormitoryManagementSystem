@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import controller.InnerPageController;
 import enums.Gender;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,7 +19,7 @@ import javafx.scene.control.TextField;
 import tableViewModel.DormitoryViewModel;
 
 //생활관 조회 및 관리
-public class DormitoryManageTabController implements Initializable 
+public class DormitoryManageTabController extends InnerPageController 
 {
 	@FXML
     private Button check_button;

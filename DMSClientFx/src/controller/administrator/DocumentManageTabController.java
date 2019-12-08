@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import application.IOHandler;
+import controller.InnerPageController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,7 +25,7 @@ import javafx.scene.control.TextField;
 import tableViewModel.*;
 
 //서류 조회 및 제출
-public class DocumentManageTabController implements Initializable 
+public class DocumentManageTabController extends InnerPageController 
 {
 	@FXML
     private Button check_button;

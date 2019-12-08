@@ -6,6 +6,8 @@ import java.util.ResourceBundle;
 
 import application.IOHandler;
 import application.Responser;
+import controller.InnerPageController;
+import controller.MainPageController;
 import enums.Bool;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,11 +18,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import models.*;
 import utils.*;
 
-public class SubmitApplicationTabController implements Initializable 
+public class SubmitApplicationTabController extends InnerPageController
 {
  	@FXML
     private Button application_button;
@@ -67,28 +71,6 @@ public class SubmitApplicationTabController implements Initializable
 		checkSchedule();
 	}
 	
-	private void debug_comboboxView()
-	{
-		//남자라고 가정, 사실 남자인지 여자인지도 서버에서 알아서 판단해서 클라이언트에게 보냄. 클라이언트는 이게 남자껀지 여자껀지 몰라야함.
-		//일반학기라고 가정, 클라이언트는 일반학기인지, 방학인지는 모름. 이것도 서버에서 알아서 판단해서 알아서 보내줌.
-		oneYear_dorm_combobox.getItems().addAll("선택", "푸름관 1,2동");
-		firstChoice_dorm_combobox.getItems().addAll("선택", "푸름관 1,2동", "푸름관 4동", "오름관 2,3동");
-		secondChoice_dorm_combobox.getItems().addAll("선택", "푸름관 1,2동", "푸름관 4동", "오름관 2,3동");
-		thirdChoice_dorm_combobox.getItems().addAll("선택", "푸름관 1,2동", "푸름관 4동", "오름관 2,3동");
-		
-		//식사구분은 기숙사에따라서, 식사의무가 T인지 F인지에 따라 서버가 알아서 보내줘야함.
-		oneYear_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
-		firstChoice_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
-		secondChoice_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
-		thirdChoice_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
-		
-		//이건 사용자 선택에 따라 결정, 변경되야함. 물론 서버에서 기본 정보는 다 받아오고, 사용자 선택에 맞는 값을 표시해줘야함.
-//		oneYear_cost_label.setText("만원");
-//		firstChoice_cost_label.setText("만원");
-//		secondChoice_cost_label.setText("만원");
-//		thirdChoice_cost_label.setText("만원");	
-	}
-	
 	//---------------------이벤트---------------------
 	
 	@FXML
@@ -116,14 +98,19 @@ public class SubmitApplicationTabController implements Initializable
         if(resultTuple == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-        	//여기서 페이지 닫게 해주자.
-        	return;
+        	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+        	{
+        		//여기서 페이지 닫게 해주자.
+        		close();
+        		return;
+        	}
         }
-        else
+        
+        //스케쥴 체크가 됬는가?
+    	//스케쥴/이미 신청한 학생이라 진입 불가인 경우 String에는 메시지가, 배열에는 null이 반환된다.
+        if(resultTuple != null)
         {
-        	//스케쥴 체크가 됬는가?
-        	//스케쥴 때문에 진입 불가인 경우 String에는 메시지가, 배열에는 null이 반환된다.
-            if(resultTuple.obj2 == null)
+        	if(resultTuple.obj2 == null)
             {
             	IOHandler.getInstance().showAlert(resultTuple.obj1);
             	//여기서 페이지 닫게 해주자.
@@ -142,6 +129,7 @@ public class SubmitApplicationTabController implements Initializable
                 	setCombobox(resultTuple.obj2);
             }
         }
+        
     }
     
     //사용자가 클릭한 콤보박스로 신청객체 배열을 만들어 반환하는 클래스
@@ -246,12 +234,14 @@ public class SubmitApplicationTabController implements Initializable
         IOHandler.getInstance().showAlert(result);
     }
     
+    //서버에게서 받은 기숙사 목록을 1년과 반년으로 나누고, 콤보박스 내 아이템을 설정함.
     private void setCombobox(ArrayList<Dormitory> dormList)
     {
     	ArrayList<Dormitory> oneYear = new ArrayList<Dormitory>();
     	ArrayList<Dormitory> halfYear = new ArrayList<Dormitory>();
     	
     	//서버에서 받아온 기숙사 목록에서 1년짜리와 반년짜리를 분리함.
+    	//현재로써 1년과 1년이 아닌 기숙사를 분리할 방법이 없어서 임시로 1년이라는 글자가 기숙사명에 포함되있는지로 가름.
     	for(Dormitory dorm : dormList)
     	{
     		if(dorm.dormitoryName.contains("1년"))
@@ -264,8 +254,31 @@ public class SubmitApplicationTabController implements Initializable
     		}
     	}
     	
-    	//TODO 여기 해야됨 미완성.
+    	setComboboxItem(oneYear_dorm_combobox, oneYear_meal_combobox, oneYear);
+    	setComboboxItem(firstChoice_dorm_combobox, firstChoice_meal_combobox, halfYear);
+    	setComboboxItem(secondChoice_dorm_combobox, secondChoice_meal_combobox, halfYear);
+    	setComboboxItem(thirdChoice_dorm_combobox, thirdChoice_meal_combobox, halfYear);
     	
     }
-
+    
+    //콤보박스 내 아이템을 설정하는 메소드
+    private void setComboboxItem(ComboBox<String> nameCombobox, ComboBox<String> mealCombobox, ArrayList<Dormitory> dormList)
+    {
+    	for(Dormitory dorm : dormList)
+    	{
+    		nameCombobox.getItems().add(dorm.dormitoryName);
+    		
+    		//식사의무가 필수가 아니면 식사안함을 추가한다.
+    		if(dorm.isMealDuty == Bool.FALSE)
+    			mealCombobox.getItems().add("식사안함");
+    		
+    		//5일식이 0원이 아니면 5일식 아이템 추가
+    		if(dorm.mealCost5 != 0)
+    			mealCombobox.getItems().add("5일식");
+    		
+    		//7일식이 0원이 아니면 7일식 아이템 추가    		
+    		if(dorm.mealCost7 != 0)
+    			mealCombobox.getItems().add("7일식");
+    	}
+    }
 }

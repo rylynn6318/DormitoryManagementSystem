@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 
 import application.IOHandler;
 import application.Responser;
+import controller.InnerPageController;
 import enums.Bool;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,7 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import models.Tuple;
 
-public class CheckBillTabController implements Initializable 
+public class CheckBillTabController extends InnerPageController 
 {
     @FXML
     private Button check_button;
@@ -46,10 +47,15 @@ public class CheckBillTabController implements Initializable
         if(resultTuple == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-        	//여기서 페이지 닫게 해주자.
-        	//return;
+        	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+        	{
+        		//여기서 페이지 닫게 해주자.
+        		close();
+        		return;
+        	}
         }
-        else
+        
+        if(resultTuple != null)
         {
         	//스케쥴 체크가 됬는가?
         	//스케쥴 때문에 진입 불가인 경우 tuple의 첫번째 항목이 false로 반환된다.
@@ -94,7 +100,9 @@ public class CheckBillTabController implements Initializable
 	        fw.close();
 	         
 	         
-	    }catch(Exception e){
+	    }
+		catch(Exception e)
+		{
 	        e.printStackTrace();
 	    }
 	}
