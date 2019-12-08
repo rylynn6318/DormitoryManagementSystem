@@ -2,10 +2,24 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import DB.*;
-import enums.*;
-import models.*;
-import utils.*;
+import DB.ApplicationParser;
+import DB.CurrentSemesterParser;
+import DB.DormParser;
+import DB.InsertApplicationParser;
+import DB.ScheduleParser;
+import DB.StudentParser;
+import enums.Code1;
+import enums.Code1.Page;
+import enums.Code2;
+import enums.Direction;
+import enums.Gender;
+import enums.ProtocolType;
+import models.Application;
+import models.Dormitory;
+import models.Tuple;
+import utils.Protocol;
+import utils.ProtocolHelper;
+import utils.SocketHelper;
 
 //디버깅용 클래스
 //대충 클라이언트에서 어떤 요청이 왔을때 그에 대한 반응(로직)을 모아둠.
@@ -100,7 +114,7 @@ public class Responser
 	}
 	
 	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시
-	public void student_submitApplicationPage_onSubmit(Protocol protocol, SocketHelper socketHelper) throws SQLException, ClassNotFoundException, IOException
+	public static void student_submitApplicationPage_onSubmit(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
@@ -122,9 +136,9 @@ public class Responser
 		//3. 받은 데이터를 역직렬화한다. ([생활관구분, 기간구분, 식사구분] x4 와 휴대전화번호, 코골이여부가 나옴)
 		Application[] A = (Application[])ProtocolHelper.deserialization(protocol.getBody());
 		//4. 해당 배열을 신청 데이트에 INSERT한다.
-		for(int i = 0; i < A.length; i++)  
+		for(int i = 0; i < A.length; i++)  //(int choice, String mealType, Bool isSnore, String dormitoryName, Gender gender, int semesterCode, String id)
 		{
-			ApplicationParser.insertApplication(A[i].getChoice(), A[i].getMealType(), A[i].isSnore(), A[i].getDormitoryName(), A[i].getGender(), A[i].getSemesterCode(), id); //이거 풀하고 다시 짤거에요
+			InsertApplicationParser.InsertApplication(A[i].getChoice(), A[i].getMealType(), A[i].isSnore(), A[i].getDormitoryName(), A[i].getGender(), A[i].getSemesterCode(), id); //이거 풀하고 다시 짤거에요
 		}
 		//5. 클라이언트에게 성공 여부를 알려준다.(성공/DB연결 오류로 인한 실패/DB사망/알수없는오류 등등...)
 		try {
@@ -172,16 +186,35 @@ public class Responser
 	//------------------------------------------------------------------------
 	
 	//학생 - 생활관 신청 조회 - 들어왔을 때
-	public void student_CheckApplicationPage_onEnter()
+	public static void student_CheckApplicationPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴을 확인하고 신청내역 조회 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-		//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
-		//3. 스케쥴 객체를 클라이언트에게 전송한다.
-		//(4. 클라이언트에서는 받은 비고(안내사항)을 표시한다)
+		if(ScheduleParser.isAdmissible((Page)protocol.code1))
+		{
+			//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
+			//3. 스케쥴 객체를 클라이언트에게 전송한다.
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization(ScheduleParser.getSchedule((Page)protocol.code1))).build());
+			//(4. 클라이언트에서는 받은 비고(안내사항)을 표시한다)리
+		}
+		else
+		{
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization("신청조회기간이 아닙니다.")).build());
+		}
+		
 	}
 	
 	//학생 - 생활관 신청 조회 - 조회 버튼 클릭 시
-	public void student_CheckApplicationPage_onCheck()
+	public static void student_CheckApplicationPage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회. 
@@ -194,13 +227,13 @@ public class Responser
 	//------------------------------------------------------------------------
 	
 	//학생 - 생활관 고지서 조회 - 들어왔을 때
-	public void student_CheckBillPage_onEnter()
+	public static void student_CheckBillPage_onEnter(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 스케쥴을 확인하고 고지서 조회 가능한 날짜인지 조회 -> TRUE이면 괜찮다고 클라이언트에게 전송, FALSE이면 못들어가게 막음
 	}
 	
 	//학생 - 생활관 고지서 조회 - 조회 버튼 클릭 시
-	public void student_CheckBillPage_onCheck()
+	public static void student_CheckBillPage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역 조회 -> 내역 있으면 다음으로, 없으면 없다고 클라이언트에게 알려줌
@@ -213,7 +246,7 @@ public class Responser
 	//------------------------------------------------------------------------
 	
 	//학생 - 생활관 호실 조회 - 들어왔을 때
-	public void student_checkRoomPage_onEnter()
+	public static void student_checkRoomPage_onEnter(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 스케쥴을 확인하고 호실 조회 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
 		//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
@@ -222,7 +255,7 @@ public class Responser
 	}
 	
 	//학생 - 생활관 호실 조회 - 조회 버튼 클릭 시
-	public void student_checkRoomPage_onCheck()
+	public static void student_checkRoomPage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 최종합격여부가 T인 내역 조회 
@@ -236,7 +269,7 @@ public class Responser
 	//------------------------------------------------------------------------
 	
 	//학생 - 서류 제출 - 들어왔을 때
-	public void student_submitDocumentPage_onEnter()
+	public static void student_submitDocumentPage_onEnter(Protocol protocol, SocketHelper socketHelper)
 	{
 		//실제 원스톱을 기반으로, 학생이 서류 제출하는건 아무때나 할 수 있다고 하였다.
 		//1. 서류 유형을 객체화 배열화하여 클라이언트로 전송한다.
@@ -244,7 +277,7 @@ public class Responser
 	}
 	
 	//학생 - 서류 제출 - 제출 버튼 클릭 시(파일 업로드)
-	public void student_submitDocumentPage_onSubmit()
+	public static void student_submitDocumentPage_onSubmit(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 서버 컴퓨터 내 저장할 공간에 빈공간이 10MB보다 큰지 확인한다. -> 빈공간이 10MB보다 크면 진행, 작으면 클라이언트에게 안된다고 알려줌.
 		//2. 헤더에서 파일 유형이 결핵진단서인지, 서약서인지 확인한다.
@@ -257,14 +290,14 @@ public class Responser
 	//------------------------------------------------------------------------
 	
 	//학생 - 서류 조회 - 들어왔을 때
-	public void student_checkDocumentPage_onEnter()
+	public static void student_checkDocumentPage_onEnter(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 서류 유형을 객체화 배열화하여 클라이언트로 전송한다.
 		//(2. 클라이언트는 받은 배열을 역직렬화하여 서류유형 combobox에 표시한다)
 	}
 	
 	//학생 - 서류 조회 - 조회 버튼 클릭 시
-	public void student_checkDocumentPage_onCheck()
+	public static void student_checkDocumentPage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 받은 요청의 헤더에서 학번, 서류유형을 알아낸다. 
 		//2. 서류 테이블에서 해당 학번이 이번 학기에 제출한 내역 중 서류유형이 일치하는 것을 찾는다. -> 있으면 진행, 없으면 없다고 알려줌
@@ -273,7 +306,7 @@ public class Responser
 	}
 	
 	//학생 - 서류 조회 - 다운로드 버튼 클릭 시(파일 다운로드)
-	public void student_checkDocumentPage_onDownlaod()
+	public static void student_checkDocumentPage_onDownlaod(Protocol protocol, SocketHelper socketHelper)
 	{
 		//(1. 클라이언트는 자기 남은 용량이 10MB 이상인지 체크한다)
 		//(2. 클라이언트는 해당 파일 경로를 바디에 담아 서버에게 보낸다)
@@ -286,7 +319,7 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 선발 일정 조회 및 관리 - 들어왔을 때
-	public void admin_scheduleManagePage_onEnter()
+	public static void admin_scheduleManagePage_onEnter(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 스케쥴 할일 코드 테이블에서 '코드', '이름' 을 객체로 만들어 배열로 가져온다.
 		//2. 객체 배열을 직렬화하여 클라이언트로 전송한다.
@@ -294,7 +327,7 @@ public class Responser
 	}
 	
 	//관리자 - 선발 일정 조회 및 관리 - 조회 버튼 클릭 시
-	public void admin_scheduleManagePage_onCheck()
+	public static void admin_scheduleManagePage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 스케쥴 할일 코드 테이블에서 목록을 객체로 만들어 배열로 가져온다. (ID, 할일코드, 시작일, 종료일, 비고)
 		//2. 스케쥴 테이블에서 목록을 객체로 만들어 배열로 가져온다. (코드, 이름)
@@ -309,7 +342,7 @@ public class Responser
 	}
 	
 	//관리자 - 선발 일정 조회 및 관리 - 삭제 버튼 클릭 시
-	public void admin_scheduleManagePage_onDelete()
+	public static void admin_scheduleManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트에게서 스케쥴 ID를 받는다.
 		//2. 스케쥴 테이블에서 해당 ID로 탐색한다.
@@ -319,7 +352,7 @@ public class Responser
 	}
 	
 	//관리자 - 선발 일정 조회 및 관리 - 등록 버튼 클릭 시
-	public void admin_scheduleManagePage_onInsert()
+	public static void admin_scheduleManagePage_onInsert(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트에게서 유형코드, 시작일, 종료일, 비고를 받는다. (유형은 코드로 전달되어야 한다. String으로 전달받는건 미개함
 		//	 그래서 유형 이름을 받는게 아니라 유형 코드를 받는것)
@@ -332,7 +365,7 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 생활관 조회 및 관리 - 들어왔을 때
-	public void admin_dormitoryManagePage_onEnter()
+	public static void admin_dormitoryManagePage_onEnter(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 식사의무 ENUM을 배열화해서 목록을 만든다.
 		//2. 배열화한 목록을 직렬화해서 클라이언트로 전송한다.
@@ -343,7 +376,7 @@ public class Responser
 	}
 	
 	//관리자 - 생활관 조회 및 관리 - 조회 버튼 클릭 시
-	public void admin_dormitoryManagePage_onCheck()
+	public static void admin_dormitoryManagePage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 생활관 정보 테이블에서 모든 정보를 가져와 객체화한다. (생활관명, 학기, 수용인원, 식사의무, 5일식 식비, 7일식 식비, 기숙사비
 		//2. 배열화한다.
@@ -352,7 +385,7 @@ public class Responser
 	}
 	
 	//관리자 - 생활관 조회 및 관리 - 삭제 버튼 클릭 시
-	public void admin_dormitoryManagePage_onDelete()
+	public static void admin_dormitoryManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트로부터 받은 생활관명, 학기로 생활관 정보 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
@@ -361,7 +394,7 @@ public class Responser
 	}
 	
 	//관리자 - 생활관 조회 및 관리 - 등록 버튼 클릭 시
-	public void admin_dormitoryManagePage_onInsert()
+	public static void admin_dormitoryManagePage_onInsert(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트에게서 생활관명, 학기, 수용인원, 식사의무, 5일식 식비, 7일식 식비, 기숙사비를 받는다.
 		//2. 생활관 정보 테이블에서 생활관명, 학기로 탐색, 중복되는 값이 있는지 체크한다.
@@ -373,7 +406,7 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 입사자 선발 버튼 클릭 시
-	public void admin_selecteesManagePage_onSelection()
+	public static void admin_selecteesManagePage_onSelection(Protocol protocol, SocketHelper socketHelper)
 	{
 		//입사자 선발 버튼은 신청 목록에서 합격여부를 Y로 바꾸는 역할을 한다
 		//ex) 100명을 뽑아야되면 성적순으로 정렬 뒤 총 신청자 중에서 상위 100명까지 합격여부를 Y로 바꾼다?
@@ -389,7 +422,7 @@ public class Responser
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 조회 버튼 클릭 시
-	public void admin_selecteesManagePage_onCheck()
+	public static void admin_selecteesManagePage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 신청 테이블에서 이번 학기 신청 목록을 가져와 객체화한다. (학번, 생활관명, 학기, 지망, 몇일식, 납부여부, 합격여부, 최종결과, 코골이여부)
 		//   (합격여부 Y, N인거 관계없이 가져와야될듯. 그래야 사실상 여기서 관리자가 신청내역 조회가능함)
@@ -399,7 +432,7 @@ public class Responser
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 삭제 버튼 클릭 시
-	public void admin_selecteesManagePage_onDelete()
+	public static void admin_selecteesManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트로부터 받은 학번, 생활관명, 학기, 지망으로 신청 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
@@ -410,7 +443,7 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 입사자 조회 및 관리 - 입사자 등록(배정) 버튼 클릭 시
-	public void admin_boarderManagePage_onAllocate()
+	public static void admin_boarderManagePage_onAllocate(Protocol protocol, SocketHelper socketHelper)
 	{
 		//입사자 등록(배정) 버튼은 신청 목록에서 합격여부를 Y, 납부내역 Y, 결핵진단서 Y인 신청의 최종합격여부를 Y로 바꾼다.
 		//그리고나서 배정내역에 최종합격여부가 Y인 학생들을 배정한다.
@@ -430,7 +463,7 @@ public class Responser
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 조회 버튼 클릭 시
-	public void admin_boarderManagePage_onCheck()
+	public static void admin_boarderManagePage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 배정내역 테이블에서 이번 학기 배정내역 목록을 가져와 객체화한다. (학번, 호, 학기, 생활관명, 자리, 퇴사예정일)
 		//2. 배열화한다.
@@ -439,7 +472,7 @@ public class Responser
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 삭제 버튼 클릭 시
-	public void admin_boarderManagePage_onDelete()
+	public static void admin_boarderManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트로부터 받은 학번, 호, 학기, 생활관명으로 배정내역 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
@@ -449,7 +482,7 @@ public class Responser
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 등록 버튼 클릭 시
-	public void admin_boarderManagePage_onInsert()
+	public static void admin_boarderManagePage_onInsert(Protocol protocol, SocketHelper socketHelper)
 	{
 		//배정내역에 학생을 임의로 추가하기 위한 기능
 		//배정내역에 학생을 넣고, 신청 테이블에도 몇일식인지, 코골이여부를 기록하기 위해 INSERT해야됨.
@@ -465,7 +498,7 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 납부 여부 조회 및 관리 - 조회 버튼 클릭 시
-	public void admin_paymentManagePage_onCheck()
+	public static void admin_paymentManagePage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 신청 테이블에서 이번 학기 신청 목록을 가져와 객체화한다. (학번, 생활관명, 학기, 지망, 몇일식, 납부여부, 합격여부, 최종결과, 코골이여부)
 		//   (합격여부 Y 인 학생만 가져온다)
@@ -475,7 +508,7 @@ public class Responser
 	}
 	
 	//관리자 - 납부 여부 조회 및 관리 - 삭제 버튼 클릭 시
-	public void admin_paymentManagePage_onUpdate()
+	public static void admin_paymentManagePage_onUpdate(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트로부터 받은 학번, 생활관명, 학기로 납부여부 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 UPDATE쿼리를 쏜다.
@@ -485,7 +518,7 @@ public class Responser
 	}
 	
 	//관리자 - 납부 여부 조회 및 관리 - CSV 업로드 버튼 클릭 시
-	public void admin_paymentManagePage_onUpload()
+	public static void admin_paymentManagePage_onUpload(Protocol protocol, SocketHelper socketHelper)
 	{
 		//클라이언트로부터 CSV파일을 다운로드 받고, 이 CSV 파일로 신청 테이블에 납부여부를 Y로 바꾸기 위함.
 		
@@ -501,7 +534,7 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 서류 조회 및 제출 - 들어왔을 때
-	public void admin_documentManagePage_onEnter()
+	public static void admin_documentManagePage_onEnter(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 서류유형 ENUM을 배열화해서 목록을 만든다.
 		//2. 배열화한 목록을 직렬화해서 클라이언트로 전송한다.
@@ -512,7 +545,7 @@ public class Responser
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 조회 버튼 클릭 시
-	public void admin_documentManagePage_onCheck()
+	public static void admin_documentManagePage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 서류 테이블에서 이번 학기 서류제출내역 목록을 가져와 객체화한다. (학번, 서류유형, 제출일, 진단일, 서류저장경로, 유효여부)
 		//2. 배열화한다.
@@ -521,7 +554,7 @@ public class Responser
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 삭제 버튼 클릭 시
-	public void admin_documentManagePage_onDelete()
+	public static void admin_documentManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트로부터 받은 학번, 서류유형, 제출일로 서류 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
@@ -530,7 +563,7 @@ public class Responser
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 업로드 버튼 클릭 시
-	public void admin_documentManagePage_onUpload()
+	public static void admin_documentManagePage_onUpload(Protocol protocol, SocketHelper socketHelper)
 	{
 		//학생으로부터 오프라인으로 받은 서류를 대리제출 하기 위함.
 		
@@ -547,7 +580,7 @@ public class Responser
 	}
 	
 	//관리자 - 서류 조회 및 제출 - UPDATE 버튼 클릭 시
-	public void admin_documentManagePage_onUpdate()
+	public static void admin_documentManagePage_onUpdate(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트로부터 받은 학번, 서류유형, 제출일, 진단일로 서류 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 UPDATE쿼리를 쏜다.
@@ -555,7 +588,6 @@ public class Responser
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. UPDATE 쿼리 결과를 클라이언트에게 알려준다.
 	}
-	
 }
 
 //변경 로그
@@ -573,3 +605,6 @@ public class Responser
 
 //2019-12-07 v1.04
 //	사용자 페이지 오타 수정 -명근
+
+//2019-12-08 v1.05
+// static붙이고 인자 모두 추가 - 서희
