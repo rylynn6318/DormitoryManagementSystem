@@ -124,21 +124,8 @@ public class CheckRoomTabController extends InnerPageController
     {
     	String lastPassedStr = application.isLastPassed() == Bool.TRUE ? "합격" : "불합격";
     	String isPaidStr = application.isPaid() == Bool.TRUE ? "납부" : "미납";
-    	String mealTypeStr = "알 수 없음";
+    	String mealTypeStr = mealTypeIntToStr(application.getMealType());
     	String dormNameStr = application.getDormitoryName();
-    	
-    	switch(application.getMealType())
-    	{
-    	case 0:
-    		mealTypeStr = "식사안함";
-    		break;
-    	case 5:
-    		mealTypeStr = "5일식";
-    		break;
-    	case 7:
-    		mealTypeStr = "7일식";
-    		break;
-    	}
     	
     	select_result_label.setText(lastPassedStr);
     	isPaid_label.setText(isPaidStr);

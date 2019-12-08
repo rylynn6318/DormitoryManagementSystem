@@ -85,3 +85,7 @@ shared-class update log
 2019-12-08 23:19 v2.10
 	Shared Class에 PlacementHistory에 키로만 구성된 생성자 추가함.
 	Shared Class Export해서 적용함.
+	
+2019-12-08 23:35 v2.11
+	Shared Class에 Application에 mealType, isSnore로만 구성된 생성자 추가함.
+	Shared Class Export해서 적용함.

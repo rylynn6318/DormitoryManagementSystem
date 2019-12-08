@@ -486,7 +486,7 @@ public class Responser
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 삭제 버튼 클릭 시
-	public static Tuple<Bool, String> admin_boarderManagePage_onDelete()
+	public static Tuple<Bool, String> admin_boarderManagePage_onDelete(PlacementHistory data)
 	{
 		//1. 클라이언트로부터 받은 학번, 호, 학기, 생활관명으로 배정내역 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
