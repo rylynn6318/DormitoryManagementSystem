@@ -45,52 +45,99 @@ public class ServerTask implements Runnable {
                 }
                 break;
             case FILE:
-                switch ((Code2.FileCode) protocol.code2) {
-                    case UPLOAD:
-                        try {
-                            ProtocolHelper.downloadFileFrom(protocol);
-                            // 잘 받았으면 body 에 Bool.TRUE 담아서 전송
-                            socketHelper.write(
-                                    new Protocol
-                                            .Builder(ProtocolType.FILE, Direction.TO_CLIENT, protocol.code1, Code2.FileCode.UPLOAD_RESULT)
-                                            .body(ProtocolHelper.serialization(Bool.TRUE))
-                                            .build()
-                            );
-                        } catch (Exception e) {
-                            // 먼가 실패했을 경우 body 에 Bool.FALSE 담아서 전송
-                            try {
-                                socketHelper.write(
-                                        new Protocol
-                                                .Builder(ProtocolType.FILE, Direction.TO_CLIENT, protocol.code1, Code2.FileCode.UPLOAD_RESULT)
-                                                .body(ProtocolHelper.serialization(Bool.FALSE))
-                                                .build()
-                                );
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
-                            e.printStackTrace();
-                        }
-                        break;
-                    case REQUEST_DOWNLOAD:
-                        try {
-                            String path = (String) ProtocolHelper.deserialization(protocol.getBody());
-                            File file = Paths.get(path).toFile();
-                            socketHelper.write(
-                                    new Protocol
-                                            .Builder(ProtocolType.FILE, Direction.TO_CLIENT, protocol.code1, Code2.FileCode.UPLOAD_RESULT)
-                                            .build()
-                            );
-                        } catch (ClassNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                Code1.FileType fileType = (Code1.FileType) protocol.code1;
+                Code2.FileCode requestType = (Code2.FileCode) protocol.code2;
+                Code2.FileCode isSuccess = Code2.FileCode.FAIL;
+
+                switch (fileType){
+                    case MEDICAL_REPORT:
+                    case OATH:
+                        switch (requestType){
+                            case UPLOAD:
+                                //     업로드 받았을때
+                                //         받은 정보는 id와 파일
+                                //         현재 학기 쿼리해와서 저장한다.
+                                //         이름규칙은 [/파일종류/학기_학번.jpg]
+                                //         id를 이용해 디비에 관련 정보 저장
+                                //         성공 유무만 되돌려준다
+
+                                // 여기 Logic 코드
+
+                                try {
+                                    socketHelper.write(
+                                            new Protocol
+                                                    .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
+                                                    .build()
+                                    );
+                                } catch (Exception e) {
+                                    try {
+                                        // 프로토콜 전송에는 에러떠도 파일 자체는 받았으니 isSuccess 전송
+                                        socketHelper.write(
+                                                new Protocol
+                                                        .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
+                                                        .build()
+                                        );
+                                    } catch (IOException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                    e.printStackTrace();
+                                }
+                                break;
+                            case REQUEST:
+                                //     다운로드 요청 받았을때
+                                //         일단 body를 통해 id만 온 상황
+                                //         해당 id와 헤더에 있는 타입, 현재 학기로 서류 테이블 쿼리 수행한다.
+                                //         결과가 있다면 관련 정보를 다 알수 있다.
+                                //         해당 파일 소유자 학번과 파일을 리턴
+                                //         body = <String, byte[]>
+                                //         없다면 실패 리턴
+                                //         body = null
+                                //         클라이언트에서는 널체크 이후
+                                //         로직 수행
+
+                                String id = null;
+                                try {
+                                    id = (String) ProtocolHelper.deserialization(protocol.getBody());
+                                } catch (ClassNotFoundException e) {
+                                    e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                                String path = null;
+                                File file = Paths.get(path).toFile();
+
+                                try {
+                                    socketHelper.write(
+                                            new Protocol
+                                                    .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
+                                                    .build()
+                                    );
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    try {
+                                        socketHelper.write(
+                                                new Protocol
+                                                        .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
+                                                        .build()
+                                        );
+                                    } catch (IOException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                                break;
+                            case SUCCESS:
+                            case FAIL:
+                                default:
+                                break;
                         }
 
                         break;
-                    case UPLOAD_RESULT:
-                    case DOWNLOAD:
-                    default:
-                        // 이 경우는 클라이언트에서 올일 없다!
+                    case CSV:
+                        // CSV 파일의 경우 일방적인 전송밖에 없다
+                        // body에는 csv 파일 바이트만 있는 상황
+                        // 적당한곳에 csv파일 저장하고 로직 수행
                         break;
                 }
                 break;
