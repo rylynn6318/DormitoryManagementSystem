@@ -169,6 +169,8 @@ public class DormitoryManageTabController extends InnerPageController
     	check_dormitory_tableview.setItems(dormitoryList);
     }
     
+    //-----------------------------------------------------------------
+    
     private void deleteDormitory()
     {
     	String dormName = delete_dormName_textfield.getText();
@@ -213,6 +215,8 @@ public class DormitoryManageTabController extends InnerPageController
 		delete_dormName_textfield.setText(null);
 		delete_semester_textfield.setText(null);
     }
+    
+    //-----------------------------------------------------------------
     
     private void insertDormitory()
     {

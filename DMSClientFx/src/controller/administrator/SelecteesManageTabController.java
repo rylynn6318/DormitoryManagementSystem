@@ -123,6 +123,8 @@ public class SelecteesManageTabController extends InnerPageController
         	IOHandler.getInstance().showAlert(resultTuple.obj2);
         }
     }
+    
+    //-----------------------------------------------------------------
 
 	//서버에서 신청테이블->이번학기->객체 배열 쫙 긁어와서 tableview에 보여줌
     private void checkApplications()
@@ -165,6 +167,8 @@ public class SelecteesManageTabController extends InnerPageController
     	check_application_column_isSnore.setCellValueFactory(cellData -> cellData.getValue().isSnoreProperty());
     	check_application_tableview.setItems(applicationViewModels);
     }
+    
+    //-----------------------------------------------------------------
     
     private void deleteSelectee()
     {

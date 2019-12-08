@@ -177,6 +177,8 @@ public class PaymentManageTabController extends InnerPageController
     	check_application_tableview.setItems(applicationList);
     }
     
+    //-----------------------------------------------------------------
+    
     private void updatePayment()
     {
     	String id = update_id_textfield.getText();
@@ -244,6 +246,8 @@ public class PaymentManageTabController extends InnerPageController
 		update_isPaid_combobox.getSelectionModel().select(-1);
     }
     
+    //-----------------------------------------------------------------
+    
     private void selectFile()
     {
     	String selectedFileDirectory, currentFileDirectory;
@@ -278,6 +282,9 @@ public class PaymentManageTabController extends InnerPageController
 			if(isSucceed)
 			{
 				IOHandler.getInstance().showAlert("은행 파일이 업로드 되었습니다.");
+				
+				//TODO 여기서 전송해라!
+				
 				file_directory_label.setText("N/A");
 			}
 			else
