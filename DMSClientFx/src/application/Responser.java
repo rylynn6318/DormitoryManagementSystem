@@ -152,16 +152,16 @@ public class Responser
 	//------------------------------------------------------------------------
 	
 	//학생 - 생활관 신청 조회 - 들어왔을 때
-	public static Tuple<String, Bool> student_CheckApplicationPage_onEnter()
+	public static Tuple<Bool, String> student_CheckApplicationPage_onEnter()
 	{
-		//1. 신청내역 조회 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
+		//1. 신청내역 조회 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 안내사항을, FALSE이면 못들어가게 막고 실패원인 메시지도 전달
 		Protocol protocol = eventProtocolBuilder(Code1.Page.신청조회, Code2.Event.REFRESH, null);
 		
 		//(2. 서버는 스케쥴 테이블에서 비고(안내사항)를 가져온다.)
 		//(3. 서버는 스케쥴 객체를 클라이언트에게 전송한다.)
 		
-		//4. 서버에서 받은 비고(안내사항)와 진입여부를 표시한다.
-		Tuple<String, Bool> result = (Tuple<String, Bool>) sendAndReceive(protocol);
+		//4. 서버에서 받은 진입여부와 메시지를 표시한다.(TRUE이면 안내사항을, FALSE이면 못들어가게 막고 실패원인 메시지도 전달)
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
 		
 		return result;
 	}
@@ -184,43 +184,58 @@ public class Responser
 	//------------------------------------------------------------------------
 	
 	//학생 - 생활관 고지서 조회 - 들어왔을 때
-	public void student_CheckBillPage_onEnter()
+	public static Tuple<Bool, String> student_CheckBillPage_onEnter()
 	{
-		//1. 고지서 조회 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
+		//1. 고지서 조회 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 진행, FALSE이면 못들어가게 막고 실패원인 메시지도 전달
+		Protocol protocol = eventProtocolBuilder(Code1.Page.고지서조회, Code2.Event.REFRESH, null);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//학생 - 생활관 고지서 조회 - 조회 버튼 클릭 시
-	public void student_CheckBillPage_onCheck()
+	public static String student_CheckBillPage_onCheck()
 	{
-		//1. 서버에게 생활관 고지서 조회 요청을 한다.  
+		//1. 서버에게 생활관 고지서 조회 요청을 한다.
+		Protocol protocol = eventProtocolBuilder(Code1.Page.고지서조회, Code2.Event.CHECK, UserInfo.getInstance().account);
+		
 		//(2. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역 조회 -> 내역 있으면 다음으로, 없으면 없다고 클라이언트에게 알려줌)
 		//(3. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역의 식사구분, 생활관구분을 알아낸다.)
 		//(4. 서버는 해당 생활관, 해당 식비로 총 금액을 알아낸다.)
 		//(5. 서버는 랜덤 생성한 계좌번호와, 은행 명, 계산한 식비를 객체화해서 클라이언트에게 전송한다.)
+		
 		//6. 서버가 보낸 정보를 받아서 대충 메모장으로 띄워준다.
+		String result = (String) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//------------------------------------------------------------------------
 	
 	//학생 - 생활관 호실 조회 - 들어왔을 때
-	public void student_checkRoomPage_onEnter()
+	public static Tuple<Bool, String> student_checkRoomPage_onEnter()
 	{
 		//1. 호실 조회 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
 		//(2. 서버는 스케쥴 테이블에서 비고(안내사항)를 가져온다.)
 		//(3. 서버는 스케쥴 객체를 클라이언트에게 전송한다.)
 		//4. 서버로부터 받은 비고(안내사항)을 표시한다.
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.호실조회, Code2.Event.REFRESH, null);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//학생 - 생활관 호실 조회 - 조회 버튼 클릭 시
-	public void student_checkRoomPage_onCheck()
+	public static Tuple<Application, PlacementHistory> student_checkRoomPage_onCheck()
 	{
 		//1. 서버에게 생활관 호실 조회 요청을 한다.   
+		Protocol protocol = eventProtocolBuilder(Code1.Page.호실조회, Code2.Event.CHECK, null);
 		//(2. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 최종합격여부가 T인 내역 조회) 
 		//(3-1. 서버는 내역이 없는 경우 불합격이라고 클라이언트에게 알려준다.)
 		//(3-2. 서버는 내역이 있는 경우 신청 테이블에서 최종합격여부, 납부여부, 식비구분, 생활관, 호실유형(이건 일반실 고정)을 조회한다.)
 		//(4. 서버는 배정내역 테이블에서 해당 학번이 배정되있는 호실과 침대번호를 가져온다.)
 		//(5. 서버는 3-2와 4를 합쳐 객체화한다. 그리고 이것을 클라이언트에게 전송한다.)
-		//6. 서버로부터 받은 객체를 역직렬화, UI에 표기한다
+		//6. 서버로부터 받은 신청, 배정내역을 역직렬화, UI에 표기한다
+		Tuple<Application, PlacementHistory> result = (Tuple<Application, PlacementHistory>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//------------------------------------------------------------------------

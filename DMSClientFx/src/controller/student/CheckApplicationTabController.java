@@ -81,7 +81,8 @@ public class CheckApplicationTabController implements Initializable
     
     private void checkSchedule()
     {
-    	Tuple<String, Bool> resultTuple = Responser.student_CheckApplicationPage_onEnter();
+    	//서버와 통신해보고, Bool이 True이면 String에는 안내사항이, Bool이 False이면 String에는 진입불가원인이 나온다.
+    	Tuple<Bool, String> resultTuple = Responser.student_CheckApplicationPage_onEnter();
         
 		//서버랑 통신이 됬는가?
         if(resultTuple == null)
@@ -93,18 +94,18 @@ public class CheckApplicationTabController implements Initializable
         else
         {
         	//스케쥴 체크가 됬는가?
-        	//스케쥴 때문에 진입 불가인 경우 tuple의 두번째 항목이 null로 반환된다.
-            if(resultTuple.obj2 == Bool.FALSE)
+        	//스케쥴 때문에 진입 불가인 경우 tuple의 첫번째 항목이 false로 반환된다.
+            if(resultTuple.obj1 == Bool.FALSE)
             {
-            	IOHandler.getInstance().showAlert(resultTuple.obj1);
+            	IOHandler.getInstance().showAlert(resultTuple.obj2);
             	//여기서 페이지 닫게 해주자.
             	//return;
             }
             else
             {
             	//안내사항 표시
-                if(resultTuple.obj1 != null)
-                	info_textarea.setText(resultTuple.obj1);
+                if(resultTuple.obj2 != null)
+                	info_textarea.setText(resultTuple.obj2);
             }
         }
     }

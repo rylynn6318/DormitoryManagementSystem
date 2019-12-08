@@ -3,12 +3,16 @@ package controller.student;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import application.IOHandler;
+import application.Responser;
+import enums.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import models.*;
 
 public class CheckRoomTabController implements Initializable 
 {
@@ -43,7 +47,7 @@ public class CheckRoomTabController implements Initializable
 		System.out.println("생활관 호실 조회 새로고침됨");
 		
 		//네트워킹
-		info_textarea.setText("서버에서 받아온 안내사항입니다.");
+		checkSchedule();
 	}
 	
 	//---------------------이벤트---------------------
@@ -57,9 +61,89 @@ public class CheckRoomTabController implements Initializable
 	
 	//---------------------로직---------------------
     
+    private void checkSchedule()
+	{
+		Tuple<Bool, String> resultTuple = Responser.student_checkRoomPage_onEnter();
+		
+		//서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	//여기서 페이지 닫게 해주자.
+        	//return;
+        }
+        else
+        {
+        	//스케쥴 체크가 됬는가?
+        	//스케쥴 때문에 진입 불가인 경우 tuple의 첫번째 항목이 false로 반환된다.
+            if(resultTuple.obj1 == Bool.FALSE)
+            {
+            	IOHandler.getInstance().showAlert(resultTuple.obj2);
+            	//여기서 페이지 닫게 해주자.
+            	//return;
+            }
+            else
+            {
+            	info_textarea.setText(resultTuple.obj2);
+            }
+        }
+	}
+    
     private void checkRoom()
     {
     	//여기는 뭐 검사할 필요없이 바로 서버로 요청날림.
+    	Tuple<Application, PlacementHistory> resultTuple = Responser.student_checkRoomPage_onCheck();
+    	
+    	//서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        //받은 신청, 배정내역 분리 및 명시
+        Application application = resultTuple.obj1;
+        PlacementHistory placementHistory = resultTuple.obj2;
+        
+        //UI에 표시
+        setApplicationInfo(application);
+        setPlacementHistoryInfo(placementHistory);
+    }
+    
+    private void setApplicationInfo(Application application)
+    {
+    	String lastPassedStr = application.isLastPassed() == Bool.TRUE ? "합격" : "불합격";
+    	String isPaidStr = application.isPaid() == Bool.TRUE ? "납부" : "미납";
+    	String mealTypeStr = "알 수 없음";
+    	String dormNameStr = application.getDormitoryName();
+    	
+    	switch(application.getMealType())
+    	{
+    	case 0:
+    		mealTypeStr = "식사안함";
+    		break;
+    	case 5:
+    		mealTypeStr = "5일식";
+    		break;
+    	case 7:
+    		mealTypeStr = "7일식";
+    		break;
+    	}
+    	
+    	select_result_label.setText(lastPassedStr);
+    	isPaid_label.setText(isPaidStr);
+    	mealType_label.setText(mealTypeStr);
+    	dorm_label.setText(dormNameStr);
+    }
+    
+    private void setPlacementHistoryInfo(PlacementHistory placementHistory)
+    {
+    	String roomTypeStr = "일반실";
+    	String roomIdStr = String.valueOf(placementHistory.roomId);
+    	String seatStr = String.valueOf(placementHistory.roomId);
+    	
+    	roomType_label.setText(roomTypeStr);
+    	roomAndBed_label.setText(roomIdStr + " / " + seatStr);
     }
 
 }
