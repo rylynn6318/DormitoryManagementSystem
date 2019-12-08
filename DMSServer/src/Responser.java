@@ -60,7 +60,8 @@ public class Responser
 //		boolean isPassed = DifferentClass.checkSchedule();
 //		
 //		//2. 받은 요청의 헤더에서 학번을 알아낸다.
-//		String id = DifferentClass2.checkId();
+//		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
+//   	//String id = a.accountId;
 //		
 //		//3. 학생테이블에서 학번으로 조회하여 성별을 알아낸다.
 //		Gender g = DifferentClass2.getGender();
@@ -176,7 +177,8 @@ public class Responser
 		public static void student_submitApplicationPage_onCancel(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException
 		{
 			//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-			String id = (String) ProtocolHelper.deserialization(protocol.getBody());
+			Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
+			String id = a.accountId;
 			
 			//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역이 있는지 조회 -> TRUE 이면 다음으로, FALSE이면 클라이언트에게 내역 없다고 알려줌.
 			boolean isExist = false;
@@ -237,7 +239,8 @@ public class Responser
 		ArrayList<Application> applicationResult = new ArrayList<>();
 		ArrayList<Application> passedApplicationResult = new ArrayList<>();
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
+		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
+		String id = a.accountId;
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회.
 		applicationResult = ApplicationParser.getApplicationResult(id);
 		//	 (클라이언트의 '생활관 입사지원 내역' 테이블뷰에 표시할 것임)
@@ -268,7 +271,8 @@ public class Responser
 	{
 		int cost;
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		String id = (String) ProtocolHelper.deserialization(protocol.getBody()); //이 부분 확인해주세요
+		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
+		String id = a.accountId;
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역 조회 -> 내역 있으면 다음으로, 없으면 없다고 클라이언트에게 알려줌
 		try {
 			if(!ApplicationParser.isExistPassState(id))
@@ -303,10 +307,8 @@ public class Responser
 	//학생 - 생활관 호실 조회 - 들어왔을 때
 	public static void student_checkRoomPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
-		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
-		String id = a.accountId;
 		//1. 스케쥴을 확인하고 호실 조회 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-		if(ScheduleParser.isAdmissible((Page)protocol.code1) && ApplicationParser.isExistLastPass(id))
+		if(ScheduleParser.isAdmissible((Page)protocol.code1))
 		{
 			//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
 			String notice = ScheduleParser.getDescription((Page)protocol.code1);
@@ -327,7 +329,7 @@ public class Responser
 					Direction.TO_CLIENT, 
 					Code1.NULL, 
 					Code2.NULL
-					).body(ProtocolHelper.serialization("합격 내역이 없습니다.")).build());
+					).body(ProtocolHelper.serialization("신청조회기간이 아닙니다.")).build());
 		}
 	}
 	
@@ -336,7 +338,8 @@ public class Responser
 	{
 		///////////////////제가 만드는중 ★ ㅡ서희ㅡ////////////////////////////
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
+		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
+		String id = a.accountId;
 		
 		//3-2. 내역이 있는 경우 신청 테이블에서 최종합격여부, 납부여부, 식비구분, 생활관, 호실유형(이건 일반실 고정)을 조회한다.
 		Application lastPassedApplication = ApplicationParser.getLastPassedApplication(id);
