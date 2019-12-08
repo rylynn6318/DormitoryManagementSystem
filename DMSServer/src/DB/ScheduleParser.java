@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import enums.Code1.Page;
+import models.Schedule;
 
 public class ScheduleParser
 {
@@ -69,5 +70,19 @@ public class ScheduleParser
 		DBHandler.INSTANCE.returnConnection(connection);
 		
 		return result;
+	}
+	
+	public static Schedule getSchedule(Page page) throws Exception
+	{
+		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE (`스케쥴 할일 코드_ID` =" + String.valueOf(page.getCode()) + ")";
+		
+		Connection connection = DBHandler.INSTANCE.getConnetion();
+		PreparedStatement state = connection.prepareStatement(sql);
+		
+		ResultSet resultSet = state.executeQuery(sql);
+		resultSet.next();
+		Schedule schedule = new Schedule(resultSet.getString("스케줄명") , resultSet.getInt("스케쥴 할일 코드_ID"), resultSet.getDate("시작일"), resultSet.getDate("종료일"), resultSet.getString("비고"));
+		return schedule;
+		
 	}
 }
