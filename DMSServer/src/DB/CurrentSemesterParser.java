@@ -66,6 +66,6 @@ public class CurrentSemesterParser
 		}
 		
 		System.out.println("CurrentSemesterParser 오류");
-		return 0;
+		return result;
 	}
 }
