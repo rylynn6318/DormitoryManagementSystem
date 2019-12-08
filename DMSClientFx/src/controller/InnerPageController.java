@@ -26,6 +26,8 @@ import tableViewModel.ScheduleViewModel;
 //Login, Main을 제외한 페이지가 공통적으로 가지는 메소드를 가짐.
 public class InnerPageController implements Initializable 
 {
+	protected final String[] comboboxItem_boolean = {null, "T", "F"};
+	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1)
 	{

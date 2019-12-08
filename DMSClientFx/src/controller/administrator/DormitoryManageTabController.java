@@ -88,8 +88,6 @@ public class DormitoryManageTabController extends InnerPageController
     @FXML
     private ComboBox<String> insert_mealDuty_combobox;
     
-    private final String[] comboboxItem_boolean = {null, "T", "F"};
-    
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
