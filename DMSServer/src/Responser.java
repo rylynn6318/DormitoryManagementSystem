@@ -129,7 +129,7 @@ public class Responser
 	}
 	
 	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시
-	public static void student_submitApplicationPage_onSubmit(Protocol protocol, SocketHelper socketHelper) throws IOException, SQLException, ClassNotFoundException
+	public static void student_submitApplicationPage_onSubmit(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다.
 		Tuple<Account, ArrayList<Application>> t =  (Tuple<Account, ArrayList<Application>>) ProtocolHelper.deserialization(protocol.getBody());
@@ -154,9 +154,13 @@ public class Responser
 		ArrayList<Application> A = t.obj2;
 		//4. 해당 배열을 신청 데이트에 INSERT한다.
 		Iterator<Application> appIter = A.iterator();
+		Gender gender = StudentParser.getGender(t.obj1.accountId);
+		int s = CurrentSemesterParser.getCurrentSemester();
 		while(appIter.hasNext())  //(int choice, String mealType, Bool isSnore, String dormitoryName, Gender gender, int semesterCode, String id)
 		{
 			Application temp = appIter.next();
+			temp.setGender(gender.gender.charAt(0));
+			temp.setSemesterCode(s);
 			ApplicationParser.insertApplication(temp.getChoice(), temp.getMealType(), temp.isSnore(), temp.getDormitoryName(), temp.getGender(), temp.getSemesterCode(), id); //이거 풀하고 다시 짤거에요
 		}
 		//5. 클라이언트에게 성공 여부를 알려준다.(성공/DB연결 오류로 인한 실패/DB사망/알수없는오류 등등...)
