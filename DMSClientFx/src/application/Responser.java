@@ -1,5 +1,6 @@
 package application;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -115,7 +116,7 @@ public class Responser
 	
 	//------------------------------------------------------------------------
 	
-	//학생 - 생활관 신청 조회 - 들어왔을 때
+	//학생 - 생활관 신청 조회 - 들어왔을 때 (2019-12-08 명근 수정)
 	public static Tuple<Bool, String> student_CheckApplicationPage_onEnter()
 	{
 		//1. 신청내역 조회 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 안내사항을, FALSE이면 못들어가게 막고 실패원인 메시지도 전달
@@ -130,7 +131,7 @@ public class Responser
 		return result;
 	}
 	
-	//학생 - 생활관 신청 조회 - 조회 버튼 클릭 시
+	//학생 - 생활관 신청 조회 - 조회 버튼 클릭 시 (2019-12-08 명근 수정)
 	public static Tuple<ArrayList<Application>, ArrayList<Application>> student_CheckApplicationPage_onCheck()
 	{
 		//1. 서버에게 생활관 신청 조회 요청을 한다. 
@@ -146,8 +147,8 @@ public class Responser
 	}
 	
 	//------------------------------------------------------------------------
-	
-	//학생 - 생활관 고지서 조회 - 들어왔을 때
+	 
+	//학생 - 생활관 고지서 조회 - 들어왔을 때 (2019-12-08 명근 수정)
 	public static Tuple<Bool, String> student_CheckBillPage_onEnter()
 	{
 		//1. 고지서 조회 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 진행, FALSE이면 못들어가게 막고 실패원인 메시지도 전달
@@ -156,7 +157,7 @@ public class Responser
 		return result;
 	}
 	
-	//학생 - 생활관 고지서 조회 - 조회 버튼 클릭 시
+	//학생 - 생활관 고지서 조회 - 조회 버튼 클릭 시 (2019-12-08 명근 수정)
 	public static String student_CheckBillPage_onCheck()
 	{
 		//1. 서버에게 생활관 고지서 조회 요청을 한다.
@@ -174,7 +175,7 @@ public class Responser
 	
 	//------------------------------------------------------------------------
 	
-	//학생 - 생활관 호실 조회 - 들어왔을 때
+	//학생 - 생활관 호실 조회 - 들어왔을 때 (2019-12-08 명근 수정)
 	public static Tuple<Bool, String> student_checkRoomPage_onEnter()
 	{
 		//1. 호실 조회 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
@@ -187,11 +188,11 @@ public class Responser
 		return result;
 	}
 	
-	//학생 - 생활관 호실 조회 - 조회 버튼 클릭 시
+	//학생 - 생활관 호실 조회 - 조회 버튼 클릭 시 (2019-12-08 명근 수정)
 	public static Tuple<Application, PlacementHistory> student_checkRoomPage_onCheck()
 	{
 		//1. 서버에게 생활관 호실 조회 요청을 한다.   
-		Protocol protocol = eventProtocolBuilder(Code1.Page.호실조회, Code2.Event.CHECK, null);
+		Protocol protocol = eventProtocolBuilder(Code1.Page.호실조회, Code2.Event.CHECK, UserInfo.getInstance().account);
 		//(2. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 최종합격여부가 T인 내역 조회) 
 		//(3-1. 서버는 내역이 없는 경우 불합격이라고 클라이언트에게 알려준다.)
 		//(3-2. 서버는 내역이 있는 경우 신청 테이블에서 최종합격여부, 납부여부, 식비구분, 생활관, 호실유형(이건 일반실 고정)을 조회한다.)
@@ -204,7 +205,7 @@ public class Responser
 	
 	//------------------------------------------------------------------------
 	
-	//학생 - 서류 제출 - 들어왔을 때
+	//학생 - 서류 제출 - 들어왔을 때 (2019-12-08 명근 수정)
 	public static ArrayList<Code1.FileType> student_submitDocumentPage_onEnter()
 	{
 		//실제 원스톱을 기반으로, 학생이 서류 제출하는건 아무때나 할 수 있다고 하였다.
@@ -217,13 +218,17 @@ public class Responser
 		return result;
 	}
 	
-	//학생 - 서류 제출 - 제출 버튼 클릭 시(파일 업로드)
+	//학생 - 서류 제출 - 제출 버튼 클릭 시(파일 업로드) (2019-12-08 명근 수정)
 	public static Tuple<Bool, String> student_submitDocumentPage_onSubmit(Code1.FileType fileType, Serializable data)
 	{
+		//TODO 바로 파일을 업로드할지, 이벤트 한번 보내고 해야하는지 모름.
+		//이대로 보내면 누가보내는지 모른다!!!
 		//1. 서버로 파일을 업로드한다.
 		Protocol protocol = fileProtocolBuilder(fileType, FileCode.UPLOAD, data);
+		
 		//(2. 서버는 컴퓨터 내 저장할 공간에 빈공간이 10MB보다 큰지 확인한다. -> 빈공간이 10MB보다 크면 진행, 작으면 클라이언트에게 안된다고 알려줌.)
 		//(3. 서버는파일 저장 성공/실패 여부를 클라이언트에게 알려준다.)
+		
 		//3. 결과를 메시지로 띄운다. 
 		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
 		return result;
@@ -231,31 +236,70 @@ public class Responser
 	
 	//------------------------------------------------------------------------
 	
-	//학생 - 서류 조회 - 들어왔을 때
-	public void student_checkDocumentPage_onEnter()
+	//학생 - 서류 조회 - 들어왔을 때 (2019-12-08 명근 수정)
+	public static ArrayList<Code1.FileType> student_checkDocumentPage_onEnter()
 	{
 		//1. 서버에게 서류 조회 페이지 들어왔다고 알려준다.
 		//(2. 서버는 서류 유형을 객체화 배열화하여 클라이언트로 전송한다.)
 		//3. 받은 배열을 역직렬화하여 서류유형 combobox에 표시한다
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.서류조회, Code2.Event.REFRESH, null);
+		ArrayList<Code1.FileType> result = (ArrayList<Code1.FileType>) sendAndReceive(protocol);
+		return result;
 	}
 	
-	//학생 - 서류 조회 - 조회 버튼 클릭 시
-	public void student_checkDocumentPage_onCheck()
+	//학생 - 서류 조회 - 조회 버튼 클릭 시 (2019-12-08 명근 수정)
+	public static Tuple<Bool, Document> student_checkDocumentPage_onCheck(Code1.FileType fileType)
 	{
 		//1. 서버에게 서류 조회 요청을 한다.(서류유형을 보내서, 어떤 서류를 조회하려는지 알려준다)
 		//(2. 서버는 서류 테이블에서 해당 학번이 이번 학기에 제출한 내역 중 서류유형이 일치하는 것을 찾는다. -> 있으면 진행, 없으면 없다고 알려줌)
 		//(3. 서버는 서류 테이블에서 서류유형, 제출일시, 진단일시, 파일경로를 알아내어 전송한다.)
 		//4. 제출일시, 진단일시, 파일경로를 표시한다.
+		
+		//어느 파일을 조회하려는지와 학번(계정)을 보낸다.
+		Tuple <Account, Code1.FileType> data = new Tuple<Account, Code1.FileType>(UserInfo.getInstance().account, fileType);
+		
+		//프로토콜 생성
+		Protocol protocol = eventProtocolBuilder(Code1.Page.서류조회, Code2.Event.CHECK, data);
+		
+		//통신하고 받았을 때 Bool이 True이면 정상적인 Document, False이면 서류 내역이 존재하지 않음.
+		//객체가 null이면 통신실패다. 즉, Bool=True -> 성공, Bool=False -> 내역없음, null=통신실패
+		Tuple<Bool, Document> result = (Tuple<Bool, Document>) sendAndReceive(protocol);
+		
+		return result;
 	}
 	
-	//학생 - 서류 조회 - 다운로드 버튼 클릭 시(파일 다운로드)
-	public void student_checkDocumentPage_onDownlaod()
+	//학생 - 서류 조회 - 다운로드 버튼 클릭 시(파일 다운로드) (2019-12-08 명근 수정)
+	public static File student_checkDocumentPage_onDownlaod(Code1.FileType fileType)
 	{
 		//1. 남은 용량이 10MB 이상인지 체크한다 -> 10MB 이상이면 다음, 10MB 이하면 중단
 		//2. 서버에게 서류 조회 요청을 한다.(파일경로를 보내서, 어떤 파일을 다운하려는지 알려준다)
 		//(3. 서버는 해당 파일 경로로 파일을 찾는다. -> 파일이 있으면 진행, 없으면 없다고 알려줌(이땐 버그라고 봐야할듯))
 		//(4. 서버는 파일을 찾았으면 클라이언트에 업로드한다.)
 		//5. 다운로드 받은 파일을 대충 바탕화면에 저장하고 연다.
+		
+		//파일 다운로드 요청 프로토콜 생성
+		Protocol requestProtocol = fileProtocolBuilder(fileType, Code2.FileCode.REQUEST_DOWNLOAD, UserInfo.getInstance().account);
+		
+		//응답 받음. 반환값이 null이면 통신 실패, Bool이 True면 OK, False이면 거절, 사유는 String에. 
+		Tuple<Bool, String> requestResult = (Tuple<Bool, String>) sendAndReceive(requestProtocol);
+		
+		if(requestResult == null)
+			return null;
+		
+		if(requestResult.obj1 == Bool.FALSE)
+		{
+			//TODO : 여기는 거절인데, 거절사유를 넘겨주던가 해야됨. 함수 분리하는게 나을지도.
+			String rejectMsg = requestResult.obj2;
+			return null;
+		}
+		
+		//파일 다운로드 프로토콜 생성
+		Protocol fileProtocol = fileProtocolBuilder(fileType, Code2.FileCode.DOWNLOAD, null);
+		
+		//반환값이 null이면 에러임.
+		File result = (File) sendAndReceive(requestProtocol);
+		return result;
 	}
 	
 	//-------------------------------------------------------------------------
@@ -456,7 +500,7 @@ public class Responser
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 	}
 	
-	//관리자 - 납부 여부 조회 및 관리 - 삭제 버튼 클릭 시
+	//관리자 - 납부 여부 조회 및 관리 - UPDATE 버튼 클릭 시
 	public void admin_paymentManagePage_onUpdate()
 	{
 		//1. 클라이언트로부터 받은 학번, 생활관명, 학기로 납부여부 테이블에서 조회한다.
@@ -568,7 +612,7 @@ public class Responser
 		try
 		{
 	        protocol = new Protocol.Builder(
-	        		ProtocolType.EVENT, 
+	        		ProtocolType.FILE, 
 	        		Direction.TO_SERVER, 
 	        		fileType, 
 	        		fileCode
