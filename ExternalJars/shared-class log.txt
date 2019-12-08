@@ -80,3 +80,7 @@ shared-class update log
 2019-12-08 22:50 v2.09
 	ProtocolHelper에 파일 업/다운로드 기능 추가
 	Shared Class Export해서 적용함.
+
+2019-12-08 23:40 v2.10
+	ProtocolHelper에 파일 업/다운로드 기능 개선
+	Shared Class Export해서 적용함.

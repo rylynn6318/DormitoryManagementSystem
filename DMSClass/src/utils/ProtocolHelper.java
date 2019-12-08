@@ -9,12 +9,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import enums.Bool;
 import enums.Code1;
+import enums.Code2;
 import enums.ProtocolType;
 import models.Tuple;
 
@@ -37,27 +40,31 @@ public final class ProtocolHelper {
         }
     }
 
-    public static void download(Protocol fileProtocol) throws Exception {
+    public static void downloadFileFrom(Protocol fileProtocol) throws Exception {
         if (fileProtocol.type != ProtocolType.FILE)
             throw new Exception("파일 프로토콜이 아닌것을 ProtocolHelper.download() 인자로 넘김!");
 
         Tuple<String, byte[]> filedata = (Tuple<String, byte[]>) deserialization(fileProtocol.getBody());
 
-        Code1.FileType type = (Code1.FileType) fileProtocol.code1;
-
-        write(type.name(), filedata.obj1 + "." + type.extension, filedata.obj2);
+        write(Paths.get(filedata.obj1), filedata.obj2);
     }
 
-    static Tuple<String, byte[]> fileToTuple(String id, int semester, File file) throws IOException {
+    public static byte[] getBodyBytesFrom(Code1.FileType type, String id, int semester, File file) throws IOException {
         byte[] filebytes = Files.readAllBytes(file.toPath());
 
-        String idsem = semester + "_" + id;
+        Path idsem = getFilePath(type, semester, id);
 
-        return new Tuple<>(idsem, filebytes);
+        Tuple<String, byte[]> body = new Tuple<>(idsem.toString(), filebytes);
+
+        return serialization(body);
     }
 
-    static void write(String path, String filename, byte[] bytes) throws IOException {
-        File file = new File(path, filename);
+    public static Path getFilePath(Code1.FileType type, int semester, String id){
+        return Paths.get(type.name(), semester + "_" + id + "." + type.extension);
+    } 
+
+    static void write(Path path, byte[] bytes) throws IOException {
+        File file = path.toFile();
         // 해당 파일이 있을경우 삭제
         file.delete();
         FileOutputStream fos = new FileOutputStream(file);
@@ -108,7 +115,7 @@ public final class ProtocolHelper {
     }
 
     // 테스트 안됨!
-    static Protocol merge(final byte[] packet) throws IOException, Exception {
+    private static Protocol merge(final byte[] packet) throws IOException, Exception {
         List<Protocol> tmp = new ArrayList<>();
 
         int chunk_size = 0;

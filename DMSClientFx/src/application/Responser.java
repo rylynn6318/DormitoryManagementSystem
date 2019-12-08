@@ -209,7 +209,7 @@ public class Responser
 	}
 	
 	//학생 - 서류 제출 - 제출 버튼 클릭 시(파일 업로드) (2019-12-08 명근 수정)
-	public static Tuple<Bool, String> student_submitDocumentPage_onSubmit(Code1.FileType fileType, Serializable data)
+	public static Tuple<Bool, String> student_submitDocumentPage_onSubmit(Code1.FileType fileType, File file)
 	{
 		//TODO 바로 파일을 업로드할지, 이벤트 한번 보내고 해야하는지 모름.
 		//이대로 보내면 누가보내는지 모른다!!!
