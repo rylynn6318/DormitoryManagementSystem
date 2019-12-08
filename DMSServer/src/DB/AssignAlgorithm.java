@@ -17,7 +17,7 @@ public class AssignAlgorithm
 	
 	public static void passUpdate() throws SQLException, ClassNotFoundException
 	{	
-		String sql ="SELECT ID, 납부여부, 합격여부, 최종결과 FROM " + DBHandler.DB_NAME + ".신청";
+		String sql ="SELECT `ID`, `납부여부`, `합격여부`, `최종결과` FROM " + DBHandler.DB_NAME + ".신청";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet purs = state.executeQuery();				// rs 는 지금 id 납부여부 합격여부가 최종결과가 들어있다 신청테이블의
@@ -26,10 +26,10 @@ public class AssignAlgorithm
 		while(purs.next())
 		{
 			boolean document = false; // 유효여부, 진단일, 서류유형이 적합하면 document = true
-			String sql1 = "SELECT 확인여부 FROM " + DBHandler.DB_NAME + ".서류 WHERE 서류유형 = 1 and 진단일 BETWEEN '19/01/01' and '19/09/01 ' and 학생_ID = " + purs.getString("ID");
+			String sql1 = "SELECT `확인여부` FROM " + DBHandler.DB_NAME + ".서류 WHERE `서류유형` = '1' and `유효여부` = 'Y' ' and `학생_ID` = '" + purs.getString("ID")+"'";
 			state1 = connection.prepareStatement(sql1);
 			ResultSet purs1 = state1.executeQuery();
-			String sql2 = "update Prototype.신청  set 최종결과 = 'Y' WHERE (ID = " + purs1.getString("학생_ID")+")";   // 납부여부 Y 결핵 통과 Y 합격여부 Y면 해당 ID의 최종결과 Y 
+			String sql2 = "update Prototype.신청  set `최종결과` = 'Y' WHERE ID = '" + purs1.getString("학생_ID")+"'";   // 납부여부 Y 결핵 통과 Y 합격여부 Y면 해당 ID의 최종결과 Y 
 			state2 = connection.prepareStatement(sql2);
 
 			if(purs1.next())
@@ -52,7 +52,7 @@ public class AssignAlgorithm
 	
 	public static void setCurrentSemester() throws ClassNotFoundException, SQLException
 	{
-		String sql = "SELECT 학기 FROM " + DBHandler.DB_NAME + ".신청 ORDER BY 학기 DESC LIMIT 1"; //신청테이블에서 하나만 가져와서 그 학기를 봄
+		String sql = "SELECT `학기` FROM " + DBHandler.DB_NAME + ".신청 ORDER BY `학기` DESC LIMIT '1'"; //신청테이블에서 하나만 가져와서 그 학기를 봄
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery(sql);
@@ -117,7 +117,7 @@ public class AssignAlgorithm
 		AssignRoomInfo[] P4 = MakeAllRoomInfo.getP4();
 		AssignRoomInfo[] SN = MakeAllRoomInfo.getSN();
 		AssignRoomInfo[] SY = MakeAllRoomInfo.getSY();
-		String sql = "SELECT 호, 생활관명, 학기 FROM " + DBHandler.DB_NAME + ".호실정보";
+		String sql = "SELECT `호`, `생활관명`, `학기` FROM " + DBHandler.DB_NAME + ".호실정보";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery(sql);
@@ -265,7 +265,7 @@ public class AssignAlgorithm
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//배정내역을 불러와서 서버 메모리에 있는 해당 생활관 호실에 배정내역이 있으면 생활관 호실에 학번을 넣어줌
-		String sql1 = "SELECT 호실정보_호, 자리, 학생_ID FROM " + DBHandler.DB_NAME + ".배정내역 WHERE 퇴사예정일 > "+ availablePeriod;// 여러 배정내역 (몇년 전꺼까지도) 중에서 아직 쓰고있는 방 예를들어 지금 2학기인데 1학기 1년 입사자
+		String sql1 = "SELECT `호실정보_호`, `자리`, `학생_ID` FROM " + DBHandler.DB_NAME + ".배정내역 WHERE `퇴사예정일` > '"+ availablePeriod + "'";// 여러 배정내역 (몇년 전꺼까지도) 중에서 아직 쓰고있는 방 예를들어 지금 2학기인데 1학기 1년 입사자
 										//호 옆에 생활관명 넣어야함
 		PreparedStatement state1 = connection.prepareStatement(sql);
 		ResultSet rs1 = state1.executeQuery(sql);
@@ -377,7 +377,7 @@ public class AssignAlgorithm
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//신청자가 신청한 생활관을 가져와서 메모리에 있는 현재 배정된 내역과 대조하면서 방에 넣어줌
-		sql = "SELECT ID, 생활관명, 지망 FROM " + DBHandler.DB_NAME + ".신청 WHERE 최종결과 = 'Y' order by 생활관명, 코골이여부";  // 최종결과가 Y인 신청에 대해 정보를 가져옴
+		sql = "SELECT `ID`, `생활관명`, `지망` FROM " + DBHandler.DB_NAME + ".신청 WHERE `최종결과` = 'Y' order by `생활관명`, `코골이여부`";  // 최종결과가 Y인 신청에 대해 정보를 가져옴
 		PreparedStatement state2 = connection.prepareStatement(sql);
 		ResultSet rs2 = state2.executeQuery(sql);		
 		while(rs2.next())
@@ -687,8 +687,7 @@ public class AssignAlgorithm
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//이제 업데이트
-		sql = "SELECT ID, 생활관명, 지망 FROM " + DBHandler.DB_NAME + ".신청 WHERE 최종결과 = 'Y' order by 생활관명, 코골이여부";  // 최종결과가 Y인 신청에 대해 정보를 가져옴
-		PreparedStatement state3 = connection.prepareStatement(sql);
+		PreparedStatement state3 = connection.prepareStatement(sql);	
 		for(int i = 1; i < O1.length; i++)
 		{
 			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O1[i].getStudentId() + "', '" + O1[i].getSeat()+ "', '"+O1[i].getCheckOut()+ "', '오름1', '" + O1[i].getSemesterCode() + "', '" + O1[i].getRoomNumber() +"')";
