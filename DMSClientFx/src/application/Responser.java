@@ -434,12 +434,16 @@ public class Responser
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 삭제 버튼 클릭 시
-	public void admin_selecteesManagePage_onDelete()
+	public static Tuple<Bool, String> admin_selecteesManagePage_onDelete(Application data)
 	{
 		//1. 클라이언트로부터 받은 학번, 생활관명, 학기, 지망으로 신청 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사선발자관리, Code2.Event.DELETE, data);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//-------------------------------------------------------------------------
