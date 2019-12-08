@@ -211,7 +211,7 @@ public class Responser
 					Direction.TO_CLIENT, 
 					Code1.NULL, 
 					Code2.NULL
-					).body(ProtocolHelper.serialization("신청조회기간이 아닙니다.")).build());
+					).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.FALSE, "신청조회기간이 아닙니다."))).build());
 		}
 		
 	}
