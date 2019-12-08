@@ -192,14 +192,15 @@ public class Responser
 		if(ScheduleParser.isAdmissible((Page)protocol.code1))
 		{
 			//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
+			String notice = ScheduleParser.getDescription((Page)protocol.code1);
 			//3. 스케쥴 객체를 클라이언트에게 전송한다.
 			socketHelper.write(new Protocol.Builder(
 					ProtocolType.EVENT, 
 					Direction.TO_CLIENT, 
 					Code1.NULL, 
 					Code2.NULL
-					).body(ProtocolHelper.serialization(ScheduleParser.getSchedule((Page)protocol.code1))).build());
-			//(4. 클라이언트에서는 받은 비고(안내사항)을 표시한다)리
+					).body(ProtocolHelper.serialization(notice).build());
+			//(4. 클라이언트에서는 받은 비고(안내사항)을 표시한다)
 		}
 		else
 		{

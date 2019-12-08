@@ -71,7 +71,7 @@ public class ScheduleParser
 		
 		return result;
 	}
-	
+	//만들긴했는데 당장 쓰진 않지만 혹시 라도 필요하면 사용하세요,,, 스케줄객체 생성하는 함수입니다 ㅠㅡㅠ........-서희-
 	public static Schedule getSchedule(Page page) throws Exception
 	{
 		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE (`스케쥴 할일 코드_ID` =" + String.valueOf(page.getCode()) + ")";
