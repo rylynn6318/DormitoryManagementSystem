@@ -3,6 +3,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import DB.ApplicationParser;
+import DB.AssignAlgorithm;
 import DB.CurrentSemesterParser;
 import DB.DormParser;
 import DB.ScheduleParser;
@@ -213,10 +214,12 @@ public class Responser
 	}
 	
 	//학생 - 생활관 신청 조회 - 조회 버튼 클릭 시
-	public static void student_CheckApplicationPage_onCheck(Protocol protocol, SocketHelper socketHelper)
+	public static void student_CheckApplicationPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
+		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회. 
+		
 		//	 (클라이언트의 '생활관 입사지원 내역' 테이블뷰에 표시할 것임)
 		//3. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역의 지망, 생활관명, 식사구분, 합격여부, 납부여부를 조회.
 		//	 (클라이언트의 '생활관 선발 결과' 테이블뷰에 표시할 것임)
@@ -459,21 +462,25 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 입사자 조회 및 관리 - 입사자 등록(배정) 버튼 클릭 시
-	public static void admin_boarderManagePage_onAllocate(Protocol protocol, SocketHelper socketHelper)
+	public static void admin_boarderManagePage_onAllocate(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, SQLException
 	{
 		//입사자 등록(배정) 버튼은 신청 목록에서 합격여부를 Y, 납부내역 Y, 결핵진단서 Y인 신청의 최종합격여부를 Y로 바꾼다.
+		
+		//이거 AssignAlgorithm.passUpdate(); 하시면 위 내용대로 동작합니다.
 		//그리고나서 배정내역에 최종합격여부가 Y인 학생들을 배정한다.
+		
+		//AssignAlgorithm.batchStart();
 		//이것도 로직 짜놓은 친구들이 구현해놨으니 거기에 맞게 로직 고치면 됨.(로직 주석 구체적으로 달아주셈, 어떻게 돌아가는지 다른애들도 알수있게)
 		
 		//1. 클라이언트에게 입사자 등록(배정) 요청을 받는다. (바디에는 딱히 아무것도 없다. 요청을 위한 통신)
-		
 		//2. 등록(배정) 알고리즘을 시행한다.
-		//   등록 배정 알고리즘 상세설명(대충 생각해본것임. 더 나은 알고리즘, 이미 구현한 알고리즘 사용해도 됨. 그 경우 아래 알고리즘을 고쳐주셈)
-		//		1) 신청 테이블에서 이번학기에 합격여부 Y, 납부내역 Y인 것 중 학번, 코골이여부 등을 가져온다.
-		//		2) 서류 테이블에서 결핵진단서 유효여부가 Y인걸 체크해서, 위에서 가져온것과 조인.
-		//		3) 같은 생활관끼리 신청내역을 묶는다?
-		//		4) 배정이 된 학생들은 최종합격여부를 Y로 고친다?
-		//		5) 배정내역 알고리즘(배정내역 테이블에 학생 한명 한명 INSERT ?)을 돌린다.
+		// 1.디비에서 생활관 정보를 가져와서 생활관별로 수용인원만큼 자리를 만듬 호실. 자리 ABCD고려해서
+		// 2. 그 자리에 이미 살고있는 학생들의 ID를 넣음
+		// 3. 없는 자리에 생활관 신청 합격자들의 ID, 퇴사일을 넣음
+		// 4.그 정보에 맞게 DB에 업데이트
+		
+		//이걸 batchStart로 묶어놨으니 그냥 이것만 실행하면 됨
+		AssignAlgorithm.batchStart();
 		
 		//3. 결과를 클라이언트에게 알려준다(성공/실패?)
 	}
