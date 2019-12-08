@@ -11,7 +11,7 @@ import enums.Bool;
 
 // 프로토콜을 이용한 소켓 통신을 쉽게 해주는 wrapper 클래스
 public final class SocketHelper implements Closeable {
-    public final static String host = "127.0.0.1";
+    public final static String localhost = "127.0.0.1";
     public final static int port = 4444;
     public final static int sendbuffer_size = 1024;
 
