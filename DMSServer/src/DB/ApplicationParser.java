@@ -248,6 +248,7 @@ public class ApplicationParser {
 		preparedStatement.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
+	
 	 
 	public static void insertApplication(int choice, int mealType, Bool isSnore, String dormitoryName, char gender , int semesterCode, String id) throws SQLException
 	{
@@ -257,6 +258,20 @@ public class ApplicationParser {
 		state.executeUpdate(sql);
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
+	}
+	
+	public static Boolean isExistPassState(String id) throws SQLException, ClassNotFoundException
+	{
+		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번=" + id + "and 합격여부 = 'Y' and 생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
+		Connection connection = DBHandler.INSTANCE.getConnetion();
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		ResultSet rs = preparedStatement.executeQuery();
+		
+		if(rs.next())
+		{
+			return true;
+		}
+		return false;
 	}
 
 }

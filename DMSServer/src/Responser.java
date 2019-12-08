@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import DB.ApplicationParser;
 import DB.CurrentSemesterParser;
 import DB.DormParser;
-import DB.InsertApplicationParser;
 import DB.ScheduleParser;
 import DB.StudentParser;
 import enums.Code1;
@@ -114,7 +113,7 @@ public class Responser
 	}
 	
 	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시
-	public static void student_submitApplicationPage_onSubmit(Protocol protocol, SocketHelper socketHelper)
+	public static void student_submitApplicationPage_onSubmit(Protocol protocol, SocketHelper socketHelper) throws IOException, SQLException, ClassNotFoundException
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
@@ -138,7 +137,7 @@ public class Responser
 		//4. 해당 배열을 신청 데이트에 INSERT한다.
 		for(int i = 0; i < A.length; i++)  //(int choice, String mealType, Bool isSnore, String dormitoryName, Gender gender, int semesterCode, String id)
 		{
-			InsertApplicationParser.InsertApplication(A[i].getChoice(), A[i].getMealType(), A[i].isSnore(), A[i].getDormitoryName(), A[i].getGender(), A[i].getSemesterCode(), id); //이거 풀하고 다시 짤거에요
+			ApplicationParser.insertApplication(A[i].getChoice(), A[i].getMealType(), A[i].isSnore(), A[i].getDormitoryName(), A[i].getGender(), A[i].getSemesterCode(), id); //이거 풀하고 다시 짤거에요
 		}
 		//5. 클라이언트에게 성공 여부를 알려준다.(성공/DB연결 오류로 인한 실패/DB사망/알수없는오류 등등...)
 		try {
@@ -233,13 +232,30 @@ public class Responser
 	}
 	
 	//학생 - 생활관 고지서 조회 - 조회 버튼 클릭 시
-	public static void student_CheckBillPage_onCheck(Protocol protocol, SocketHelper socketHelper)
+	public void student_CheckBillPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
 	{
+		int cost;
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
+		String id = (String) ProtocolHelper.deserialization(protocol.getBody()); //이 부분 확인해주세요
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역 조회 -> 내역 있으면 다음으로, 없으면 없다고 클라이언트에게 알려줌
-		//3. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역의 식사구분, 생활관구분을 알아낸다.
-		//4. 해당 생활관, 해당 식비로 총 금액을 알아낸다.
-		//5. 랜덤 생성한 계좌번호와, 은행 명, 계산한 식비를 객체화해서 클라이언트에게 전송한다.
+		try {
+			if(ApplicationParser.isExistPassState(id))
+			{
+				socketHelper.write(new Protocol.Builder(
+						ProtocolType.EVENT, 
+						Direction.TO_CLIENT, 
+						Code1.NULL, 
+						Code2.NULL
+						).body(ProtocolHelper.serialization("고지서 내역이 없습니다.")).build());
+				return;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//3. 합격한 신청 내역에 관한 납부해야 할 비용을 저장
+		cost = DormParser.getCheckBillCost(id);
+		//5. 랜덤 생성한 계좌번호와, 은행 명, 계산한 비용을 객체화해서 클라이언트에게 전송한다.
+		///////////////////////////////////누가 5번좀 해주세요 제가하면 너무 막연하게 할 듯
 		//(6. 클라이언트는 이걸 받아서 대충 메모장으로 띄워준다.)
 	}
 	
