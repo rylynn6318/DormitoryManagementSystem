@@ -100,7 +100,9 @@ public class CheckBillTabController extends InnerPageController
 	        fw.close();
 	         
 	         
-	    }catch(Exception e){
+	    }
+		catch(Exception e)
+		{
 	        e.printStackTrace();
 	    }
 	}

@@ -141,8 +141,8 @@ public class CheckApplicationTabController extends InnerPageController
 		//지망, 생활관명, 식비구분, 합격여부, 납부여부를 받아와야한다.
         ObservableList<StudentApplicationResultViewModel> selections = appListToResultViewModel(receivedApplicationList2);
     	
-    	refreshApplicationTable(appHistory);
-    	refreshApplicationResultTable(selections);
+    	setApplicationTable(appHistory);
+    	setApplicationResultTable(selections);
     }
     
     //서버에서 Application 객체를 가져오면, StudentApplicationViewModel로 형변환해서 반환 
@@ -167,7 +167,7 @@ public class CheckApplicationTabController extends InnerPageController
     	return selections;
     }
     
-    private void refreshApplicationTable(ObservableList<StudentApplicationViewModel> appHistory)
+    private void setApplicationTable(ObservableList<StudentApplicationViewModel> appHistory)
     {
     	application_history_column_choice.setCellValueFactory(cellData -> cellData.getValue().choiceProperty());
     	application_history_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
@@ -175,7 +175,7 @@ public class CheckApplicationTabController extends InnerPageController
     	application_history_tableview.setItems(appHistory);
     }
     
-    private void refreshApplicationResultTable(ObservableList<StudentApplicationResultViewModel> selections)
+    private void setApplicationResultTable(ObservableList<StudentApplicationResultViewModel> selections)
     {
     	selection_result_column_choice.setCellValueFactory(cellData -> cellData.getValue().choiceProperty());
     	selection_result_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
@@ -183,29 +183,5 @@ public class CheckApplicationTabController extends InnerPageController
     	selection_result_column_isPassed.setCellValueFactory(cellData -> cellData.getValue().isPassedProperty());
     	selection_result_column_isPaid.setCellValueFactory(cellData -> cellData.getValue().isPaidProperty());
     	selection_result_tableview.setItems(selections);
-    }
-    
-    //---------------------디버깅용---------------------
-    
-    //디버깅용 
-    private ObservableList<StudentApplicationViewModel> debug_getTestAppViewModel()
-    {
-      ObservableList<StudentApplicationViewModel> appHistory = FXCollections.observableArrayList(
-				new StudentApplicationViewModel(1, "오름관2동", 5),
-				new StudentApplicationViewModel(2, "푸름관1동", 7),
-				new StudentApplicationViewModel(3, "푸름관4동", 0)
-				);
-      return appHistory;
-    }
-    
-    //디버깅용 
-    private ObservableList<StudentApplicationResultViewModel> debug_getTestResultViewModel()
-    {
-      ObservableList<StudentApplicationResultViewModel> selections = FXCollections.observableArrayList(
-				new StudentApplicationResultViewModel(1, "오름관2동", 5, Bool.TRUE, Bool.TRUE),
-				new StudentApplicationResultViewModel(2, "푸름관1동", 7, Bool.TRUE, Bool.FALSE),
-				new StudentApplicationResultViewModel(3, "푸름관4동", 0, Bool.TRUE, Bool.FALSE)
-				);
-      return selections;
     }
 }
