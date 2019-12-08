@@ -246,12 +246,14 @@ public class SubmitApplicationTabController implements Initializable
         IOHandler.getInstance().showAlert(result);
     }
     
+    //서버에게서 받은 기숙사 목록을 1년과 반년으로 나누고, 콤보박스 내 아이템을 설정함.
     private void setCombobox(ArrayList<Dormitory> dormList)
     {
     	ArrayList<Dormitory> oneYear = new ArrayList<Dormitory>();
     	ArrayList<Dormitory> halfYear = new ArrayList<Dormitory>();
     	
     	//서버에서 받아온 기숙사 목록에서 1년짜리와 반년짜리를 분리함.
+    	//현재로써 1년과 1년이 아닌 기숙사를 분리할 방법이 없어서 임시로 1년이라는 글자가 기숙사명에 포함되있는지로 가름.
     	for(Dormitory dorm : dormList)
     	{
     		if(dorm.dormitoryName.contains("1년"))
@@ -264,8 +266,32 @@ public class SubmitApplicationTabController implements Initializable
     		}
     	}
     	
-    	//TODO 여기 해야됨 미완성.
+    	setComboboxItem(oneYear_dorm_combobox, oneYear_meal_combobox, oneYear);
+    	setComboboxItem(firstChoice_dorm_combobox, firstChoice_meal_combobox, halfYear);
+    	setComboboxItem(secondChoice_dorm_combobox, secondChoice_meal_combobox, halfYear);
+    	setComboboxItem(thirdChoice_dorm_combobox, thirdChoice_meal_combobox, halfYear);
     	
+    }
+    
+    //콤보박스 내 아이템을 설정하는 메소드
+    private void setComboboxItem(ComboBox<String> nameCombobox, ComboBox<String> mealCombobox, ArrayList<Dormitory> dormList)
+    {
+    	for(Dormitory dorm : dormList)
+    	{
+    		nameCombobox.getItems().add(dorm.dormitoryName);
+    		
+    		//식사의무가 필수가 아니면 식사안함을 추가한다.
+    		if(dorm.isMealDuty == Bool.FALSE)
+    			mealCombobox.getItems().add("식사안함");
+    		
+    		//5일식이 0원이 아니면 5일식 아이템 추가
+    		if(dorm.mealCost5 != 0)
+    			mealCombobox.getItems().add("5일식");
+    		
+    		//7일식이 0원이 아니면 7일식 아이템 추가    		
+    		if(dorm.mealCost7 != 0)
+    			mealCombobox.getItems().add("7일식");
+    	}
     }
 
 }
