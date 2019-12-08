@@ -319,7 +319,7 @@ public class Responser
 	}
 	
 	//관리자 - 선발 일정 조회 및 관리 - 조회 버튼 클릭 시
-	public void admin_scheduleManagePage_onCheck()
+	public static ArrayList<Schedule> admin_scheduleManagePage_onCheck()
 	{
 		//1. 서버에게 서류 조회 요청을 한다.(요청만 보낸다)
 		//(2. 서버는 스케쥴 테이블에서 목록을 객체로 만들어 배열로 가져온다. (코드, 이름))
@@ -328,10 +328,9 @@ public class Responser
 		//(3-2. 스케쥴 할일 코드 배열과 스케쥴 배열을 각각 보낸다.)
 		//4. 클라이언트는 받아서 tableView에 표시한다. 클라이언트에는 ID, 할일이름, 시작일, 종료일, 비고가 표시된다
 		
-		
-		//* 클라이언트 UI에서 유형 코드를 보여주는게 아니라, 유형 이름을 보여줘야 하기때문에
-		//  코드와 이름 둘다 전송하는 것. 결국 스케쥴 테이블과 스케쥴 할일 코드 테이블 조인 
-		//  하거나 둘다 가져와서 섞어야함.
+		Protocol protocol = eventProtocolBuilder(Code1.Page.선발일정관리, Code2.Event.CHECK, null);
+		ArrayList<Schedule> result = (ArrayList<Schedule>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 선발 일정 조회 및 관리 - 삭제 버튼 클릭 시

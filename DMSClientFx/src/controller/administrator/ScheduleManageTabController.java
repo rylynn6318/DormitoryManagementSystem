@@ -106,7 +106,7 @@ public class ScheduleManageTabController extends InnerPageController
 	
 	//---------------------로직---------------------
     
-    //스케쥴 할일 코드를 받아온다.
+    //서버에게서 받아온 스케쥴 할일 코드 목록을 콤보박스에 추가한다.
     private void onEnter()
     {
     	ArrayList<ScheduleCode> resultList = Responser.admin_scheduleManagePage_onEnter();
@@ -120,16 +120,23 @@ public class ScheduleManageTabController extends InnerPageController
         
         if(resultList != null)
         {
-        	//서버에게서 받아온 스케쥴 할일 코드 목록을 콤보박스에 추가한다.
-        	
+        	setCombobox(insert_type_combobox, resultList);
         }
+    }
+    
+    private void setCombobox(ComboBox<String> combobox, ArrayList<ScheduleCode> list)
+    {
+    	for(ScheduleCode sc : list)
+    	{
+    		combobox.getItems().add(sc.name);
+    	}
     }
 
     private void checkSchdules()
     {
     	//네트워킹해서 스케쥴 테이블 쫙 긁어와야됨.
     	//긁어올때 스케쥴 할일 코드 테이블도 긁어와야됨.
-//    	Tuple<Bool, ArrayList<Schedule>> resultTuple = Responser.admin_scheduleManagePage_onEnter();
+    	ArrayList<Schedule> resultList = Responser.admin_scheduleManagePage_onCheck();
     	
     	ObservableList<ScheduleViewModel> scheduleViewModels = FXCollections.observableArrayList(
     			new ScheduleViewModel("1234", 3, new Date(2019, 3, 2), new Date(219, 7, 13), "입사 기간"),	//귀찮아서 대충 때려박음. 꼬우면 RG?
