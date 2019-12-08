@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-import org.w3c.dom.DocumentType;
-
 import DB.ApplicationParser;
 import DB.AssignAlgorithm;
 import DB.CurrentSemesterParser;

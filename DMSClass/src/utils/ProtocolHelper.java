@@ -2,13 +2,10 @@ package utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,13 +29,6 @@ public final class ProtocolHelper {
                 return (Serializable) obj;
             }
         }
-    }
-
-    static void write(Path path, byte[] bytes) throws IOException {
-        File file = path.toFile();
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(bytes);
-        fos.close();
     }
 
     static byte[] shortToByte(short input) {

@@ -1,7 +1,10 @@
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 
+import DB.CurrentSemesterParser;
 import enums.*;
 import logic.*;
 import models.*;
@@ -51,57 +54,65 @@ public class ServerTask implements Runnable {
 
                         switch (requestType) {
                             case UPLOAD:
-                                //     업로드 받았을때
-                                //         받은 정보는 id와 파일
-                                //         현재 학기 쿼리해와서 저장한다.
-                                //         이름규칙은 [/파일종류/학기_학번.jpg]
-                                //         id를 이용해 디비에 관련 정보 저장
-                                //         성공 유무만 되돌려준다
+                                //업로드 받았을때
+                                //  받은 정보는 id와 파일
+                                //  현재 학기 쿼리해와서 저장한다.
+                                //  이름규칙은 [/파일종류/학기_학번.jpg]
+                                //  id를 이용해 디비에 관련 정보 저장
+                                //  성공 유무만 되돌려준다
                                 try {
                                     Tuple<String, byte[]> body = (Tuple<String, byte[]>) ProtocolHelper.deserialization(protocol.getBody());
+                                    String id = body.obj1;
 
-                                } catch (ClassNotFoundException | IOException e) {
+                                    int nowSemester = CurrentSemesterParser.getCurrentSemester();
+
+                                    IOHandler.INSTANCE.write(Paths.get(fileType.name(), nowSemester + "_" + id, fileType.extension), body.obj2);
+
+                                    // TODO 여기에 DB에 서류 관련 정보 저장하는 로직 추가해야함
+
+                                    isSuccess = Code2.FileCode.SUCCESS;
+                                } catch (ClassNotFoundException | IOException | SQLException e) {
                                     e.printStackTrace();
                                 }
 
                                 // 결과 반환
-
                                 result = new Protocol
                                         .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
                                         .build();
-
                                 socketHelper.write(result);
                                 break;
 
                             case REQUEST:
-                                //     다운로드 요청 받았을때
-                                //         일단 body를 통해 id만 온 상황
-                                //         해당 id와 헤더에 있는 타입, 현재 학기로 서류 테이블 쿼리 수행한다.
-                                //         결과가 있다면 관련 정보를 다 알수 있다.
-                                //         해당 파일 소유자 학번과 파일을 리턴
-                                //         body = <String, byte[]>
-                                //         없다면 실패 리턴
-                                //         body = null
-                                //         클라이언트에서는 널체크 이후
-                                //         로직 수행
-
-                                String id = null;
+                                //다운로드 요청 받았을때
+                                //  일단 body를 통해 id만 온 상황
+                                //  해당 id와 헤더에 있는 타입, 현재 학기로 서류 테이블 쿼리 수행한다.
+                                //  결과가 있다면 관련 정보를 다 알수 있다.
+                                //  해당 파일을 리턴
+                                //  body = byte[]
+                                //  없다면 실패 리턴
+                                //  body = null
+                                //  클라이언트에서는 널체크 이후
+                                //  로직 수행
+                                byte[] filebytes = null;
 
                                 try {
-                                    id = (String) ProtocolHelper.deserialization(protocol.getBody());
+                                    String id = (String) ProtocolHelper.deserialization(protocol.getBody());
 
-                                } catch (ClassNotFoundException e) {
-                                    e.printStackTrace();
-                                } catch (IOException e) {
+                                    // TODO id를 이용해 해당 사용자의 현재학기 서류 저장 경로를 가져온다
+                                    String path = null;
+                                    filebytes = Files.readAllBytes(Paths.get(path));
+
+                                    isSuccess = Code2.FileCode.SUCCESS;
+                                } catch (ClassNotFoundException | IOException e) {
                                     e.printStackTrace();
                                 }
-
 
                                 String path = null;
                                 File file = Paths.get(path).toFile();
 
                                 result = new Protocol
                                         .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
+                                        .body(filebytes)
                                         .build();
                                 socketHelper.write(result);
                                 break;
@@ -117,6 +128,20 @@ public class ServerTask implements Runnable {
                         // CSV 파일의 경우 일방적인 전송밖에 없다
                         // body에는 csv 파일 바이트만 있는 상황
                         // 적당한곳에 csv파일 저장하고 로직 수행
+                        try {
+                            IOHandler.INSTANCE.write(IOHandler.csvFilePath, protocol.getBody());
+
+                            // TODO 업데이트 하는 로직
+
+                            isSuccess = Code2.FileCode.SUCCESS;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        result = new Protocol
+                                .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
+                                .build();
+                        socketHelper.write(result);
                         break;
                 }
                 break;
