@@ -2,11 +2,13 @@ package controller.administrator;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import application.IOHandler;
+import application.Responser;
 import controller.InnerPageController;
 import enums.*;
 import javafx.collections.FXCollections;
@@ -20,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import models.*;
 import tableViewModel.*;
 
 //납부 여부 조회 및 관리
@@ -133,16 +136,34 @@ public class PaymentManageTabController extends InnerPageController
     private void checkApplications()
     {
     	//서버에서 신청테이블->이번학기->객체 배열 쫙 긁어와서 tableview에 보여줌
+    	ArrayList<Application> resultList = Responser.admin_paymentManagePage_onCheck();
     	
-    	//서버랑 통신했다 치고 Application 객체 받아옴.
-    	//물론 실제로 받아왔을때 받아온 Application 배열목록을 ApplicationViewModel로 변환하고 넣어야됨.
-    	applicationList = FXCollections.observableArrayList(
-    			new ApplicationViewModel("20160001", "오름관 1동", 201901, 1, 7, Bool.TRUE, Bool.TRUE, Bool.FALSE, Bool.TRUE),
-    			new ApplicationViewModel("20160002", "오름관 2동", 201901, 2, 5, Bool.TRUE, Bool.TRUE, Bool.FALSE, Bool.FALSE),
-    			new ApplicationViewModel("20160003", "푸름관 3동", 201901, 0, 7, Bool.FALSE, Bool.TRUE, Bool.FALSE, Bool.FALSE),
-    			new ApplicationViewModel("20160004", "푸름관 4동", 201901, 1, 5, Bool.FALSE, Bool.FALSE, Bool.FALSE, Bool.TRUE)
-        		);
-    	
+    	//서버랑 통신이 됬는가?
+        if(resultList == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultList != null)
+        {
+        	//객체를 테이블뷰 모델로 변환
+        	ObservableList<ApplicationViewModel> applicationList = FXCollections.observableArrayList();
+        	
+        	for(Application application : resultList)
+        	{
+        		applicationList.add(applicationToViewModel(application));
+        	}
+        	//
+        	applicationList = FXCollections.observableArrayList();
+        	
+            //테이블뷰에 추가
+        	setApplicationTableView(applicationList);
+        }
+    }
+    
+    private void setApplicationTableView(ObservableList<ApplicationViewModel> applicationList)
+    {
     	//서버에서 받아온거 표시하게 만듬.
     	check_application_column_id.setCellValueFactory(cellData -> cellData.getValue().studentIdProperty());
     	check_application_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());

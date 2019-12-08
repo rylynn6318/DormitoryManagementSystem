@@ -151,13 +151,6 @@ public class SelecteesManageTabController extends InnerPageController
     	
     }
     
-    private ApplicationViewModel applicationToViewModel(Application application)
-    {
-    	return new ApplicationViewModel(application.getStudentId(), application.getDormitoryName(), application.getSemesterCode(), 
-    			application.getChoice(), application.getMealType(), application.isPaid(), application.isPassed(), 
-    			application.isLastPassed(), application.isSnore());
-    }
-    
     private void setApplicationTableView(ObservableList<ApplicationViewModel> applicationViewModels)
     {
     	//서버에서 받아온거 표시하게 만듬.
