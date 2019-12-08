@@ -8,18 +8,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import enums.Bool;
-import enums.Code1;
-import enums.Code2;
-import enums.ProtocolType;
-import models.Tuple;
 
 public final class ProtocolHelper {
     public static byte[] serialization(final Serializable obj) throws IOException {
@@ -40,33 +34,8 @@ public final class ProtocolHelper {
         }
     }
 
-    public static void downloadFileFrom(Protocol fileProtocol) throws Exception {
-        if (fileProtocol.type != ProtocolType.FILE)
-            throw new Exception("파일 프로토콜이 아닌것을 ProtocolHelper.download() 인자로 넘김!");
-
-        Tuple<String, byte[]> filedata = (Tuple<String, byte[]>) deserialization(fileProtocol.getBody());
-
-        write(Paths.get(filedata.obj1), filedata.obj2);
-    }
-
-    public static byte[] getBodyBytesFrom(Code1.FileType type, String id, int semester, File file) throws IOException {
-        byte[] filebytes = Files.readAllBytes(file.toPath());
-
-        Path idsem = getFilePath(type, semester, id);
-
-        Tuple<String, byte[]> body = new Tuple<>(idsem.toString(), filebytes);
-
-        return serialization(body);
-    }
-
-    public static Path getFilePath(Code1.FileType type, int semester, String id){
-        return Paths.get(type.name(), semester + "_" + id + "." + type.extension);
-    } 
-
     static void write(Path path, byte[] bytes) throws IOException {
         File file = path.toFile();
-        // 해당 파일이 있을경우 삭제
-        file.delete();
         FileOutputStream fos = new FileOutputStream(file);
         fos.write(bytes);
         fos.close();
@@ -112,19 +81,6 @@ public final class ProtocolHelper {
         }
 
         return result;
-    }
-
-    // 테스트 안됨!
-    private static Protocol merge(final byte[] packet) throws IOException, Exception {
-        List<Protocol> tmp = new ArrayList<>();
-
-        int chunk_size = 0;
-        for (int cursor = 0; cursor < packet.length; cursor += chunk_size) {
-            chunk_size = bytesToShort(packet[cursor], packet[cursor + 1]);
-            tmp.add(new Protocol.Builder(Arrays.copyOfRange(packet, cursor, chunk_size)).build());
-        }
-
-        return merge(tmp);
     }
 
     static Protocol merge(List<Protocol> protocols) throws IOException {

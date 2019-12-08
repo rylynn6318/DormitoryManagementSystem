@@ -270,7 +270,7 @@ public class Responser
 		//5. 다운로드 받은 파일을 대충 바탕화면에 저장하고 연다.
 		
 		//파일 다운로드 요청 프로토콜 생성
-		Protocol requestProtocol = fileProtocolBuilder(fileType, Code2.FileCode.REQUEST_DOWNLOAD, UserInfo.getInstance().account);
+		Protocol requestProtocol = fileProtocolBuilder(fileType, FileCode.REQUEST, UserInfo.getInstance().account);
 		
 		//응답 받음. 반환값이 null이면 통신 실패, Bool이 True면 OK, False이면 거절, 사유는 String에. 
 		Tuple<Bool, String> requestResult = (Tuple<Bool, String>) sendAndReceive(requestProtocol);
@@ -286,7 +286,7 @@ public class Responser
 		}
 		
 		//파일 다운로드 프로토콜 생성
-		Protocol fileProtocol = fileProtocolBuilder(fileType, Code2.FileCode.DOWNLOAD, null);
+		Protocol fileProtocol = fileProtocolBuilder(fileType, FileCode.REQUEST, null);
 		
 		//반환값이 null이면 에러임.
 		File result = (File) sendAndReceive(requestProtocol);

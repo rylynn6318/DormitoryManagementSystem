@@ -96,3 +96,7 @@ shared-class update log
 2019-12-09 00:31 v2.13
 	Shared Class 안에 Document 생성자 추가함.
 	Shared Class Export해서 적용함.
+
+2019-12-09 02:08 v2.14
+	코드 정리
+	Shared Class Export해서 적용함.

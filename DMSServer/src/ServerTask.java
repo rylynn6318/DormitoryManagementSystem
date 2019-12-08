@@ -45,14 +45,58 @@ public class ServerTask implements Runnable {
                 }
                 break;
             case FILE:
+            // 파일 송수신
+
+            // 진단서, 서약서의 경우
+            // 클라이언트에서 서버로
+            //     파일 선택해서 업로드한다.
+            //     이때 필요한 정보?
+            //         id, 파일
+            //         body = <String, byte[]>
+            
+            //     파일 요청한다
+            //     이때 필요한 정보?
+            //         파일 종류(헤더), CSV가 아니라면 누구의 파일인지, 언제 파일인지 즉
+            //         id, 학기 보내야함. 근데 학기는 최신학기만 요청한다 가정하면
+            //         id 만 있으면 된다
+            //         body = String
+                    
+            // 서버에서 클라이언트로
+            //     업로드 받았을때
+            //         받은 정보는 id와 파일
+            //         현재 학기 쿼리해와서 저장한다.
+            //         이름규칙은 [/파일종류/학기_학번.jpg]
+            //         id를 이용해 디비에 관련 정보 저장
+            //         성공 유무만 되돌려준다
+            //         body = Bool (String도 가능)
+                
+            //     다운로드 요청 받았을때
+            //         일단 body를 통해 id만 온 상황
+            //         해당 id와 헤더에 있는 타입, 현재 학기로 서류 테이블 쿼리 수행한다.
+            //         결과가 있다면 관련 정보를 다 알수 있다.
+            //         해당 파일 소유자 학번과 파일을 리턴
+            //         body = <String, byte[]>
+            //         없다면 실패 리턴
+            //         body = null
+            //         클라이언트에서는 널체크 이후
+            //         로직 수행
+                    
+            
+            // CSV 파일의 경우
+            //     클라가 서버로 전송
+            //         body = byte[]
+                
+            //     서버는 받은 파일을 기반으로 쿼리 수행
+                
+            //     결과 성공 여부 반환
+            //         body = Bool
                 switch ((Code2.FileCode) protocol.code2) {
                     case UPLOAD:
                         try {
-                            ProtocolHelper.downloadFileFrom(protocol);
                             // 잘 받았으면 body 에 Bool.TRUE 담아서 전송
                             socketHelper.write(
                                     new Protocol
-                                            .Builder(ProtocolType.FILE, Direction.TO_CLIENT, protocol.code1, Code2.FileCode.UPLOAD_RESULT)
+                                            .Builder(ProtocolType.FILE, Direction.TO_CLIENT, protocol.code1, Code2.FileCode.SUCCESS)
                                             .body(ProtocolHelper.serialization(Bool.TRUE))
                                             .build()
                             );
@@ -61,8 +105,7 @@ public class ServerTask implements Runnable {
                             try {
                                 socketHelper.write(
                                         new Protocol
-                                                .Builder(ProtocolType.FILE, Direction.TO_CLIENT, protocol.code1, Code2.FileCode.UPLOAD_RESULT)
-                                                .body(ProtocolHelper.serialization(Bool.FALSE))
+                                                .Builder(ProtocolType.FILE, Direction.TO_CLIENT, protocol.code1, Code2.FileCode.FAIL)
                                                 .build()
                                 );
                             } catch (IOException ex) {
@@ -71,13 +114,13 @@ public class ServerTask implements Runnable {
                             e.printStackTrace();
                         }
                         break;
-                    case REQUEST_DOWNLOAD:
+                    case REQUEST:
                         try {
                             String path = (String) ProtocolHelper.deserialization(protocol.getBody());
                             File file = Paths.get(path).toFile();
                             socketHelper.write(
                                     new Protocol
-                                            .Builder(ProtocolType.FILE, Direction.TO_CLIENT, protocol.code1, Code2.FileCode.UPLOAD_RESULT)
+                                            .Builder(ProtocolType.FILE, Direction.TO_CLIENT, protocol.code1, Code2.FileCode.SUCCESS)
                                             .build()
                             );
                         } catch (ClassNotFoundException e) {
@@ -87,8 +130,8 @@ public class ServerTask implements Runnable {
                         }
 
                         break;
-                    case UPLOAD_RESULT:
-                    case DOWNLOAD:
+                    case SUCCESS:
+                    case FAIL:
                     default:
                         // 이 경우는 클라이언트에서 올일 없다!
                         break;

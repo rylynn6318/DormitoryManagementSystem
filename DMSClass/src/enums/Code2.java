@@ -76,7 +76,7 @@ public class Code2 {
     }
 
     public static enum FileCode implements ICode2 {
-        UPLOAD((byte) 0x01), REQUEST_DOWNLOAD((byte) 0x02), UPLOAD_RESULT((byte) 0x03), DOWNLOAD((byte) 0x04);
+        UPLOAD((byte) 0x01), REQUEST((byte) 0x02), SUCCESS((byte) 0x03), FAIL((byte) 0x04);
 
         private final byte code;
 
@@ -94,11 +94,11 @@ public class Code2 {
             case 0x01:
                 return UPLOAD;
             case 0x02:
-                return REQUEST_DOWNLOAD;
+                return REQUEST;
             case 0x03:
-                return UPLOAD_RESULT;
+                return SUCCESS;
             case 0x04:
-                return DOWNLOAD;
+                return FAIL;
             default:
                 return null;
             }
