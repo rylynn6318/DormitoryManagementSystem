@@ -12,7 +12,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import application.IOHandler;
 import application.Responser;
 import controller.InnerPageController;
-import enums.Code1;
+import enums.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,8 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import models.Application;
-import models.Document;
+import models.*;
 import tableViewModel.*;
 
 //서류 조회 및 제출
@@ -222,7 +221,7 @@ public class DocumentManageTabController extends InnerPageController
     {
     	String id = delete_id_textfield.getText();
     	String documentType = delete_documentType_combobox.getSelectionModel().getSelectedItem();
-    	LocalDate submitDate = delete_date_datepicker.getValue();
+    	LocalDate submitDate_l = delete_date_datepicker.getValue();
     	
     	if(id == null || id.isEmpty())
     	{
@@ -236,28 +235,47 @@ public class DocumentManageTabController extends InnerPageController
     		IOHandler.getInstance().showAlert("서류유형이 비어있습니다.");
     		return;
     	}
-    	else if(submitDate == null || submitDate.toString().equals(""))
+    	else if(submitDate_l == null || submitDate_l.toString().equals(""))
     	{
     		//제출일이 없음
     		IOHandler.getInstance().showAlert("제출일이 비어있습니다.");
     		return;
     	}
     	
+    	//LocalDate를 Date타입으로 변형
+    	Date submitDate = localDateToDate(submitDate_l);
+    	
     	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-		boolean isSucceed = true;
-		if(isSucceed)
-		{
-			IOHandler.getInstance().showAlert("서류 삭제에 성공하였습니다.");
-			
-			//선택한 항목들 클리어
-			delete_id_textfield.setText(null);
-			delete_documentType_combobox.getSelectionModel().select(-1);
-			delete_date_datepicker.setValue(null);
-		}
-		else
-		{
-			IOHandler.getInstance().showAlert("서류 삭제에 실패하였습니다.");
-		}
+    	Document data = new Document(id, stringToFileType(documentType), submitDate);
+    	Tuple<Bool, String> resultList = Responser.admin_documentManagePage_onDelete(data);
+    	
+    	//서버랑 통신이 됬는가?
+        if(resultList == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+    	
+    	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
+        if(resultList != null)
+        {
+        	if(resultList.obj1 == Bool.TRUE)
+        	{
+        		clearDeleteInfo();	
+        	}
+        	IOHandler.getInstance().showAlert(resultList.obj2);
+        }
+        
+
+    }
+    
+    private void clearDeleteInfo()
+    {
+		
+		//선택한 항목들 클리어
+		delete_id_textfield.setText(null);
+		delete_documentType_combobox.getSelectionModel().select(-1);
+		delete_date_datepicker.setValue(null);
     }
     
     private void selectFile()
