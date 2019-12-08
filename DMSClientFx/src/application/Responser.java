@@ -614,7 +614,8 @@ public class Responser
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			System.out.println("[Exception.eventProtocolBuilder] Page:" + page.toString() + ", Event:" + event.toString() + 
+					", DataType:" + sendData.getClass().getName());
 		}
 		return protocol;
 	}
@@ -633,7 +634,8 @@ public class Responser
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			System.out.println("[Exception.fileProtocolBuilder] FileType:" + fileType.toString() + ", fileCode:" + fileCode.toString() + 
+					", DataType:" + sendData.getClass().getName());
 		}
 		return protocol;
 	}
@@ -653,8 +655,8 @@ public class Responser
         } 
         catch (Exception e) 
         {
-        	System.out.println("서버 연결 실패!");
-            e.printStackTrace();
+        	System.out.println("[Exception.sendAndReceive] protocolType:" + protocol.type.toString() + ", Code1:" + protocol.code1.toString() + 
+        			", Code2:" + protocol.code2.toString());
         }
         return result;
 	}
