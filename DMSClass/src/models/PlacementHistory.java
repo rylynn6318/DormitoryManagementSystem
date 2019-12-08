@@ -38,4 +38,14 @@ public final class PlacementHistory implements Serializable
 		seat = null;
 		checkout = null;
 	}
+	
+	public PlacementHistory(int roomId, Seat seat)
+	{
+		this.studentId = null;
+		this.semester = (Integer) null;
+		this.dormitoryName = null;
+		this.checkout = null;
+		this.roomId = roomId;
+		this.seat = seat;
+	}
 }

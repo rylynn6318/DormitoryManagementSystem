@@ -325,14 +325,17 @@ public class Responser
 	}
 	
 	//학생 - 생활관 호실 조회 - 조회 버튼 클릭 시
-	public static void student_checkRoomPage_onCheck(Protocol protocol, SocketHelper socketHelper)
+	public static void student_checkRoomPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
 	{
 		///////////////////제가 만드는중 ★ ㅡ서희ㅡ////////////////////////////
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 최종합격여부가 T인 내역 조회 
-		//3-1. 내역이 없는 경우 불합격이라고 클라이언트에게 알려준다.(객체 만들던지, String 보내던 알아서 해야될듯. 전용 객체가 있는게 바람직하겠다.)
+		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
+		
 		//3-2. 내역이 있는 경우 신청 테이블에서 최종합격여부, 납부여부, 식비구분, 생활관, 호실유형(이건 일반실 고정)을 조회한다.
+		Application lastPassedApplication = ApplicationParser.getLastPassedApplication(id);
 		//4. 배정내역 테이블에서 해당 학번이 배정되있는 호실과 침대번호를 가져온다.
+		
+		//어플리케이션과 히스토리를 묶어서 보내주자
 		//5. 3-2와 4를 합쳐 객체화한다. 그리고 이것을 클라이언트에게 전송한다.
 		//(6. 클라이언트는 받은 객체를 역직렬화, UI에 표기한다)
 	}
