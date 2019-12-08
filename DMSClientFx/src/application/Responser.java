@@ -322,10 +322,8 @@ public class Responser
 	public static ArrayList<Schedule> admin_scheduleManagePage_onCheck()
 	{
 		//1. 서버에게 서류 조회 요청을 한다.(요청만 보낸다)
-		//(2. 서버는 스케쥴 테이블에서 목록을 객체로 만들어 배열로 가져온다. (코드, 이름))
-		//(3. 2가지 방법이 있다.)
-		//(3-1. 스케쥴 할일 코드와 스케쥴을 묶는 viewModel 클래스를 만들어 클라이언트로 보낸다.)
-		//(3-2. 스케쥴 할일 코드 배열과 스케쥴 배열을 각각 보낸다.)
+		//(2. 서버는 스케쥴 테이블에서 목록을 객체로 만들어 배열로 가져온다.)
+		//(3. 서버는 스케쥴 객체 배열을 전송한다)
 		//4. 클라이언트는 받아서 tableView에 표시한다. 클라이언트에는 ID, 할일이름, 시작일, 종료일, 비고가 표시된다
 		
 		Protocol protocol = eventProtocolBuilder(Code1.Page.선발일정관리, Code2.Event.CHECK, null);
@@ -334,7 +332,7 @@ public class Responser
 	}
 	
 	//관리자 - 선발 일정 조회 및 관리 - 삭제 버튼 클릭 시
-	public void admin_scheduleManagePage_onDelete()
+	public static Tuple<Bool, String> admin_scheduleManagePage_onDelete(String scheduleId)
 	{
 		//1. 서버에게 스케쥴 ID와 함께 삭제 요청을 보낸다.
 		//(2. 스케쥴 테이블에서 해당 ID로 탐색한다.)
@@ -342,6 +340,11 @@ public class Responser
 		//(3-2. DB에 해당 ID가 존재하지 않는다. -> 없다고 클라이언트에게 알려줌.)
 		//(4. DELETE 요청 결과를 클라이언트에게 알려준다. (성공/실패/아마존 사망...etc))
 		//5. 결과값을 받아 메시지로 띄워준다.
+		
+		//Bool이 True면 성공, False면 실패, String에는 각각 메시지
+		Protocol protocol = eventProtocolBuilder(Code1.Page.선발일정관리, Code2.Event.DELETE, scheduleId);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 선발 일정 조회 및 관리 - 등록 버튼 클릭 시
