@@ -230,24 +230,24 @@ public class ScheduleManageTabController extends InnerPageController
     	}
     	
     	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-    	Tuple<Bool, String> resultList = Responser.admin_scheduleManagePage_onDelete(id);
+    	Tuple<Bool, String> resultTuple = Responser.admin_scheduleManagePage_onDelete(id);
 		
-		if(resultList == null)
+		if(resultTuple == null)
 		{
 			IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
         	return;
 		}
 		
-		if(resultList != null)
+		if(resultTuple != null)
 		{
-			if(resultList.obj1 == Bool.TRUE)
+			if(resultTuple.obj1 == Bool.TRUE)
 			{
 				//입력했던 항목들 클리어
 				delete_id_textfield.setText(null);
 			}
 			
 			//성공/실패 메시지 표시
-			IOHandler.getInstance().showAlert(resultList.obj2);
+			IOHandler.getInstance().showAlert(resultTuple.obj2);
 		}
     }
     

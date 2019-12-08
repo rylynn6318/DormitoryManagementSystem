@@ -526,21 +526,28 @@ public class Responser
 		//2. 배열화한다.
 		//3. 직렬화해서 클라이언트에 전송한다.
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
-		return null;
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.납부관리, Code2.Event.REFRESH, null);
+		ArrayList<Application> result = (ArrayList<Application>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 납부 여부 조회 및 관리 - UPDATE 버튼 클릭 시
-	public void admin_paymentManagePage_onUpdate()
+	public static Tuple<Bool, String> admin_paymentManagePage_onUpdate(Application data)
 	{
 		//1. 클라이언트로부터 받은 학번, 생활관명, 학기로 납부여부 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 UPDATE쿼리를 쏜다.
 		//	   (납부여부를 클라이언트에게서 받은 T/F로 UPDATE한다)
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. UPDATE 쿼리 결과를 클라이언트에게 알려준다.
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.납부관리, Code2.Event.UPDATE, data);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 납부 여부 조회 및 관리 - CSV 업로드 버튼 클릭 시
-	public void admin_paymentManagePage_onUpload()
+	public static void admin_paymentManagePage_onUpload()
 	{
 		//클라이언트로부터 CSV파일을 다운로드 받고, 이 CSV 파일로 신청 테이블에 납부여부를 Y로 바꾸기 위함.
 		

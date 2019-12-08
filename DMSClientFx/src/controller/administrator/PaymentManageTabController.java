@@ -209,22 +209,39 @@ public class PaymentManageTabController extends InnerPageController
     		return;
     	}
     	
+    	Application data = new Application(id, dormName, Integer.parseInt(semester), -1);
+    	data.setPaid(isPaid.equals("T") ? Bool.TRUE : Bool.FALSE);
+    	
+    	Tuple<Bool, String> resultTuple = Responser.admin_paymentManagePage_onUpdate(data);
+    	
     	//서버에 Update 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-		boolean isSucceed = true;
-		if(isSucceed)
+    	if(resultTuple == null)
 		{
-			IOHandler.getInstance().showAlert("납부여부 갱신에 성공하였습니다.");
+			IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+		}
+		
+		if(resultTuple != null)
+		{
+			if(resultTuple.obj1 == Bool.TRUE)
+			{
+				//입력했던 항목들 클리어
+				clearUpdateInfo();
+			}
 			
-			//선택한 항목들 클리어
-			update_id_textfield.setText(null);
-			update_dormName_textfield.setText(null);
-			update_semester_textfield.setText(null);
-			update_isPaid_combobox.getSelectionModel().select(-1);
+			//성공/실패 메시지 표시
+			IOHandler.getInstance().showAlert(resultTuple.obj2);
 		}
-		else
-		{
-			IOHandler.getInstance().showAlert("납부여부 갱신에 실패하였습니다.");
-		}
+		
+    }
+    
+    private void clearUpdateInfo()
+    {
+    	//선택한 항목들 클리어
+		update_id_textfield.setText(null);
+		update_dormName_textfield.setText(null);
+		update_semester_textfield.setText(null);
+		update_isPaid_combobox.getSelectionModel().select(-1);
     }
     
     private void selectFile()
