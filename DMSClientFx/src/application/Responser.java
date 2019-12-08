@@ -172,7 +172,7 @@ public class Responser
 		//(3. 서버는 스케쥴 객체를 클라이언트에게 전송한다.)
 		//4. 서버로부터 받은 비고(안내사항)을 표시한다.
 		
-		Protocol protocol = eventProtocolBuilder(Code1.Page.호실조회, Code2.Event.REFRESH, null);
+		Protocol protocol = eventProtocolBuilder(Code1.Page.호실조회, Code2.Event.REFRESH, UserInfo.getInstance().account);
 		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
 		return result;
 	}
@@ -449,7 +449,7 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 입사자 조회 및 관리 - 입사자 등록(배정) 버튼 클릭 시
-	public void admin_boarderManagePage_onAllocate()
+	public static Tuple<Bool, String> admin_boarderManagePage_onAllocate()
 	{
 		//입사자 등록(배정) 버튼은 신청 목록에서 합격여부를 Y, 납부내역 Y, 결핵진단서 Y인 신청의 최종합격여부를 Y로 바꾼다.
 		//그리고나서 배정내역에 최종합격여부가 Y인 학생들을 배정한다.
@@ -466,6 +466,10 @@ public class Responser
 		//		5) 배정내역 알고리즘(배정내역 테이블에 학생 한명 한명 INSERT ?)을 돌린다.
 		
 		//3. 결과를 클라이언트에게 알려준다(성공/실패?)
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사자관리, Code2.Event.ASSIGN, null);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 조회 버튼 클릭 시

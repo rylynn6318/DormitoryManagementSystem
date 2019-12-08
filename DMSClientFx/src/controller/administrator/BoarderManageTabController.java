@@ -6,7 +6,9 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import application.Responser;
 import controller.InnerPageController;
+import enums.Bool;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,6 +20,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import models.Tuple;
 import tableViewModel.PlacementHistoryViewModel;
 
 //입사자 조회 및 관리
@@ -138,6 +141,20 @@ public class BoarderManageTabController extends InnerPageController
     private void allocate()
     {
     	//입사자 등록(배정) 쿼리 요청
+    	Tuple<Bool, String> resultTuple = Responser.admin_boarderManagePage_onAllocate();
+    	
+    	//서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultTuple != null)
+        {
+        	//성공/실패 메시지 표시
+        	IOHandler.getInstance().showAlert(resultTuple.obj2);
+        }
     }
     
     private void checkBoarders()
