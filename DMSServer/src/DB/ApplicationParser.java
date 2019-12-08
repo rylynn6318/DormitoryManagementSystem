@@ -354,5 +354,16 @@ public class ApplicationParser {
 		DBHandler.INSTANCE.returnConnection(connection);
 		return applications;
 	}
+	
+	public static Application getPassedApplication(String id)
+	{
+		String sql = "SELECT 최종합격여부, 납부여부, 식비구분, 생활관 FROM" + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ id + "생활관정보_학기 = " +CurrentSemesterParser.getCurrentSemester() + "최종결과 = 'Y'";
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+		rs.next();
+		Application application = new Application(rs.getString);
+		
+	}
 
 }

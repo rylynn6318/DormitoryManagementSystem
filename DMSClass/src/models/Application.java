@@ -69,13 +69,21 @@ public class Application implements Comparable<Application>, Serializable
 		this.isPassed = isPassed;
 		this.isPaid = isPaid;
 	}
-	
+	최종합격여부, 납부여부, 식비구분, 생활관
 	public Application(String studentId, String dormitoryName, int semesterCode, int choice)	//클라이언트->서버에게 입사선발자 삭제 요청에 필요
 	{
 		this.studentId = studentId;
 		this.dormitoryName = dormitoryName;
 		this.semesterCode = semesterCode;
 		this.choice = choice;
+	}
+	
+	public Application(Bool isLastPassed, Bool isPaid, int mealType, String dormitoryName)
+	{
+		this.isLastPassed = isLastPassed;
+		this.isPaid = isPaid;
+		this.mealType = mealType;
+		this.dormitoryName = dormitoryName;
 	}
 	
 	public Application(int mealType, Bool isSnore)
