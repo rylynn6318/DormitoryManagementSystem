@@ -64,36 +64,7 @@ public class SubmitApplicationTabController implements Initializable
 		System.out.println("생활관 입사 신청 새로고침됨");
 		
 		//네트워킹
-		Tuple<String, ArrayList<Dormitory>> resultTuple = Responser.student_submitApplicationPage_onEnter();
-        
-		//서버랑 통신이 됬는가?
-        if(resultTuple == null)
-        {
-        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-        	//여기서 페이지 닫게 해주자.
-        	//return;
-        }
-        else
-        {
-        	//스케쥴 체크가 됬는가?
-        	//스케쥴 때문에 진입 불가인 경우 tuple의 두번째 항목이 null로 반환된다.
-            if(resultTuple.obj2 == null)
-            {
-            	IOHandler.getInstance().showAlert(resultTuple.obj1);
-            	//여기서 페이지 닫게 해주자.
-            	//return;
-            }
-        }
-        
-        //안내사항 표시
-        if(resultTuple != null)
-        	info_textarea.setText(resultTuple.obj1);
-		
-		//TODO 테스트용, 콤보박스 아이템 추가. 나중에 클래스든, String이든, 네트워크에서 받아와 처리해야됨.
-		//그리고, 요청받아올때 서버에서 남자인지 여자인지 알아내서 그에 맞는 생활관구분, 기간구분, 식사구분, 생활관비 가져와야댐.
-		//(추가)그냥 서버에서 생활관정보테이블->이번학기->성별에 맞게-> 다 긁어와서 객체 배열로 만들고, 클라이언트로 전송하면됨.
-		setCombobox(resultTuple.obj2);
-		
+		checkSchedule();
 	}
 	
 	private void debug_comboboxView()
@@ -135,6 +106,42 @@ public class SubmitApplicationTabController implements Initializable
     }
     
     //---------------------로직---------------------
+    
+    private void checkSchedule()
+    {
+    	Tuple<String, ArrayList<Dormitory>> resultTuple = Responser.student_submitApplicationPage_onEnter();
+        
+		//서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	//여기서 페이지 닫게 해주자.
+        	//return;
+        }
+        else
+        {
+        	//스케쥴 체크가 됬는가?
+        	//스케쥴 때문에 진입 불가인 경우 tuple의 두번째 항목이 null로 반환된다.
+            if(resultTuple.obj2 == null)
+            {
+            	IOHandler.getInstance().showAlert(resultTuple.obj1);
+            	//여기서 페이지 닫게 해주자.
+            	//return;
+            }
+            else
+            {
+            	//안내사항 표시
+                if(resultTuple.obj1 != null)
+                	info_textarea.setText(resultTuple.obj1);
+        		
+        		//TODO 테스트용, 콤보박스 아이템 추가. 나중에 클래스든, String이든, 네트워크에서 받아와 처리해야됨.
+        		//그리고, 요청받아올때 서버에서 남자인지 여자인지 알아내서 그에 맞는 생활관구분, 기간구분, 식사구분, 생활관비 가져와야댐.
+        		//(추가)그냥 서버에서 생활관정보테이블->이번학기->성별에 맞게-> 다 긁어와서 객체 배열로 만들고, 클라이언트로 전송하면됨.
+                if(resultTuple.obj2 != null)
+                	setCombobox(resultTuple.obj2);
+            }
+        }
+    }
     
     //사용자가 클릭한 콤보박스로 신청객체 배열을 만들어 반환하는 클래스
     private ArrayList<Application> getApplicationList(Bool isSnore)

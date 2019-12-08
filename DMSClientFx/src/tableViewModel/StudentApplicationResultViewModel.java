@@ -1,5 +1,6 @@
 package tableViewModel;
 
+import enums.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -14,11 +15,11 @@ public class StudentApplicationResultViewModel extends StudentApplicationViewMod
 		super(choice, dormitoryName, mealType);
 	}
 	
-	public StudentApplicationResultViewModel(int choice, String dormitoryName, int mealType, boolean isPassed, boolean isPaid)
+	public StudentApplicationResultViewModel(int choice, String dormitoryName, int mealType, Bool isPassed, Bool isPaid)
 	{
 		super(choice, dormitoryName, mealType);
-		isPassedStr = isPassed ? new SimpleStringProperty("합격") : new SimpleStringProperty("불합격");
-		isPaidStr = isPaid ? new SimpleStringProperty("납부") : new SimpleStringProperty("미납");
+		isPassedStr = isPassed.bool ? new SimpleStringProperty("합격") : new SimpleStringProperty("불합격");
+		isPaidStr = isPaid.bool ? new SimpleStringProperty("납부") : new SimpleStringProperty("미납");
 	}
 	
 	public StringProperty isPassedProperty()

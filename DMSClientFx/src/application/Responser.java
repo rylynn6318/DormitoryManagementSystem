@@ -119,8 +119,6 @@ public class Responser
 	public static String student_submitApplicationPage_onSubmit(ArrayList<Application> applicationList)
 	{
 		//1. 사용자가 선택한 신청 + 코골이여부를 배열화한다.
-		//	 2, 3지망은 1지망, 2지망 선택하기 전에는 선택못하게 막기 or 비어있는 줄 무시하고 2,3지망만 쓰면 1,2지망으로 바꾸기
-
 		//사용자 정보와 신청배열을 보내야하기때문에 튜플 사용함.
 		Tuple<Account, ArrayList<Application>> sendData = new Tuple<Account, ArrayList<Application>>(UserInfo.getInstance().account, applicationList);
 		
@@ -154,24 +152,33 @@ public class Responser
 	//------------------------------------------------------------------------
 	
 	//학생 - 생활관 신청 조회 - 들어왔을 때
-	public void student_CheckApplicationPage_onEnter()
+	public static Tuple<String, Bool> student_CheckApplicationPage_onEnter()
 	{
 		//1. 신청내역 조회 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
+		Protocol protocol = eventProtocolBuilder(Code1.Page.신청조회, Code2.Event.REFRESH, null);
+		
 		//(2. 서버는 스케쥴 테이블에서 비고(안내사항)를 가져온다.)
 		//(3. 서버는 스케쥴 객체를 클라이언트에게 전송한다.)
-		//4. 서버에서 받은 비고(안내사항)을 표시한다
+		
+		//4. 서버에서 받은 비고(안내사항)와 진입여부를 표시한다.
+		Tuple<String, Bool> result = (Tuple<String, Bool>) sendAndReceive(protocol);
+		
+		return result;
 	}
 	
 	//학생 - 생활관 신청 조회 - 조회 버튼 클릭 시
-	public void student_CheckApplicationPage_onCheck()
+	public static Tuple<ArrayList<Application>, ArrayList<Application>> student_CheckApplicationPage_onCheck()
 	{
 		//1. 서버에게 생활관 신청 조회 요청을 한다. 
+		Protocol protocol = eventProtocolBuilder(Code1.Page.신청조회, Code2.Event.CHECK, UserInfo.getInstance().account);
 		//(2. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회.
 		//	  '생활관 입사지원 내역' 테이블뷰에 표시할 것임)
 		//(3. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역의 지망, 생활관명, 식사구분, 합격여부, 납부여부를 조회.
 		//	  '생활관 선발 결과' 테이블뷰에 표시할 것임)
 		//(4. 조회된 내역을 객체화, 배열에 담아 클라이언트에게 반환한다.)
 		//5. 서버로부터 받은 내역을 각각 두개의 테이블에 표시한다.
+		Tuple<ArrayList<Application>, ArrayList<Application>> result = (Tuple<ArrayList<Application>, ArrayList<Application>>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//------------------------------------------------------------------------

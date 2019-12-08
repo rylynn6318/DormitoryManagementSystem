@@ -1,8 +1,12 @@
 package controller.student;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import application.IOHandler;
+import application.Responser;
+import enums.Bool;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +16,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import models.Application;
+import models.Dormitory;
+import models.Tuple;
 import tableViewModel.*;
 
 public class CheckApplicationTabController implements Initializable
@@ -52,16 +59,13 @@ public class CheckApplicationTabController implements Initializable
     @FXML
     private TextArea info_textarea;
     
-    ObservableList<StudentApplicationViewModel> appHistory;
-    ObservableList<StudentApplicationResultViewModel> selections;
-    
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
 		System.out.println("생활관 신청 조회 새로고침됨");
 
 		//네트워킹
-		info_textarea.setText("서버에서 받아온 안내사항입니다.");
+		checkSchedule();
 	}
 	
 	//---------------------이벤트---------------------
@@ -75,32 +79,88 @@ public class CheckApplicationTabController implements Initializable
     
     //---------------------로직---------------------
     
+    private void checkSchedule()
+    {
+    	Tuple<String, Bool> resultTuple = Responser.student_CheckApplicationPage_onEnter();
+        
+		//서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	//여기서 페이지 닫게 해주자.
+        	//return;
+        }
+        else
+        {
+        	//스케쥴 체크가 됬는가?
+        	//스케쥴 때문에 진입 불가인 경우 tuple의 두번째 항목이 null로 반환된다.
+            if(resultTuple.obj2 == Bool.FALSE)
+            {
+            	IOHandler.getInstance().showAlert(resultTuple.obj1);
+            	//여기서 페이지 닫게 해주자.
+            	//return;
+            }
+            else
+            {
+            	//안내사항 표시
+                if(resultTuple.obj1 != null)
+                	info_textarea.setText(resultTuple.obj1);
+            }
+        }
+    }
+    
     private void checkApplication()
     {
     	//여기는 뭐 검사할 필요없이 바로 서버로 요청날림.
     	//서버로 요청날리고 받아온 후 refreshApplicationTable 호출
+    	Tuple<ArrayList<Application>, ArrayList<Application>> resultTuple = Responser.student_CheckApplicationPage_onCheck();
     	
+    	//서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        //서버에서 받아온 데이터
+        ArrayList<Application> receivedApplicationList1 = resultTuple.obj1;		//생활관 입사지원 내역(지망, 생활관명, 식사구분만 받아옴)
+        ArrayList<Application> receivedApplicationList2 = resultTuple.obj2;		//생활관 선발결과 내역(지망, 생활관명, 식비구분, 합격여부, 납부여부 받아옴)
+        
     	//아래에서 서버와 통신하여 appHistory 배열과, selections 배열을 객체로 채웠다..
 		//서버에서 Application 객체를 가져오면, StudentApplicationViewModel로 형변환해서 써야할듯. 
-		appHistory = FXCollections.observableArrayList(
-				new StudentApplicationViewModel(1, "오름관2동", 5),
-				new StudentApplicationViewModel(2, "푸름관1동", 7),
-				new StudentApplicationViewModel(3, "푸름관4동", 0)
-				);
+        ObservableList<StudentApplicationViewModel> appHistory = appListToAppViewModel(receivedApplicationList1);
 		
 		//이건 생활관 선발 결과 객체 배열
 		//지망, 생활관명, 식비구분, 합격여부, 납부여부를 받아와야한다.
-		selections = FXCollections.observableArrayList(
-				new StudentApplicationResultViewModel(1, "오름관2동", 5, true, true),
-				new StudentApplicationResultViewModel(2, "푸름관1동", 7, true, false),
-				new StudentApplicationResultViewModel(3, "푸름관4동", 0, true, false)
-				);
+        ObservableList<StudentApplicationResultViewModel> selections = appListToResultViewModel(receivedApplicationList2);
     	
-    	refreshApplicationTable();
-    	refreshApplicationResultTable();
+    	refreshApplicationTable(appHistory);
+    	refreshApplicationResultTable(selections);
     }
     
-    private void refreshApplicationTable()
+    //서버에서 Application 객체를 가져오면, StudentApplicationViewModel로 형변환해서 반환 
+    private ObservableList<StudentApplicationViewModel> appListToAppViewModel(ArrayList<Application> appList)
+    {
+    	ObservableList<StudentApplicationViewModel> appHistory = FXCollections.observableArrayList();
+    	for(Application app : appList)
+    	{
+    		appHistory.add(new StudentApplicationViewModel(app.getChoice(), app.getDormitoryName(), app.getMealType()));
+    	}
+    	return appHistory;
+    }
+    
+    //서버에서 Application 객체를 가져오면, StudentApplicationResultViewModel로 형변환해서 반환 
+    private ObservableList<StudentApplicationResultViewModel> appListToResultViewModel(ArrayList<Application> appList)
+    {
+    	ObservableList<StudentApplicationResultViewModel> selections = FXCollections.observableArrayList();
+    	for(Application app : appList)
+    	{
+    		selections.add(new StudentApplicationResultViewModel(app.getChoice(), app.getDormitoryName(), app.getMealType(), app.isPassed(), app.isPaid()));
+    	}
+    	return selections;
+    }
+    
+    private void refreshApplicationTable(ObservableList<StudentApplicationViewModel> appHistory)
     {
     	application_history_column_choice.setCellValueFactory(cellData -> cellData.getValue().choiceProperty());
     	application_history_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
@@ -108,7 +168,7 @@ public class CheckApplicationTabController implements Initializable
     	application_history_tableview.setItems(appHistory);
     }
     
-    private void refreshApplicationResultTable()
+    private void refreshApplicationResultTable(ObservableList<StudentApplicationResultViewModel> selections)
     {
     	selection_result_column_choice.setCellValueFactory(cellData -> cellData.getValue().choiceProperty());
     	selection_result_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
@@ -116,5 +176,29 @@ public class CheckApplicationTabController implements Initializable
     	selection_result_column_isPassed.setCellValueFactory(cellData -> cellData.getValue().isPassedProperty());
     	selection_result_column_isPaid.setCellValueFactory(cellData -> cellData.getValue().isPaidProperty());
     	selection_result_tableview.setItems(selections);
+    }
+    
+    //---------------------디버깅용---------------------
+    
+    //디버깅용 
+    private ObservableList<StudentApplicationViewModel> debug_getTestAppViewModel()
+    {
+      ObservableList<StudentApplicationViewModel> appHistory = FXCollections.observableArrayList(
+				new StudentApplicationViewModel(1, "오름관2동", 5),
+				new StudentApplicationViewModel(2, "푸름관1동", 7),
+				new StudentApplicationViewModel(3, "푸름관4동", 0)
+				);
+      return appHistory;
+    }
+    
+    //디버깅용 
+    private ObservableList<StudentApplicationResultViewModel> debug_getTestResultViewModel()
+    {
+      ObservableList<StudentApplicationResultViewModel> selections = FXCollections.observableArrayList(
+				new StudentApplicationResultViewModel(1, "오름관2동", 5, Bool.TRUE, Bool.TRUE),
+				new StudentApplicationResultViewModel(2, "푸름관1동", 7, Bool.TRUE, Bool.FALSE),
+				new StudentApplicationResultViewModel(3, "푸름관4동", 0, Bool.TRUE, Bool.FALSE)
+				);
+      return selections;
     }
 }
