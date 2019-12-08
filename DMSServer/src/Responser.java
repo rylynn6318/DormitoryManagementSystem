@@ -533,12 +533,14 @@ public class Responser
 	{
 		Bool isSucceed = Bool.TRUE;
 		//1. 클라이언트로부터 받은 학번, 생활관명, 학기, 지망으로 신청 테이블에서 조회한다.
+		Application temp;
 		try {
-			Application temp = (Application) ProtocolHelper.deserialization(protocol.getBody());	//받은 객체를 temp에 저장
-			isSucceed = DB.ApplicationParser.deleteApplication(temp);	//여기서 조회 및 삭제를 함
-		} catch (ClassNotFoundException | IOException e) {
+			temp = (Application) ProtocolHelper.deserialization(protocol.getBody());
+			DB.ApplicationParser.deleteApplication(temp);
+		} catch (ClassNotFoundException | IOException | SQLException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			isSucceed = Bool.FALSE;
+			e1.printStackTrace();
 		}
 		
 		Tuple<Bool,String> result;

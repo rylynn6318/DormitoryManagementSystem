@@ -32,21 +32,13 @@ public class ApplicationParser {
 
 	}
 	
-	public static Bool deleteApplication(Application app)
+	public static void deleteApplication(Application app) throws SQLException
 	{
 		String deleteApplication = "DELETE FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번=" + app.getStudentId() + " AND 생활관정보_생활관명=" + app.getDormitoryName() + " AND 학기=" + app.getSemesterCode() + " AND 지망=" + app.getChoice();
 		
-		try {
-			Connection connection = DBHandler.INSTANCE.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(deleteApplication);
-			preparedStatement.execute();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return Bool.FALSE;
-		}
-		
-		return Bool.TRUE;
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement preparedStatement = connection.prepareStatement(deleteApplication);
+		preparedStatement.execute();
 	}
 	
 	public static ArrayList<Application> getAllApplications() throws SQLException
