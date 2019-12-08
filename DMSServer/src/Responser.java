@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -79,6 +80,33 @@ public class Responser
 //		Networking(rs);
 //	}
 	
+	//----------------------------------유틸리티---------------------------------------------------
+	
+	//클라이언트 이벤트에 대한 회신
+	private static void eventReply(SocketHelper socketHelper, Serializable data)
+	{
+		try
+		{
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					null, 
+					null
+					).body(ProtocolHelper.serialization(data)).build());
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return;
+	}
+	
+	private static Tuple<Bool, String> createMessage(Bool isSucceed, String msg)
+	{
+		return new Tuple<Bool, String>(isSucceed, msg);
+	}
+	
+	//------------------------------------------------------------------------------------------------
+	
 	//학생 - 생활관 입사 신청 - 들어왔을 때
 	public static void student_submitApplicationPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
@@ -87,43 +115,55 @@ public class Responser
 		System.out.println("스케쥴 체크됨");
 		if(!isAdmissible)
 		{
-			//이렇게 튜플로 보내주는 이유는, 아래에서 스케쥴 체크에서 성공했을때 튜플로 보내기 때문임.
+			//스케쥴 때문에 진입 불가한 경우
 			Tuple<String, ArrayList<Dormitory>> failMessage = new Tuple<String, ArrayList<Dormitory>>("현재 생활관 입사 신청 기간이 아닙니다.", null);
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(failMessage)).build());
+			eventReply(socketHelper, failMessage);
 			return;
 		}
 		
 		//2. 받은 요청의 헤더에서 학번을 알아낸다.
 		Account account = (Account) ProtocolHelper.deserialization(protocol.getBody());
+		System.out.println("전달받은 학번 : " + account.accountId);
 		
 		//3. 학생테이블에서 학번으로 조회하여 성별을 알아낸다.
 		Gender gender = StudentParser.getGender(account.accountId);
+		if(gender == null)
+		{
+			//학생이 조회되지 않은 경우
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당 학생이 조회되지 않았습니다. 관리자에게 문의하세요."));
+			return ;
+		}
 		System.out.println("성별 불러옴 : " + gender.toString() );
 		
 		//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
 		//	 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
-		int semester;
-		semester = CurrentSemesterParser.getCurrentSemester();											//나중에 이런 코드 만들어서 쓰게해야됨.
+		int semester = CurrentSemesterParser.getCurrentSemester();
+		if(semester == 0)
+		{
+			//현재 학기 조회 실패
+			eventReply(socketHelper, createMessage(Bool.FALSE, "현재 학기 조회 실패. 관리자에게 문의하세요."));
+		}
+		
 		ArrayList<Dormitory> dormitoryList = DormParser.getDormitoryList(semester, gender);
+		if(dormitoryList == null)
+		{
+			//기숙사 목록 조회 실패
+			eventReply(socketHelper, createMessage(Bool.FALSE, "기숙사 목록 조회 실패. 관리자에게 문의하세요."));
+		}
 		
 		//5. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
 		String description = ScheduleParser.getDescription(Code1.Page.입사신청);
+		if(description == null)
+		{
+			//기숙사 목록 조회 실패
+			eventReply(socketHelper, createMessage(Bool.FALSE, "안내사항 조회 실패. 관리자에게 문의하세요."));
+		}
 		
 		//6. 해당 정보를 객체화, 배열로 만들어 클라이언트에게 전송한다.
 		Tuple<String, ArrayList<Dormitory>> resultTuple = new Tuple(description, dormitoryList);
 		
 		//전송한다.
-		socketHelper.write(new Protocol.Builder(
-				ProtocolType.EVENT, 
-				Direction.TO_CLIENT, 
-				Code1.NULL, 
-				Code2.NULL
-				).body(ProtocolHelper.serialization(resultTuple)).build());
+		eventReply(socketHelper, resultTuple);
 	}
 	
 	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시
@@ -136,12 +176,7 @@ public class Responser
 		try {
 			if(ApplicationParser.isExist(id))
 			{
-				socketHelper.write(new Protocol.Builder(
-						ProtocolType.EVENT, 
-						Direction.TO_CLIENT, 
-						Code1.NULL, 
-						Code2.NULL
-						).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.FALSE, "이전 신청 정보를 삭제해 주세요."))).build());
+				eventReply(socketHelper, createMessage(Bool.FALSE, "이전 신청 정보를 삭제해 주세요."));
 				return;
 			}
 		} catch (SQLException e) {
@@ -153,92 +188,80 @@ public class Responser
 		//4. 해당 배열을 신청 데이트에 INSERT한다.
 		Iterator<Application> appIter = A.iterator();
 		Gender gender = StudentParser.getGender(t.obj1.accountId);
-		int s = CurrentSemesterParser.getCurrentSemester();
+		if(gender == null)
+		{
+			//학생이 조회되지 않은 경우
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당 학생이 조회되지 않았습니다. 관리자에게 문의하세요."));
+			return ;
+		}
+		int semester = CurrentSemesterParser.getCurrentSemester();
+		if(semester == 0)
+		{
+			//현재 학기 조회 실패
+			eventReply(socketHelper, createMessage(Bool.FALSE, "현재 학기 조회 실패. 관리자에게 문의하세요."));
+		}
 		while(appIter.hasNext())  //(int choice, String mealType, Bool isSnore, String dormitoryName, Gender gender, int semesterCode, String id)
 		{
 			Application temp = appIter.next();
 			temp.setGender(gender.gender.charAt(0));
-			temp.setSemesterCode(s);
+			temp.setSemesterCode(semester);
 			ApplicationParser.insertApplication(temp.getChoice(), temp.getMealType(), temp.isSnore(), temp.getDormitoryName(), temp.getGender(), temp.getSemesterCode(), id); //이거 풀하고 다시 짤거에요
+			//이것도 실패했을때 클라이언트한테 알려줘라.
 		}
 		//5. 클라이언트에게 성공 여부를 알려준다.(성공/DB연결 오류로 인한 실패/DB사망/알수없는오류 등등...)
 		// 여기 있는 모든 배열 = ArrayList 진짜 []로 짜시면 안돼요 / 배열을 ArrayList로 대체함 진짜 대체만 했으니 나머지 알고리즘은 완성해주세요
 		try {
 			if(ApplicationParser.isExist(id))
 			{
-				socketHelper.write(new Protocol.Builder(
-						ProtocolType.EVENT, 
-						Direction.TO_CLIENT, 
-						Code1.NULL, 
-						Code2.NULL
-						).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.TRUE,"신청 성공했습니다"))).build());
+				eventReply(socketHelper, createMessage(Bool.TRUE, "신청에 성공했습니다."));
 				return;
 			}
 			else
 			{
-				socketHelper.write(new Protocol.Builder(
-						ProtocolType.EVENT, 
-						Direction.TO_CLIENT, 
-						Code1.NULL, 
-						Code2.NULL
-						).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.FALSE,"신청에 실패했습니다"))).build());
+				eventReply(socketHelper, createMessage(Bool.FALSE, "신청에 실패했습니다."));
 				return;
 			}
-		} catch (SQLException | IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	//학생 - 생활관 입사 신청 - 취소 버튼 클릭 시 (2019-12-08 명근 수정)
-		public static void student_submitApplicationPage_onCancel(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
-		{
-			//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-			Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
-			String id = a.accountId;
-			
-			//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역이 있는지 조회 -> TRUE 이면 다음으로, FALSE이면 클라이언트에게 내역 없다고 알려줌.
-			boolean isExist = false;
-			try {
-				isExist = ApplicationParser.isExist(id);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			if(!isExist)
-			{
-				socketHelper.write(new Protocol.Builder(
-						ProtocolType.EVENT, 
-						Direction.TO_CLIENT, 
-						Code1.NULL, 
-						Code2.NULL
-						).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.FALSE,"신청내역 없음"))).build());
-				return;
-			}
-			
-			
-			try
-			{
-				ApplicationParser.deleteApplication(id);
-				socketHelper.write(new Protocol.Builder(
-						ProtocolType.EVENT, 
-						Direction.TO_CLIENT, 
-						Code1.NULL, 
-						Code2.NULL
-						).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.TRUE,"삭제 성공했습니다"))).build());
-				return;
-			}
-			catch(Exception e)
-			{
-				socketHelper.write(new Protocol.Builder(
-						ProtocolType.EVENT, 
-						Direction.TO_CLIENT, 
-						Code1.NULL, 
-						Code2.NULL
-						).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.FALSE,"삭제에 실패했습니다"))).build());
-				return;
-			}
-			
+	public static void student_submitApplicationPage_onCancel(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
+	{
+		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
+		Account account = (Account) ProtocolHelper.deserialization(protocol.getBody());	
+		String id = account.accountId;
+		
+		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역이 있는지 조회 -> TRUE 이면 다음으로, FALSE이면 클라이언트에게 내역 없다고 알려줌.
+		boolean isExist = false;
+		try {
+			isExist = ApplicationParser.isExist(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청 내역 조회 중 오류가 발생했습니다."));
 		}
+		
+		if(!isExist)
+		{
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청내역이 존재하지 않습니다."));
+			return;
+		}
+		
+		
+		try
+		{
+			ApplicationParser.deleteApplication(id);
+			eventReply(socketHelper, createMessage(Bool.TRUE, "신청내역 삭제에 성공했습니다."));
+			return;
+		}
+		catch(Exception e)
+		{
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청내역 삭제에 실패했습니다."));
+			return;
+		}
+		
+	}
 	
 	//------------------------------------------------------------------------
 	

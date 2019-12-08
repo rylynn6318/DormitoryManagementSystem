@@ -23,8 +23,9 @@ public class StudentParser {
         state.close();
         DBHandler.INSTANCE.returnConnection(connection);
         
-//        Gender gender = result.equals("M") ? Gender.Male : Gender.Female;
-        Gender gender = Gender.get(result);
+        Gender gender = null;
+        if(result != null)
+        	gender = Gender.get(result);
 
         return gender; //.equals("M") ? Gender.Male : Gender.Female;
     }
