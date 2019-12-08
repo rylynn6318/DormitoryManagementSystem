@@ -18,6 +18,7 @@ import enums.Code2;
 import enums.Direction;
 import enums.Gender;
 import enums.ProtocolType;
+import models.Account;
 import models.Application;
 import models.Bill;
 import models.Dormitory;
@@ -123,7 +124,8 @@ public class Responser
 	public static void student_submitApplicationPage_onSubmit(Protocol protocol, SocketHelper socketHelper) throws IOException, SQLException, ClassNotFoundException
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
+		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
+		String id = a.accountId;
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역이 있는지 조회 -> TRUE 이면 내역 취소하고 하라고 클라이언트에게 알려줌. FALSE이면 다음으로
 		try {
 			if(ApplicationParser.isExist(id))
