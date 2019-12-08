@@ -2,6 +2,7 @@ package DB;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import enums.Code1.Page;
@@ -72,25 +73,49 @@ public class ScheduleParser
 		return result;
 	}
 	
-	//만들긴했는데 당장 쓰진 않지만 혹시 라도 필요하면 사용하세요,,, 스케줄객체 생성하는 함수입니다 ㅠㅡㅠ........-서희-
-	public static Schedule[] getAllSchedule() throws Exception
+	//만들긴했는데 당장 쓰진 않지만 혹시 라도 필요하면 사용하세요,,, 스케줄객체 생성하는 함수입니다 ㅠㅡㅠ........-서희- <- 이거 java.sql.Date를 java.util.Date에 바로 집어넣으면 안됨 일단 주석처리 해두겠음
+//	public static Schedule[] getAllSchedule() throws Exception
+//	{
+//		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME +";";
+//		
+//		Connection connection = DBHandler.INSTANCE.getConnection();
+//		PreparedStatement state = connection.prepareStatement(sql);
+//		
+//		ResultSet resultSet = state.executeQuery(sql);
+//		resultSet.last();
+//		Schedule[] schedule = new Schedule[resultSet.getRow()];
+//		resultSet.first();
+//		int index = 0;
+//		while(resultSet.next())
+//		{
+//			schedule[index] = new Schedule(resultSet.getString("스케줄명") , resultSet.getInt("스케쥴 할일 코드_ID"), resultSet.getDate("시작일"), resultSet.getDate("종료일"), resultSet.getString("비고"));
+//			index++;
+//		}
+//		return schedule;
+//	}
+	
+	public static ArrayList<Schedule> getAllSchedule() throws SQLException
 	{
-		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME +";";
-		
+		ArrayList<Schedule> schedule = new ArrayList<Schedule>();
+		String getAllScheduleSql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴";
 		Connection connection = DBHandler.INSTANCE.getConnection();
-		PreparedStatement state = connection.prepareStatement(sql);
+		PreparedStatement state = connection.prepareStatement(getAllScheduleSql);
+		ResultSet rsSchedule = state.executeQuery();
 		
-		ResultSet resultSet = state.executeQuery(sql);
-		resultSet.last();
-		Schedule[] schedule = new Schedule[resultSet.getRow()];
-		resultSet.first();
-		int index = 0;
-		while(resultSet.next())
+		while(rsSchedule.next())
 		{
-			schedule[index] = new Schedule(resultSet.getString("스케줄명") , resultSet.getInt("스케쥴 할일 코드_ID"), resultSet.getDate("시작일"), resultSet.getDate("종료일"), resultSet.getString("비고"));
-			index++;
+			java.sql.Date sqlStartDate = rsSchedule.getDate("시작일");
+			java.sql.Date sqlEndDate = rsSchedule.getDate("종료일");
+			
+			@SuppressWarnings("deprecation")
+			java.util.Date startDate = new java.util.Date(sqlStartDate.getYear(), sqlStartDate.getMonth(), sqlStartDate.getDay());
+			@SuppressWarnings("deprecation")
+			java.util.Date endDate = new java.util.Date(sqlEndDate.getYear(), sqlEndDate.getMonth(), sqlEndDate.getDay());
+			
+			Schedule temp = new Schedule(rsSchedule.getString("ID"), rsSchedule.getInt("`스케쥴 할일 코드_ID`"), startDate, endDate, rsSchedule.getString("비고"));
+			schedule.add(temp);
 		}
-		return schedule;
 		
+		return schedule;
 	}
 }
