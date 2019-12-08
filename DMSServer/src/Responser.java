@@ -12,6 +12,7 @@ import DB.ScheduleParser;
 import DB.StudentParser;
 import enums.Bool;
 import enums.Code1;
+import enums.Code1.FileType;
 import enums.Code1.Page;
 import enums.Code2;
 import enums.Direction;
@@ -363,6 +364,22 @@ public class Responser
 	public static void student_checkDocumentPage_onEnter(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 서류 유형을 객체화 배열화하여 클라이언트로 전송한다.
+		ArrayList<Code1.FileType> fileType = new ArrayList<Code1.FileType>();
+		fileType.add(FileType.MEDICAL_REPORT);
+		fileType.add(FileType.OATH);
+
+		try {
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization(fileType)).build());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return;
 		//(2. 클라이언트는 받은 배열을 역직렬화하여 서류유형 combobox에 표시한다)
 	}
 	
