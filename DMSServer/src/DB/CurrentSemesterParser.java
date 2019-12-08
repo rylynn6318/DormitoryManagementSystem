@@ -4,9 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class CurrentSemesterParser 
@@ -25,7 +23,7 @@ public class CurrentSemesterParser
 		
 //		String sql = "SELECT `스케쥴 할일 코드`, 비고 FROM " + DBinfo.DB_NAME + ".스케쥴 <![CDATA[ WHERE 시작일 <="+time1+" and "+time1 + "<= 종료일   ]]>"; //만약 위 방법이 안되면 사용할것		 
 
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state1 = connection.prepareStatement(sql1);
 		ResultSet rs1 = state1.executeQuery();
 		rs1.next();		

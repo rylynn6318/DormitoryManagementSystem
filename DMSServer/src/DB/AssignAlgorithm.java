@@ -18,7 +18,7 @@ public class AssignAlgorithm
 	public static void passUpdate() throws SQLException, ClassNotFoundException
 	{	
 		String sql ="SELECT ID, 납부여부, 합격여부, 최종결과 FROM " + DBHandler.DB_NAME + ".신청";
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet purs = state.executeQuery();				// rs 는 지금 id 납부여부 합격여부가 최종결과가 들어있다 신청테이블의
 		PreparedStatement state1 = null;
@@ -53,7 +53,7 @@ public class AssignAlgorithm
 	public static void setCurrentSemester() throws ClassNotFoundException, SQLException
 	{
 		String sql = "SELECT 학기 FROM " + DBHandler.DB_NAME + ".신청 ORDER BY 학기 DESC LIMIT 1"; //신청테이블에서 하나만 가져와서 그 학기를 봄
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery(sql);
 		rs.next();
@@ -118,7 +118,7 @@ public class AssignAlgorithm
 		AssignRoomInfo[] SN = MakeAllRoomInfo.getSN();
 		AssignRoomInfo[] SY = MakeAllRoomInfo.getSY();
 		String sql = "SELECT 호, 생활관명, 학기 FROM " + DBHandler.DB_NAME + ".호실정보";
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery(sql);
 		

@@ -13,7 +13,7 @@ public class AccountParser {
         Code2.LoginResult result = Code2.LoginResult.FAIL;
         String sql = "SELECT PW, `계정 타입_코드` FROM " + DBHandler.INSTANCE.DB_NAME + ".계정 WHERE ID = '" + id + "'";
 
-        Connection connection = DBHandler.INSTANCE.getConnetion();
+        Connection connection = DBHandler.INSTANCE.getConnection();
         PreparedStatement state = connection.prepareStatement(sql);
         ResultSet loginRs = state.executeQuery();
 

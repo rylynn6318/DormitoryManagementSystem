@@ -32,7 +32,7 @@ public enum DBHandler {
         }
     }
 
-    public Connection getConnetion() throws SQLException {
+    public Connection getConnection() throws SQLException {
         if (pool.isEmpty())
             pool.add(DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD));
         

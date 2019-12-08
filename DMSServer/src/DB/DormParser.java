@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import enums.Bool;
@@ -22,7 +21,7 @@ public class DormParser {
 		// 1. DBHandler.INSTANCE.excuteSelect 쓰는 경우
 		// 2. 기존의, DB 커넥션 만들어서 쓰는 경우
 		// 이 경우엔 1.번 경우로 아래와 같이 수정한다
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet resultSet = state.executeQuery();
 
@@ -43,7 +42,7 @@ public class DormParser {
 	// 일단 싹다 보내주고 클라이언트에서 알아서 거르는걸로
 	public static ArrayList<Dormitory> getDormInfo(ArrayList<String> dList) throws Exception
 	{
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		ArrayList<Dormitory> dorm = new ArrayList<Dormitory>();
 		ResultSet resultSet = null;
 		PreparedStatement state = null;
@@ -79,7 +78,7 @@ public class DormParser {
 		ArrayList<Dormitory> dorm = new ArrayList<Dormitory>();
 
 		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보  WHERE 성별 = " + gender.gender + " AND 학기 = " + String.valueOf(semester);
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet resultSet = state.executeQuery();
 
@@ -108,7 +107,7 @@ public class DormParser {
 	{
 		int cost;
 		String sql = "SELECT 몇일식, 생활관명 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번=" + id + "and 합격여부 = 'Y' and 생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
 		rs.next();

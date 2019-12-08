@@ -14,7 +14,7 @@ public class ApplicationParser {
 	public static Boolean isExist(String studentID) throws SQLException
 	{
 		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ studentID;
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
 		boolean isNext = rs.next();
@@ -35,7 +35,7 @@ public class ApplicationParser {
 	public static ArrayList<Application> getAllApplications() throws SQLException
 	{
 		String getUnsortedAppsQuery = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 학기=(select max(학기) from " + DBHandler.DB_NAME + ".신청)";
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(getUnsortedAppsQuery);
 		ResultSet apps = preparedStatement.executeQuery();
 		
@@ -52,7 +52,7 @@ public class ApplicationParser {
 	public static int getSemester() throws SQLException 
 	{
 		String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 학기 = (SELECT max(학기) FROM " + DBHandler.DB_NAME + ".신청)";
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
 		rs.next();
@@ -68,7 +68,7 @@ public class ApplicationParser {
 		String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + " AND 합격여부=Y)";
 		String getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + semester;
 
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement passedState = connection.prepareStatement(getNumOfPassedAppsQuery);
 		PreparedStatement capacityState = connection.prepareStatement(getCapacityQuery);
 
@@ -102,7 +102,7 @@ public class ApplicationParser {
 		TreeSet<Application> sortedApps = new TreeSet<Application>();
 		
 		String getUnsortedAppsQuery = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 생활관명=" + dormName + " AND 지망=" + choice + "학기=201901 AND 합격여부=N";
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(getUnsortedAppsQuery);
 		ResultSet apps = preparedStatement.executeQuery();
 		
@@ -239,7 +239,7 @@ public class ApplicationParser {
 	public static TreeSet<Score> getScores(String studentId, int twoSemesterBefore, int lastSemester) throws SQLException
 	{
 		String getScoresQuery = "SELECT 학점,등급 FROM " + DBHandler.DB_NAME + ".점수 WHERE 학번=" + studentId + "AND 학기 BETWEEN '" + twoSemesterBefore + "' AND '" + lastSemester + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(getScoresQuery);
 		ResultSet scores = preparedStatement.executeQuery();
 
@@ -258,7 +258,7 @@ public class ApplicationParser {
 	public static String getZipCode(String studentId) throws SQLException
 	{
 		String zipCodeQuery = "SELECT 보호자우편번호 FROM " + DBHandler.DB_NAME + ".학생 WHERE 학번=" + studentId;
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(zipCodeQuery);
 		ResultSet zipCode = preparedStatement.executeQuery();
 
@@ -275,7 +275,7 @@ public class ApplicationParser {
 	public static void updatePasser(Application temp) throws SQLException 
 	{
 		String setPassed = "UPDATE " + DBHandler.DB_NAME + ".신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + "지망=" + temp.getChoice() + "학기=" + temp.getSemesterCode();
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(setPassed);
 		preparedStatement.executeUpdate();
 		preparedStatement.close();
@@ -286,7 +286,7 @@ public class ApplicationParser {
 	public static void insertApplication(int choice, int mealType, Bool isSnore, String dormitoryName, char gender , int semesterCode, String id) throws SQLException
 	{
 		String sql = "INSERT INTO `Prototype`.`신청` (`지망`, `몇일식`, `코골이여부`, `생활관명`, `성별`, `학기`, `학생_ID`) VALUES ('"+ choice + "', '" + mealType + "', '" + isSnore + "', '" + dormitoryName + "', '"+ gender +"', '" + semesterCode + "', '" + id +"')";
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		state.executeUpdate(sql);
 		state.close();
@@ -296,7 +296,7 @@ public class ApplicationParser {
 	public static Boolean isExistPassState(String id) throws SQLException, ClassNotFoundException
 	{
 		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번=" + id + "and 합격여부 = 'Y' and 생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
 		
@@ -315,7 +315,7 @@ public class ApplicationParser {
 	{
 		ArrayList<Application> dorm = new ArrayList<>();
 		String sql = "SELECT 지망, 생활관명, 몇일식 FROM" + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ id + "생활관정보_학기 = " +CurrentSemesterParser.getCurrentSemester();
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
 		
@@ -332,7 +332,7 @@ public class ApplicationParser {
 	{
 		ArrayList<Application> applications = new ArrayList<>();
 		String sql = "SELECT 지망, 생활관명, 몇일식, 합격여부, 납부여부 FROM" + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ id + "생활관정보_학기 = " +CurrentSemesterParser.getCurrentSemester();
-		Connection connection = DBHandler.INSTANCE.getConnetion();
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
 		
