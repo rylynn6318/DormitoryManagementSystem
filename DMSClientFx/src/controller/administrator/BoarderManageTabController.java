@@ -183,12 +183,6 @@ public class BoarderManageTabController extends InnerPageController
         }
     }
     
-    private PlacementHistoryViewModel placementHistoryToViewModel(PlacementHistory history)
-    {
-    	return new PlacementHistoryViewModel(history.studentId, history.roomId, history.semester, 
-    			history.dormitoryName, history.seat, history.checkout);
-    }
-    
     private void setPlacementHistoryTableView(ObservableList<PlacementHistoryViewModel> historyList)
     {
     	//서버에서 받아온거 표시하게 만듬.
@@ -202,7 +196,7 @@ public class BoarderManageTabController extends InnerPageController
     	check_placementHistory_tableview.setItems(historyList);
     }
     
-    //-------------------------------------------
+    //-----------------------------------------------------------------
     
     private void deleteBoarder()
     {
@@ -267,7 +261,7 @@ public class BoarderManageTabController extends InnerPageController
 		delete_dormName_textfield.setText(null);
     }
     
-    //-------------------------------------------
+    //-----------------------------------------------------------------
     
     private void insertBoarder()
     {

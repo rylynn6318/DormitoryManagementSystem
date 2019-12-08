@@ -15,10 +15,12 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import models.Application;
 import models.Document;
+import models.PlacementHistory;
 import models.Schedule;
 import models.ScheduleCode;
 import tableViewModel.ApplicationViewModel;
 import tableViewModel.DocumentViewModel;
+import tableViewModel.PlacementHistoryViewModel;
 import tableViewModel.ScheduleViewModel;
 
 //Login, Main을 제외한 페이지가 공통적으로 가지는 메소드를 가짐.
@@ -36,7 +38,8 @@ public class InnerPageController implements Initializable
     	Tab currentTab = mainTabPane.getSelectionModel().getSelectedItem();
     	mainTabPane.getTabs().remove(currentTab);
     }
-
+	
+    //-----------------------------------------------------------------
 	
 	public Code1.FileType stringToFileType(String str)
     {
@@ -103,6 +106,8 @@ public class InnerPageController implements Initializable
     	}
 	}
 	
+    //-----------------------------------------------------------------
+	
 	//인자로 받은 스케쥴의 유형 이름을 얻어내는 메소드(code->문자)
     //서버에서 받은 유형 코드를 유형 문자로 바꾸어 tableView에 보여주기 위함임.
     public String codeToTodoStr(Schedule schedule, ArrayList<ScheduleCode> scList)
@@ -144,6 +149,8 @@ public class InnerPageController implements Initializable
     		combobox.getItems().add(fileTypeToString(fileType));
     	}
     }
+    
+    //-----------------------------------------------------------------
 	
 	public ApplicationViewModel applicationToViewModel(Application application)
     {
@@ -163,6 +170,12 @@ public class InnerPageController implements Initializable
     {
     	return new ScheduleViewModel(schedule.scheduleId, codeToTodoStr(schedule, scheduleCodeList), 
     			schedule.startDate, schedule.endDate, schedule.description);
+    }
+    
+    public PlacementHistoryViewModel placementHistoryToViewModel(PlacementHistory history)
+    {
+    	return new PlacementHistoryViewModel(history.studentId, history.roomId, history.semester, 
+    			history.dormitoryName, history.seat, history.checkout);
     }
     
     

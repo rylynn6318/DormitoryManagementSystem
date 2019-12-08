@@ -123,7 +123,6 @@ public class ScheduleManageTabController extends InnerPageController
         		close();
         		return;
         	}
-        	return;
         }
         
         if(scheduleCodeList != null)

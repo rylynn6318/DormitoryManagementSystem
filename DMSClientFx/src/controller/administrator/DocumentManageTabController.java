@@ -110,10 +110,7 @@ public class DocumentManageTabController extends InnerPageController
 		update_isValid_combobox.getItems().addAll(comboboxItem_boolean);
 		
 		//네트워킹해서 서류유형 콤보박스 아이템 받아와라.
-		
-//		delete_documentType_combobox.getItems().addAll("결핵진단서", "서약서");
-//		upload_documentType_combobox.getItems().addAll("결핵진단서", "서약서");
-//		update_documentType_combobox.getItems().addAll("결핵진단서", "서약서");
+		onEnter();
 	}
 	
 	//---------------------이벤트---------------------
@@ -164,7 +161,12 @@ public class DocumentManageTabController extends InnerPageController
         if(resultList == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-        	return;
+        	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+        	{
+        		//여기서 페이지 닫게 해주자.
+        		close();
+        		return;
+        	}
         }
         
         if(resultList != null)
@@ -175,7 +177,7 @@ public class DocumentManageTabController extends InnerPageController
         }
     }
     
-    
+    //-----------------------------------------------------------------
     
     private void checkDocuments()
     {
@@ -216,6 +218,8 @@ public class DocumentManageTabController extends InnerPageController
     	
     	check_document_tableview.setItems(documentList);
     }
+    
+    //-----------------------------------------------------------------
     
     private void deleteDocument()
     {
@@ -271,12 +275,13 @@ public class DocumentManageTabController extends InnerPageController
     
     private void clearDeleteInfo()
     {
-		
 		//선택한 항목들 클리어
 		delete_id_textfield.setText(null);
 		delete_documentType_combobox.getSelectionModel().select(-1);
 		delete_date_datepicker.setValue(null);
     }
+    
+    //-----------------------------------------------------------------
     
     private void selectFile()
     {
@@ -321,16 +326,15 @@ public class DocumentManageTabController extends InnerPageController
 		File file = new File(fileDirectory);
 		if(file.exists())
 		{
-			//파일전송하는 프로토콜
-			IOHandler.getInstance().showAlert("서류가 제출되었습니다.");
+			//TODO 여기서 파일전송해라!!!! 파일전송하는 프로토콜
+			Responser.admin_documentManagePage_onUpload();
 			
 			boolean isSucceed = true;
 			if(isSucceed)
 			{
-				//성공했으면 입력한 값 비워준다.
-				upload_id_textfield.setText("");
-				upload_documentType_combobox.getSelectionModel().select(-1);
-				upload_fileDirectory_label.setText("N/A");;
+				IOHandler.getInstance().showAlert("서류가 제출되었습니다.");
+				//전송한 정보값 UI에서 비워준다.
+				clearUploadInfo();
 			}
 			else
 			{
@@ -345,6 +349,16 @@ public class DocumentManageTabController extends InnerPageController
 		}
 	
     }
+    
+    private void clearUploadInfo()
+    {
+    	//성공했으면 입력한 값 비워준다.
+		upload_id_textfield.setText("");
+		upload_documentType_combobox.getSelectionModel().select(-1);
+		upload_fileDirectory_label.setText("N/A");;
+    }
+    
+    //-----------------------------------------------------------------
     
     private void updateValid()
     {

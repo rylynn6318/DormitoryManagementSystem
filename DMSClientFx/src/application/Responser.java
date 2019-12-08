@@ -601,7 +601,7 @@ public class Responser
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 업로드 버튼 클릭 시
-	public void admin_documentManagePage_onUpload()
+	public static void admin_documentManagePage_onUpload()
 	{
 		//학생으로부터 오프라인으로 받은 서류를 대리제출 하기 위함.
 		
@@ -618,7 +618,7 @@ public class Responser
 	}
 	
 	//관리자 - 서류 조회 및 제출 - UPDATE 버튼 클릭 시
-	public void admin_documentManagePage_onUpdate()
+	public static void admin_documentManagePage_onUpdate()
 	{
 		//1. 클라이언트로부터 받은 학번, 서류유형, 제출일, 진단일로 서류 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 UPDATE쿼리를 쏜다.
