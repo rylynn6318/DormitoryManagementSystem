@@ -8,6 +8,8 @@ import application.IOHandler;
 import application.Responser;
 import controller.InnerPageController;
 import enums.Bool;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -247,31 +249,70 @@ public class SubmitApplicationTabController extends InnerPageController
     		}
     	}
     	
-    	setComboboxItem(oneYear_dorm_combobox, oneYear_meal_combobox, oneYear);
-    	setComboboxItem(firstChoice_dorm_combobox, firstChoice_meal_combobox, halfYear);
-    	setComboboxItem(secondChoice_dorm_combobox, secondChoice_meal_combobox, halfYear);
-    	setComboboxItem(thirdChoice_dorm_combobox, thirdChoice_meal_combobox, halfYear);
+    	//콤보박스 이벤트 설정
+    	ComboboxChangeListener cclOneYear = new ComboboxChangeListener(oneYear, oneYear_meal_combobox);
+    	oneYear_dorm_combobox.valueProperty().addListener(cclOneYear);
+    	
+    	ComboboxChangeListener ccl1 = new ComboboxChangeListener(halfYear, firstChoice_meal_combobox);
+    	firstChoice_dorm_combobox.valueProperty().addListener(ccl1);
+    	
+    	ComboboxChangeListener ccl2 = new ComboboxChangeListener(halfYear, secondChoice_meal_combobox);
+    	secondChoice_dorm_combobox.valueProperty().addListener(ccl2);
+    	
+    	ComboboxChangeListener ccl3 = new ComboboxChangeListener(halfYear, thirdChoice_meal_combobox);
+    	thirdChoice_dorm_combobox.valueProperty().addListener(ccl3);
+    	
+    	//콤보박스 내 아이템 설정
+    	setComboboxItem(oneYear_dorm_combobox, oneYear);
+    	setComboboxItem(firstChoice_dorm_combobox, halfYear);
+    	setComboboxItem(secondChoice_dorm_combobox, halfYear);
+    	setComboboxItem(thirdChoice_dorm_combobox, halfYear);
     	
     }
     
     //콤보박스 내 아이템을 설정하는 메소드
-    private void setComboboxItem(ComboBox<String> nameCombobox, ComboBox<String> mealCombobox, ArrayList<Dormitory> dormList)
+    private void setComboboxItem(ComboBox<String> nameCombobox, ArrayList<Dormitory> dormList)
     {
     	for(Dormitory dorm : dormList)
     	{
     		nameCombobox.getItems().add(dorm.dormitoryName);
-    		
-    		//식사의무가 필수가 아니면 식사안함을 추가한다.
-    		if(dorm.isMealDuty == Bool.FALSE)
-    			mealCombobox.getItems().add("식사안함");
-    		
-    		//5일식이 0원이 아니면 5일식 아이템 추가
-    		if(dorm.mealCost5 != 0)
-    			mealCombobox.getItems().add("5일식");
-    		
-    		//7일식이 0원이 아니면 7일식 아이템 추가    		
-    		if(dorm.mealCost7 != 0)
-    			mealCombobox.getItems().add("7일식");
     	}
     }
+}
+
+class ComboboxChangeListener implements ChangeListener<String>
+{
+	ArrayList<Dormitory> dormList;
+	ComboBox<String> mealTypeCombobox;
+	
+	public ComboboxChangeListener(ArrayList<Dormitory> dormList, ComboBox<String> mealTypeCombobox)
+	{
+		this.dormList = dormList;
+		this.mealTypeCombobox = mealTypeCombobox;
+	}
+	
+	@Override
+	public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue)
+	{
+		mealTypeCombobox.getItems().clear();
+		for(Dormitory dorm : dormList)
+		{
+			if(newValue.equals(dorm.dormitoryName))
+			{
+		    	//식사의무가 필수가 아니면 식사안함을 추가한다.
+				if(dorm.isMealDuty == Bool.FALSE)
+					mealTypeCombobox.getItems().add("식사안함");
+				
+				//5일식이 0원이 아니면 5일식 아이템 추가
+				if(dorm.mealCost5 != 0)
+					mealTypeCombobox.getItems().add("5일식");
+				
+				//7일식이 0원이 아니면 7일식 아이템 추가    		
+				if(dorm.mealCost7 != 0)
+					mealTypeCombobox.getItems().add("7일식");
+				break;
+			}
+		}
+	}
+	
 }
