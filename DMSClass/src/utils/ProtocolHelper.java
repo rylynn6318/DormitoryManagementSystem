@@ -64,7 +64,7 @@ public final class ProtocolHelper {
         return result;
     }
 
-    static List<Protocol> split(final Protocol protocol, final int size_to_split) throws IOException {
+    static List<Protocol> split(final Protocol protocol, final int size_to_split) {
         List<Protocol> result = new ArrayList<>();
         byte[] tmp = protocol.getBody();
         List<byte[]> body_chunks = splitBySize(tmp, size_to_split - Protocol.HEADER_LENGTH);
@@ -83,12 +83,20 @@ public final class ProtocolHelper {
         return result;
     }
 
-    static Protocol merge(List<Protocol> protocols) throws IOException {
+    static Protocol merge(List<Protocol> protocols) {
+        if(protocols.size() == 0)
+            return null;
+
         protocols.sort(null);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         for (Protocol protocol : protocols) {
-            output.write(protocol.getBody());
+            try {
+                output.write(protocol.getBody());
+            } catch (IOException e) {
+                // ByteArrayOutputStream는 예외 안던진다.
+                e.printStackTrace();
+            }
         }
 
         return new Protocol.Builder(protocols.get(0).type, protocols.get(0).direction, protocols.get(0).code1,

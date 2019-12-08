@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public final class SocketHelper implements Closeable {
     public final static String localhost = "127.0.0.1";
     public final static int port = 4444;
     public final static int sendbuffer_size = 1024;
+    public final static int timeout = 15000; // 15초, 아직 안씀
 
     private Socket socket = null;
 
@@ -21,24 +23,32 @@ public final class SocketHelper implements Closeable {
         this.socket = socket;
     }
 
-    public void write(Protocol p) throws IOException {
+    public void write(Protocol p) {
         List<Protocol> protocols = ProtocolHelper.split(p, sendbuffer_size);
         for (Protocol protocol : protocols) {
             byte[] packet = protocol.getPacket();
-            socket.getOutputStream().write(packet);
+            try {
+                socket.getOutputStream().write(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public Protocol read() throws Exception {
+    public Protocol read() {
         List<Protocol> protocols = new ArrayList<>();
         byte[] buffer = new byte[sendbuffer_size];
 
         Bool isLast = Bool.FALSE;
         while (!isLast.bool) {
-            socket.getInputStream().read(buffer);
-            Protocol tmp = new Protocol.Builder(buffer).build();
-            protocols.add(tmp);
-            isLast = tmp.is_last;
+            try {
+                socket.getInputStream().read(buffer);
+                Protocol tmp = new Protocol.Builder(buffer).build();
+                protocols.add(tmp);
+                isLast = tmp.is_last;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return ProtocolHelper.merge(protocols);

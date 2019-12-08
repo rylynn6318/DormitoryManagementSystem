@@ -100,3 +100,8 @@ shared-class update log
 2019-12-09 02:08 v2.14
 	코드 정리
 	Shared Class Export해서 적용함.
+
+2019-12-09 03:19 v2.15
+	Protocol 내부적으로 처리가능한 예외 처리하고
+	OutOfIndex 외에 예외 안던지게 바꿈
+	Shared Class Export해서 적용함.

@@ -3,6 +3,7 @@ package utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+
 import enums.*;
 import interfaces.*;
 
@@ -26,12 +27,12 @@ public final class Protocol implements Comparable<Protocol> {
         private final ICode2 code2; // 1바이트, 프로토콜 코드
         // 옵션
         private int length = HEADER_LENGTH; // 2바이트, 전체 프로토콜 길이.
-                                              // 실제 프로토콜에선 필수 정보지만 헤더길이는 10으로 고정되어 있으니
-                                              // body 받고나면 길이 계산 가능해서 Builder에선 옵션임.
+        // 실제 프로토콜에선 필수 정보지만 헤더길이는 10으로 고정되어 있으니
+        // body 받고나면 길이 계산 가능해서 Builder에선 옵션임.
         private Bool is_splitted = Bool.FALSE; // 1바이트, 프로토콜 분리 여부
         private Bool is_last = Bool.TRUE; // 1바이트, 마지막 프로토콜인지 여부
         private short sequence = 0; // 2바이트, 시퀀스 넘버
-        private byte[] body_bytes = null; // body가 직렬화 된것
+        private byte[] body_bytes = { (byte)0x00 }; // body가 직렬화 된것
 
         public Builder(ProtocolType type, Direction direction, ICode1 code1, ICode2 code2) {
             this.type = type;
@@ -53,10 +54,7 @@ public final class Protocol implements Comparable<Protocol> {
             return this;
         }
 
-        public Builder(byte[] packet) throws Exception {
-            if (packet.length < HEADER_LENGTH)
-                throw new Exception("패킷 길이가 먼가 짧다!!!");
-
+        public Builder(byte[] packet) {
             // 빅 엔디안으로 읽음
             this.length = ProtocolHelper.bytesToShort(packet[0], packet[1]);
             this.type = ProtocolType.get(packet[2]);
@@ -70,12 +68,7 @@ public final class Protocol implements Comparable<Protocol> {
             this.body_bytes = Arrays.copyOfRange(packet, HEADER_LENGTH, packet.length);
         }
 
-        // body에 아무것도 할당하지 않았을 경우 null을 직렬화해서 body에 할당함
-        // why? 진짜 아무것도 없는거보단 null이 들어가게 만들기 위해
-        public Protocol build() throws IOException {
-            if (body_bytes == null)
-                body(ProtocolHelper.serialization(null));
-
+        public Protocol build() {
             return new Protocol(this);
         }
     }
@@ -102,7 +95,7 @@ public final class Protocol implements Comparable<Protocol> {
     }
 
     // Builder로부터 프로토콜 생성
-    protected Protocol(Builder builder) throws IOException {
+    protected Protocol(Builder builder) {
         this.length = builder.length;
         this.type = builder.type;
         this.direction = builder.direction;
@@ -116,17 +109,23 @@ public final class Protocol implements Comparable<Protocol> {
 
     // head를 바이트 배열로 바꿔서 이를 body랑 합쳐 반환함.
     // 순서는 변수 선언 순서와 같음
-    byte[] getPacket() throws IOException {
+    byte[] getPacket() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        baos.write(ProtocolHelper.shortToByte((short)length));
-        baos.write(type.getCode());
-        baos.write(direction.getCode());
-        baos.write(code1.getCode());
-        baos.write(code2.getCode());
-        baos.write(is_splitted.bit);
-        baos.write(is_last.bit);
-        baos.write(ProtocolHelper.shortToByte((short)length));
-        baos.write(body_bytes);
+        try {
+            baos.write(ProtocolHelper.shortToByte((short) length));
+            baos.write(type.getCode());
+            baos.write(direction.getCode());
+            baos.write(code1.getCode());
+            baos.write(code2.getCode());
+            baos.write(is_splitted.bit);
+            baos.write(is_last.bit);
+            baos.write(ProtocolHelper.shortToByte((short) length));
+            baos.write(body_bytes);
+        } catch (IOException e) {
+            // ByteArrayOutputStream 는 OutputStream 상속해서 이때문에 예외가 던져짐
+            // 즉 실제로는 예외 뜰일 없음.
+            e.printStackTrace();
+        }
         return baos.toByteArray();
     }
 

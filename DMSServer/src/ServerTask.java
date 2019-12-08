@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.rmi.server.ExportException;
 
 import enums.*;
 import logic.*;
@@ -20,39 +19,37 @@ public class ServerTask implements Runnable {
         Logger.INSTANCE.print(socketHelper.getInetAddress(), "연결");
 
         Protocol protocol = null;
-        try {
-            protocol = socketHelper.read();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        protocol = socketHelper.read();
+
+        // null 체크
+        if (protocol == null)
+            socketHelper.write(new Protocol.Builder(ProtocolType.ERROR, Direction.TO_CLIENT, Code1.NULL, Code2.NULL).build());
 
         Logger.INSTANCE.print(socketHelper.getInetAddress(), protocol.type);
 
         switch (protocol.type) {
             case LOGIN:
+                UserType permission = null;
                 try {
-                    Account result = LoginChecker.check((Account) ProtocolHelper.deserialization(protocol.getBody()));
-                    socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.get(result.userType)).build());
-                } catch (Exception e) {
-                    try {
-                        // 먼가 예외 터지면 일단 실패로 전송함
-                        socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.FAIL).build());
-                    } catch (IOException ex) {
-                        // 이것조차도 터질수 있긴 한데 이 경우는 안터질꺼임
-                        ex.printStackTrace();
-                    }
+                    permission = LoginChecker.check((Account) ProtocolHelper.deserialization(protocol.getBody()));
+                } catch (ClassNotFoundException | IOException e) {
                     e.printStackTrace();
                 }
+
+                socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.get(permission)).build());
                 break;
+
             case FILE:
                 Code1.FileType fileType = (Code1.FileType) protocol.code1;
                 Code2.FileCode requestType = (Code2.FileCode) protocol.code2;
                 Code2.FileCode isSuccess = Code2.FileCode.FAIL;
 
-                switch (fileType){
+                switch (fileType) {
                     case MEDICAL_REPORT:
                     case OATH:
-                        switch (requestType){
+                        Protocol result;
+
+                        switch (requestType) {
                             case UPLOAD:
                                 //     업로드 받았을때
                                 //         받은 정보는 id와 파일
@@ -60,29 +57,22 @@ public class ServerTask implements Runnable {
                                 //         이름규칙은 [/파일종류/학기_학번.jpg]
                                 //         id를 이용해 디비에 관련 정보 저장
                                 //         성공 유무만 되돌려준다
-
-                                // 여기 Logic 코드
-
                                 try {
-                                    socketHelper.write(
-                                            new Protocol
-                                                    .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
-                                                    .build()
-                                    );
-                                } catch (Exception e) {
-                                    try {
-                                        // 프로토콜 전송에는 에러떠도 파일 자체는 받았으니 isSuccess 전송
-                                        socketHelper.write(
-                                                new Protocol
-                                                        .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
-                                                        .build()
-                                        );
-                                    } catch (IOException ex) {
-                                        ex.printStackTrace();
-                                    }
+                                    Tuple<String, byte[]> body = (Tuple<String, byte[]>) ProtocolHelper.deserialization(protocol.getBody());
+
+                                } catch (ClassNotFoundException | IOException e) {
                                     e.printStackTrace();
                                 }
+
+                                // 결과 반환
+
+                                result = new Protocol
+                                        .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
+                                        .build();
+
+                                socketHelper.write(result);
                                 break;
+
                             case REQUEST:
                                 //     다운로드 요청 받았을때
                                 //         일단 body를 통해 id만 온 상황
@@ -96,8 +86,10 @@ public class ServerTask implements Runnable {
                                 //         로직 수행
 
                                 String id = null;
+
                                 try {
                                     id = (String) ProtocolHelper.deserialization(protocol.getBody());
+
                                 } catch (ClassNotFoundException e) {
                                     e.printStackTrace();
                                 } catch (IOException e) {
@@ -108,28 +100,15 @@ public class ServerTask implements Runnable {
                                 String path = null;
                                 File file = Paths.get(path).toFile();
 
-                                try {
-                                    socketHelper.write(
-                                            new Protocol
-                                                    .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
-                                                    .build()
-                                    );
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    try {
-                                        socketHelper.write(
-                                                new Protocol
-                                                        .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
-                                                        .build()
-                                        );
-                                    } catch (IOException ex) {
-                                        ex.printStackTrace();
-                                    }
-                                }
+                                result = new Protocol
+                                        .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
+                                        .build();
+                                socketHelper.write(result);
                                 break;
+
                             case SUCCESS:
                             case FAIL:
-                                default:
+                            default:
                                 break;
                         }
 
@@ -154,7 +133,7 @@ public class ServerTask implements Runnable {
                                 }
                                 break;
                             case SUBMIT:
-                            	try {
+                                try {
                                     Responser.student_submitApplicationPage_onSubmit(protocol, socketHelper);
                                 } catch (Exception e) {
                                     e.printStackTrace();

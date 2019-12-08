@@ -7,7 +7,7 @@ import enums.UserType;
 import models.Account;
 
 public class LoginChecker {
-	public static Account check(Account account)
+	public static UserType check(Account account)
 	{
 		String id = account.accountId;
 		String pw = account.password;
@@ -18,6 +18,6 @@ public class LoginChecker {
 			e.printStackTrace();
 			result = Code2.LoginResult.FAIL;
 		}
-		return new Account(id, pw, UserType.get(result));
+		return UserType.get(result);
 	}
 }
