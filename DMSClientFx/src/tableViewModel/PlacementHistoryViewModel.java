@@ -19,15 +19,15 @@ public class PlacementHistoryViewModel
 	private StringProperty seatStr;
 	private StringProperty checkoutStr;
 	
-	public PlacementHistoryViewModel(String studentId, int roomId, int semester, String dormitoryName, char seat, Date checkout)
+	public PlacementHistoryViewModel(String studentId, int roomId, int semester, String dormitoryName, Seat seat, Date checkout)
 	{
-		placementHistory = new PlacementHistory(studentId, roomId, semester, dormitoryName, Seat.get(String.valueOf(seat)), checkout);
+		placementHistory = new PlacementHistory(studentId, roomId, semester, dormitoryName, seat, checkout);
 		
 		this.studentIdStr = new SimpleStringProperty(studentId);
 		this.roomIdStr = new SimpleStringProperty(Integer.toString(roomId));
 		this.semesterStr = new SimpleStringProperty(Integer.toString(semester));
 		this.dormitoryNameStr = new SimpleStringProperty(dormitoryName);
-		this.seatStr = new SimpleStringProperty(String.valueOf(seat));
+		this.seatStr = new SimpleStringProperty(seat.abcd);
 		this.checkoutStr = new SimpleStringProperty(checkout.toString());
 	}
 	

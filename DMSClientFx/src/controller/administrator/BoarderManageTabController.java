@@ -2,6 +2,7 @@ package controller.administrator;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -20,6 +21,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import models.PlacementHistory;
 import models.Tuple;
 import tableViewModel.PlacementHistoryViewModel;
 
@@ -96,14 +98,10 @@ public class BoarderManageTabController extends InnerPageController
     @FXML
     private CheckBox insert_snore_checkbox;
     
-    private ObservableList<PlacementHistoryViewModel> historyList;
-    
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
 		System.out.println("입사자 조회 및 관리 새로고침됨");
-		
-		
 	}
 	
 	//---------------------이벤트---------------------
@@ -160,13 +158,38 @@ public class BoarderManageTabController extends InnerPageController
     private void checkBoarders()
     {
     	//배정내역 테이블 조회 요청
+    	ArrayList<PlacementHistory> resultList = Responser.admin_boarderManagePage_onCheck();
     	
-    	historyList = FXCollections.observableArrayList(
-    			new PlacementHistoryViewModel("20161234", 201, 201901, "오른관 2동", 'A', new Date(2019,07,01)),
-    			new PlacementHistoryViewModel("20161235", 304, 201901, "푸름관 2동", 'B', new Date(2019,07,01)),
-    			new PlacementHistoryViewModel("20161236", 406, 201901, "오른관 3동", 'A', new Date(2019,07,01))
-        		);
-    	
+    	//서버랑 통신이 됬는가?
+        if(resultList == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultList != null)
+        {
+        	//객체를 테이블뷰 모델로 변환
+        	ObservableList<PlacementHistoryViewModel> historyList = FXCollections.observableArrayList();
+        	
+        	for(PlacementHistory history : resultList)
+        	{
+        		historyList.add(placementHistoryToViewModel(history));
+        	}
+        	
+            //테이블뷰에 추가
+            setPlacementHistoryTableView(historyList);
+        }
+    }
+    
+    private PlacementHistoryViewModel placementHistoryToViewModel(PlacementHistory history)
+    {
+    	return new PlacementHistoryViewModel(history.studentId, history.roomId, history.semester, 
+    			history.dormitoryName, history.seat, history.checkout);
+    }
+    
+    private void setPlacementHistoryTableView(ObservableList<PlacementHistoryViewModel> historyList)
+    {
     	//서버에서 받아온거 표시하게 만듬.
     	check_placementHistory_column_studentId.setCellValueFactory(cellData -> cellData.getValue().studentIdProperty());
     	check_placementHistory_column_roomNumber.setCellValueFactory(cellData -> cellData.getValue().roomIdProperty());
