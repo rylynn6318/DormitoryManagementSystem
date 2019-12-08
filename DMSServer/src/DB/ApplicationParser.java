@@ -31,6 +31,23 @@ public class ApplicationParser {
 		}
 
 	}
+	
+	public static ArrayList<Application> getAllApplications() throws SQLException
+	{
+		String getUnsortedAppsQuery = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 학기=(select max(학기) from " + DBHandler.DB_NAME + ".신청)";
+		Connection connection = DBHandler.INSTANCE.getConnetion();
+		PreparedStatement preparedStatement = connection.prepareStatement(getUnsortedAppsQuery);
+		ResultSet apps = preparedStatement.executeQuery();
+		
+		ArrayList<Application> ApplicationList = new ArrayList<Application>();
+		while(apps.next())
+		{
+			Application temp = new Application(apps.getString("학번"), apps.getString("생활관정보_생활관명"), apps.getString("생활관정보_성별"), apps.getInt("생활관정보_학기"), apps.getInt("지망"), apps.getInt("몇일식"), apps.getString("납부여부"), apps.getString("합격여부"), apps.getString("최종결과"), apps.getString("코골이여부"));
+			ApplicationList.add(temp);
+		}
+		
+		return ApplicationList;
+	}
 
 	public static int getSemester() throws SQLException 
 	{

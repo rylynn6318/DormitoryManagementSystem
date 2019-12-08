@@ -30,6 +30,20 @@ public class Application implements Comparable<Application>, Serializable
 		
 	}
 	
+	public Application(String studentId, String dormitoryName, String gender, int semesterCode, int choice, int mealType, String isPaid, String isPassed, String isLastPassed, String isSnore)	//모든 값 조회에 필요한 생성자
+	{
+		this.studentId = studentId;
+		this.dormitoryName = dormitoryName;
+		this.gender = gender.toCharArray()[0];
+		this.semesterCode = semesterCode;
+		this.choice = choice;
+		this.mealType = mealType;
+		this.isPaid = Bool.get(isPaid);
+		this.isPassed = Bool.get(isPassed);
+		this.isLastPassed = Bool.get(isLastPassed);
+		this.isSnore = Bool.get(isSnore);
+	}
+	
 	public Application(String studentId, String dormitoryName, String gender, int semesterCode, int choice, double score)	//합격 알고리즘에 필요한 생성자임 터치 ㄴㄴ해
 	{
 		this.studentId = studentId;
