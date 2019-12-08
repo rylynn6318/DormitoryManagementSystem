@@ -18,7 +18,7 @@ public class ScheduleViewModel
 	public ScheduleViewModel(String scheduleId, String toDo, Date startDate, Date endDate, String description)
 	{
 		scheduleIdStr = new SimpleStringProperty(scheduleId);
-		codeStr = new SimpleStringProperty(toDo);			//이거 스케쥴 할일 코드 가져와서 String 보여줘야됨.
+		codeStr = new SimpleStringProperty(toDo);
 		startDateStr = new SimpleStringProperty(startDate.toString());
 		endDateStr = new SimpleStringProperty(endDate.toString());
 		descriptionStr = new SimpleStringProperty(description);

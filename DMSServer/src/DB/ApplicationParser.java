@@ -1,11 +1,11 @@
 package DB;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 import enums.Bool;
-import enums.Gender;
 import enums.Grade;
 import models.Application;
 import models.Score;
@@ -260,7 +260,7 @@ public class ApplicationParser {
 		String setPassed = "UPDATE " + DBHandler.DB_NAME + ".신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + "지망=" + temp.getChoice() + "학기=" + temp.getSemesterCode();
 		Connection connection = DBHandler.INSTANCE.getConnetion();
 		PreparedStatement preparedStatement = connection.prepareStatement(setPassed);
-		ResultSet scores = preparedStatement.executeQuery();
+		preparedStatement.executeUpdate();
 		preparedStatement.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
@@ -280,14 +280,35 @@ public class ApplicationParser {
 	{
 		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번=" + id + "and 합격여부 = 'Y' and 생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
 		Connection connection = DBHandler.INSTANCE.getConnetion();
-		PreparedStatement preparedStatement = connection.prepareStatement(sql);
-		ResultSet rs = preparedStatement.executeQuery();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
 		
 		if(rs.next())
 		{
+			state.close();
+			DBHandler.INSTANCE.returnConnection(connection);
 			return true;
 		}
+		state.close();		
+		DBHandler.INSTANCE.returnConnection(connection);
 		return false;
+	}
+	
+	public static ArrayList<Application> getApplicationResult(String id) throws ClassNotFoundException, SQLException
+	{
+		ArrayList<Application> dorm = new ArrayList<>();
+		String sql = "SELECT 지망, 생활관명, 몇일식 FROM" + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ id + "생활관정보_학기 = " +CurrentSemesterParser.getCurrentSemester();
+		Connection connection = DBHandler.INSTANCE.getConnetion();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+		
+		while(rs.next())
+		{
+			dorm.add(new Application(rs.getInt("지망"), rs.getString("생활관명"), rs.getInt("몇일식")));
+		}
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		return dorm;
 	}
 
 }

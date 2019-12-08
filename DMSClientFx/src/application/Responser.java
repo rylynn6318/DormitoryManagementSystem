@@ -67,51 +67,40 @@ public class Responser
 	{
 		//1. 입사 신청 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
 		//프로토콜 빌더를 사용해서 입사신청에 들어왔다고, 현 계정을 함께 보낸다(학번을 전달하기 위해)
-		Protocol protocol = eventProtocolBuilder(Code1.Page.입사신청, Code2.Event.REFRESH, UserInfo.account);
-        
         //2. 서버로 요청 및 응답을 받는다.
-        Tuple<String, ArrayList<Dormitory>> resultTuple = (Tuple<String, ArrayList<Dormitory>>) sendAndReceive(protocol);
-        
         //3. 클라이언트는 받은 안내사항 + 생활관목록을 표시한다.
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사신청, Code2.Event.REFRESH, UserInfo.account);
+		Tuple<String, ArrayList<Dormitory>> resultTuple = (Tuple<String, ArrayList<Dormitory>>) sendAndReceive(protocol);
         return resultTuple;
-        
-        //이후 동작은 이 함수 밖에서 한다. UI적인 부분이라.
-		//6. 생활관 테이블에서 받은 정보들은 사용자가 combobox 선택함에 따라 표시할수 있게 끔 따로 표시 및 저장한다.
-		//7. 사용자가 combobox 선택에 따라 각각 다른 정보가 표시될 수 있게 구현한다(Tree 쓰면 될것같기도함)
 	}
 	
 	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시 (2019-12-08 명근 수정)
-	public static String student_submitApplicationPage_onSubmit(ArrayList<Application> applicationList)
+	public static Tuple<Bool, String> student_submitApplicationPage_onSubmit(ArrayList<Application> applicationList)
 	{
-		//1. 사용자가 선택한 신청 + 코골이여부를 배열화한다.
-		//사용자 정보와 신청배열을 보내야하기때문에 튜플 사용함.
-		Tuple<Account, ArrayList<Application>> sendData = new Tuple<Account, ArrayList<Application>>(UserInfo.getInstance().account, applicationList);
-		
+		//1. 사용자가 선택한 신청을 배열화한다.
+		//	 사용자 정보와 신청배열을 보내야하기때문에 튜플 사용함.
 		//2. 데이터를 보내기위해 프로토콜을 만든다.
-		Protocol protocol = eventProtocolBuilder(Code1.Page.입사신청, Code2.Event.SUBMIT, sendData);
-		
-		//3. 데이터를 서버로 보내고 성공여부 메시지를 받는다.
-		String result = (String) sendAndReceive(protocol);
-
+		//3. 데이터를 서버로 보내고 성공여부, 메시지를 받는다.
 		//4. 서버에서 받은 성공여부로 메세지를 표시한다.
+		
+		Tuple<Account, ArrayList<Application>> sendData = new Tuple<Account, ArrayList<Application>>(UserInfo.getInstance().account, applicationList);
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사신청, Code2.Event.SUBMIT, sendData);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
 		return result;
 	}
 	
 	//학생 - 생활관 입사 신청 - 취소 버튼 클릭 시 (2019-12-08 명근 수정)
-	public static String student_submitApplicationPage_onCancel()
+	public static Tuple<Bool, String> student_submitApplicationPage_onCancel()
 	{
 		//1. 서버에게 입사 신청 취소요청을 한다.
-		Protocol protocol = eventProtocolBuilder(Code1.Page.입사신청, Code2.Event.CANCEL, UserInfo.account);
-        
 		//(2. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역이 있는지 조회)
 		//(3. TRUE 이면 됬다고 클라이언트에게 알려줌, FALSE이면 클라이언트에게 내역 없다고 알려줌.)
+		//4. 서버에서 받은 성공여부, 메세지를 표시한다.		
 		
-        //서버로 요청 및 응답을 받는다.
-        String result = (String) sendAndReceive(protocol);
-        
-		//4. 서버에서 받은 성공여부로 메세지를 표시한다.		
-		return result;
-
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사신청, Code2.Event.CANCEL, UserInfo.account);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+        return result;
 	}
 	
 	//------------------------------------------------------------------------
@@ -120,12 +109,11 @@ public class Responser
 	public static Tuple<Bool, String> student_CheckApplicationPage_onEnter()
 	{
 		//1. 신청내역 조회 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 안내사항을, FALSE이면 못들어가게 막고 실패원인 메시지도 전달
-		Protocol protocol = eventProtocolBuilder(Code1.Page.신청조회, Code2.Event.REFRESH, null);
-		
 		//(2. 서버는 스케쥴 테이블에서 비고(안내사항)를 가져온다.)
 		//(3. 서버는 스케쥴 객체를 클라이언트에게 전송한다.)
-		
 		//4. 서버에서 받은 진입여부와 메시지를 표시한다.(TRUE이면 안내사항을, FALSE이면 못들어가게 막고 실패원인 메시지도 전달)
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.신청조회, Code2.Event.REFRESH, null);
 		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
 		
 		return result;
@@ -135,13 +123,14 @@ public class Responser
 	public static Tuple<ArrayList<Application>, ArrayList<Application>> student_CheckApplicationPage_onCheck()
 	{
 		//1. 서버에게 생활관 신청 조회 요청을 한다. 
-		Protocol protocol = eventProtocolBuilder(Code1.Page.신청조회, Code2.Event.CHECK, UserInfo.getInstance().account);
 		//(2. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회.
 		//	  '생활관 입사지원 내역' 테이블뷰에 표시할 것임)
 		//(3. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역의 지망, 생활관명, 식사구분, 합격여부, 납부여부를 조회.
 		//	  '생활관 선발 결과' 테이블뷰에 표시할 것임)
 		//(4. 조회된 내역을 객체화, 배열에 담아 클라이언트에게 반환한다.)
 		//5. 서버로부터 받은 내역을 각각 두개의 테이블에 표시한다.
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.신청조회, Code2.Event.CHECK, UserInfo.getInstance().account);
 		Tuple<ArrayList<Application>, ArrayList<Application>> result = (Tuple<ArrayList<Application>, ArrayList<Application>>) sendAndReceive(protocol);
 		return result;
 	}
@@ -152,6 +141,7 @@ public class Responser
 	public static Tuple<Bool, String> student_CheckBillPage_onEnter()
 	{
 		//1. 고지서 조회 가능한 날짜인지 서버에게 물어본다 -> TRUE이면 진행, FALSE이면 못들어가게 막고 실패원인 메시지도 전달
+		
 		Protocol protocol = eventProtocolBuilder(Code1.Page.고지서조회, Code2.Event.REFRESH, null);
 		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
 		return result;
@@ -192,13 +182,14 @@ public class Responser
 	public static Tuple<Application, PlacementHistory> student_checkRoomPage_onCheck()
 	{
 		//1. 서버에게 생활관 호실 조회 요청을 한다.   
-		Protocol protocol = eventProtocolBuilder(Code1.Page.호실조회, Code2.Event.CHECK, UserInfo.getInstance().account);
 		//(2. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 최종합격여부가 T인 내역 조회) 
 		//(3-1. 서버는 내역이 없는 경우 불합격이라고 클라이언트에게 알려준다.)
 		//(3-2. 서버는 내역이 있는 경우 신청 테이블에서 최종합격여부, 납부여부, 식비구분, 생활관, 호실유형(이건 일반실 고정)을 조회한다.)
 		//(4. 서버는 배정내역 테이블에서 해당 학번이 배정되있는 호실과 침대번호를 가져온다.)
 		//(5. 서버는 3-2와 4를 합쳐 객체화한다. 그리고 이것을 클라이언트에게 전송한다.)
 		//6. 서버로부터 받은 신청, 배정내역을 역직렬화, UI에 표기한다
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.호실조회, Code2.Event.CHECK, UserInfo.getInstance().account);
 		Tuple<Application, PlacementHistory> result = (Tuple<Application, PlacementHistory>) sendAndReceive(protocol);
 		return result;
 	}
@@ -224,12 +215,13 @@ public class Responser
 		//TODO 바로 파일을 업로드할지, 이벤트 한번 보내고 해야하는지 모름.
 		//이대로 보내면 누가보내는지 모른다!!!
 		//1. 서버로 파일을 업로드한다.
-		Protocol protocol = fileProtocolBuilder(fileType, FileCode.UPLOAD, data);
-		
 		//(2. 서버는 컴퓨터 내 저장할 공간에 빈공간이 10MB보다 큰지 확인한다. -> 빈공간이 10MB보다 크면 진행, 작으면 클라이언트에게 안된다고 알려줌.)
 		//(3. 서버는파일 저장 성공/실패 여부를 클라이언트에게 알려준다.)
 		
-		//3. 결과를 메시지로 띄운다. 
+		//3. 결과를 메시지로 띄운다.
+		//TODO 미완성임.
+		
+		Protocol protocol = fileProtocolBuilder(fileType, FileCode.UPLOAD, data);
 		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
 		return result;
 	}
@@ -348,7 +340,7 @@ public class Responser
 	}
 	
 	//관리자 - 선발 일정 조회 및 관리 - 등록 버튼 클릭 시
-	public void admin_scheduleManagePage_onInsert()
+	public static Tuple<Bool, String> admin_scheduleManagePage_onInsert(Schedule schedule)
 	{
 		//1. 유형코드, 시작일, 종료일, 비고를 서버로 전송한다. (유형은 코드로 전달되어야 한다. String으로 전달받는건 미개함
 		//	 그래서 유형 이름을 받는게 아니라 유형 코드를 받는것)
@@ -357,22 +349,13 @@ public class Responser
 		//(3-2. 기존 값이 존재하지 않으면 INSERT한다.)
 		//(4. INSERT 수행에 대한 결과를 클라이언트에게 알려준다 (성공/실패/아마존사망...etc))
 		//5. 성공/실패여부를 알려준다.
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.선발일정관리, Code2.Event.SUBMIT, schedule);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//-------------------------------------------------------------------------
-	
-	//TODO 아래부터는 미완성. 서버 동작로직인데 대충 보고 클라이언트꺼 짜세요.
-	
-	//관리자 - 생활관 조회 및 관리 - 들어왔을 때
-	public void admin_dormitoryManagePage_onEnter()
-	{
-		//1. 식사의무 ENUM을 배열화해서 목록을 만든다.
-		//2. 배열화한 목록을 직렬화해서 클라이언트로 전송한다.
-		//(3. 클라이언트는 받은 ENUM 배열을 역직렬화하여 식사의무 combobox에 표시한다)
-		
-		//[ENUM 배열화 예시]
-		//arrayList<MealDuty> data = new arrayList<MealDuty>(MealDuty.NOMEAL, MealDuty.MEAL5, MealDuty.MEAL7);
-	}
 	
 	//관리자 - 생활관 조회 및 관리 - 조회 버튼 클릭 시
 	public void admin_dormitoryManagePage_onCheck()

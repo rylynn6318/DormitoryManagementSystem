@@ -25,18 +25,10 @@ public enum DBHandler {
     private static final int INITIAL_CAPACITY = 5;
     ConcurrentLinkedQueue<Connection> pool = new ConcurrentLinkedQueue<>();
 
-    DBHandler() {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void init() throws ClassNotFoundException, SQLException {
+        Class.forName("com.mysql.cj.jdbc.Driver");
         for (int i = 0; i < INITIAL_CAPACITY; ++i) {
-            try {
-                pool.add(DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            pool.add(DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD));
         }
     }
 
