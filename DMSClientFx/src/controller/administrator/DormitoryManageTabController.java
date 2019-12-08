@@ -36,6 +36,9 @@ public class DormitoryManageTabController extends InnerPageController
     
     @FXML
     private TableColumn<DormitoryViewModel, String> check_dormitory_column_dormName;
+    
+    @FXML
+    private TableColumn<DormitoryViewModel, String> check_dormitory_column_gender;
 
     @FXML
     private TableColumn<DormitoryViewModel, String> check_dormitory_column_semester;
@@ -84,6 +87,9 @@ public class DormitoryManageTabController extends InnerPageController
 
     @FXML
     private TextField insert_boradingFees_textfield;
+
+    @FXML
+    private TextField insert_gender_textfield;
 
     @FXML
     private ComboBox<String> insert_mealDuty_combobox;
@@ -158,7 +164,9 @@ public class DormitoryManageTabController extends InnerPageController
     private void setTableView(ObservableList<DormitoryViewModel> dormitoryList)
     {
     	check_dormitory_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
+    	
     	check_dormitory_column_semester.setCellValueFactory(cellData -> cellData.getValue().semesterProperty());
+    	check_dormitory_column_gender.setCellValueFactory(cellData -> cellData.getValue().genderProperty());
     	check_dormitory_column_capacity.setCellValueFactory(cellData -> cellData.getValue().capacityProperty());
     	check_dormitory_column_mealDuty.setCellValueFactory(cellData -> cellData.getValue().mealDutyProperty());
     	check_dormitory_column_meal5.setCellValueFactory(cellData -> cellData.getValue().meal5Property());
@@ -219,7 +227,7 @@ public class DormitoryManageTabController extends InnerPageController
     private void insertDormitory()
     {
     	String dormNameStr = insert_dormName_textfield.getText();
-    	String genderStr = "";
+    	String genderStr = insert_gender_textfield.getText();
     	String semesterStr = insert_semester_textfield.getText();
     	String capacityStr = insert_capacity_textfield.getText();
     	String mealDutyStr = insert_mealDuty_combobox.getSelectionModel().getSelectedItem();
@@ -231,6 +239,12 @@ public class DormitoryManageTabController extends InnerPageController
     	{
     		//생활관명 비어있음
     		IOHandler.getInstance().showAlert("생활관명이 비어있습니다.");
+    		return;
+    	}
+    	else if(genderStr == null || genderStr.isEmpty())
+    	{
+    		//성별이 없음
+    		IOHandler.getInstance().showAlert("성별이 비어있습니다.");
     		return;
     	}
     	else if(semesterStr == null || semesterStr.isEmpty())
