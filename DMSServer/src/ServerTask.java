@@ -1,15 +1,10 @@
 import enums.*;
 
-import logic.LoginChecker;
-import models.Account;
+import logic.*;
+import models.*;
 import utils.*;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 //클라이언트와 연결을 담당하는 쓰레드
 //서버소켓을 생성하고, 서버소켓이 클라이언트와 연결을 accept 하면
@@ -37,20 +32,14 @@ public class ServerTask implements Runnable {
 
         switch (protocol.type) {
             case LOGIN:
-                Account result = null;
                 try {
-                    result = LoginChecker.check((Account) ProtocolHelper.deserialization(protocol.getBody()));
+                    Account result = LoginChecker.check((Account) ProtocolHelper.deserialization(protocol.getBody()));
+                    socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.get(result.userType)).build());
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                try {
-                    socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.get(result.userType)).build());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
                 break;
             case FILE:
                 //file 처리
