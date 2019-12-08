@@ -207,25 +207,22 @@ public class SelecteesManageTabController extends InnerPageController
     	
     	//서버에 쿼리 요청.
     	Application data = new Application(id, dormName, Integer.parseInt(semester), Integer.parseInt(choice));
-    	ArrayList<Application> resultList = Responser.admin_selecteesManagePage_onCheck();
+    	Tuple<Bool, String> resultTuple = Responser.admin_selecteesManagePage_onDelete(data);
     	
     	//서버랑 통신이 됬는가?
-        if(resultList == null)
+        if(resultTuple == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
         	return;
         }
         
-        if(resultList != null)
+        if(resultTuple != null)
         {
-        	ObservableList<ApplicationViewModel> applicationViewModels = FXCollections.observableArrayList();
-        	
-        	for(Application app : resultList)
+        	if(resultTuple.obj1 == Bool.TRUE)
         	{
-        		applicationViewModels.add(applicationToViewModel(app));
+        		clearDeleteInfo();
         	}
-        	
-        	setApplicationTableView(applicationViewModels);
+        	IOHandler.getInstance().showAlert(resultTuple.obj2);
         }
     }
     

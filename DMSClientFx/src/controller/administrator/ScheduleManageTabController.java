@@ -306,7 +306,7 @@ public class ScheduleManageTabController extends InnerPageController
     		if(resultTuple.obj1 == Bool.TRUE)
     		{
     			//입력했던 항목들 클리어
-    			clearInserts();
+    			clearInsertInfo();
     		}
     		//성공/실패 메시지 표시
     		IOHandler.getInstance().showAlert(resultTuple.obj2);
@@ -320,7 +320,7 @@ public class ScheduleManageTabController extends InnerPageController
     	return date;
     }
     
-    private void clearInserts()
+    private void clearInsertInfo()
     {
     	//선택한 항목들 클리어
 		insert_type_combobox.getSelectionModel().select(-1);
