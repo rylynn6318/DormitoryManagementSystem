@@ -30,11 +30,14 @@ public class DocumentParser
             Document temp = new Document(documents.getString("학번"), Code1.FileType.get((byte)documents.getInt("서류유형")), submissionDate, diagnosisDate, documents.getString("서류저장경로"), Bool.get( documents.getString("유효여부")));
             documentList.add(temp);
         }
+
+        preparedStatement.close();
+        DBHandler.INSTANCE.returnConnection(connection);
         
         return documentList;
 	}
 	
-	public static void deleteDocument(String studentId, int documentType, java.util.Date submissionDate) throws SQLException
+	public static void deleteDocument(String studentId, Code1.FileType documentType, java.util.Date submissionDate) throws SQLException
 	{
 		@SuppressWarnings("deprecation")
 		java.sql.Date date = new java.sql.Date(submissionDate.getYear(), submissionDate.getMonth(), submissionDate.getDay());    //취소선 그어진거 잘 안쓰는 함수 쓰고있다고 경고 주는건데 대체 기능 없길래 일단 씀
@@ -42,15 +45,23 @@ public class DocumentParser
         String deleteDocumentQuery = "DELETE FROM 서류 WHERE 학번=" + studentId + " AND 서류유형=" + documentType + " AND 제출일=" + date;
         Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(deleteDocumentQuery);
+
 		preparedStatement.execute(deleteDocumentQuery);
+
+		preparedStatement.close();
+		DBHandler.INSTANCE.returnConnection(connection);
 	}
 	
-	public static void updateDocument(String sIsValid, Date submissionSqlDate, Date diagnosisSqlDate) throws SQLException
+	public static void updateDocument(Bool isValid, Date submissionSqlDate, Date diagnosisSqlDate, Code1.FileType type) throws SQLException
 	{
-		String updateDocument = "UPDATE 서류 SET 유효여부=" + sIsValid + " WHERE 제출일 = " + submissionSqlDate + " AND 진단일=" + diagnosisSqlDate + " AND 서류유형=" + sIsValid;
+		String updateDocument = "UPDATE 서류 SET 유효여부=" + isValid.yn + " WHERE 제출일 = " + submissionSqlDate + " AND 진단일=" + diagnosisSqlDate + " AND 서류유형=" + type;
 
         Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(updateDocument);
+
 		preparedStatement.executeUpdate(updateDocument);
+
+		preparedStatement.close();
+		DBHandler.INSTANCE.returnConnection(connection);
 	}
 }

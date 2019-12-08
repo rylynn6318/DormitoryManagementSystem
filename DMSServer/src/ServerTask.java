@@ -1,4 +1,7 @@
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.rmi.server.ExportException;
 
 import enums.*;
 import logic.*;
@@ -30,9 +33,14 @@ public class ServerTask implements Runnable {
                 try {
                     Account result = LoginChecker.check((Account) ProtocolHelper.deserialization(protocol.getBody()));
                     socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.get(result.userType)).build());
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
+                } catch (Exception e) {
+                    try {
+                        // 먼가 예외 터지면 일단 실패로 전송함
+                        socketHelper.write(new Protocol.Builder(ProtocolType.LOGIN, Direction.TO_CLIENT, Code1.NULL, Code2.LoginResult.FAIL).build());
+                    } catch (IOException ex) {
+                        // 이것조차도 터질수 있긴 한데 이 경우는 안터질꺼임
+                        ex.printStackTrace();
+                    }
                     e.printStackTrace();
                 }
                 break;
@@ -41,11 +49,42 @@ public class ServerTask implements Runnable {
                     case UPLOAD:
                         try {
                             ProtocolHelper.downloadFileFrom(protocol);
+                            // 잘 받았으면 body 에 Bool.TRUE 담아서 전송
+                            socketHelper.write(
+                                    new Protocol
+                                            .Builder(ProtocolType.FILE, Direction.TO_CLIENT, protocol.code1, Code2.FileCode.UPLOAD_RESULT)
+                                            .body(ProtocolHelper.serialization(Bool.TRUE))
+                                            .build()
+                            );
                         } catch (Exception e) {
+                            // 먼가 실패했을 경우 body 에 Bool.FALSE 담아서 전송
+                            try {
+                                socketHelper.write(
+                                        new Protocol
+                                                .Builder(ProtocolType.FILE, Direction.TO_CLIENT, protocol.code1, Code2.FileCode.UPLOAD_RESULT)
+                                                .body(ProtocolHelper.serialization(Bool.FALSE))
+                                                .build()
+                                );
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
                             e.printStackTrace();
                         }
                         break;
                     case REQUEST_DOWNLOAD:
+                        try {
+                            String path = (String) ProtocolHelper.deserialization(protocol.getBody());
+                            File file = Paths.get(path).toFile();
+                            socketHelper.write(
+                                    new Protocol
+                                            .Builder(ProtocolType.FILE, Direction.TO_CLIENT, protocol.code1, Code2.FileCode.UPLOAD_RESULT)
+                                            .build()
+                            );
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
                         break;
                     case UPLOAD_RESULT:

@@ -23,6 +23,6 @@ public class DocumentManager {
         @SuppressWarnings("deprecation")
         java.sql.Date diagnosisSqlDate = new java.sql.Date(diagnosisDate.getYear(), diagnosisDate.getMonth(), diagnosisDate.getDay());
 
-        DocumentParser.updateDocument(sIsValid, submissionSqlDate, diagnosisSqlDate);
+        // DocumentParser.updateDocument(sIsValid, submissionSqlDate, diagnosisSqlDate);
     }
 }
