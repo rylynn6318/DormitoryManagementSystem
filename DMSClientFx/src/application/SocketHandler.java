@@ -10,7 +10,7 @@ public enum SocketHandler {
     INSTANCE;
 
     public Protocol request(Protocol protocol) throws Exception {
-        Socket socket = new Socket(SocketHelper.host,SocketHelper.port);
+        Socket socket = new Socket(SocketHelper.localhost,SocketHelper.port);
         SocketHelper socketHelper = new SocketHelper(socket);
 
         socketHelper.write(protocol);
