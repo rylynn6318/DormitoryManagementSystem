@@ -8,6 +8,7 @@ import DB.ApplicationParser;
 import DB.AssignAlgorithm;
 import DB.CurrentSemesterParser;
 import DB.DormParser;
+import DB.PlacementHistoryParser;
 import DB.ScheduleParser;
 import DB.StudentParser;
 import enums.Bool;
@@ -22,6 +23,7 @@ import models.Account;
 import models.Application;
 import models.Bill;
 import models.Dormitory;
+import models.PlacementHistory;
 import models.Schedule;
 import models.Tuple;
 import utils.Protocol;
@@ -336,9 +338,16 @@ public class Responser
 		//3-2. 내역이 있는 경우 신청 테이블에서 최종합격여부, 납부여부, 식비구분, 생활관, 호실유형(이건 일반실 고정)을 조회한다.
 		Application lastPassedApplication = ApplicationParser.getLastPassedApplication(id);
 		//4. 배정내역 테이블에서 해당 학번이 배정되있는 호실과 침대번호를 가져온다.
-		
+		PlacementHistory ph = PlacementHistoryParser.getPlacementResult(id);
 		//어플리케이션과 히스토리를 묶어서 보내주자
 		//5. 3-2와 4를 합쳐 객체화한다. 그리고 이것을 클라이언트에게 전송한다.
+		Tuple<Application, PlacementHistory> resultTuple = new Tuple(lastPassedApplication, ph);
+		socketHelper.write(new Protocol.Builder(
+				ProtocolType.EVENT, 
+				Direction.TO_CLIENT, 
+				Code1.NULL, 
+				Code2.NULL
+				).body(ProtocolHelper.serialization(resultTuple)).build());
 		//(6. 클라이언트는 받은 객체를 역직렬화, UI에 표기한다)
 	}
 	
