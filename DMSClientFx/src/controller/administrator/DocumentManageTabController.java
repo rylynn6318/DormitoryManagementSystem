@@ -96,7 +96,7 @@ public class DocumentManageTabController extends InnerPageController
     @FXML
     private DatePicker update_submitDate_datepicker;
     
-	private final String[] comboboxItem_boolean = {"T", "F"};
+	private final String[] comboboxItem_boolean = {null, "T", "F"};
 	
 	private ObservableList<DocumentViewModel> documentList;
 	

@@ -370,22 +370,31 @@ public class Responser
 	}
 	
 	//관리자 - 생활관 조회 및 관리 - 삭제 버튼 클릭 시
-	public void admin_dormitoryManagePage_onDelete()
+	public static Tuple<Bool, String> admin_dormitoryManagePage_onDelete(String dormName, String semester)
 	{
 		//1. 클라이언트로부터 받은 생활관명, 학기로 생활관 정보 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
+		
+		Tuple<String, String> data = new Tuple<String, String>(dormName, semester);
+		Protocol protocol = eventProtocolBuilder(Code1.Page.생활관관리, Code2.Event.DELETE, data);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 생활관 조회 및 관리 - 등록 버튼 클릭 시
-	public void admin_dormitoryManagePage_onInsert()
+	public static Tuple<Bool, String> admin_dormitoryManagePage_onInsert(Dormitory data)
 	{
 		//1. 클라이언트에게서 생활관명, 학기, 수용인원, 식사의무, 5일식 식비, 7일식 식비, 기숙사비를 받는다.
 		//2. 생활관 정보 테이블에서 생활관명, 학기로 탐색, 중복되는 값이 있는지 체크한다.
 		//3-1. 기존 값이 존재하면 기존 값 삭제하라고 클라이언트에게 알려준다.
 		//3-2. 기존 값이 존재하지 않으면 INSERT한다.
 		//4. INSERT 수행에 대한 결과를 클라이언트에게 알려준다 (성공/실패/아마존사망...etc)
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.생활관관리, Code2.Event.SUBMIT, data);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//-------------------------------------------------------------------------
