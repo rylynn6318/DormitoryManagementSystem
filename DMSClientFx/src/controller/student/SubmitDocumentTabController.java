@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
-import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import application.IOHandler;
@@ -16,13 +15,10 @@ import enums.Bool;
 import enums.Code1;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Alert.AlertType;
 import models.Tuple;
 
 public class SubmitDocumentTabController extends InnerPageController 
@@ -55,7 +51,6 @@ public class SubmitDocumentTabController extends InnerPageController
 		int thisYear = Calendar.getInstance().get(Calendar.YEAR);
 		year_label.setText(String.valueOf(thisYear));
 		
-		//TODO 네트워킹
 		setCombobox();
 	}
 	
@@ -86,7 +81,12 @@ public class SubmitDocumentTabController extends InnerPageController
         if(resultList == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-        	return;
+        	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+        	{
+        		//여기서 페이지 닫게 해주자.
+        		close();
+        		return;
+        	}
         }
         else
         {

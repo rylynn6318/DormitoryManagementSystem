@@ -7,22 +7,14 @@ import java.util.ResourceBundle;
 import application.IOHandler;
 import application.Responser;
 import controller.InnerPageController;
-import controller.MainPageController;
 import enums.Bool;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import models.*;
-import utils.*;
 
 public class SubmitApplicationTabController extends InnerPageController
 {
@@ -214,6 +206,7 @@ public class SubmitApplicationTabController extends InnerPageController
     	if(result == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	
         	return;
         }
         

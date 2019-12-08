@@ -17,7 +17,6 @@ import enums.Bool;
 import enums.Code1;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -84,7 +83,12 @@ public class CheckDocumentTabController extends InnerPageController
         if(resultList == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-        	return;
+        	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+        	{
+        		//여기서 페이지 닫게 해주자.
+        		close();
+        		return;
+        	}
         }
         
         if(resultList != null)

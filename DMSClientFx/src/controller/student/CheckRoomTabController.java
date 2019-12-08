@@ -9,7 +9,6 @@ import controller.InnerPageController;
 import enums.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -104,7 +103,12 @@ public class CheckRoomTabController extends InnerPageController
         if(resultTuple == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-        	return;
+        	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+        	{
+        		//여기서 페이지 닫게 해주자.
+        		close();
+        		return;
+        	}
         }
         
         //받은 신청, 배정내역 분리 및 명시
