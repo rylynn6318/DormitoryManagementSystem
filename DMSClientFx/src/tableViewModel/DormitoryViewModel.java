@@ -19,14 +19,14 @@ public class DormitoryViewModel
 	private StringProperty meal7Str;
 	private StringProperty boardingFee;
 	
-	public DormitoryViewModel(String dormitoryName, Gender gender, int semesterCode, int capacity, boolean isMealDuty, int mealCost5, int mealCost7, int boardingFees)
+	public DormitoryViewModel(String dormitoryName, Gender gender, int semesterCode, int capacity, Bool isMealDuty, int mealCost5, int mealCost7, int boardingFees)
 	{
-		dormitory = new Dormitory(dormitoryName, gender, semesterCode, capacity, Bool.get(isMealDuty), mealCost5, mealCost7, boardingFees);
+		dormitory = new Dormitory(dormitoryName, gender, semesterCode, capacity, isMealDuty, mealCost5, mealCost7, boardingFees);
 		
 		this.dormNameStr = new SimpleStringProperty(dormitoryName);
 		this.semesterStr = new SimpleStringProperty(Integer.toString(semesterCode));
 		this.capacityStr = new SimpleStringProperty(Integer.toString(capacity));
-		this.mealDutyStr = new SimpleStringProperty(isMealDuty ? "필수" : "선택");
+		this.mealDutyStr = new SimpleStringProperty(isMealDuty.bool ? "필수" : "선택");
 		this.meal5Str = new SimpleStringProperty(Integer.toString(mealCost5));
 		this.meal7Str = new SimpleStringProperty(Integer.toString(mealCost7));
 		this.boardingFee = new SimpleStringProperty(Integer.toString(boardingFees));

@@ -1,10 +1,13 @@
 package controller.administrator;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import application.Responser;
 import controller.InnerPageController;
+import enums.Bool;
 import enums.Gender;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,7 +19,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import models.Dormitory;
+import models.Schedule;
+import models.Tuple;
 import tableViewModel.DormitoryViewModel;
+import tableViewModel.ScheduleViewModel;
 
 //생활관 조회 및 관리
 public class DormitoryManageTabController extends InnerPageController 
@@ -81,8 +88,6 @@ public class DormitoryManageTabController extends InnerPageController
     @FXML
     private ComboBox<String> insert_mealDuty_combobox;
     
-    ObservableList<DormitoryViewModel> dormitoryList;
-    
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
@@ -120,11 +125,38 @@ public class DormitoryManageTabController extends InnerPageController
     private void checkDormitories()
     {
     	//서버에서 생활관 목록 쫙 조회함.
-    	dormitoryList = FXCollections.observableArrayList(
-        		new DormitoryViewModel("오름관1동", Gender.Female, 201903, 100, true, 150000, 200000, 700000),
-        		new DormitoryViewModel("오름관3동", Gender.Male, 201903, 100, true, 150000, 230000, 800000)
-        		);
+    	ArrayList<Dormitory> resultList = Responser.admin_dormitoryManagePage_onCheck();
     	
+    	if(resultList == null)
+    	{
+    		IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+    	}
+    	
+    	if(resultList != null)
+    	{
+    		ObservableList<DormitoryViewModel> dormitoryViewModels = FXCollections.observableArrayList();
+    		
+    		for(Dormitory dorm : resultList)
+        	{
+    			dormitoryViewModels.add(dormitoryToViewModel(dorm));
+        	}
+    		
+    		setTableView(dormitoryViewModels);
+    	}
+    	
+    }
+    
+    //스케쥴 객체를 뷰모델로 바꾸는 메소드
+    private DormitoryViewModel dormitoryToViewModel(Dormitory dormitory)
+    {
+    	return new DormitoryViewModel(dormitory.dormitoryName, dormitory.gender, dormitory.semesterCode, dormitory.capacity, 
+    			dormitory.isMealDuty, dormitory.mealCost5, dormitory.mealCost7, dormitory.boardingFees);
+    			
+    }
+    
+    private void setTableView(ObservableList<DormitoryViewModel> dormitoryList)
+    {
     	check_dormitory_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
     	check_dormitory_column_semester.setCellValueFactory(cellData -> cellData.getValue().semesterProperty());
     	check_dormitory_column_capacity.setCellValueFactory(cellData -> cellData.getValue().capacityProperty());

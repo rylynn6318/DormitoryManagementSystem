@@ -151,14 +151,13 @@ public class Responser
 	public static String student_CheckBillPage_onCheck()
 	{
 		//1. 서버에게 생활관 고지서 조회 요청을 한다.
-		Protocol protocol = eventProtocolBuilder(Code1.Page.고지서조회, Code2.Event.CHECK, UserInfo.getInstance().account);
-		
 		//(2. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역 조회 -> 내역 있으면 다음으로, 없으면 없다고 클라이언트에게 알려줌)
 		//(3. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역의 식사구분, 생활관구분을 알아낸다.)
 		//(4. 서버는 해당 생활관, 해당 식비로 총 금액을 알아낸다.)
 		//(5. 서버는 랜덤 생성한 계좌번호와, 은행 명, 계산한 식비를 객체화해서 클라이언트에게 전송한다.)
-		
 		//6. 서버가 보낸 정보를 받아서 대충 메모장으로 띄워준다.
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.고지서조회, Code2.Event.CHECK, UserInfo.getInstance().account);
 		String result = (String) sendAndReceive(protocol);
 		return result;
 	}
@@ -358,12 +357,16 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 생활관 조회 및 관리 - 조회 버튼 클릭 시
-	public void admin_dormitoryManagePage_onCheck()
+	public static ArrayList<Dormitory> admin_dormitoryManagePage_onCheck()
 	{
-		//1. 생활관 정보 테이블에서 모든 정보를 가져와 객체화한다. (생활관명, 학기, 수용인원, 식사의무, 5일식 식비, 7일식 식비, 기숙사비
-		//2. 배열화한다.
-		//3. 직렬화해서 클라이언트에 전송한다.
-		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
+		//(1. 생활관 정보 테이블에서 모든 정보를 가져와 객체화한다. (생활관명, 학기, 수용인원, 식사의무, 5일식 식비, 7일식 식비, 기숙사비)
+		//(2. 배열화한다.)
+		//(3. 직렬화해서 클라이언트에 전송한다.)
+		//4. 클라이언트는 받은 배열을 tableView에 표시한다
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.생활관관리, Code2.Event.CHECK, null);
+		ArrayList<Dormitory> result = (ArrayList<Dormitory>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 생활관 조회 및 관리 - 삭제 버튼 클릭 시
