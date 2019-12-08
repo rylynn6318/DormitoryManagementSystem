@@ -48,7 +48,7 @@ public class ApplicationParser {
 	
 	public static int getNumOfLeftSeat(String dormName, int semester) throws SQLException
 	{
-		String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + ")";
+		String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + " AND 합격여부=Y)";
 		String getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + semester;
 
 		Connection connection = DBHandler.INSTANCE.getConnetion();
@@ -66,7 +66,7 @@ public class ApplicationParser {
 		if((semester%10) != 01)		//0지망 처리 구문
 		{
 			int firstSemester = (semester / 10) * 10 + 1;
-			String getNumOfZeroChoiceQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + firstSemester + "AND 지망=0)";
+			String getNumOfZeroChoiceQuery = "SELECT COUNT(*) FROM (SELECT * FROM " + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + firstSemester + " AND 합격여부=Y AND 지망=0)";
 			PreparedStatement passedZeroState = connection.prepareStatement(getNumOfZeroChoiceQuery);
 			ResultSet passedZero = passedZeroState.executeQuery();
 			passedZero.next();
@@ -92,7 +92,18 @@ public class ApplicationParser {
 		while(apps.next())
 		{
 			Application temp = new Application(apps.getString("학번"), apps.getString("생활관정보_생활관명"), apps.getString("생활관정보_성별"), apps.getInt("생활관정보_학기"), apps.getInt("지망"), getFinalScore(apps.getString("학번"), apps.getInt("학기")));
-			sortedApps.add(temp);
+			
+//			if(choice != 01)		//최소 지망일 때는 스킵하게 하고싶은데 어떤건 0지망이 제일 낮고 어떤건 1지망이 제일 낮아서 생각중임
+//			{
+				String havePassedApp = "SELECT COUNT(*) FROM (SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 합격여부=Y AND 학기=" + temp.getSemesterCode();
+				PreparedStatement havePassedAppState = connection.prepareStatement(havePassedApp);
+				ResultSet numOfPassed = havePassedAppState.executeQuery();
+				numOfPassed.next();
+				if(numOfPassed.getInt("COUNT(*)") == 0)
+					sortedApps.add(temp);
+//			}
+			
+			
 		}
 
 		preparedStatement.close();
