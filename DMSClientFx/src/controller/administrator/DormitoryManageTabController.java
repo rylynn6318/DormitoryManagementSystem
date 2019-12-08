@@ -89,7 +89,7 @@ public class DormitoryManageTabController extends InnerPageController
 		System.out.println("생활관 조회 및 관리 새로고침됨");
 		
 		//네트워크 통신 후 식사의무칸 가져와야하나? 어짜피 모든 기숙사엔 5일식 7일식 식사안함밖에없으니까.
-		insert_mealDuty_combobox.getItems().addAll("5일식", "7일식", "식사안함");
+		insert_mealDuty_combobox.getItems().addAll(null, "T", "F");
 	}
 	
 	//---------------------이벤트---------------------
@@ -120,9 +120,6 @@ public class DormitoryManageTabController extends InnerPageController
     private void checkDormitories()
     {
     	//서버에서 생활관 목록 쫙 조회함.
-    	
-    	
-    	
     	dormitoryList = FXCollections.observableArrayList(
         		new DormitoryViewModel("오름관1동", Gender.Female, 201903, 100, true, 150000, 200000, 700000),
         		new DormitoryViewModel("오름관3동", Gender.Male, 201903, 100, true, 150000, 230000, 800000)

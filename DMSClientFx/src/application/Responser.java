@@ -357,19 +357,6 @@ public class Responser
 	
 	//-------------------------------------------------------------------------
 	
-	//TODO 아래부터는 미완성. 서버 동작로직인데 대충 보고 클라이언트꺼 짜세요.
-	
-	//관리자 - 생활관 조회 및 관리 - 들어왔을 때
-	public void admin_dormitoryManagePage_onEnter()
-	{
-		//1. 식사의무 ENUM을 배열화해서 목록을 만든다.
-		//2. 배열화한 목록을 직렬화해서 클라이언트로 전송한다.
-		//(3. 클라이언트는 받은 ENUM 배열을 역직렬화하여 식사의무 combobox에 표시한다)
-		
-		//[ENUM 배열화 예시]
-		//arrayList<MealDuty> data = new arrayList<MealDuty>(MealDuty.NOMEAL, MealDuty.MEAL5, MealDuty.MEAL7);
-	}
-	
 	//관리자 - 생활관 조회 및 관리 - 조회 버튼 클릭 시
 	public void admin_dormitoryManagePage_onCheck()
 	{
