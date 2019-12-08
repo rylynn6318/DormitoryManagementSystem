@@ -384,10 +384,20 @@ public class Responser
 	//------------------------------------------------------------------------
 	
 	//학생 - 서류 제출 - 들어왔을 때
-	public static void student_submitDocumentPage_onEnter(Protocol protocol, SocketHelper socketHelper)
+	public static void student_submitDocumentPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//실제 원스톱을 기반으로, 학생이 서류 제출하는건 아무때나 할 수 있다고 하였다.
 		//1. 서류 유형을 객체화 배열화하여 클라이언트로 전송한다.
+		ArrayList<FileType> docuTypeList = new ArrayList<>();
+		docuTypeList.add(FileType.CSV);
+		docuTypeList.add(FileType.MEDICAL_REPORT);
+		docuTypeList.add(FileType.OATH);
+		socketHelper.write(new Protocol.Builder(
+				ProtocolType.EVENT, 
+				Direction.TO_CLIENT, 
+				Code1.NULL, 
+				Code2.NULL
+				).body(ProtocolHelper.serialization(docuTypeList)).build());
 		//(2. 클라이언트는 받은 배열을 역직렬화하여 서류유형 combobox에 표시한다)
 	}
 	
@@ -491,6 +501,8 @@ public class Responser
 		ArrayList<Schedule> schedule = ScheduleParser.getAllSchedule();
 		//2. 스케쥴 테이블에서 목록을 객체로 만들어 배열로 가져온다. (코드, 이름)
 			
+						//해야함
+		
 		//3. 스케쥴 객체 배열을 클라이언트로 전송한다.
 		socketHelper.write(new Protocol.Builder(
 				ProtocolType.EVENT, 
