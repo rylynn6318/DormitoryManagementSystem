@@ -19,6 +19,7 @@ import enums.ProtocolType;
 import models.Application;
 import models.Bill;
 import models.Dormitory;
+import models.Schedule;
 import models.Tuple;
 import utils.Protocol;
 import utils.ProtocolHelper;
@@ -383,10 +384,17 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 선발 일정 조회 및 관리 - 들어왔을 때
-	public static void admin_scheduleManagePage_onEnter(Protocol protocol, SocketHelper socketHelper)
+	public static void admin_scheduleManagePage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴 할일 코드 테이블에서 '코드', '이름' 을 객체로 만들어 배열로 가져온다.
+		Schedule[] schedule = ScheduleParser.getAllSchedule();
 		//2. 객체 배열을 직렬화하여 클라이언트로 전송한다.
+		socketHelper.write(new Protocol.Builder(
+				ProtocolType.EVENT, 
+				Direction.TO_CLIENT, 
+				Code1.NULL, 
+				Code2.NULL
+				).body(ProtocolHelper.serialization(schedule)).build());
 		//(3. 클라이언트는 등록 gridView 안의 유형 combobox에 값을 채워준다.)
 	}
 	
