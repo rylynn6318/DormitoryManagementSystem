@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 
 import application.IOHandler;
 import application.Responser;
+import controller.InnerPageController;
 import enums.Bool;
 import enums.Code1;
 import javafx.event.ActionEvent;
@@ -23,7 +24,7 @@ import javafx.scene.control.Label;
 import models.Document;
 import models.Tuple;
 
-public class CheckDocumentTabController implements Initializable 
+public class CheckDocumentTabController extends InnerPageController 
 {
 
 	@FXML
@@ -85,7 +86,8 @@ public class CheckDocumentTabController implements Initializable
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
         	return;
         }
-        else
+        
+        if(resultList != null)
         {
         	//서버에게서 받아온 파일타입 목록을 콤보박스에 추가한다.
         	ArrayList<String> fileTypeList = new ArrayList<String>();

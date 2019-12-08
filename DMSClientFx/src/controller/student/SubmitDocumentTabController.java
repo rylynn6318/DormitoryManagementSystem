@@ -11,6 +11,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import application.IOHandler;
 import application.Responser;
+import controller.InnerPageController;
 import enums.Bool;
 import enums.Code1;
 import javafx.event.ActionEvent;
@@ -24,7 +25,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert.AlertType;
 import models.Tuple;
 
-public class SubmitDocumentTabController implements Initializable 
+public class SubmitDocumentTabController extends InnerPageController 
 {
 	@FXML
     private Button submit_button;

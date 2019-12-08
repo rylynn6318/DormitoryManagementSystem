@@ -6,6 +6,8 @@ import java.util.ResourceBundle;
 
 import application.IOHandler;
 import application.Responser;
+import controller.InnerPageController;
+import controller.MainPageController;
 import enums.Bool;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,11 +18,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import models.*;
 import utils.*;
 
-public class SubmitApplicationTabController implements Initializable 
+public class SubmitApplicationTabController extends InnerPageController
 {
  	@FXML
     private Button application_button;
@@ -81,12 +85,6 @@ public class SubmitApplicationTabController implements Initializable
 		firstChoice_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
 		secondChoice_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
 		thirdChoice_meal_combobox.getItems().addAll("선택", "5일식", "7일식", "식사안함");
-		
-		//이건 사용자 선택에 따라 결정, 변경되야함. 물론 서버에서 기본 정보는 다 받아오고, 사용자 선택에 맞는 값을 표시해줘야함.
-//		oneYear_cost_label.setText("만원");
-//		firstChoice_cost_label.setText("만원");
-//		secondChoice_cost_label.setText("만원");
-//		thirdChoice_cost_label.setText("만원");	
 	}
 	
 	//---------------------이벤트---------------------
@@ -116,14 +114,19 @@ public class SubmitApplicationTabController implements Initializable
         if(resultTuple == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-        	//여기서 페이지 닫게 해주자.
-        	return;
+        	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+        	{
+        		//여기서 페이지 닫게 해주자.
+        		close();
+        		return;
+        	}
         }
-        else
+        
+        //스케쥴 체크가 됬는가?
+    	//스케쥴 때문에 진입 불가인 경우 String에는 메시지가, 배열에는 null이 반환된다.
+        if(resultTuple != null)
         {
-        	//스케쥴 체크가 됬는가?
-        	//스케쥴 때문에 진입 불가인 경우 String에는 메시지가, 배열에는 null이 반환된다.
-            if(resultTuple.obj2 == null)
+        	if(resultTuple.obj2 == null)
             {
             	IOHandler.getInstance().showAlert(resultTuple.obj1);
             	//여기서 페이지 닫게 해주자.
@@ -142,6 +145,7 @@ public class SubmitApplicationTabController implements Initializable
                 	setCombobox(resultTuple.obj2);
             }
         }
+        
     }
     
     //사용자가 클릭한 콤보박스로 신청객체 배열을 만들어 반환하는 클래스
@@ -293,5 +297,4 @@ public class SubmitApplicationTabController implements Initializable
     			mealCombobox.getItems().add("7일식");
     	}
     }
-
 }

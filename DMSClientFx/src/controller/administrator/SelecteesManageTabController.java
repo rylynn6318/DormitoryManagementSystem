@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import controller.InnerPageController;
 import enums.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +18,7 @@ import javafx.scene.control.TextField;
 import tableViewModel.ApplicationViewModel;
 
 //입사 선발자 조회 및 관리
-public class SelecteesManageTabController implements Initializable 
+public class SelecteesManageTabController extends InnerPageController 
 {
 	@FXML
     private Button selection_button;

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import controller.InnerPageController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,7 +21,7 @@ import javafx.scene.control.TextField;
 import tableViewModel.ScheduleViewModel;
 
 //선발 일정 조회 및 관리
-public class ScheduleManageTabController implements Initializable 
+public class ScheduleManageTabController extends InnerPageController 
 {
 	@FXML
     private Button check_button;

@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import application.IOHandler;
+import controller.InnerPageController;
 import enums.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,7 +23,7 @@ import javafx.scene.control.TextField;
 import tableViewModel.*;
 
 //납부 여부 조회 및 관리
-public class PaymentManageTabController implements Initializable 
+public class PaymentManageTabController extends InnerPageController 
 {
 	
 	@FXML
