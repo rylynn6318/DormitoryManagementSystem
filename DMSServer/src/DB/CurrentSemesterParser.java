@@ -16,10 +16,10 @@ public class CurrentSemesterParser
 		String time1 = format1.format(time);
 		int result;
 		
-		String sql1 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 1학기"; //신청테이블에서 하나만 가져와서 그 학기를 봄
-		String sql2 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 여름계절"; //신청테이블에서 하나만 가져와서 그 학기를 봄
-		String sql3 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 2학기"; //신청테이블에서 하나만 가져와서 그 학기를 봄
-		String sql4 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 겨울계절"; //신청테이블에서 하나만 가져와서 그 학기를 봄	
+		String sql1 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 1학기"; 
+		String sql2 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 여름계절";
+		String sql3 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 2학기"; 
+		String sql4 = "SELECT `스케쥴 할일 코드`, 시작일, 종료일  비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴 WHERE `스케쥴 할일 코드` = 겨울계절"; 
 		
 //		String sql = "SELECT `스케쥴 할일 코드`, 비고 FROM " + DBinfo.DB_NAME + ".스케쥴 <![CDATA[ WHERE 시작일 <="+time1+" and "+time1 + "<= 종료일   ]]>"; //만약 위 방법이 안되면 사용할것		 
 
@@ -43,27 +43,34 @@ public class CurrentSemesterParser
 			result = rs1.getInt("비고"); //1학기
 			rs1.close();
 			DBHandler.INSTANCE.returnConnection(connection);
+			return result;
 		}
 		else if(rs2.getDate("시작일").before(time)&& time.before(rs2.getDate("종료일"))) 
 		{
 			result = rs2.getInt("비고"); //여름계절
 			rs2.close();
 			DBHandler.INSTANCE.returnConnection(connection);
+			return result;
 		}		
 		else if(rs3.getDate("시작일").before(time)&& time.before(rs3.getDate("종료일"))) 
 		{
 			result = rs3.getInt("비고");//2학기
 			rs3.close();
 			DBHandler.INSTANCE.returnConnection(connection);
+			return result;
 		}
-		else
+		else if(rs4.getDate("시작일").before(time) && time.before(rs3.getDate("종료일")))
 		{
 			result = rs4.getInt("비고"); //겨울계절
 			rs4.close();
-			DBHandler.INSTANCE.returnConnection(connection);			
+			DBHandler.INSTANCE.returnConnection(connection);		
+			return result;
 		}
-		
-		System.out.println("CurrentSemesterParser 오류");
-		return result;
+		else
+		{
+			System.out.println("CurrentSemesterParser 오류");
+			return 0;
+		}
+		//return result;
 	}
 }
