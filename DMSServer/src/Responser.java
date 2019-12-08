@@ -15,6 +15,7 @@ import enums.Code2;
 import enums.Direction;
 import enums.Gender;
 import enums.ProtocolType;
+import models.Account;
 import models.Application;
 import models.Dormitory;
 import models.Tuple;
@@ -221,8 +222,7 @@ public class Responser
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
-		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회. 
-		
+		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회. 		
 		//	 (클라이언트의 '생활관 입사지원 내역' 테이블뷰에 표시할 것임)
 		//3. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역의 지망, 생활관명, 식사구분, 합격여부, 납부여부를 조회.
 		//	 (클라이언트의 '생활관 선발 결과' 테이블뷰에 표시할 것임)
@@ -238,14 +238,14 @@ public class Responser
 	}
 	
 	//학생 - 생활관 고지서 조회 - 조회 버튼 클릭 시
-	public void student_CheckBillPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
+	public static void student_CheckBillPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
 	{
 		int cost;
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		String id = (String) ProtocolHelper.deserialization(protocol.getBody()); //이 부분 확인해주세요
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역 조회 -> 내역 있으면 다음으로, 없으면 없다고 클라이언트에게 알려줌
 		try {
-			if(ApplicationParser.isExistPassState(id))
+			if(!ApplicationParser.isExistPassState(id))
 			{
 				socketHelper.write(new Protocol.Builder(
 						ProtocolType.EVENT, 
@@ -260,17 +260,18 @@ public class Responser
 		}
 		//3. 합격한 신청 내역에 관한 납부해야 할 비용을 저장
 		cost = DormParser.getCheckBillCost(id);
-		//5. 랜덤 생성한 계좌번호와, 은행 명, 계산한 비용을 객체화해서 클라이언트에게 전송한다.
-		///////////////////////////////////누가 5번좀 해주세요 제가하면 너무 막연하게 할 듯
-		//(6. 클라이언트는 이걸 받아서 대충 메모장으로 띄워준다.)
+		//4. 랜덤 생성한 계좌번호와, 은행 명, 계산한 비용을 객체화해서 클라이언트에게 전송한다.
+		String bankName = "농협";
+		   
+		//(. 클라이언트는 이걸 받아서 대충 메모장으로 띄워준다.)
 	}
-	
 	//------------------------------------------------------------------------
 	
 	//학생 - 생활관 호실 조회 - 들어왔을 때
 	public static void student_checkRoomPage_onEnter(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 스케쥴을 확인하고 호실 조회 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
+		
 		//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
 		//3. 스케쥴 객체를 클라이언트에게 전송한다.
 		//(4. 클라이언트에서는 받은 비고(안내사항)을 표시한다)
@@ -527,7 +528,7 @@ public class Responser
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 	}
 	
-	//관리자 - 납부 여부 조회 및 관리 - 삭제 버튼 클릭 시
+	//관리자 - 납부 여부 조회 및 관리 - 업데이트 버튼 클릭 시
 	public static void admin_paymentManagePage_onUpdate(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트로부터 받은 학번, 생활관명, 학기로 납부여부 테이블에서 조회한다.
@@ -611,8 +612,7 @@ public class Responser
 }
 
 //변경 로그
-//2019-12-06 v1.00
-//	Responser.java 생성하였음 -명근
+//2019-12-06 v1.00   
 
 //2019-12-07 v1.01
 //	주석 추가 및 오타 수정 -명근

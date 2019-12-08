@@ -31,4 +31,6 @@ public class AccountParser {
         DBHandler.INSTANCE.returnConnection(connection);
         return result;
     }
+    
+    
 }
