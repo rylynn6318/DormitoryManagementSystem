@@ -85,7 +85,7 @@ public class Responser
 		if(!isAdmissible)
 		{
 			//이렇게 튜플로 보내주는 이유는, 아래에서 스케쥴 체크에서 성공했을때 튜플로 보내기 때문임.
-			Tuple<String, String> failMessage = new Tuple<String, String>("현재 생활관 입사 신청 기간이 아닙니다.", null);
+			Tuple<String, ArrayList<Dormitory>> failMessage = new Tuple<String, ArrayList<Dormitory>>("현재 생활관 입사 신청 기간이 아닙니다.", null);
 			socketHelper.write(new Protocol.Builder(
 					ProtocolType.EVENT, 
 					Direction.TO_CLIENT, 
@@ -96,10 +96,10 @@ public class Responser
 		}
 		
 		//2. 받은 요청의 헤더에서 학번을 알아낸다.
-		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
+		Account account = (Account) ProtocolHelper.deserialization(protocol.getBody());
 		
 		//3. 학생테이블에서 학번으로 조회하여 성별을 알아낸다.
-		Gender gender = StudentParser.getGender(id);
+		Gender gender = StudentParser.getGender(account.accountId);
 		
 		//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
 		//	 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
