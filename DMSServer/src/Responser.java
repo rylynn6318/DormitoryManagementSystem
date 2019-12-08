@@ -289,23 +289,32 @@ public class Responser
 	//------------------------------------------------------------------------
 	
 	//학생 - 생활관 호실 조회 - 들어왔을 때
-	public static void student_checkRoomPage_onEnter(Protocol protocol, SocketHelper socketHelper)
+	public static void student_checkRoomPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴을 확인하고 호실 조회 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-		//만드는 중 -서희-
-		try {
-			if(ScheduleParser.isAdmissible((Page)protocol.code1))
-			{
-
-			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		if(ScheduleParser.isAdmissible((Page)protocol.code1))
+		{
+			//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
+			String notice = ScheduleParser.getDescription((Page)protocol.code1);
+			//3. 스케쥴 객체를 클라이언트에게 전송한다.
+			Tuple<Bool,String> resultTuple = new Tuple(Bool.TRUE, notice);
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization(resultTuple)).build());
+			//(4. 클라이언트에서는 받은 비고(안내사항)을 표시한다)
 		}
-		//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
-		//3. 스케쥴 객체를 클라이언트에게 전송한다.
-		//(4. 클라이언트에서는 받은 비고(안내사항)을 표시한다)
+		else
+		{
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization("신청조회기간이 아닙니다.")).build());
+		}
 	}
 	
 	//학생 - 생활관 호실 조회 - 조회 버튼 클릭 시
