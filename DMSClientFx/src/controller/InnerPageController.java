@@ -1,6 +1,10 @@
 package controller;
 
 import java.net.URL;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import enums.Code1;
@@ -52,4 +56,41 @@ public class InnerPageController implements Initializable
 			return null;
 		}
     }
+	
+	public Date localDateToDate(LocalDate local)
+    {
+    	Instant instant = Instant.from(local.atStartOfDay(ZoneId.systemDefault()));
+    	Date date = Date.from(instant);
+    	return date;
+    }
+	
+	public String mealTypeIntToStr(int mealType)
+	{
+		switch(mealType)
+    	{
+    	case 0:
+    		return "식사안함";
+    	case 5:
+    		return "5일식";
+    	case 7:
+    		return "7일식";
+		default:
+    		return null;
+    	}
+	}
+	
+	public int mealTypeStrToInt(String mealType)
+	{
+		switch(mealType)
+    	{
+    	case "식사안함":
+    		return 0;
+    	case "5일식":
+    		return 5;
+    	case "7일식":
+    		return 7;
+		default:
+    		return -1;
+    	}
+	}
 }

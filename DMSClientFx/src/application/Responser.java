@@ -172,7 +172,7 @@ public class Responser
 		//(3. 서버는 스케쥴 객체를 클라이언트에게 전송한다.)
 		//4. 서버로부터 받은 비고(안내사항)을 표시한다.
 		
-		Protocol protocol = eventProtocolBuilder(Code1.Page.호실조회, Code2.Event.REFRESH, null);
+		Protocol protocol = eventProtocolBuilder(Code1.Page.호실조회, Code2.Event.REFRESH, UserInfo.getInstance().account);
 		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
 		return result;
 	}
@@ -449,7 +449,7 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 입사자 조회 및 관리 - 입사자 등록(배정) 버튼 클릭 시
-	public void admin_boarderManagePage_onAllocate()
+	public static Tuple<Bool, String> admin_boarderManagePage_onAllocate()
 	{
 		//입사자 등록(배정) 버튼은 신청 목록에서 합격여부를 Y, 납부내역 Y, 결핵진단서 Y인 신청의 최종합격여부를 Y로 바꾼다.
 		//그리고나서 배정내역에 최종합격여부가 Y인 학생들을 배정한다.
@@ -466,29 +466,41 @@ public class Responser
 		//		5) 배정내역 알고리즘(배정내역 테이블에 학생 한명 한명 INSERT ?)을 돌린다.
 		
 		//3. 결과를 클라이언트에게 알려준다(성공/실패?)
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사자관리, Code2.Event.ASSIGN, null);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 조회 버튼 클릭 시
-	public void admin_boarderManagePage_onCheck()
+	public static ArrayList<PlacementHistory> admin_boarderManagePage_onCheck()
 	{
 		//1. 배정내역 테이블에서 이번 학기 배정내역 목록을 가져와 객체화한다. (학번, 호, 학기, 생활관명, 자리, 퇴사예정일)
 		//2. 배열화한다.
 		//3. 직렬화해서 클라이언트에 전송한다.
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사자관리, Code2.Event.CHECK, null);
+		ArrayList<PlacementHistory> result = (ArrayList<PlacementHistory>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 삭제 버튼 클릭 시
-	public void admin_boarderManagePage_onDelete()
+	public static Tuple<Bool, String> admin_boarderManagePage_onDelete(PlacementHistory data)
 	{
 		//1. 클라이언트로부터 받은 학번, 호, 학기, 생활관명으로 배정내역 테이블에서 조회한다.
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//	   (신청 테이블에서 최종합격여부를 N으로 UPDATE해야할지는 모르겠음...)
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
+		
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사자관리, Code2.Event.DELETE, data);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 등록 버튼 클릭 시
-	public void admin_boarderManagePage_onInsert()
+	public static Tuple<Bool, String> admin_boarderManagePage_onInsert(Tuple<PlacementHistory, Application> data)
 	{
 		//배정내역에 학생을 임의로 추가하기 위한 기능
 		//배정내역에 학생을 넣고, 신청 테이블에도 몇일식인지, 코골이여부를 기록하기 위해 INSERT해야됨.
@@ -499,6 +511,9 @@ public class Responser
 		//3-2. 기존 값이 존재하지 않으면 INSERT한다.
 		//	   신청 테이블에도 몇일식, 코골이여부 넣어주기위해 INSERT해줘야 한다.
 		//4. INSERT 수행에 대한 결과를 클라이언트에게 알려준다 (성공/실패/아마존사망...etc)
+		Protocol protocol = eventProtocolBuilder(Code1.Page.입사자관리, Code2.Event.SUBMIT, data);
+		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+		return result;
 	}
 	
 	//-------------------------------------------------------------------------

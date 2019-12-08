@@ -2,11 +2,14 @@ package controller.administrator;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
+import application.Responser;
 import controller.InnerPageController;
+import enums.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,6 +21,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import models.*;
 import tableViewModel.PlacementHistoryViewModel;
 
 //입사자 조회 및 관리
@@ -93,14 +97,10 @@ public class BoarderManageTabController extends InnerPageController
     @FXML
     private CheckBox insert_snore_checkbox;
     
-    private ObservableList<PlacementHistoryViewModel> historyList;
-    
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
 		System.out.println("입사자 조회 및 관리 새로고침됨");
-		
-		
 	}
 	
 	//---------------------이벤트---------------------
@@ -138,18 +138,59 @@ public class BoarderManageTabController extends InnerPageController
     private void allocate()
     {
     	//입사자 등록(배정) 쿼리 요청
+    	Tuple<Bool, String> resultTuple = Responser.admin_boarderManagePage_onAllocate();
+    	
+    	//서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultTuple != null)
+        {
+        	//성공/실패 메시지 표시
+        	IOHandler.getInstance().showAlert(resultTuple.obj2);
+        }
     }
+    
+    //-------------------------------------------
     
     private void checkBoarders()
     {
     	//배정내역 테이블 조회 요청
+    	ArrayList<PlacementHistory> resultList = Responser.admin_boarderManagePage_onCheck();
     	
-    	historyList = FXCollections.observableArrayList(
-    			new PlacementHistoryViewModel("20161234", 201, 201901, "오른관 2동", 'A', new Date(2019,07,01)),
-    			new PlacementHistoryViewModel("20161235", 304, 201901, "푸름관 2동", 'B', new Date(2019,07,01)),
-    			new PlacementHistoryViewModel("20161236", 406, 201901, "오른관 3동", 'A', new Date(2019,07,01))
-        		);
-    	
+    	//서버랑 통신이 됬는가?
+        if(resultList == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultList != null)
+        {
+        	//객체를 테이블뷰 모델로 변환
+        	ObservableList<PlacementHistoryViewModel> historyList = FXCollections.observableArrayList();
+        	
+        	for(PlacementHistory history : resultList)
+        	{
+        		historyList.add(placementHistoryToViewModel(history));
+        	}
+        	
+            //테이블뷰에 추가
+            setPlacementHistoryTableView(historyList);
+        }
+    }
+    
+    private PlacementHistoryViewModel placementHistoryToViewModel(PlacementHistory history)
+    {
+    	return new PlacementHistoryViewModel(history.studentId, history.roomId, history.semester, 
+    			history.dormitoryName, history.seat, history.checkout);
+    }
+    
+    private void setPlacementHistoryTableView(ObservableList<PlacementHistoryViewModel> historyList)
+    {
     	//서버에서 받아온거 표시하게 만듬.
     	check_placementHistory_column_studentId.setCellValueFactory(cellData -> cellData.getValue().studentIdProperty());
     	check_placementHistory_column_roomNumber.setCellValueFactory(cellData -> cellData.getValue().roomIdProperty());
@@ -160,6 +201,8 @@ public class BoarderManageTabController extends InnerPageController
     	
     	check_placementHistory_tableview.setItems(historyList);
     }
+    
+    //-------------------------------------------
     
     private void deleteBoarder()
     {
@@ -192,24 +235,39 @@ public class BoarderManageTabController extends InnerPageController
     		IOHandler.getInstance().showAlert("생활관명이 비어있습니다.");
     		return;
     	}
+
+    	PlacementHistory data = new PlacementHistory(id, Integer.parseInt(roomNumber), Integer.parseInt(semester), dormName);
+    	Tuple<Bool, String> resultTuple = Responser.admin_boarderManagePage_onDelete(data);
     	
-    	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-		boolean isSucceed = true;
-		if(isSucceed)
-		{
-			IOHandler.getInstance().showAlert("입사자 삭제에 성공하였습니다.");
-			
-			//선택한 항목들 클리어
-			delete_id_textfield.setText(null);
-			delete_roomNumber_textfield.setText(null);
-			delete_semester_textfield.setText(null);
-			delete_dormName_textfield.setText(null);
-		}
-		else
-		{
-			IOHandler.getInstance().showAlert("서류 삭제에 실패하였습니다.");
-		}
+    	//서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultTuple != null)
+        {
+        	//성공/실패 메시지 표시
+        	if(resultTuple.obj1 == Bool.TRUE)
+        	{
+        		clearDeleteInfo();
+        	}
+        	IOHandler.getInstance().showAlert(resultTuple.obj2);
+        	
+        }
     }
+    
+    private void clearDeleteInfo()
+    {
+    	//선택한 항목들 클리어
+		delete_id_textfield.setText(null);
+		delete_roomNumber_textfield.setText(null);
+		delete_semester_textfield.setText(null);
+		delete_dormName_textfield.setText(null);
+    }
+    
+    //-------------------------------------------
     
     private void insertBoarder()
     {
@@ -218,8 +276,9 @@ public class BoarderManageTabController extends InnerPageController
     	String semester = insert_semester_textfield.getText();
     	String dormName = insert_dormName_textfield.getText();
     	String seat = insert_seat_textfield.getText();
-    	LocalDate checkout = insert_checkout_datepicker.getValue();
+    	LocalDate checkout_l = insert_checkout_datepicker.getValue();
     	String mealType = insert_mealType_textfield.getText();
+    	Bool isSnore = insert_snore_checkbox.isSelected() ? Bool.TRUE : Bool.FALSE;
     	
     	if(id == null || id.isEmpty())
     	{
@@ -251,7 +310,7 @@ public class BoarderManageTabController extends InnerPageController
     		IOHandler.getInstance().showAlert("자리가 비어있습니다.");
     		return;
     	}
-    	else if(checkout == null || checkout.toString().isEmpty())
+    	else if(checkout_l == null || checkout_l.toString().isEmpty())
     	{
     		//퇴사예정일이 없음
     		IOHandler.getInstance().showAlert("퇴사예정일이 비어있습니다.");
@@ -264,24 +323,47 @@ public class BoarderManageTabController extends InnerPageController
     		return;
     	}
     	
-    	//서버에 등록 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-		boolean isSucceed = true;
-		if(isSucceed)
-		{
-			IOHandler.getInstance().showAlert("입사자 등록에 성공하였습니다.");
-			
-			//선택한 항목들 클리어
-			insert_id_textfield.setText(null);
-			insert_roomNumber_textfield.setText(null);
-			insert_semester_textfield.setText(null);
-			insert_dormName_textfield.setText(null);
-			insert_seat_textfield.setText(null);
-			insert_checkout_datepicker.setValue(null);
-			insert_mealType_textfield.setText(null);
-		}
-		else
-		{
-			IOHandler.getInstance().showAlert("입사자 등록에 실패하였습니다.");
-		}
-    }   
+    	//datePicker에서 나온 localDate를 Date유형으로 변환
+    	Date checkout = localDateToDate(checkout_l);
+    	
+    	//배정내역 객체 생성
+    	PlacementHistory history = new PlacementHistory(id, Integer.parseInt(roomNumber), Integer.parseInt(semester), dormName, 
+    			Seat.get(seat), checkout);
+    	
+    	//신청 객체 생성
+    	Application application = new Application(Integer.parseInt(mealType), isSnore);
+    	
+    	Tuple<PlacementHistory, Application> data = new Tuple<PlacementHistory, Application>(history, application);
+    	
+    	Tuple<Bool, String> resultTuple = Responser.admin_boarderManagePage_onInsert(data);
+    	
+//    	서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+        
+        if(resultTuple != null)
+        {
+        	//성공/실패 메시지 표시
+        	if(resultTuple.obj1 == Bool.TRUE)
+        	{
+        		clearInsertInfo();
+        	}
+        	IOHandler.getInstance().showAlert(resultTuple.obj2);
+        	
+        }
+    	
+    } 
+    private void clearInsertInfo()
+    {
+    	insert_id_textfield.setText(null);
+		insert_roomNumber_textfield.setText(null);
+		insert_semester_textfield.setText(null);
+		insert_dormName_textfield.setText(null);
+		insert_seat_textfield.setText(null);
+		insert_checkout_datepicker.setValue(null);
+		insert_mealType_textfield.setText(null);
+    }
 }

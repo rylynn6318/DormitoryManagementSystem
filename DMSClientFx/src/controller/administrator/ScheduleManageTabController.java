@@ -313,13 +313,6 @@ public class ScheduleManageTabController extends InnerPageController
     	}
     }
     
-    private Date localDateToDate(LocalDate local)
-    {
-    	Instant instant = Instant.from(local.atStartOfDay(ZoneId.systemDefault()));
-    	Date date = Date.from(instant);
-    	return date;
-    }
-    
     private void clearInsertInfo()
     {
     	//선택한 항목들 클리어

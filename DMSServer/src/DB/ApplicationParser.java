@@ -32,6 +32,15 @@ public class ApplicationParser {
 
 	}
 	
+	public static void deleteApplication(Application app) throws SQLException
+	{
+		String deleteApplication = "DELETE FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번=" + app.getStudentId() + " AND 생활관정보_생활관명=" + app.getDormitoryName() + " AND 학기=" + app.getSemesterCode() + " AND 지망=" + app.getChoice();
+		
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement preparedStatement = connection.prepareStatement(deleteApplication);
+		preparedStatement.execute();
+	}
+	
 	public static ArrayList<Application> getAllApplications() throws SQLException
 	{
 		String getUnsortedAppsQuery = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 학기=(select max(학기) from " + DBHandler.DB_NAME + ".신청)";
@@ -344,6 +353,17 @@ public class ApplicationParser {
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 		return applications;
+	}
+	
+	public static Application getPassedApplication(String id)
+	{
+		String sql = "SELECT 최종합격여부, 납부여부, 식비구분, 생활관 FROM" + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ id + "생활관정보_학기 = " +CurrentSemesterParser.getCurrentSemester() + "최종결과 = 'Y'";
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+		rs.next();
+		Application application = new Application(rs.getString);
+		
 	}
 
 }

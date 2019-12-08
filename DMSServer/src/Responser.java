@@ -320,7 +320,7 @@ public class Responser
 	//학생 - 생활관 호실 조회 - 조회 버튼 클릭 시
 	public static void student_checkRoomPage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
-		
+		///////////////////제가 만드는중 ★ ㅡ서희ㅡ////////////////////////////
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 최종합격여부가 T인 내역 조회 
 		//3-1. 내역이 없는 경우 불합격이라고 클라이언트에게 알려준다.(객체 만들던지, String 보내던 알아서 해야될듯. 전용 객체가 있는게 바람직하겠다.)
@@ -531,7 +531,37 @@ public class Responser
 	//관리자 - 입사 선발자 조회 및 관리 - 삭제 버튼 클릭 시
 	public static void admin_selecteesManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
+		Bool isSucceed = Bool.TRUE;
 		//1. 클라이언트로부터 받은 학번, 생활관명, 학기, 지망으로 신청 테이블에서 조회한다.
+		Application temp;
+		try {
+			temp = (Application) ProtocolHelper.deserialization(protocol.getBody());
+			DB.ApplicationParser.deleteApplication(temp);
+		} catch (ClassNotFoundException | IOException | SQLException e1) {
+			// TODO Auto-generated catch block
+			isSucceed = Bool.FALSE;
+			e1.printStackTrace();
+		}
+		
+		Tuple<Bool,String> result;
+		if(isSucceed == Bool.TRUE)
+			result = new Tuple<Bool,String>(Bool.TRUE, "성공했습니다");
+		else
+			result = new Tuple<Bool,String>(Bool.FALSE, "실패했습니다");
+		
+		try {
+			
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization(result)).build());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return;
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
