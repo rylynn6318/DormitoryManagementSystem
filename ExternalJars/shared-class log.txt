@@ -92,3 +92,7 @@ shared-class update log
 2019-12-08 23:40 v2.12
 	ProtocolHelper에 파일 업/다운로드 기능 개선
 	Shared Class Export해서 적용함.
+	
+2019-12-09 00:31 v2.13
+	Shared Class 안에 Document 생성자 추가함.
+	Shared Class Export해서 적용함.

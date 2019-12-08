@@ -8,18 +8,22 @@ import DB.ApplicationParser;
 import DB.AssignAlgorithm;
 import DB.CurrentSemesterParser;
 import DB.DormParser;
+import DB.PlacementHistoryParser;
 import DB.ScheduleParser;
 import DB.StudentParser;
 import enums.Bool;
 import enums.Code1;
+import enums.Code1.FileType;
 import enums.Code1.Page;
 import enums.Code2;
 import enums.Direction;
 import enums.Gender;
 import enums.ProtocolType;
+import models.Account;
 import models.Application;
 import models.Bill;
 import models.Dormitory;
+import models.PlacementHistory;
 import models.Schedule;
 import models.Tuple;
 import utils.Protocol;
@@ -81,7 +85,7 @@ public class Responser
 		if(!isAdmissible)
 		{
 			//이렇게 튜플로 보내주는 이유는, 아래에서 스케쥴 체크에서 성공했을때 튜플로 보내기 때문임.
-			Tuple<String, String> failMessage = new Tuple<String, String>("현재 생활관 입사 신청 기간이 아닙니다.", null);
+			Tuple<String, ArrayList<Dormitory>> failMessage = new Tuple<String, ArrayList<Dormitory>>("현재 생활관 입사 신청 기간이 아닙니다.", null);
 			socketHelper.write(new Protocol.Builder(
 					ProtocolType.EVENT, 
 					Direction.TO_CLIENT, 
@@ -92,10 +96,10 @@ public class Responser
 		}
 		
 		//2. 받은 요청의 헤더에서 학번을 알아낸다.
-		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
+		Account account = (Account) ProtocolHelper.deserialization(protocol.getBody());
 		
 		//3. 학생테이블에서 학번으로 조회하여 성별을 알아낸다.
-		Gender gender = StudentParser.getGender(id);
+		Gender gender = StudentParser.getGender(account.accountId);
 		
 		//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
 		//	 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
@@ -122,7 +126,8 @@ public class Responser
 	public static void student_submitApplicationPage_onSubmit(Protocol protocol, SocketHelper socketHelper) throws IOException, SQLException, ClassNotFoundException
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
+		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
+		String id = a.accountId;
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역이 있는지 조회 -> TRUE 이면 내역 취소하고 하라고 클라이언트에게 알려줌. FALSE이면 다음으로
 		try {
 			if(ApplicationParser.isExist(id))
@@ -297,8 +302,10 @@ public class Responser
 	//학생 - 생활관 호실 조회 - 들어왔을 때
 	public static void student_checkRoomPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
+		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
+		String id = a.accountId;
 		//1. 스케쥴을 확인하고 호실 조회 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-		if(ScheduleParser.isAdmissible((Page)protocol.code1))
+		if(ScheduleParser.isAdmissible((Page)protocol.code1) && ApplicationParser.isExistLastPass(id))
 		{
 			//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
 			String notice = ScheduleParser.getDescription((Page)protocol.code1);
@@ -319,20 +326,30 @@ public class Responser
 					Direction.TO_CLIENT, 
 					Code1.NULL, 
 					Code2.NULL
-					).body(ProtocolHelper.serialization("신청조회기간이 아닙니다.")).build());
+					).body(ProtocolHelper.serialization("합격 내역이 없습니다.")).build());
 		}
 	}
 	
 	//학생 - 생활관 호실 조회 - 조회 버튼 클릭 시
-	public static void student_checkRoomPage_onCheck(Protocol protocol, SocketHelper socketHelper)
+	public static void student_checkRoomPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
 	{
 		///////////////////제가 만드는중 ★ ㅡ서희ㅡ////////////////////////////
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 최종합격여부가 T인 내역 조회 
-		//3-1. 내역이 없는 경우 불합격이라고 클라이언트에게 알려준다.(객체 만들던지, String 보내던 알아서 해야될듯. 전용 객체가 있는게 바람직하겠다.)
+		String id = (String) ProtocolHelper.deserialization(protocol.getBody());
+		
 		//3-2. 내역이 있는 경우 신청 테이블에서 최종합격여부, 납부여부, 식비구분, 생활관, 호실유형(이건 일반실 고정)을 조회한다.
+		Application lastPassedApplication = ApplicationParser.getLastPassedApplication(id);
 		//4. 배정내역 테이블에서 해당 학번이 배정되있는 호실과 침대번호를 가져온다.
+		PlacementHistory ph = PlacementHistoryParser.getPlacementResult(id);
+		//어플리케이션과 히스토리를 묶어서 보내주자
 		//5. 3-2와 4를 합쳐 객체화한다. 그리고 이것을 클라이언트에게 전송한다.
+		Tuple<Application, PlacementHistory> resultTuple = new Tuple(lastPassedApplication, ph);
+		socketHelper.write(new Protocol.Builder(
+				ProtocolType.EVENT, 
+				Direction.TO_CLIENT, 
+				Code1.NULL, 
+				Code2.NULL
+				).body(ProtocolHelper.serialization(resultTuple)).build());
 		//(6. 클라이언트는 받은 객체를 역직렬화, UI에 표기한다)
 	}
 	
@@ -363,6 +380,22 @@ public class Responser
 	public static void student_checkDocumentPage_onEnter(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 서류 유형을 객체화 배열화하여 클라이언트로 전송한다.
+		ArrayList<Code1.FileType> fileType = new ArrayList<Code1.FileType>();
+		fileType.add(FileType.MEDICAL_REPORT);
+		fileType.add(FileType.OATH);
+
+		try {
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization(fileType)).build());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return;
 		//(2. 클라이언트는 받은 배열을 역직렬화하여 서류유형 combobox에 표시한다)
 	}
 	

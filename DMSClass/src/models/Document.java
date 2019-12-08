@@ -27,4 +27,13 @@ public final class Document implements Serializable {
 		this.documentStoragePath = documentStoragePath;
 		this.isValid = isValid;
 	}
+	
+	public Document(String studentId, Code1.FileType documentType, Date submissionDate) {
+		this.studentId = studentId;
+		this.documentType = documentType;
+		this.submissionDate = submissionDate;
+		this.diagnosisDate = null;
+		this.documentStoragePath = null;
+		this.isValid = null;
+	}
 }

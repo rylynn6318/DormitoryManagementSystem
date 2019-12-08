@@ -86,8 +86,6 @@ public class PaymentManageTabController extends InnerPageController
 	@FXML
     private ComboBox<String> update_isPaid_combobox;
 	
-	private final String[] comboboxItem_boolean = {null, "T", "F"};
-	
 	ObservableList<ApplicationViewModel> applicationList;
 	
 	@Override

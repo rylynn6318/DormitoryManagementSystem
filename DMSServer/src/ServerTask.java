@@ -101,6 +101,13 @@ public class ServerTask implements Runnable {
                         switch ((Code2.Event) protocol.code2) {
                             case REFRESH:
                                 try {
+                                    Responser.student_submitApplicationPage_onEnter(protocol, socketHelper);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                break;
+                            case SUBMIT:
+                            	try {
                                     Responser.student_submitApplicationPage_onSubmit(protocol, socketHelper);
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -124,7 +131,7 @@ public class ServerTask implements Runnable {
                                     e.printStackTrace();
                                 }
                                 break;
-                            case CANCEL:
+                            case CHECK:
                                 try {
                                     Responser.student_CheckApplicationPage_onCheck(protocol, socketHelper);
                                 } catch (Exception e) {

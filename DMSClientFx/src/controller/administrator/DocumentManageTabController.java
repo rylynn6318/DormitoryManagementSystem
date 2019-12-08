@@ -12,7 +12,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import application.IOHandler;
 import application.Responser;
 import controller.InnerPageController;
-import enums.Code1;
+import enums.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,8 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import models.Application;
-import models.Document;
+import models.*;
 import tableViewModel.*;
 
 //서류 조회 및 제출
@@ -100,8 +99,6 @@ public class DocumentManageTabController extends InnerPageController
 
     @FXML
     private DatePicker update_submitDate_datepicker;
-    
-	private final String[] comboboxItem_boolean = {null, "T", "F"};
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
@@ -111,10 +108,7 @@ public class DocumentManageTabController extends InnerPageController
 		update_isValid_combobox.getItems().addAll(comboboxItem_boolean);
 		
 		//네트워킹해서 서류유형 콤보박스 아이템 받아와라.
-		
-//		delete_documentType_combobox.getItems().addAll("결핵진단서", "서약서");
-//		upload_documentType_combobox.getItems().addAll("결핵진단서", "서약서");
-//		update_documentType_combobox.getItems().addAll("결핵진단서", "서약서");
+		onEnter();
 	}
 	
 	//---------------------이벤트---------------------
@@ -165,7 +159,12 @@ public class DocumentManageTabController extends InnerPageController
         if(resultList == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-        	return;
+        	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+        	{
+        		//여기서 페이지 닫게 해주자.
+        		close();
+        		return;
+        	}
         }
         
         if(resultList != null)
@@ -176,7 +175,7 @@ public class DocumentManageTabController extends InnerPageController
         }
     }
     
-    
+    //-----------------------------------------------------------------
     
     private void checkDocuments()
     {
@@ -218,11 +217,13 @@ public class DocumentManageTabController extends InnerPageController
     	check_document_tableview.setItems(documentList);
     }
     
+    //-----------------------------------------------------------------
+    
     private void deleteDocument()
     {
     	String id = delete_id_textfield.getText();
     	String documentType = delete_documentType_combobox.getSelectionModel().getSelectedItem();
-    	LocalDate submitDate = delete_date_datepicker.getValue();
+    	LocalDate submitDate_l = delete_date_datepicker.getValue();
     	
     	if(id == null || id.isEmpty())
     	{
@@ -236,29 +237,49 @@ public class DocumentManageTabController extends InnerPageController
     		IOHandler.getInstance().showAlert("서류유형이 비어있습니다.");
     		return;
     	}
-    	else if(submitDate == null || submitDate.toString().equals(""))
+    	else if(submitDate_l == null || submitDate_l.toString().equals(""))
     	{
     		//제출일이 없음
     		IOHandler.getInstance().showAlert("제출일이 비어있습니다.");
     		return;
     	}
     	
+    	//LocalDate를 Date타입으로 변형
+    	Date submitDate = localDateToDate(submitDate_l);
+    	
     	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-		boolean isSucceed = true;
-		if(isSucceed)
-		{
-			IOHandler.getInstance().showAlert("서류 삭제에 성공하였습니다.");
-			
-			//선택한 항목들 클리어
-			delete_id_textfield.setText(null);
-			delete_documentType_combobox.getSelectionModel().select(-1);
-			delete_date_datepicker.setValue(null);
-		}
-		else
-		{
-			IOHandler.getInstance().showAlert("서류 삭제에 실패하였습니다.");
-		}
+    	Document data = new Document(id, stringToFileType(documentType), submitDate);
+    	Tuple<Bool, String> resultTuple = Responser.admin_documentManagePage_onDelete(data);
+    	
+    	//서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+    	
+    	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
+        if(resultTuple != null)
+        {
+        	if(resultTuple.obj1 == Bool.TRUE)
+        	{
+        		clearDeleteInfo();	
+        	}
+        	IOHandler.getInstance().showAlert(resultTuple.obj2);
+        }
+        
+
     }
+    
+    private void clearDeleteInfo()
+    {
+		//선택한 항목들 클리어
+		delete_id_textfield.setText(null);
+		delete_documentType_combobox.getSelectionModel().select(-1);
+		delete_date_datepicker.setValue(null);
+    }
+    
+    //-----------------------------------------------------------------
     
     private void selectFile()
     {
@@ -303,16 +324,15 @@ public class DocumentManageTabController extends InnerPageController
 		File file = new File(fileDirectory);
 		if(file.exists())
 		{
-			//파일전송하는 프로토콜
-			IOHandler.getInstance().showAlert("서류가 제출되었습니다.");
+			//TODO 여기서 파일전송해라!!!! 파일전송하는 프로토콜
+			Responser.admin_documentManagePage_onUpload();
 			
 			boolean isSucceed = true;
 			if(isSucceed)
 			{
-				//성공했으면 입력한 값 비워준다.
-				upload_id_textfield.setText("");
-				upload_documentType_combobox.getSelectionModel().select(-1);
-				upload_fileDirectory_label.setText("N/A");;
+				IOHandler.getInstance().showAlert("서류가 제출되었습니다.");
+				//전송한 정보값 UI에서 비워준다.
+				clearUploadInfo();
 			}
 			else
 			{
@@ -328,13 +348,23 @@ public class DocumentManageTabController extends InnerPageController
 	
     }
     
+    private void clearUploadInfo()
+    {
+    	//성공했으면 입력한 값 비워준다.
+		upload_id_textfield.setText("");
+		upload_documentType_combobox.getSelectionModel().select(-1);
+		upload_fileDirectory_label.setText("N/A");;
+    }
+    
+    //-----------------------------------------------------------------
+    
     private void updateValid()
     {
     	String id = update_id_textfield.getText();
     	String documentType = update_documentType_combobox.getSelectionModel().getSelectedItem();
-    	LocalDate submitDate = update_submitDate_datepicker.getValue();
-    	LocalDate diagnosisDate = update_diagnosisDate_datepicker.getValue();
-    	String isValid = update_isValid_combobox.getSelectionModel().getSelectedItem();
+    	LocalDate submitDate_l = update_submitDate_datepicker.getValue();
+    	LocalDate diagnosisDate_l = update_diagnosisDate_datepicker.getValue();
+    	String isValidStr = update_isValid_combobox.getSelectionModel().getSelectedItem();
     	
     	if(id == null || id.isEmpty())
     	{
@@ -348,46 +378,62 @@ public class DocumentManageTabController extends InnerPageController
     		IOHandler.getInstance().showAlert("서류유형이 비어있습니다.");
     		return;
     	}
-    	else if(submitDate == null || submitDate.toString().equals(""))
+    	else if(submitDate_l == null || submitDate_l.toString().equals(""))
     	{
     		//제출일이 없음
     		IOHandler.getInstance().showAlert("제출일이 비어있습니다.");
     		return;
     	}
-    	else if(isValid == null || isValid.toString().equals(""))
+    	else if(isValidStr == null || isValidStr.toString().equals(""))
     	{
     		//유효여부가 없음
     		IOHandler.getInstance().showAlert("유효여부가 비어있습니다.");
     		return;
     	}
     	
-    	//결핵진단서인지 체크해라. 나중에 enum으로 쓰면 비교하는것도 고쳐주셈.
+    	//결핵진단서인지 체크해라.
     	if(documentType.equals("결핵진단서"))
     	{
-    		if(diagnosisDate == null || diagnosisDate.toString().equals(""))
+    		if(diagnosisDate_l == null || diagnosisDate_l.toString().equals(""))
     		{
     			IOHandler.getInstance().showAlert("진단일이 비어있습니다.");
         		return;
     		}
     	}
     	
+    	Date submitDate = localDateToDate(submitDate_l);
+    	Date diagnosisDate = localDateToDate(diagnosisDate_l);
+    	Bool isValid = isValidStr.equals("T") ? Bool.TRUE : Bool.FALSE;
+    	
+    	Document data = new Document(id, stringToFileType(documentType), submitDate, diagnosisDate, null, isValid);
+    	Tuple<Bool, String> resultTuple = Responser.admin_documentManagePage_onUpdate(data);
+    	
+    	//서버랑 통신이 됬는가?
+        if(resultTuple == null)
+        {
+        	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+        	return;
+        }
+    	
     	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-		boolean isSucceed = true;
-		if(isSucceed)
-		{
-			IOHandler.getInstance().showAlert("유효여부 갱신에 성공하였습니다.");
-			
-			//선택한 항목들 클리어
-			update_id_textfield.setText(null);
-			update_documentType_combobox.getSelectionModel().select(-1);
-			update_submitDate_datepicker.setValue(null);
-			update_diagnosisDate_datepicker.setValue(null);
-			update_isValid_combobox.getSelectionModel().select(-1);
-		}
-		else
-		{
-			IOHandler.getInstance().showAlert("유효여부 갱신에 실패하였습니다.");
-		}
+        if(resultTuple != null)
+        {
+        	if(resultTuple.obj1 == Bool.TRUE)
+        	{
+        		clearUpdateInfo();	
+        	}
+        	IOHandler.getInstance().showAlert(resultTuple.obj2);
+        }
     }
+    
+    private void clearUpdateInfo()
+	{
+		//선택한 항목들 클리어
+		update_id_textfield.setText(null);
+		update_documentType_combobox.getSelectionModel().select(-1);
+		update_submitDate_datepicker.setValue(null);
+		update_diagnosisDate_datepicker.setValue(null);
+		update_isValid_combobox.getSelectionModel().select(-1);
+	}
     
 }
