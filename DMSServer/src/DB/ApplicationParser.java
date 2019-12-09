@@ -389,6 +389,25 @@ public class ApplicationParser {
 		return applications;
 	}
 	
+	public static ArrayList<Application> getPassedApplication() throws SQLException, ClassNotFoundException
+	{
+		String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 생활관정보_학기 = '" +CurrentSemesterParser.getCurrentSemester() + "' AND 합격여부 = 'Y'";
+		System.out.println(sql);
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+		
+		ArrayList<Application> applications = new ArrayList<Application>();
+		while(rs.next())
+		{
+			Application app = new Application(rs.getString("학번"), rs.getString("생활관정보_생활관명"), rs.getString("생활관정보_성별"), rs.getInt("생활관정보_학기"), rs.getInt("지망"), rs.getInt("몇일식"), rs.getString("납부여부"), rs.getString("합격여부"), rs.getString("최종결과"), rs.getString("코골이여부"));
+			applications.add(app);
+		}
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		return applications;
+	}
+	
 	public static Application getLastPassedApplication(String id) throws SQLException, ClassNotFoundException
 	{
 		String sql = "SELECT 최종결과, 납부여부, 몇일식, 생활관정보_생활관명 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = '"+ id + "' AND 생활관정보_학기 = '" + CurrentSemesterParser.getCurrentSemester() + "'";

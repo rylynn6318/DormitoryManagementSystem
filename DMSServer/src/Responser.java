@@ -1041,33 +1041,28 @@ public class Responser
 	{
 		//1. 배정내역 테이블에서 이번 학기 배정내역 목록을 가져와 객체화한다. (학번, 호, 학기, 생활관명, 자리, 퇴사예정일)
 		//2. 배열화한다.
-		Bool isSucceed = Bool.TRUE;
-		try {
-			ArrayList<PlacementHistory> ph = PlacementHistoryParser.getAllResidence();
-		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			isSucceed = Bool.FALSE;
-			e.printStackTrace();
+		ArrayList<PlacementHistory> ph = new ArrayList<PlacementHistory>();
+		try 
+		{
+			ph = PlacementHistoryParser.getAllResidence();
+		} 
+		catch (ClassNotFoundException | SQLException e) 
+		{
+			System.out.println("배정내역 조회에 실패했습니다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "배정내역 조회에 실패했습니다."));
+			return;
 		}
+		
+		if(ph.isEmpty())
+		{
+			System.out.println("배정내역이 비어있습니다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "배정내역이 비어있습니다."));
+			return;
+		}
+		
 		//3. 직렬화해서 클라이언트에 전송한다.
 		
-		Tuple<Bool,String> result;
-		if(isSucceed == Bool.TRUE)
-			result = new Tuple<Bool,String>(Bool.TRUE, "성공했습니다");
-		else
-			result = new Tuple<Bool,String>(Bool.FALSE, "실패했습니다");
-		try {
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(result)).build());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return;
+		eventReply(socketHelper, new Tuple<Bool, ArrayList<PlacementHistory>>(Bool.TRUE, ph));
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 	}
 	
@@ -1104,6 +1099,27 @@ public class Responser
 		//1. 신청 테이블에서 이번 학기 신청 목록을 가져와 객체화한다. (학번, 생활관명, 학기, 지망, 몇일식, 납부여부, 합격여부, 최종결과, 코골이여부)
 		//   (합격여부 Y 인 학생만 가져온다)
 		//2. 배열화한다.
+		ArrayList<Application> apps = new ArrayList<Application>();
+
+		try
+		{
+			apps = ApplicationParser.getPassedApplication();
+		}
+		catch(Exception e)
+		{
+			System.out.println("납부여부 조회에 실패했습니다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "납부여부 조회에 실패했습니다."));
+			return;
+		}
+		
+		if(apps.isEmpty())
+		{
+			System.out.println("신청 테이블이 비어있습니다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청 테이블이 비어있습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, new Tuple<Bool, ArrayList<Application>>(Bool.TRUE, apps));
 		//3. 직렬화해서 클라이언트에 전송한다.
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 	}
