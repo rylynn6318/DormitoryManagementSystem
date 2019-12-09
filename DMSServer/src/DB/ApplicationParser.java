@@ -314,9 +314,15 @@ public class ApplicationParser {
 	}
 	
 	public static void updatePayCheck(Application temp) throws SQLException 
-	{				
-		String sql = "SELECT 납부여부 FROM "+DBHandler.INSTANCE.DB_NAME+".신청 WHERE 학번="+temp.getStudentId()+" AND 생활관정보_생활관명 = "+temp.getDormitoryName()+" AND 생활관정보_학기 = "+temp.getSemesterCode()+"AND 생활관정보_성별 ="+temp.getGender()+" AND 납부유무 ="+temp.isPaid();
+	{		
+		String a;
+		if(temp.isPaid().bool)
+			a="Y";
+		else
+			a="N";
 		
+		String sql = "UPDATE  "+DBHandler.INSTANCE.DB_NAME+".신청 SET 납부여부 = '"+a+ "' WHERE 학번='"+temp.getStudentId()+"' AND 생활관정보_생활관명 = '"+temp.getDormitoryName()+"' AND 생활관정보_학기 = '"+temp.getSemesterCode()+"' AND 생활관정보_성별 ='"+temp.getGender()+"'";
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();		
 		PreparedStatement state= connection.prepareStatement(sql);
 		state.executeUpdate(sql);
