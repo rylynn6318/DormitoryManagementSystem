@@ -7,6 +7,7 @@ import java.util.Date;
 
 import enums.Code1.Page;
 import models.Schedule;
+import models.ScheduleCode;
 
 public class ScheduleParser
 {
@@ -117,5 +118,21 @@ public class ScheduleParser
 		}
 		
 		return schedule;
+	}
+	
+	public static ArrayList<ScheduleCode> getScheduleCode() throws SQLException
+	{
+		//1. 스케쥴 할일 코드 테이블에서 '코드', '이름' 을 객체로 만들어 배열로 가져온다.
+		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".`스케쥴 할일 코드`";
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+		ArrayList<ScheduleCode> s = new ArrayList<ScheduleCode>();
+		while(rs.next())
+		{
+			ScheduleCode sc = new ScheduleCode(rs.getInt("코드"), rs.getString("이름"));
+			s.add(sc);
+		}
+		return s;
 	}
 }
