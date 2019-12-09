@@ -148,6 +148,7 @@ public class ScheduleParser
 	{
 		//1. 스케쥴 할일 코드 테이블에서 '코드', '이름' 을 객체로 만들어 배열로 가져온다.
 		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".`스케쥴 할일 코드`";
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
@@ -165,10 +166,40 @@ public class ScheduleParser
 		return s;
 	}
 	
+	//아이디로 스케쥴이 있는지 찾는다.
 	public static boolean isExist(String scheduleId) throws SQLException
 	{
 		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE ID = '" + scheduleId + "'";
 		System.out.println(sql);
+		
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet resultSet = state.executeQuery();
+		
+		boolean isExist = false;
+		if(resultSet.next())
+		{
+			isExist = true;
+		}
+		
+		//자원 반환
+		resultSet.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		
+		return isExist;
+	}
+	
+	//스케쥴 할일코드, 시작일, 종료일로 중복값이 있나 찾는다.
+	public static boolean isExist(Schedule schedule) throws SQLException
+	{
+		int code = schedule.code;
+		java.sql.Date statDate = utilDateToSqlDate(schedule.startDate);
+		java.sql.Date endDate = utilDateToSqlDate(schedule.startDate);
+		
+		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID` = '" + String.valueOf(code) + 
+				"' AND `시작일` = '" + statDate + "' AND 종료일 = '" + endDate + "'";
+		System.out.println(sql);
+		
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet resultSet = state.executeQuery();
@@ -189,6 +220,7 @@ public class ScheduleParser
 	public static boolean deleteSchedule(String scheduleId) throws SQLException
 	{
 		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".스케쥴 WHERE ID ='" + scheduleId + "'";
+		System.out.println(sql);
 		
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -209,4 +241,76 @@ public class ScheduleParser
 		
 		return isSucceed;
 	}
+	
+	public static boolean insertSchedule(Schedule schedule) throws SQLException
+	{
+		int newId = getFinalId() + 1;
+		String todoCode = String.valueOf(schedule.code);
+		Date startDate = schedule.startDate;
+		Date endDate = schedule.endDate;
+		String description = schedule.description != null ? schedule.description : "" ;
+		
+		java.sql.Date sqlStartDate = utilDateToSqlDate(startDate);
+		java.sql.Date sqlEndDate = utilDateToSqlDate(endDate);
+		
+		String sql = "INSERT INTO " + DBHandler.INSTANCE.DB_NAME+".스케쥴 VALUES('" + String.valueOf(newId) + "','" + todoCode + "','"+ sqlStartDate +
+				"','"+ sqlEndDate + "','" + description + "')";
+		System.out.println(sql);
+		
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		
+		boolean isSucceed = false;
+		
+		try
+		{
+			preparedStatement.executeUpdate(sql);
+			isSucceed = true;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		DBHandler.INSTANCE.returnConnection(connection);
+		
+		return isSucceed;
+	}
+	
+	//스케쥴 테이블에 들어있는 항목의 총 개수
+	public static int getFinalId() throws SQLException
+	{
+		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴";
+		System.out.println(sql);
+		
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet resultSet = state.executeQuery();
+		
+		int count = 0;
+		if(resultSet.next())
+		{
+			resultSet.last();
+			count = resultSet.getInt("ID");
+		}
+		
+		//자원 반환
+		resultSet.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		
+		return count;
+	}
+	
+	public static java.sql.Date utilDateToSqlDate(java.util.Date utilDate)
+	{
+		return new java.sql.Date(utilDate.getYear(), utilDate.getMonth(), utilDate.getDay());
+		
+	}
+	
+	public static java.util.Date sqlDateToUtilDate(java.sql.Date utilDate)
+	{
+		return new java.util.Date(utilDate.getTime());
+	}
+	
+	
 }

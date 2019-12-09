@@ -746,7 +746,14 @@ public class Responser
 		}
 		catch(Exception e)
 		{
-			System.out.println("클라이언트에서 받아온 스케쥴아이디가 없습니다.");
+			System.out.println("클라이언트에서 받아온 스케쥴이 이상합니다. 관리자에게 문의해주세요. code-406");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "클라이언트에서 받아온 스케쥴이 이상함."));
+			return;
+		}
+		
+		if(scheduleId == null)
+		{
+			System.out.println("서버에서 빈 아이디 수신.");
 			eventReply(socketHelper, createMessage(Bool.FALSE, "서버에서 빈 아이디를 수신했습니다."));
 			return;
 		}
@@ -795,6 +802,66 @@ public class Responser
 		//3-1. 기존 값이 존재하면 기존 값 삭제하라고 클라이언트에게 알려준다 
 		//3-2. 기존 값이 존재하지 않으면 INSERT한다.
 		//4. INSERT 수행에 대한 결과를 클라이언트에게 알려준다 (성공/실패/아마존사망...etc)
+		
+		Schedule schedule = null;
+		try
+		{
+			schedule = (Schedule) ProtocolHelper.deserialization(protocol.getBody());
+		}
+		catch(Exception e)
+		{
+			System.out.println("클라이언트에서 받아온 스케쥴이 이상함.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "클라이언트에서 받아온 스케쥴이 이상합니다. 관리자에게 문의하세요. code-407"));
+			return;
+		}
+		
+		if(schedule == null)
+		{
+			System.out.println("클라이언트에서 받아온 스케쥴이 없음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "클라이언트에서 받아온 스케쥴이 없습니다."));
+			return;
+		}
+		
+		//중복체크
+		boolean isExist = false;
+		try
+		{
+			isExist = ScheduleParser.isExist(schedule);
+		}
+		catch(Exception e)
+		{
+			System.out.println("중복체크 하던 도중 에러 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 중복 체크 도중 에러가 발생하였습니다. 관리자에게 문의하세요. code-408"));
+			return;
+		}
+		
+		if(isExist)
+		{
+			System.out.println("중복값 존재");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "코드, 시작일, 종료일이 모두 일치한 중복값이 존재합니다. 삭제하고 등록해주세요."));
+			return;
+		}
+		boolean isSuceed = false;
+		try
+		{
+			isSuceed = ScheduleParser.insertSchedule(schedule);
+		}
+		catch(Exception e)
+		{
+			System.out.println("스케쥴 등록 도중 오류가 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 등록 도중 오류가 발생하였습니다."));
+			return;
+		}
+		
+		if(!isSuceed) 
+		{
+			System.out.println("스케쥴 등록에 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 등록에 실패하였습니다."));
+			return;
+		}
+		
+		//성공!
+		eventReply(socketHelper, createMessage(Bool.TRUE, "스케쥴 등록에 성공하였습니다."));
 	}
 	
 	//-------------------------------------------------------------------------
