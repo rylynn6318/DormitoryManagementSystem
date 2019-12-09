@@ -500,7 +500,7 @@ public class AssignAlgorithm
 				{
 					if(P3[i].getStudentId() == null)
 					{
-						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("600호") >= 0) // 탑층 자리이면 넣지마라는 뜻
+						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("500호") >= 0) // 탑층 자리이면 넣지마라는 뜻
 						{
 						}
 						else if(rs2.getInt("지망") == 0)
@@ -528,7 +528,7 @@ public class AssignAlgorithm
 				{
 					if(P4[i].getStudentId() == null)
 					{
-						if((P4[i].getSeat().equals("B") || P4[i].getSeat().equals("D"))&& P4[i].getRoomNumber().compareTo("600호") >= 0) // 탑층 자리이면 넣지마라는 뜻
+						if((P4[i].getSeat().equals("B") || P4[i].getSeat().equals("D"))&& P4[i].getRoomNumber().compareTo("500호") >= 0) // 탑층 자리이면 넣지마라는 뜻
 						{
 						}
 						else if(rs2.getInt("지망") == 0)
