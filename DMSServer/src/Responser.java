@@ -333,26 +333,57 @@ public class Responser
 
 	public static void student_CheckApplicationPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
 	{
-		ArrayList<Application> applicationResult = new ArrayList<>();
-		ArrayList<Application> passedApplicationResult = new ArrayList<>();
-		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
-		String id = a.accountId;
-		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회.
-		applicationResult = ApplicationParser.getApplicationResult(id);
-		//	 (클라이언트의 '생활관 입사지원 내역' 테이블뷰에 표시할 것임)
-		//3. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역의 지망, 생활관명, 식사구분, 합격여부, 납부여부를 조회.
-		// 구현중
-		passedApplicationResult = ApplicationParser.getPassedApplication(id);
-		//	 (클라이언트의 '생활관 선발 결과' 테이블뷰에 표시할 것임)
-		//4. 조회된 내역을 객체화, 배열에 담아 클라이언트에게 반환한다.
-		Tuple<ArrayList<Application>, ArrayList<Application>> resultTuple = new Tuple(applicationResult, passedApplicationResult);
-		socketHelper.write(new Protocol.Builder(
-				ProtocolType.EVENT, 
-				Direction.TO_CLIENT, 
-				Code1.NULL, 
-				Code2.NULL
-				).body(ProtocolHelper.serialization(resultTuple)).build());
+		//명근 수정. 2019-12-09 15:54
+		//그냥 통신 두번하는걸로 생각함.
+		//클라이언트가 요청하면 서버가 신청목록 한번 보내고.
+		//그 다음 서버가 바로 선발결과 한번 또 보내고.
+
+		String studentId = "";
+		try
+		{
+			Account account = (Account) ProtocolHelper.deserialization(protocol.getBody());		
+			studentId = account.accountId;
+		}
+		catch(Exception e)
+		{
+			//계정 조회 중 오류 발생.
+			Tuple<String, ArrayList<Application>> failMessage = new Tuple<String, ArrayList<Application>>("해당 계정이 존재하지 않습니다.", null);
+			eventReply(socketHelper, failMessage);
+			return;
+		}
+		
+		ArrayList<Application> applicationResult;
+		try
+		{
+			applicationResult = ApplicationParser.getApplicationResult(studentId);
+		}
+		catch(Exception e)
+		{
+			//신청 목록 조회 중 오류 발생
+			Tuple<String, ArrayList<Application>> failMessage = new Tuple<String, ArrayList<Application>>("신청 목록 조회 중 오류가 발생하였습니다.", null);
+			eventReply(socketHelper, failMessage);
+			return;
+		}
+		
+		//조회 성공한 신청 목록 전송
+		Tuple<String, ArrayList<Application>> appList = new Tuple<String, ArrayList<Application>>(null, applicationResult);
+		eventReply(socketHelper, appList);
+		
+		ArrayList<Application> passedApplicationResult = null;
+		try
+		{
+			passedApplicationResult = ApplicationParser.getPassedApplication(studentId);
+		}
+		catch(Exception e)
+		{
+			//선발결과 조회 중 오류 발생
+			Tuple<String, ArrayList<Application>> failMessage = new Tuple<String, ArrayList<Application>>("선발 결과 조회 중 오류가 발생하였습니다.", null);
+			eventReply(socketHelper, failMessage);
+		}
+		
+		//조회 성공한 선발결과 목록 전송
+		Tuple<String, ArrayList<Application>> passList = new Tuple<String, ArrayList<Application>>(null, passedApplicationResult);
+		eventReply(socketHelper, passList);
 	}
 	
 	//------------------------------------------------------------------------

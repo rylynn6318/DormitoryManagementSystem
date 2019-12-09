@@ -133,8 +133,27 @@ public class Responser
 		//5. 서버로부터 받은 내역을 각각 두개의 테이블에 표시한다.
 		
 		Protocol protocol = eventProtocolBuilder(Code1.Page.신청조회, Code2.Event.CHECK, UserInfo.getInstance().account);
-		Tuple<ArrayList<Application>, ArrayList<Application>> result = (Tuple<ArrayList<Application>, ArrayList<Application>>) sendAndReceive(protocol);
-		return result;
+		Tuple<String, ArrayList<Application>> result = (Tuple<String, ArrayList<Application>>) sendAndReceive(protocol);
+		if(result.obj2 == null)
+		{
+			//첫번째 수신 결과 오류
+			//obj1에있는 오류문자 넘겨주도록 나중에 고쳐라 TODO
+			return null;
+		}
+		else
+		{
+			Tuple<String, ArrayList<Application>> result2 = (Tuple<String, ArrayList<Application>>) sendAndReceive(protocol);
+			if(result2.obj2 == null)
+			{
+				//두번째 수신 결과 오류
+				//obj1에있는 오류문자 넘겨주도록 나중에 고쳐라 TODO
+				return null;
+			}
+			else
+			{
+				return new Tuple<ArrayList<Application>, ArrayList<Application>>(result.obj2, result2.obj2);
+			}
+		}
 	}
 	
 	//------------------------------------------------------------------------
