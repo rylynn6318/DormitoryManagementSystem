@@ -762,7 +762,7 @@ public class Responser
 		
 		try
 		{
-			ScheduleParser.isExist(scheduleId);
+			isExist = ScheduleParser.isExist(scheduleId);
 		}
 		catch(Exception e)
 		{
