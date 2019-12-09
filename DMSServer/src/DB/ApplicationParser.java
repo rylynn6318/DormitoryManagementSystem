@@ -313,6 +313,34 @@ public class ApplicationParser {
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
 	
+	public static void updatePayCheck(Application temp) throws SQLException 
+	{
+		String paycheck1 = "UPDATE " + DBHandler.DB_NAME + ".신청 SET 납부여부=N WHERE 학번="+temp.getStudentId()+" AND 생활관정보_생활관명 = "+temp.getDormitoryName()+" AND 생활관정보_학기 = "+temp.getSemesterCode();
+		String paycheck2 = "UPDATE " + DBHandler.DB_NAME + ".신청 SET 납부여부=Y WHERE 학번="+temp.getStudentId()+" AND 생활관정보_생활관명 = "+temp.getDormitoryName()+" AND 생활관정보_학기 = "+temp.getSemesterCode();
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state1 = connection.prepareStatement(paycheck1);		
+		PreparedStatement state2 = connection.prepareStatement(paycheck2);
+		
+		
+		String sql = "SELECT 납부여부 FROM "+DBHandler.INSTANCE.DB_NAME+".신청 WHERE 학번="+temp.getStudentId()+" AND 생활관정보_생활관명 = "+temp.getDormitoryName()+" AND 생활관정보_학기 = "+temp.getSemesterCode();
+		PreparedStatement state= connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery(sql);
+		while(rs.next())
+		{
+			if(rs.getString("납부여부").equals("Y"))	//납부여부가 Y일경우
+			{
+				state1.executeUpdate(); // N로 바꿔줌
+			}
+			else	//납부여부가 N일경우
+				state2.executeUpdate();	// Y로 바꿔줌
+		}
+		
+		state.close();
+		state1.close();
+		state2.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+	}
+	
 	 
 	public static void insertApplication(int choice, int mealType, Bool isSnore, String dormitoryName, char gender , int semesterCode, String id) throws SQLException
 	{
@@ -443,6 +471,11 @@ public class ApplicationParser {
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 		return isExist;
+	}
+
+	public static boolean isExist(String studentId, String dormitoryName, int semesterCode) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
