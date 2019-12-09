@@ -45,6 +45,18 @@ public class PlacementHistoryParser
 		return history;
 	}
 	
+	public static void deletePlacamentHistory(String studentId) throws ClassNotFoundException, SQLException
+	{
+		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".배정내역 WHERE 학생_학번 = '" + studentId + "' AND 호실정보_학기 = '" + CurrentSemesterParser.getCurrentSemester() + "'";
+		System.out.println(sql);
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		state.execute();
+		
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+	}
+	
 	public static ArrayList<PlacementHistory> getAllResidence() throws SQLException, ClassNotFoundException
 	{
 		ArrayList<PlacementHistory> phArray = new ArrayList<PlacementHistory>();

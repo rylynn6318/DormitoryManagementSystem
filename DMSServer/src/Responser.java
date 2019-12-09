@@ -1036,7 +1036,7 @@ public class Responser
 		//3. 결과를 클라이언트에게 알려준다(성공/실패?)
 	}
 	
-	//관리자 - 입사 선발자 조회 및 관리 - 조회 버튼 클릭 시
+	//관리자 - 입사자 조회 및 관리 - 조회 버튼 클릭 시
 	public static void admin_boarderManagePage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 배정내역 테이블에서 이번 학기 배정내역 목록을 가져와 객체화한다. (학번, 호, 학기, 생활관명, 자리, 퇴사예정일)
@@ -1066,11 +1066,39 @@ public class Responser
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 	}
 	
-	//관리자 - 입사 선발자 조회 및 관리 - 삭제 버튼 클릭 시
+	//관리자 - 입사자 조회 및 관리 - 삭제 버튼 클릭 시
 	public static void admin_boarderManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트로부터 받은 학번, 호, 학기, 생활관명으로 배정내역 테이블에서 조회한다.
+		PlacementHistory ph;
+		try 
+		{
+			ph = (PlacementHistory) ProtocolHelper.deserialization(protocol.getBody());
+		}
+		catch (ClassNotFoundException | IOException e) 
+		{
+			System.out.println("역직렬화 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 삭제에 실패했습니다."));
+			return;
+		}
 		
+		try {
+				if(PlacementHistoryParser.isExistPlcementHistory(ph.studentId))
+				{
+					PlacementHistoryParser.deletePlacamentHistory(ph.studentId);
+					eventReply(socketHelper,new Tuple<Bool, String>(Bool.FALSE, "입사자 삭제에 실패했습니다."));
+				}
+				else
+				{
+					System.out.println("해당 입사자가 존재하지 않음");
+					eventReply(socketHelper, createMessage(Bool.FALSE, "해당 입사자가 존재하지 않습니다."));
+					return;
+				}
+		} catch (ClassNotFoundException | SQLException e) {
+			System.out.println("Parser 오류");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 삭제에 실패했습니다."));
+			return;
+		}
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//	   (신청 테이블에서 최종합격여부를 N으로 UPDATE해야할지는 모르겠음...)
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
