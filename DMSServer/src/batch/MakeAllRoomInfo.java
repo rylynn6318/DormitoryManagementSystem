@@ -6,8 +6,8 @@ import DB.DormParser;
 public class MakeAllRoomInfo {
 	public static AssignRoomInfo[] getO1() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] O1 = new AssignRoomInfo[DormParser.getMaxCapacity("오름1") + 1];
-		for(int i = 1; i < O1.length; i++)
+		AssignRoomInfo[] O1 = new AssignRoomInfo[DormParser.getMaxCapacity("오름1")];
+		for(int i = 0; i < O1.length; i++)
 		{
 			O1[i] = new AssignRoomInfo();
 			O1[i].setDormitoryName("오름1");
@@ -25,8 +25,8 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getO2() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] O2 = new AssignRoomInfo[DormParser.getMaxCapacity("오름2") + 1];
-		for(int i = 1; i < O2.length; i++)
+		AssignRoomInfo[] O2 = new AssignRoomInfo[DormParser.getMaxCapacity("오름2")];
+		for(int i = 0; i < O2.length; i++)
 		{
 			O2[i] = new AssignRoomInfo();
 			O2[i].setDormitoryName("오름2");
@@ -44,8 +44,8 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getO3() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] O3 = new AssignRoomInfo[DormParser.getMaxCapacity("오름3") + 1];
-		for(int i = 1; i < O3.length; i++)
+		AssignRoomInfo[] O3 = new AssignRoomInfo[DormParser.getMaxCapacity("오름3")];
+		for(int i = 0; i < O3.length; i++)
 		{
 			O3[i] = new AssignRoomInfo();
 			O3[i].setDormitoryName("오름3");
@@ -63,8 +63,8 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getP1() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] P1 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름1") + 11];
-		for(int i = 1; i < P1.length; i++)
+		AssignRoomInfo[] P1 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름1")];
+		for(int i = 0; i < P1.length; i++)
 		{
 			P1[i] = new AssignRoomInfo();
 			P1[i].setDormitoryName("푸름1");
@@ -82,8 +82,8 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getP2() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] P2 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름2") + 11];
-		for(int i = 1; i < P2.length; i++)
+		AssignRoomInfo[] P2 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름2") + 10];
+		for(int i = 0; i < P2.length; i++)
 		{
 			P2[i] = new AssignRoomInfo();
 			P2[i].setDormitoryName("푸름2");
@@ -101,8 +101,8 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getP3() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] P3 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름3") + 11];
-		for(int i = 1; i < P3.length; i++)
+		AssignRoomInfo[] P3 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름3") + 10];
+		for(int i = 0; i < P3.length; i++)
 		{
 			P3[i] = new AssignRoomInfo();
 			P3[i].setDormitoryName("푸름3");
@@ -128,8 +128,8 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getP4() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] P4 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름4") + 11];
-		for(int i = 1; i < P4.length; i++)
+		AssignRoomInfo[] P4 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름4") + 10];
+		for(int i = 0; i < P4.length; i++)
 		{
 			P4[i] = new AssignRoomInfo();
 			P4[i].setDormitoryName("푸름4");
@@ -155,8 +155,8 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getSN() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] SN = new AssignRoomInfo[DormParser.getMaxCapacity("신평남") + 1];
-		for(int i = 1; i < SN.length; i++)
+		AssignRoomInfo[] SN = new AssignRoomInfo[DormParser.getMaxCapacity("신평남")];
+		for(int i = 0; i < SN.length; i++)
 		{
 			SN[i] = new AssignRoomInfo();
 			SN[i].setDormitoryName("신평남");
@@ -174,8 +174,8 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getSY() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] SY = new AssignRoomInfo[DormParser.getMaxCapacity("신평여") + 1];
-		for(int i = 1; i < SY.length; i++)
+		AssignRoomInfo[] SY = new AssignRoomInfo[DormParser.getMaxCapacity("신평여")];
+		for(int i = 0; i < SY.length; i++)
 		{
 			SY[i] = new AssignRoomInfo();
 			SY[i].setDormitoryName("신평여");
