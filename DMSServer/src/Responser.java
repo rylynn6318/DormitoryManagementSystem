@@ -965,17 +965,28 @@ public class Responser
 		//   (합격여부 Y, N인거 관계없이 가져와야될듯. 그래야 사실상 여기서 관리자가 신청내역 조회가능함)
 		//2. 배열화한다.
 		//3. 직렬화해서 클라이언트에 전송한다.
-		try {
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(DB.ApplicationParser.getAllApplications())).build());
-		} catch (IOException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		ArrayList<Application> appList = null;
+		try 
+		{
+			appList = ApplicationParser.getAllApplications();
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("입사 선발자 조회 도중 오류 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "입사 선발자 조회 도중 오류가 발생하였습니다."));
+			return;
 		}
+		
+		if(appList == null)
+		{
+			System.out.println("입사 선발자 목록이 조회되지 않음");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "입사 선발자 목록이 조회되지 않았습니다."));
+			return;
+		}
+		
+		Tuple<Bool, ArrayList<Application>> resultTuple = new Tuple<Bool, ArrayList<Application>>(Bool.TRUE, appList);
+		eventReply(socketHelper, resultTuple);
+		
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 	}
 	

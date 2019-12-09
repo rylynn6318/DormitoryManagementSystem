@@ -1,5 +1,6 @@
 package controller.administrator;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -138,26 +139,37 @@ public class SelecteesManageTabController extends InnerPageController
     private void checkApplications()
     {
     	//서버에 쿼리 요청.
-    	ArrayList<Application> resultList = Responser.admin_selecteesManagePage_onCheck();
+    	Serializable result = Responser.admin_selecteesManagePage_onCheck();
     	
     	//서버랑 통신이 됬는가?
-        if(resultList == null)
+        if(result == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
         	return;
         }
         
-        if(resultList != null)
+        Tuple<Bool, String> checkTuple = (Tuple<Bool, String>) result;
+        
+        //그래서 잘 동작했냐?
+        if(checkTuple.obj1 == Bool.FALSE)
         {
-        	ObservableList<ApplicationViewModel> applicationViewModels = FXCollections.observableArrayList();
-        	
-        	for(Application app : resultList)
-        	{
-        		applicationViewModels.add(applicationToViewModel(app));
-        	}
-        	
-        	setApplicationTableView(applicationViewModels);
+        	//아님, 사유 표시
+        	IOHandler.getInstance().showAlert(checkTuple.obj2);
+        	return;
         }
+        
+        //잘동작해서 납부여부목록 받아옴.
+        Tuple<Bool, ArrayList<Application>> resultTuple = (Tuple<Bool, ArrayList<Application>>) result;
+        ArrayList<Application> resultList = resultTuple.obj2;
+        
+        ObservableList<ApplicationViewModel> applicationViewModels = FXCollections.observableArrayList();
+    	
+    	for(Application app : resultList)
+    	{
+    		applicationViewModels.add(applicationToViewModel(app));
+    	}
+    	
+    	setApplicationTableView(applicationViewModels);
     	
     }
     
