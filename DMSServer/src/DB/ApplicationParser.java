@@ -47,8 +47,8 @@ public class ApplicationParser {
 	public static void deleteApplication(String id) throws SQLException, ClassNotFoundException
 	{
 		int semester = CurrentSemesterParser.getCurrentSemester();
-		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".신청 WHERE ( 학번='" + id + "' AND 학기='"+String.valueOf(semester)+"')";
-		
+		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".신청 WHERE ( 학번='" + id + "' AND 생활관정보_학기='"+String.valueOf(semester)+"')";
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 		preparedStatement.executeUpdate(sql);
