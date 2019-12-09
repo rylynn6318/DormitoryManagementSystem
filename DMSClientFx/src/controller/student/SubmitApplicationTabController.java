@@ -94,8 +94,12 @@ public class SubmitApplicationTabController extends InnerPageController
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
         	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
         	{
-        		//여기서 페이지 닫게 해주자.
-        		close();
+        		if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+            	{
+            		//여기서 페이지 닫게 해주자.
+            		close();
+            		return;
+            	}
         		return;
         	}
         }
@@ -107,8 +111,12 @@ public class SubmitApplicationTabController extends InnerPageController
         	if(resultTuple.obj2 == null)
             {
             	IOHandler.getInstance().showAlert(resultTuple.obj1);
-            	//여기서 페이지 닫게 해주자.
-            	return;
+            	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+            	{
+            		//여기서 페이지 닫게 해주자.
+            		close();
+            		return;
+            	}
             }
             else
             {
