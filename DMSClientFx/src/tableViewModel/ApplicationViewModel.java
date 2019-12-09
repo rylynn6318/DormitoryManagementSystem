@@ -11,6 +11,7 @@ public class ApplicationViewModel extends Application
 {
 	private StringProperty studentIdStr;
 	private StringProperty dormNameStr;
+	private StringProperty genderStr;
 	private StringProperty semesterStr;
 	private StringProperty choiceStr;
 	private StringProperty mealTypeStr;
@@ -19,12 +20,13 @@ public class ApplicationViewModel extends Application
 	private StringProperty isLastPassedStr;
 	private StringProperty isSnoreStr;
 	
-	public ApplicationViewModel(String studentId, String dormNameStr, int semester, int choice, int mealType, 
+	public ApplicationViewModel(String studentId, String dormNameStr, char gender, int semester, int choice, int mealType, 
 			Bool isPaid, Bool isPassed, Bool isLastPassed, Bool isSnore)
 	{
 		//생성자로 묶을수있을거같은데, 일단 보류
 		super.setStudentId(studentId);
 		super.setDormitoryName(dormNameStr);
+		super.setGender(gender);
 		super.setSemesterCode(semester);
 		super.setChoice(choice);
 		super.setMealType(mealType);
@@ -33,8 +35,10 @@ public class ApplicationViewModel extends Application
 		super.setLastPassed(isLastPassed);
 		super.setSnore(isSnore);
 		
+		
 		this.studentIdStr = new SimpleStringProperty(studentId);
 		this.dormNameStr = new SimpleStringProperty(dormNameStr);
+		this.genderStr = new SimpleStringProperty(String.valueOf(gender));
 		this.semesterStr = new SimpleStringProperty(Integer.toString(semester));
 		this.choiceStr = new SimpleStringProperty(Integer.toString(choice));
 		this.mealTypeStr = new SimpleStringProperty(Integer.toString(mealType));
@@ -52,6 +56,11 @@ public class ApplicationViewModel extends Application
 	public StringProperty dormNameProperty()
 	{
 		return dormNameStr;
+	}
+	
+	public StringProperty genderProperty()
+	{
+		return genderStr;
 	}
 	
 	public StringProperty semesterProperty()

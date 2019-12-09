@@ -37,6 +37,9 @@ public class SelecteesManageTabController extends InnerPageController
 
     @FXML
     private TableColumn<ApplicationViewModel, String> check_application_column_dormName;
+    
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_gender;
 
     @FXML
     private TableColumn<ApplicationViewModel, String> check_application_column_semester;
@@ -70,9 +73,14 @@ public class SelecteesManageTabController extends InnerPageController
 
     @FXML
     private TextField delete_dormName_textfield;
+    
+    @FXML
+    private TextField delete_gender_textfield;
 
     @FXML
     private TextField delete_semester_textfield;
+    
+    
     	
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
@@ -158,6 +166,7 @@ public class SelecteesManageTabController extends InnerPageController
     	//서버에서 받아온거 표시하게 만듬.
     	check_application_column_id.setCellValueFactory(cellData -> cellData.getValue().studentIdProperty());
     	check_application_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
+    	check_application_column_gender.setCellValueFactory(cellData -> cellData.getValue().genderProperty());
     	check_application_column_semester.setCellValueFactory(cellData -> cellData.getValue().semesterProperty());
     	check_application_column_choice.setCellValueFactory(cellData -> cellData.getValue().choiceProperty());
     	check_application_column_mealType.setCellValueFactory(cellData -> cellData.getValue().mealTypeProperty());
@@ -174,6 +183,7 @@ public class SelecteesManageTabController extends InnerPageController
     {
     	String id = delete_id_textfield.getText();
     	String dormName = delete_dormName_textfield.getText();
+    	String gender = delete_gender_textfield.getText();
     	String semester = delete_semester_textfield.getText();
     	String choice = delete_choice_textfield.getText();
     	
@@ -187,6 +197,12 @@ public class SelecteesManageTabController extends InnerPageController
     	{
     		//생활관명 비어있음
     		IOHandler.getInstance().showAlert("생활관명이 비어있습니다.");
+    		return;
+    	}
+    	else if(gender == null || gender.isEmpty())
+    	{
+    		//성별 비어있음
+    		IOHandler.getInstance().showAlert("성별이 비어있습니다.");
     		return;
     	}
     	else if(semester == null || semester.isEmpty())
@@ -204,6 +220,7 @@ public class SelecteesManageTabController extends InnerPageController
     	
     	//서버에 쿼리 요청.
     	Application data = new Application(id, dormName, Integer.parseInt(semester), Integer.parseInt(choice));
+    	data.setGender(gender.charAt(0));
     	Tuple<Bool, String> resultTuple = Responser.admin_selecteesManagePage_onDelete(data);
     	
     	//서버랑 통신이 됬는가?

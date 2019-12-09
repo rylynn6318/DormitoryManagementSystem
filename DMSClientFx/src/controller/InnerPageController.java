@@ -156,7 +156,7 @@ public class InnerPageController implements Initializable
 	
 	public ApplicationViewModel applicationToViewModel(Application application)
     {
-    	return new ApplicationViewModel(application.getStudentId(), application.getDormitoryName(), application.getSemesterCode(), 
+    	return new ApplicationViewModel(application.getStudentId(), application.getDormitoryName(), application.getGender(), application.getSemesterCode(), 
     			application.getChoice(), application.getMealType(), application.isPaid(), application.isPassed(), 
     			application.isLastPassed(), application.isSnore());
     }
