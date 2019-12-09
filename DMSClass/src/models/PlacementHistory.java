@@ -10,7 +10,7 @@ public final class PlacementHistory implements Serializable
 {
 	//키
 	public final String studentId;			//학생의 학번(외래키)
-	public final int roomId;					//방의 고유 아이디(외래키)
+	public final String roomId;					//방의 고유 아이디(외래키)
 	public final int semester;				//학기(외래키)
 	public final String dormitoryName;		//생활관명(외래키)
 	
@@ -18,7 +18,7 @@ public final class PlacementHistory implements Serializable
 	public final Seat seat;					//자리
 	public final Date checkout;				//퇴사 예정일
 
-	public PlacementHistory(String studentId, int roomId, int semester, String dormitoryName, Seat seat, Date checkout) 
+	public PlacementHistory(String studentId, String roomId, int semester, String dormitoryName, Seat seat, Date checkout) 
 	{
 		this.studentId = studentId;
 		this.roomId = roomId;
@@ -29,7 +29,7 @@ public final class PlacementHistory implements Serializable
 	}
 	
 	//키값으로만 구성된 생성자. 클라이언트에서 삭제요청할때 사용함.
-	public PlacementHistory(String studentId, int roomId, int semester, String dormitoryName) 
+	public PlacementHistory(String studentId, String roomId, int semester, String dormitoryName) 
 	{
 		this.studentId = studentId;
 		this.roomId = roomId;
@@ -39,7 +39,7 @@ public final class PlacementHistory implements Serializable
 		checkout = null;
 	}
 	
-	public PlacementHistory(int roomId, Seat seat)
+	public PlacementHistory(String roomId, Seat seat)
 	{
 		this.studentId = null;
 		this.semester = (Integer) null;
