@@ -255,7 +255,6 @@ public class AssignAlgorithm
 		while(rs1.next())
 		{
 			arr.add(rs1.getString("학생_학번"));
-			System.out.println(rs1.getString("학생_학번"));
 			switch (rs1.getString("호실정보_생활관명"))
 			{
 			case "오름1" :
@@ -369,8 +368,6 @@ public class AssignAlgorithm
 		{
 			if(arr.contains(rs2.getString("학번")) != true)
 			{
-				System.out.println(arr.contains(rs2.getString("학번")));
-				System.out.println(rs2.getString("학번"));
 			switch (rs2.getString("생활관정보_생활관명"))
 			{
 			case "오름1" :
@@ -381,9 +378,6 @@ public class AssignAlgorithm
 					{
 						O1[i].setStudentId(rs2.getString("학번"));
 						O1[i].setIsNew(true);
-						///////////////////
-						System.out.println(checkOutDate1);
-						System.out.println(checkOutDate2);
 						if(rs2.getInt("지망") == 0)
 						{
 							O1[i].setCheckout(checkOutDate2);
