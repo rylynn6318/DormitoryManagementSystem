@@ -64,18 +64,18 @@ public class AssignAlgorithm
 		switch(currentSemester % 10)
 		{
 		case 1:
-			checkOutDate1 = (currentSemester - 1) * 100 + 620;	// 1학기 
-			checkOutDate2 = (currentSemester - 1) * 100 + 1220; // 1년 신청일 경우
+			checkOutDate1 = (currentSemester - 1) * 100 + 615;	// 1학기 
+			checkOutDate2 = (currentSemester - 1) * 100 + 1215; // 1년 신청일 경우
 			break;
 		case 2:
-			checkOutDate1 = (currentSemester - 2) * 100 + 820;	// 여름
+			checkOutDate1 = (currentSemester - 2) * 100 + 815;	// 여름
 			break;
 		case 3:
-			checkOutDate1 = (currentSemester - 3) * 100 + 10120;	// 2학기
-			checkOutDate2 = (currentSemester - 3) * 100 + 1220;
+			checkOutDate1 = (currentSemester - 3) * 100 + 1215;	// 2학기
+			checkOutDate2 = (currentSemester - 3) * 100 + 10615;
 			break;
 		case 4:
-			checkOutDate1 = (currentSemester - 4) * 100 + 10120; //	겨울
+			checkOutDate1 = (currentSemester - 4) * 100 + 10115; //	겨울
 			break;
 		}
 	}
