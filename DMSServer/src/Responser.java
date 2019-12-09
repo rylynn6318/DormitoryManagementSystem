@@ -92,7 +92,7 @@ public class Responser
 					Direction.TO_CLIENT, 
 					Code1.NULL, 
 					Code2.NULL
-					).body(ProtocolHelper.serialization(null)).build());
+					).body(ProtocolHelper.serialization(data)).build());
 		} catch (IOException e)
 		{
 			e.printStackTrace();
