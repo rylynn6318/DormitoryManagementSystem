@@ -147,6 +147,7 @@ public class Responser
 			//현재 학기 조회 실패
 			failMessage = new Tuple<String, ArrayList<Dormitory>>("현재 학기 조회 실패. 관리자에게 문의하세요.", null);
 			eventReply(socketHelper, failMessage);
+			return;
 		}
 		
 		ArrayList<Dormitory> dormitoryList = DormParser.getDormitoryList(semester, gender);
@@ -155,6 +156,7 @@ public class Responser
 			//기숙사 목록 조회 실패
 			failMessage = new Tuple<String, ArrayList<Dormitory>>("기숙사 목록 조회 실패. 관리자에게 문의하세요.", null);
 			eventReply(socketHelper, failMessage);
+			return;
 		}
 		
 		//5. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
@@ -164,6 +166,7 @@ public class Responser
 			//기숙사 목록 조회 실패
 			failMessage = new Tuple<String, ArrayList<Dormitory>>("안내사항 조회 실패. 관리자에게 문의하세요.", null);
 			eventReply(socketHelper, failMessage);
+			return;
 		}
 		
 		//6. 해당 정보를 객체화, 배열로 만들어 클라이언트에게 전송한다.
@@ -209,13 +212,14 @@ public class Responser
 		{
 			//학생이 조회되지 않은 경우
 			eventReply(socketHelper, createMessage(Bool.FALSE, "해당 학생이 조회되지 않았습니다. 관리자에게 문의하세요."));
-			return ;
+			return;
 		}
 		int semester = CurrentSemesterParser.getCurrentSemester();
 		if(semester == 0)
 		{
 			//현재 학기 조회 실패
 			eventReply(socketHelper, createMessage(Bool.FALSE, "현재 학기 조회 실패. 관리자에게 문의하세요."));
+			return;
 		}
 		while(appIter.hasNext())  //(int choice, String mealType, Bool isSnore, String dormitoryName, Gender gender, int semesterCode, String id)
 		{
@@ -239,10 +243,12 @@ public class Responser
 		if(isApplicationExist)
 		{
 			eventReply(socketHelper, createMessage(Bool.TRUE, "신청에 성공했습니다."));
+			return;
 		}
 		else
 		{
 			eventReply(socketHelper, createMessage(Bool.FALSE, "신청에 실패했습니다."));
+			return;
 		}
 	}
 	
@@ -260,6 +266,7 @@ public class Responser
 		} catch (Exception e) {
 			e.printStackTrace();
 			eventReply(socketHelper, createMessage(Bool.FALSE, "신청 내역 조회 중 오류가 발생했습니다."));
+			return;
 		}
 		
 		if(!isExist)
@@ -297,12 +304,13 @@ public class Responser
 		catch(Exception e)
 		{
 			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 조회 중 오류가 발생했습니다."));
+			return;
 		}
 		
 		if(!isAdmissible)
 		{
 			eventReply(socketHelper, createMessage(Bool.FALSE, "신청조회기간이 아닙니다."));
-			
+			return;
 		}
 		
 		//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
