@@ -619,36 +619,54 @@ public class Responser
 	public static void student_checkDocumentPage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 받은 요청의 헤더에서 학번, 서류유형을 알아낸다. 
-				String studentId;
-				Code1.FileType fileType;
-				Document document = null;
-				try {
-					@SuppressWarnings("unchecked")
-					Tuple<Account, Code1.FileType> temp = (Tuple<Account, Code1.FileType>) ProtocolHelper.deserialization(protocol.getBody());
-					studentId = temp.obj1.accountId;
-					fileType = temp.obj2;
-					document = DocumentParser.findDocument(studentId, fileType);
-				} catch (ClassNotFoundException | IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				//2. 서류 테이블에서 해당 학번이 이번 학기에 제출한 내역 중 서류유형이 일치하는 것을 찾는다. -> 있으면 진행, 없으면 없다고 알려줌
-				//3. 서류 테이블에서 서류유형, 제출일시, 진단일시, 파일경로를 알아내어 객체화한다.
-				//4. 클라이언트에게 전송한다.
-				try {
-					socketHelper.write(new Protocol.Builder(
-							ProtocolType.EVENT, 
-							Direction.TO_CLIENT, 
-							Code1.NULL, 
-							Code2.NULL
-							).body(ProtocolHelper.serialization(document)).build());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		String studentId;
+		Code1.FileType fileType;
+		Document document = null;
+		try 
+		{
+			@SuppressWarnings("unchecked")
+			Tuple<Account, Code1.FileType> temp = (Tuple<Account, Code1.FileType>) ProtocolHelper.deserialization(protocol.getBody());
+			studentId = temp.obj1.accountId;
+			fileType = temp.obj2;
+		}
+		catch (Exception e) 
+		{
+			System.out.println("클라이언트가 송신한 계정과 파일유형이 이상하다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "클라이언트가 송신한 튜플이 이상합니다. 관리자에게 문의하세요. Code-404"));
+			return;
+		}
+		
+		try
+		{
+			document = DocumentParser.findDocument(studentId, fileType);
+		}
+		catch(Exception e)
+		{
+			System.out.println("서류를 조회하는데 실패.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류를 조회하는데 실패하였습니다."));
+			return;
+		}
+		
+		if(document == null)
+		{
+			System.out.println("서류 제출 내역 없음, 혹은 DocumentParser.findDocument 안에서 예외터짐");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 제출 내역이 없습니다."));
+			return;
+		}
+		//2. 서류 테이블에서 해당 학번이 이번 학기에 제출한 내역 중 서류유형이 일치하는 것을 찾는다. -> 있으면 진행, 없으면 없다고 알려줌
+		//3. 서류 테이블에서 서류유형, 제출일시, 진단일시, 파일경로를 알아내어 객체화한다.
+		//4. 클라이언트에게 전송한다.
+		try {
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization(document)).build());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	//학생 - 서류 조회 - 다운로드 버튼 클릭 시(파일 다운로드)
