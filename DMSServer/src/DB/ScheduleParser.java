@@ -16,23 +16,28 @@ public class ScheduleParser
 	{
 		// 지금 DB가 datetime 타입이 아니라 시분초설정이 오전9시로 고정되어있음 ㅇㅇ 그거 수정하고 다시 검사필요
 		Date day = new Date(); //현재시간
-		Date start = null;
-		Date end = null;
-
+		Timestamp start = null;
+		Timestamp end = null;		
+	
 		// String.valueOf((int)page)를 String.valueOf((int)page.getCode())로 수정함. by ssm
-		String sql = "SELECT 시작일, 종료일 FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE (`스케쥴 할일 코드_ID` =" + String.valueOf((int)page.getCode()) + ")";
+		String sql = "SELECT 시작일, 종료일 FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE (`스케쥴 할일 코드_ID` ='" + String.valueOf((int)page.getCode()) + "')";
 		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet resultSet = state.executeQuery();
 		resultSet.next();
-
-		start = resultSet.getDate("시작일");
-		end = resultSet.getDate("종료일");
+				
+		start = resultSet.getTimestamp("시작일");
+		end = resultSet.getTimestamp("종료일");		
 		
-		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
-		String time1 = format1.format(start);		
-		System.out.println(time1);
+		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+		String time1 = format1.format(start);			
+		String time2 = format1.format(end);		
+		String time3 = format1.format(day);
+		System.out.println("현재시간: " + time3);
+		System.out.println("시작일: "+time1);
+		System.out.println("종료일: "+time2);
+		
 		int result1 = day.compareTo(start);
 		int result2 = day.compareTo(end);
 
