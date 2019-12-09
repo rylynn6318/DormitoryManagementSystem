@@ -247,7 +247,7 @@ public class Responser
 	}
 	
 	//학생 - 서류 조회 - 조회 버튼 클릭 시 (2019-12-08 명근 수정)
-	public static Tuple<Bool, Document> student_checkDocumentPage_onCheck(Code1.FileType fileType)
+	public static Serializable student_checkDocumentPage_onCheck(Code1.FileType fileType)
 	{
 		//1. 서버에게 서류 조회 요청을 한다.(서류유형을 보내서, 어떤 서류를 조회하려는지 알려준다)
 		//(2. 서버는 서류 테이블에서 해당 학번이 이번 학기에 제출한 내역 중 서류유형이 일치하는 것을 찾는다. -> 있으면 진행, 없으면 없다고 알려줌)
@@ -262,7 +262,7 @@ public class Responser
 		
 		//통신하고 받았을 때 Bool이 True이면 정상적인 Document, False이면 서류 내역이 존재하지 않음.
 		//객체가 null이면 통신실패다. 즉, Bool=True -> 성공, Bool=False -> 내역없음, null=통신실패
-		Tuple<Bool, Document> result = (Tuple<Bool, Document>) sendAndReceive(protocol);
+		Serializable result = sendAndReceive(protocol);
 		
 		return result;
 	}
@@ -305,19 +305,19 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 선발 일정 조회 및 관리 - 들어왔을 때
-	public static ArrayList<ScheduleCode> admin_scheduleManagePage_onEnter()
+	public static Serializable admin_scheduleManagePage_onEnter()
 	{
 		//1. 서버에게 선발 일정 조회 및 관리 들어왔다고 알려준다.
 		//(2. 서버는 스케쥴 유형을 객체화 배열화하여 클라이언트로 전송한다.)
 		//3. 받은 배열을 역직렬화하여 스케쥴유형 combobox에 표시한다
 		
 		Protocol protocol = eventProtocolBuilder(Code1.Page.선발일정관리, Code2.Event.REFRESH, null);
-		ArrayList<ScheduleCode> result = (ArrayList<ScheduleCode>) sendAndReceive(protocol);
+		Serializable result = sendAndReceive(protocol);
 		return result;
 	}
 	
 	//관리자 - 선발 일정 조회 및 관리 - 조회 버튼 클릭 시
-	public static ArrayList<Schedule> admin_scheduleManagePage_onCheck()
+	public static Serializable admin_scheduleManagePage_onCheck()
 	{
 		//1. 서버에게 서류 조회 요청을 한다.(요청만 보낸다)
 		//(2. 서버는 스케쥴 테이블에서 목록을 객체로 만들어 배열로 가져온다.)
@@ -325,7 +325,7 @@ public class Responser
 		//4. 클라이언트는 받아서 tableView에 표시한다. 클라이언트에는 ID, 할일이름, 시작일, 종료일, 비고가 표시된다
 		
 		Protocol protocol = eventProtocolBuilder(Code1.Page.선발일정관리, Code2.Event.CHECK, null);
-		ArrayList<Schedule> result = (ArrayList<Schedule>) sendAndReceive(protocol);
+		Serializable result = sendAndReceive(protocol);
 		return result;
 	}
 	

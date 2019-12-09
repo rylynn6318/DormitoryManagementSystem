@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -118,7 +119,7 @@ public class CheckDocumentTabController extends InnerPageController
 		//TODO 네트워킹해서 파일 조회해라.
 		//어느 유형 조회한다고 알려주기위해 콤보박스로 선택한 fileType을 전송(+학번 전달을 위한 Account)
 		Code1.FileType fileType = stringToFileType(comboboxItem);
-		Tuple<Bool, Document> result = Responser.student_checkDocumentPage_onCheck(fileType);
+		Serializable result = Responser.student_checkDocumentPage_onCheck(fileType);
 		
 		//서버랑 통신이 됬는가?
         if(result == null)
@@ -126,18 +127,22 @@ public class CheckDocumentTabController extends InnerPageController
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
         	return;
         }
-        else
-        {
-        	if(result.obj1 == Bool.FALSE)
-        	{
-        		IOHandler.getInstance().showAlert("서류 제출 내역이 없습니다.");
-        		return;
-        	}
-        }
+        
+        //오류 메시지가 반환됬는지, 문서가 반환됬는지 체크해봄.
+        Tuple<Bool, String> checkTuple = (Tuple<Bool, String>) result;
+        
+    	if(checkTuple.obj1 == Bool.FALSE)
+    	{
+    		IOHandler.getInstance().showAlert(checkTuple.obj2);
+    		return;
+    	}
+        
+    	//문서가 반환된듯 하다.
+    	Tuple<Bool, Document> resultTuple = (Tuple<Bool, Document>) result;
         
         //파일 조회됨.
         selectedFileType = fileType;		//현재 조회된 파일의 타입도 저장해둔다. 파일 다운로드 시 파일유형을 알려줘야하기때문.
-        setLabels(result.obj2);
+        setLabels(resultTuple.obj2);
     }
     
     //제출일시, 진단일시, 파일경로를 설정함.

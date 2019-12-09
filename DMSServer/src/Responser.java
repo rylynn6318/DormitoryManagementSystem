@@ -122,7 +122,7 @@ public class Responser
 	public static void student_submitApplicationPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴을 확인하고 입사 신청 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-		boolean isAdmissible = ScheduleParser.isAdmissible(Code1.Page.입사신청);
+		boolean isAdmissible = ScheduleParser.isAdmissible((Page)protocol.code1);
 		System.out.println("스케쥴 체크됨");
 		Tuple<String, ArrayList<Dormitory>> failMessage;
 		if(!isAdmissible)
@@ -619,36 +619,44 @@ public class Responser
 	public static void student_checkDocumentPage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 받은 요청의 헤더에서 학번, 서류유형을 알아낸다. 
-				String studentId;
-				Code1.FileType fileType;
-				Document document = null;
-				try {
-					@SuppressWarnings("unchecked")
-					Tuple<Account, Code1.FileType> temp = (Tuple<Account, Code1.FileType>) ProtocolHelper.deserialization(protocol.getBody());
-					studentId = temp.obj1.accountId;
-					fileType = temp.obj2;
-					document = DocumentParser.findDocument(studentId, fileType);
-				} catch (ClassNotFoundException | IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				//2. 서류 테이블에서 해당 학번이 이번 학기에 제출한 내역 중 서류유형이 일치하는 것을 찾는다. -> 있으면 진행, 없으면 없다고 알려줌
-				//3. 서류 테이블에서 서류유형, 제출일시, 진단일시, 파일경로를 알아내어 객체화한다.
-				//4. 클라이언트에게 전송한다.
-				try {
-					socketHelper.write(new Protocol.Builder(
-							ProtocolType.EVENT, 
-							Direction.TO_CLIENT, 
-							Code1.NULL, 
-							Code2.NULL
-							).body(ProtocolHelper.serialization(document)).build());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		String studentId;
+		Code1.FileType fileType;
+		Document document = null;
+		try 
+		{
+			@SuppressWarnings("unchecked")
+			Tuple<Account, Code1.FileType> temp = (Tuple<Account, Code1.FileType>) ProtocolHelper.deserialization(protocol.getBody());
+			studentId = temp.obj1.accountId;
+			fileType = temp.obj2;
+		}
+		catch (Exception e) 
+		{
+			System.out.println("클라이언트가 송신한 계정과 파일유형이 이상하다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "클라이언트가 송신한 튜플이 이상합니다. 관리자에게 문의하세요. Code-404"));
+			return;
+		}
+		
+		try
+		{
+			document = DocumentParser.findDocument(studentId, fileType);
+		}
+		catch(Exception e)
+		{
+			System.out.println("서류를 조회하는데 실패.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류를 조회하는데 실패하였습니다."));
+			return;
+		}
+		
+		if(document == null)
+		{
+			System.out.println("서류 제출 내역 없음, 혹은 DocumentParser.findDocument 안에서 예외터짐");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 제출 내역이 없습니다."));
+			return;
+		}
+		//2. 서류 테이블에서 해당 학번이 이번 학기에 제출한 내역 중 서류유형이 일치하는 것을 찾는다. -> 있으면 진행, 없으면 없다고 알려줌
+		//3. 서류 테이블에서 서류유형, 제출일시, 진단일시, 파일경로를 알아내어 객체화한다.
+		//4. 클라이언트에게 전송한다.
+		eventReply(socketHelper, new Tuple<Bool, Document>(Bool.TRUE, document));
 	}
 	
 	//학생 - 서류 조회 - 다운로드 버튼 클릭 시(파일 다운로드)
@@ -668,8 +676,28 @@ public class Responser
 	public static void admin_scheduleManagePage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴 할일 코드 테이블에서 '코드', '이름' 을 객체로 만들어 배열로 가져온다.
-		ArrayList<ScheduleCode> s = ScheduleParser.getScheduleCode();
+		ArrayList<ScheduleCode> scheduleList = null;
+		try
+		{
+			scheduleList = ScheduleParser.getScheduleCode();			
+		}
+		catch(Exception e)
+		{
+			System.out.println("스케쥴 할일 코드 조회 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 할일 코드 조회에 실패하였습니다."));
+			return;
+		}
+		
+		if(scheduleList == null)
+		{
+			System.out.println("스케쥴 할일 코드 목록 비어있음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 할일 코드 목록이 비어있습니다."));
+			return;
+		}
+		
 		//2. 객체 배열을 직렬화하여 클라이언트로 전송한다.
+		eventReply(socketHelper, new Tuple<Bool, ArrayList<ScheduleCode>>(Bool.TRUE, scheduleList));
+		
 		//(3. 클라이언트는 등록 gridView 안의 유형 combobox에 값을 채워준다.)
 	}
 	
@@ -677,18 +705,28 @@ public class Responser
 	public static void admin_scheduleManagePage_onCheck(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴 할일 코드 테이블에서 목록을 객체로 만들어 배열로 가져온다. (ID, 할일코드, 시작일, 종료일, 비고)
-		ArrayList<Schedule> schedule = ScheduleParser.getAllSchedule();
-		//2. 스케쥴 테이블에서 목록을 객체로 만들어 배열로 가져온다. (코드, 이름)
-			
-						//해야함
+		ArrayList<Schedule> scheduleList = null;
+		try
+		{
+			scheduleList = ScheduleParser.getAllSchedule();
+		}
+		catch(Exception e)
+		{
+			System.out.println("스케쥴 조회 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 조회에 실패하였습니다."));
+			return;
+		}
+		
+		if(scheduleList == null)
+		{
+			System.out.println("스케쥴 조회 목록이 비어있음");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 조회 목록이 비어있습니다."));
+			return;
+		}
 		
 		//3. 스케쥴 객체 배열을 클라이언트로 전송한다.
-		socketHelper.write(new Protocol.Builder(
-				ProtocolType.EVENT, 
-				Direction.TO_CLIENT, 
-				Code1.NULL, 
-				Code2.NULL
-				).body(ProtocolHelper.serialization(schedule)).build());
+		eventReply(socketHelper, new Tuple<Bool, ArrayList<Schedule>>(Bool.TRUE, scheduleList));
+		
 		//(4. 클라이언트는 받아서 tableView에 표시한다. 클라이언트에는 ID, 할일이름, 시작일, 종료일, 비고가 표시된다)
 	}
 	
@@ -987,20 +1025,13 @@ public class Responser
 	public static void admin_documentManagePage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 서류유형 ENUM을 배열화해서 목록을 만든다.
-		ArrayList<FileType> docuTypeList = new ArrayList<>();
-		docuTypeList.add(FileType.CSV);
-		docuTypeList.add(FileType.MEDICAL_REPORT);
-		docuTypeList.add(FileType.OATH);
 		//2. 배열화한 목록을 직렬화해서 클라이언트로 전송한다.
-		socketHelper.write(new Protocol.Builder(
-				ProtocolType.EVENT, 
-				Direction.TO_CLIENT, 
-				Code1.NULL, 
-				Code2.NULL
-				).body(ProtocolHelper.serialization(docuTypeList)).build());
 		//(3. 클라이언트는 받은 ENUM 배열을 역직렬화하여 서류유형 combobox에 표시한다)
 		//[ENUM 배열화 예시]
 		//arrayList<DocumentType> data = new arrayList<DocumentType>(DocumentType.MEDICAL, DocumentType.OATH);
+		
+		sendDocumentType(socketHelper);
+		return;
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 조회 버튼 클릭 시
