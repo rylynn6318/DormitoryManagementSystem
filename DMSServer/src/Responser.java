@@ -1234,7 +1234,7 @@ public class Responser
 	}
 	
 	//관리자 - 납부 여부 조회 및 관리 - 업데이트 버튼 클릭 시
-		public static void admin_paymentManagePage_onUpdate(Protocol protocol, SocketHelper socketHelper)
+		public static void admin_paymentManagePage_onUpdate(Protocol protocol, SocketHelper socketHelper) throws SQLException
 		{
 			//1. 클라이언트로부터 받은 학번, 생활관명, 학기로 납부여부 테이블에서 조회한다.
 			
@@ -1242,7 +1242,7 @@ public class Responser
 			Application ap = null;
 			try 
 			{
-				ap = (Application) ProtocolHelper.deserialization(protocol.getBody());
+				ap = (Application) ProtocolHelper.deserialization(protocol.getBody());				
 			}
 			catch (ClassNotFoundException | IOException e) 
 			{
@@ -1251,10 +1251,11 @@ public class Responser
 				return;
 			}
 			//2-1. 해당되는 데이터가 있으면 DB에 UPDATE쿼리를 쏜다.
-					//	   (납부여부를 클라이언트에게서 받은 T/F로 UPDATE한다)	
+			//(납부여부를 클라이언트에게서 받은 T/F로 UPDATE한다)	
 			
-			try {
-				ApplicationParser.updatePayCheck(ap);				
+			try {				
+				ApplicationParser.updatePayCheck(ap);
+				eventReply(socketHelper, createMessage(Bool.TRUE, "납부 여부 업데이트 성공"));
 			} 
 			catch(Exception e) {
 				System.out.println("납부 여부 갱신 실패");
