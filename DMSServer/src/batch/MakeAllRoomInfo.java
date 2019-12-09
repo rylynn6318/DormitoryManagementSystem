@@ -4,23 +4,9 @@ import java.sql.SQLException;
 import DB.DormParser;
 
 public class MakeAllRoomInfo {
-	static int maxO1, maxO2, maxO3, maxP1, maxP2, maxP3, maxP4, maxSN, maxSY;
-	public static void getCapacity() throws ClassNotFoundException, SQLException
-	{
-		int maxCapacity[] = DormParser.getMaxCapacity();
-		maxO1 = maxCapacity[0];
-		maxO2 = maxCapacity[1];
-		maxO3 = maxCapacity[2];
-		maxP1 = maxCapacity[3];
-		maxP2 = maxCapacity[4];
-		maxP3 = maxCapacity[5];
-		maxP4 = maxCapacity[6];
-		maxSN = maxCapacity[7];
-		maxSY = maxCapacity[8];
-	}
 	public static AssignRoomInfo[] getO1() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] O1 = new AssignRoomInfo[maxO1];
+		AssignRoomInfo[] O1 = new AssignRoomInfo[DormParser.getMaxCapacity("오름1") + 1];
 		for(int i = 1; i < O1.length; i++)
 		{
 			O1[i] = new AssignRoomInfo();
@@ -37,9 +23,9 @@ public class MakeAllRoomInfo {
 		return O1;
 	}
 	
-	public static AssignRoomInfo[] getO2()
+	public static AssignRoomInfo[] getO2() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] O2 = new AssignRoomInfo[maxO2];
+		AssignRoomInfo[] O2 = new AssignRoomInfo[DormParser.getMaxCapacity("오름2") + 1];
 		for(int i = 1; i < O2.length; i++)
 		{
 			O2[i] = new AssignRoomInfo();
@@ -56,9 +42,9 @@ public class MakeAllRoomInfo {
 		return O2;
 	}
 	
-	public static AssignRoomInfo[] getO3()
+	public static AssignRoomInfo[] getO3() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] O3 = new AssignRoomInfo[maxO3];
+		AssignRoomInfo[] O3 = new AssignRoomInfo[DormParser.getMaxCapacity("오름3") + 1];
 		for(int i = 1; i < O3.length; i++)
 		{
 			O3[i] = new AssignRoomInfo();
@@ -75,9 +61,9 @@ public class MakeAllRoomInfo {
 		return O3;
 	}
 	
-	public static AssignRoomInfo[] getP1()
+	public static AssignRoomInfo[] getP1() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] P1 = new AssignRoomInfo[maxP1];
+		AssignRoomInfo[] P1 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름1") + 1];
 		for(int i = 1; i < P1.length; i++)
 		{
 			P1[i] = new AssignRoomInfo();
@@ -94,9 +80,9 @@ public class MakeAllRoomInfo {
 		return P1;
 	}
 	
-	public static AssignRoomInfo[] getP2()
+	public static AssignRoomInfo[] getP2() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] P2 = new AssignRoomInfo[maxP2];
+		AssignRoomInfo[] P2 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름2") + 1];
 		for(int i = 1; i < P2.length; i++)
 		{
 			P2[i] = new AssignRoomInfo();
@@ -113,9 +99,9 @@ public class MakeAllRoomInfo {
 		return P2;
 	}
 	
-	public static AssignRoomInfo[] getP3()
+	public static AssignRoomInfo[] getP3() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] P3 = new AssignRoomInfo[maxP3];
+		AssignRoomInfo[] P3 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름3") + 1];
 		for(int i = 1; i < P3.length; i++)
 		{
 			P3[i] = new AssignRoomInfo();
@@ -140,9 +126,9 @@ public class MakeAllRoomInfo {
 		return P3;
 	}
 	
-	public static AssignRoomInfo[] getP4()
+	public static AssignRoomInfo[] getP4() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] P4 = new AssignRoomInfo[maxP4];
+		AssignRoomInfo[] P4 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름4") + 1];
 		for(int i = 1; i < P4.length; i++)
 		{
 			P4[i] = new AssignRoomInfo();
@@ -167,9 +153,9 @@ public class MakeAllRoomInfo {
 		return P4;
 	}
 	
-	public static AssignRoomInfo[] getSN()
+	public static AssignRoomInfo[] getSN() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] SN = new AssignRoomInfo[maxSN];
+		AssignRoomInfo[] SN = new AssignRoomInfo[DormParser.getMaxCapacity("신평남") + 1];
 		for(int i = 1; i < SN.length; i++)
 		{
 			SN[i] = new AssignRoomInfo();
@@ -186,9 +172,9 @@ public class MakeAllRoomInfo {
 		return SN;
 	}
 	
-	public static AssignRoomInfo[] getSY()
+	public static AssignRoomInfo[] getSY() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] SY = new AssignRoomInfo[maxSY];
+		AssignRoomInfo[] SY = new AssignRoomInfo[DormParser.getMaxCapacity("신평여") + 1];
 		for(int i = 1; i < SY.length; i++)
 		{
 			SY[i] = new AssignRoomInfo();
