@@ -456,7 +456,6 @@ public class AssignAlgorithm
 							P1[i].setStudentId(rs2.getString("학번"));
 							P1[i].setIsNew(true);
 							break;
-
 						}
 					}
 				}
