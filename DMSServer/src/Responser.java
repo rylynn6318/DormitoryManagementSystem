@@ -180,15 +180,25 @@ public class Responser
 		Tuple<Account, ArrayList<Application>> t =  (Tuple<Account, ArrayList<Application>>) ProtocolHelper.deserialization(protocol.getBody());
 		String id = t.obj1.accountId;
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역이 있는지 조회 -> TRUE 이면 내역 취소하고 하라고 클라이언트에게 알려줌. FALSE이면 다음으로
-		try {
-			if(ApplicationParser.isExist(id))
-			{
-				eventReply(socketHelper, createMessage(Bool.FALSE, "이전 신청 정보를 삭제해 주세요."));
-				return;
-			}
-		} catch (SQLException e) {
+		
+		boolean isPrevAppExist = true;
+		try 
+		{
+			isPrevAppExist = ApplicationParser.isExist(id);
+		} 
+		catch (SQLException e) 
+		{
 			e.printStackTrace();
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청 내역 조회 중 오류가 발생하였습니다."));
+			return;
 		}
+		
+		if(isPrevAppExist)
+		{
+			eventReply(socketHelper, createMessage(Bool.FALSE, "이전 신청 정보를 삭제해 주세요."));
+			return;
+		}
+		
 		//3. 받은 데이터를 역직렬화한다. ([생활관구분, 기간구분, 식사구분] x4 와 휴대전화번호, 코골이여부가 나옴)
 		@SuppressWarnings("unchecked")
 		ArrayList<Application> A = t.obj2;
@@ -217,19 +227,22 @@ public class Responser
 		}
 		//5. 클라이언트에게 성공 여부를 알려준다.(성공/DB연결 오류로 인한 실패/DB사망/알수없는오류 등등...)
 		// 여기 있는 모든 배열 = ArrayList 진짜 []로 짜시면 안돼요 / 배열을 ArrayList로 대체함 진짜 대체만 했으니 나머지 알고리즘은 완성해주세요
+
+		boolean isApplicationExist = false;
 		try {
-			if(ApplicationParser.isExist(id))
-			{
-				eventReply(socketHelper, createMessage(Bool.TRUE, "신청에 성공했습니다."));
-				return;
-			}
-			else
-			{
-				eventReply(socketHelper, createMessage(Bool.FALSE, "신청에 실패했습니다."));
-				return;
-			}
+			isApplicationExist = ApplicationParser.isExist(id);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		
+		//DB에 들어갔는지 체크함.
+		if(isApplicationExist)
+		{
+			eventReply(socketHelper, createMessage(Bool.TRUE, "신청에 성공했습니다."));
+		}
+		else
+		{
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청에 실패했습니다."));
 		}
 	}
 	
