@@ -90,9 +90,9 @@ public class Responser
 			socketHelper.write(new Protocol.Builder(
 					ProtocolType.EVENT, 
 					Direction.TO_CLIENT, 
-					null, 
-					null
-					).body(ProtocolHelper.serialization(data)).build());
+					Code1.NULL, 
+					Code2.NULL
+					).body(ProtocolHelper.serialization(null)).build());
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -113,10 +113,11 @@ public class Responser
 		//1. 스케쥴을 확인하고 입사 신청 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
 		boolean isAdmissible = ScheduleParser.isAdmissible(Code1.Page.입사신청);
 		System.out.println("스케쥴 체크됨");
+		Tuple<String, ArrayList<Dormitory>> failMessage;
 		if(!isAdmissible)
 		{
 			//스케쥴 때문에 진입 불가한 경우
-			Tuple<String, ArrayList<Dormitory>> failMessage = new Tuple<String, ArrayList<Dormitory>>("현재 생활관 입사 신청 기간이 아닙니다.", null);
+			failMessage = new Tuple<String, ArrayList<Dormitory>>("현재 생활관 입사 신청 기간이 아닙니다.", null);
 			eventReply(socketHelper, failMessage);
 			return;
 		}
@@ -129,8 +130,10 @@ public class Responser
 		Gender gender = StudentParser.getGender(account.accountId);
 		if(gender == null)
 		{
+			System.out.println("성별이 조회되지 않음.");
 			//학생이 조회되지 않은 경우
-			eventReply(socketHelper, createMessage(Bool.FALSE, "해당 학생이 조회되지 않았습니다. 관리자에게 문의하세요."));
+			failMessage = new Tuple<String, ArrayList<Dormitory>>("해당 학생이 조회되지 않았습니다. 관리자에게 문의하세요.", null);
+			eventReply(socketHelper, failMessage);
 			return ;
 		}
 		System.out.println("성별 불러옴 : " + gender.toString() );
@@ -141,14 +144,16 @@ public class Responser
 		if(semester == 0)
 		{
 			//현재 학기 조회 실패
-			eventReply(socketHelper, createMessage(Bool.FALSE, "현재 학기 조회 실패. 관리자에게 문의하세요."));
+			failMessage = new Tuple<String, ArrayList<Dormitory>>("현재 학기 조회 실패. 관리자에게 문의하세요.", null);
+			eventReply(socketHelper, failMessage);
 		}
 		
 		ArrayList<Dormitory> dormitoryList = DormParser.getDormitoryList(semester, gender);
 		if(dormitoryList == null)
 		{
 			//기숙사 목록 조회 실패
-			eventReply(socketHelper, createMessage(Bool.FALSE, "기숙사 목록 조회 실패. 관리자에게 문의하세요."));
+			failMessage = new Tuple<String, ArrayList<Dormitory>>("기숙사 목록 조회 실패. 관리자에게 문의하세요.", null);
+			eventReply(socketHelper, failMessage);
 		}
 		
 		//5. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
@@ -156,7 +161,8 @@ public class Responser
 		if(description == null)
 		{
 			//기숙사 목록 조회 실패
-			eventReply(socketHelper, createMessage(Bool.FALSE, "안내사항 조회 실패. 관리자에게 문의하세요."));
+			failMessage = new Tuple<String, ArrayList<Dormitory>>("안내사항 조회 실패. 관리자에게 문의하세요.", null);
+			eventReply(socketHelper, failMessage);
 		}
 		
 		//6. 해당 정보를 객체화, 배열로 만들어 클라이언트에게 전송한다.
