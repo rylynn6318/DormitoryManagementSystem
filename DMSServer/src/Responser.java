@@ -230,8 +230,8 @@ public class Responser
 	public static void student_submitApplicationPage_onCancel(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
-		String id = a.accountId;
+		Account account = (Account) ProtocolHelper.deserialization(protocol.getBody());	
+		String id = account.accountId;
 		
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역이 있는지 조회 -> TRUE 이면 다음으로, FALSE이면 클라이언트에게 내역 없다고 알려줌.
 		boolean isExist = false;
@@ -239,16 +239,12 @@ public class Responser
 			isExist = ApplicationParser.isExist(id);
 		} catch (Exception e) {
 			e.printStackTrace();
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청 내역 조회 중 오류가 발생했습니다."));
 		}
 		
 		if(!isExist)
 		{
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.FALSE,"신청내역 없음"))).build());
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청내역이 존재하지 않습니다."));
 			return;
 		}
 		
@@ -256,22 +252,12 @@ public class Responser
 		try
 		{
 			ApplicationParser.deleteApplication(id);
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.TRUE,"삭제 성공했습니다"))).build());
+			eventReply(socketHelper, createMessage(Bool.TRUE, "신청내역 삭제에 성공했습니다."));
 			return;
 		}
 		catch(Exception e)
 		{
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.FALSE,"삭제에 실패했습니다"))).build());
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청내역 삭제에 실패했습니다."));
 			return;
 		}
 		
