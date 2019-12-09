@@ -312,7 +312,7 @@ public class ApplicationParser {
 		//19.12.09 지금 디비가 안바껴서 안돌아감 -동현-
 		System.out.println(gender);
 		String snore = isSnore==Bool.TRUE ?"Y" : "N";
-		String sql = "INSERT INTO " +DBHandler.INSTANCE.DB_NAME+".신청 VALUES("+id+"','"+dormitoryName+"','"+String.valueOf(gender)+"','"+ String.valueOf(semesterCode)+"','"+String.valueOf(choice)+"','"+String.valueOf(mealType)+"','N','N','N'+'"+snore+"')";
+		String sql = "INSERT INTO " +DBHandler.INSTANCE.DB_NAME+".신청 VALUES('"+id+"','"+dormitoryName+"','"+String.valueOf(gender)+"','"+ String.valueOf(semesterCode)+"','"+String.valueOf(choice)+"','"+String.valueOf(mealType)+"','N','N','N','"+snore+"')";
 //원래  	String sql = "INSERT INTO " +DBHandler.INSTANCE.DB_NAME+".신청 VALUES( "+id+","+dormitoryName+","+String.valueOf(gender)+","+String.valueOf(semesterCode)+","+ String.valueOf(choice)+","+String.valueOf(mealType)+","+"N , N, N ,"+ String.valueOf(isSnore)+")";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
