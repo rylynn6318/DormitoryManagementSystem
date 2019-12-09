@@ -4,9 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import batch.AssignRoomInfo;
 import batch.MakeAllRoomInfo;
+
+
 
 public class AssignAlgorithm 
 {
@@ -15,37 +18,13 @@ public class AssignAlgorithm
 	private static int checkOutDate1; //이건 1학기나 계절학기 신청자들의 기숙사 종료일 어차피 현재 받고있는 신청자들의 학기에 따라 변수 알아서 바뀌니 걱정 ㄴ
 	private static int checkOutDate2; //이건 1년 신청자들의 기숙사 종료일
 	
-	public static void passUpdate() throws SQLException, ClassNotFoundException
-	{	
-		String sql ="SELECT `학번`, `납부여부`, `합격여부`, `최종결과`, `생활관정보_생활관명`, `생활관정보_성별`, `생활관정보_학기`, `지망` FROM " + DBHandler.DB_NAME + ".신청";
+	public static void lastPassUpdate() throws SQLException
+	{
+		String sql = "UPDATE Prototype.신청 A  INNER JOIN Prototype.서류 B ON A.학번 = B.학번 SET A.최종결과 = 'Y' WHERE B.유효여부 = 'Y' AND A.납부여부 = 'Y' AND A.합격여부 = 'Y'";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
-		ResultSet purs = state.executeQuery();				// rs 는 지금 id 납부여부 합격여부가 최종결과가 들어있다 신청테이블의
-		PreparedStatement state1 = null;
-		PreparedStatement state2 = null;
-		while(purs.next())
-		{
-			boolean document = false; // 유효여부, 진단일, 서류유형이 적합하면 document = true
-			String sql1 = "SELECT `유효여부` FROM " + DBHandler.DB_NAME + ".서류 WHERE `서류유형` = '1' and `유효여부` = 'Y' and `학번` = '" + purs.getString("학번")+"'";
-			state1 = connection.prepareStatement(sql1);
-			ResultSet purs1 = state1.executeQuery();
-			String sql2 = "UPDATE " + DBHandler.DB_NAME +".신청 SET `최종결과` = 'Y' WHERE `학번` = ('" + purs.getString("학번") + "') and (`생활관정보_생활관명` = '" + purs.getString("생활관정보_생활관명") + "') and (`생활관정보_성별` = '"+ purs.getString("생활관정보_성별") + "') and (`생활관정보_학기` = '"+ purs.getString("생활관정보_학기") + "') and (`지망` = '"+ purs.getString("지망") + "')";   // 납부여부 Y 결핵 통과 Y 합격여부 Y면 해당 ID의 최종결과 Y 
-			state2 = connection.prepareStatement(sql2);
-			if(purs1.next())
-			{
-				if(purs1.getString("유효여부").equals("Y"))
-				{
-					document = true;
-				}
-				if(purs.getString("납부여부").equals("Y") && purs.getString("합격여부").equals("Y") && document == true)
-				{
-					state2.executeUpdate(sql2);
-				} 
-			}
-		}
+		state.executeUpdate(sql);
 		state.close();
-		state1.close();
-		state2.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
 	
@@ -264,14 +243,16 @@ public class AssignAlgorithm
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//배정내역을 불러와서 서버 메모리에 있는 해당 생활관 호실에 배정내역이 있으면 생활관 호실에 학번을 넣어줌
-		String sql1 = "SELECT `호실정보_호`, `자리`, `학생_ID`, `호실정보_생활관명` FROM " + DBHandler.DB_NAME + ".배정내역 WHERE `퇴사예정일` >= '"+ availablePeriod + "'";// 여러 배정내역 (몇년 전꺼까지도) 중에서 아직 쓰고있는 방 예를들어 지금 2학기인데 1학기 1년 입사자
+		String sql1 = "SELECT `호실정보_호`, `자리`, `학생_학번`, `호실정보_생활관명` FROM " + DBHandler.DB_NAME + ".배정내역 WHERE `퇴사예정일` >= '"+ availablePeriod + "'";// 여러 배정내역 (몇년 전꺼까지도) 중에서 아직 쓰고있는 방 예를들어 지금 2학기인데 1학기 1년 입사자
 										//호 옆에 생활관명 넣어야함
 		PreparedStatement state1 = connection.prepareStatement(sql);
 		ResultSet rs1 = state1.executeQuery(sql);
+		ArrayList<String> arr = new ArrayList<String>();
 		if(rs1.next())
 		{
 		while(rs1.next())
 		{
+			arr.add(rs.getString("학생_학번"));
 			switch (rs1.getString("호실정보_생활관명"))
 			{
 			case "오름1" :
@@ -280,7 +261,7 @@ public class AssignAlgorithm
 				{
 					if(rs1.getString("호").equals(O1[i].getRoomNumber()) && rs1.getString("자리").equals(O1[i].getSeat()))
 					{
-						O1[i].setStudentId(rs1.getString("학생_ID"));
+						O1[i].setStudentId(rs1.getString("학생_학번"));
 					}
 				}
 				break;
@@ -291,7 +272,7 @@ public class AssignAlgorithm
 				{
 					if(rs1.getString("호").equals(O2[i].getRoomNumber()) && rs1.getString("자리").equals(O2[i].getSeat()))
 					{
-						O2[i].setStudentId(rs1.getString("학생_ID"));
+						O2[i].setStudentId(rs1.getString("학생_학번"));
 					}
 				}
 				break;
@@ -302,7 +283,7 @@ public class AssignAlgorithm
 				{
 					if(rs1.getString("호").equals(O3[i].getRoomNumber()) && rs1.getString("자리").equals(O3[i].getSeat()))
 					{
-						O3[i].setStudentId(rs1.getString("학생_ID"));
+						O3[i].setStudentId(rs1.getString("학생_학번"));
 					}
 				}
 				break;
@@ -313,7 +294,7 @@ public class AssignAlgorithm
 				{
 					if(rs1.getString("호").equals(P1[i].getRoomNumber()) && rs1.getString("자리").equals(P1[i].getSeat()))
 					{
-						P1[i].setStudentId(rs1.getString("학생_ID"));
+						P1[i].setStudentId(rs1.getString("학생_학번"));
 					}
 				}
 				break;
@@ -324,7 +305,7 @@ public class AssignAlgorithm
 				{
 					if(rs1.getString("호").equals(P2[i].getRoomNumber()) && rs1.getString("자리").equals(P2[i].getSeat()))
 					{
-						P2[i].setStudentId(rs1.getString("학생_ID"));
+						P2[i].setStudentId(rs1.getString("학생_학번"));
 					}
 				}
 				break;
@@ -335,7 +316,7 @@ public class AssignAlgorithm
 				{
 					if(rs1.getString("호").equals(P3[i].getRoomNumber()) && rs1.getString("자리").equals(P3[i].getSeat()))
 					{
-						P3[i].setStudentId(rs1.getString("학생_ID"));
+						P3[i].setStudentId(rs1.getString("학생_학번"));
 					}
 				}
 				break;
@@ -346,7 +327,7 @@ public class AssignAlgorithm
 				{
 					if(rs1.getString("호").equals(P4[i].getRoomNumber()) && rs1.getString("자리").equals(P4[i].getSeat()))
 					{
-						P4[i].setStudentId(rs1.getString("학생_ID"));
+						P4[i].setStudentId(rs1.getString("학생_학번"));
 					}
 				}
 				break;
@@ -357,7 +338,7 @@ public class AssignAlgorithm
 				{
 					if(rs1.getString("호").equals(SN[i].getRoomNumber()) && rs1.getString("자리").equals(SN[i].getSeat()))
 					{
-						SN[i].setStudentId(rs1.getString("학생_ID"));
+						SN[i].setStudentId(rs1.getString("학생_학번"));
 					}
 				}
 				break;
@@ -368,7 +349,7 @@ public class AssignAlgorithm
 				{
 					if(rs1.getString("호").equals(SY[i].getRoomNumber()) && rs1.getString("자리").equals(SY[i].getSeat()))
 					{
-						SY[i].setStudentId(rs1.getString("학생_ID"));
+						SY[i].setStudentId(rs1.getString("학생_학번"));
 					}
 				}
 				break;
@@ -432,6 +413,7 @@ public class AssignAlgorithm
 					if(O3[i].getStudentId() == null)
 					{
 						O3[i].setStudentId(rs2.getString("학번"));
+						O3[i].setIsNew(true);
 						if(rs2.getInt("지망") == 0)
 						{
 							O3[i].setCheckout(checkOutDate2);
@@ -694,7 +676,7 @@ public class AssignAlgorithm
 		PreparedStatement state3 = connection.prepareStatement(sql);	
 		for(int i = 1; i < O1.length; i++)
 		{
-			if(O1[i].getStudentId() != null)
+			if(O1[i].getIsNew())
 			{
 			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O1[i].getStudentId() + "', '" + O1[i].getRoomNumber() + "', '"+ O1[i].getSemesterCode() + "', '오름1', '" + O1[i].getSeat() + "', '" + O1[i].getCheckOut() +"')";
 			state3.executeUpdate(sql);
@@ -702,7 +684,7 @@ public class AssignAlgorithm
 		}
 		for(int i = 1; i < O2.length; i++)
 		{
-			if(O2[i].getStudentId() != null)
+			if(O2[i].getIsNew())
 			{
 			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O2[i].getStudentId() + "', '" + O2[i].getRoomNumber() + "', '"+ O2[i].getSemesterCode() + "', '오름2', '" + O2[i].getSeat() + "', '" + O2[i].getCheckOut() +"')";
 			state3.executeUpdate(sql);
@@ -710,7 +692,7 @@ public class AssignAlgorithm
 		}
 		for(int i = 1; i < O3.length; i++)
 		{
-			if(!PlacementHistoryParser.isExistPlcementHistory(O3[i].getStudentId()))
+			if(O3[i].getIsNew())
 			{
 			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O3[i].getStudentId() + "', '" + O3[i].getRoomNumber() + "', '"+ O3[i].getSemesterCode() + "', '오름3', '" + O3[i].getSeat() + "', '" + O3[i].getCheckOut() +"')";
 			state3.executeUpdate(sql);
@@ -718,7 +700,7 @@ public class AssignAlgorithm
 		}
 		for(int i = 1; i < P1.length; i++)
 		{			
-			if(P1[i].getStudentId() != null)
+			if(P1[i].getIsNew())
 			{
 			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P1[i].getStudentId() + "', '" + P1[i].getRoomNumber() + "', '"+ P1[i].getSemesterCode() + "', '푸름1', '" + P1[i].getSeat() + "', '" + P1[i].getCheckOut() +"')";
 			state3.executeUpdate(sql);
@@ -726,7 +708,7 @@ public class AssignAlgorithm
 		}
 		for(int i = 1; i < P2.length; i++)
 		{
-			if(P2[i].getStudentId() != null)
+			if(P2[i].getIsNew())
 			{
 			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P2[i].getStudentId() + "', '" + P2[i].getRoomNumber() + "', '"+ P2[i].getSemesterCode() + "', '푸름2', '" + P2[i].getSeat() + "', '" + P2[i].getCheckOut() +"')";
 			state3.executeUpdate(sql);
@@ -734,7 +716,7 @@ public class AssignAlgorithm
 		}
 		for(int i = 1; i < P3.length; i++)
 		{
-			if(P3[i].getStudentId() != null)
+			if(P3[i].getIsNew())
 			{
 			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P3[i].getStudentId() + "', '" + P3[i].getRoomNumber() + "', '"+ P3[i].getSemesterCode() + "', '푸름3', '" + P3[i].getSeat() + "', '" + P3[i].getCheckOut() +"')";
 			state3.executeUpdate(sql);
@@ -742,7 +724,7 @@ public class AssignAlgorithm
 		}
 		for(int i = 1; i < P4.length; i++)
 		{
-			if(P4[i].getStudentId() != null)
+			if(P4[i].getIsNew())
 			{
 			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P4[i].getStudentId() + "', '" + P4[i].getRoomNumber() + "', '"+ P4[i].getSemesterCode() + "', '푸름4', '" + P4[i].getSeat() + "', '" + P4[i].getCheckOut() +"')";
 			state3.executeUpdate(sql);
@@ -750,7 +732,7 @@ public class AssignAlgorithm
 		}
 		for(int i = 1; i < SN.length; i++)
 		{
-			if(SN[i].getStudentId() != null)
+			if(SN[i].getIsNew())
 			{
 			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + SN[i].getStudentId() + "', '" + SN[i].getRoomNumber() + "', '"+ SN[i].getSemesterCode() + "', '신평남', '" + SN[i].getSeat() + "', '" + SN[i].getCheckOut() +"')";
 			state3.executeUpdate(sql);
@@ -758,7 +740,7 @@ public class AssignAlgorithm
 		}
 		for(int i = 1; i < SY.length; i++)
 		{
-			if(SY[i].getStudentId() != null)
+			if(SY[i].getIsNew())
 			{
 			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + SY[i].getStudentId() + "', '" + SY[i].getRoomNumber() + "', '"+ SY[i].getSemesterCode() + "', '신평여', '" + SY[i].getSeat() + "', '" + SY[i].getCheckOut() +"')";
 			state3.executeUpdate(sql);
@@ -772,7 +754,7 @@ public class AssignAlgorithm
 	}
 	public static void batchStart() throws ClassNotFoundException, SQLException
 	{
-		passUpdate();
+		lastPassUpdate();
 		setCurrentSemester();
 		setAvailablePeriod();
 		setCheckOutPeriod();
