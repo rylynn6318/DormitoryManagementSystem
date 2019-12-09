@@ -38,6 +38,23 @@ public class DormParser {
 
 		return dlist;
 	}
+	
+	public static ArrayList<Dormitory> getAllDormitories() throws SQLException
+	{
+		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보";
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet resultSet = state.executeQuery();
+		
+		ArrayList<Dormitory> dorm = new ArrayList<Dormitory>();
+		while(resultSet.next())
+		{
+			dorm.add(new Dormitory(resultSet.getString("생활관명"), Gender.get(resultSet.getString("성별")), resultSet.getInt("학기"), resultSet.getInt("수용인원"), Bool.get(resultSet.getString("식사의무")), resultSet.getInt("5일식_식비"), resultSet.getInt("7일식_식비"), resultSet.getInt("기숙사비")));
+		}
+		
+		return dorm;
+	}
+
 	//5. 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비
 	// 일단 싹다 보내주고 클라이언트에서 알아서 거르는걸로
 	public static ArrayList<Dormitory> getDormInfo(ArrayList<String> dList) throws Exception
