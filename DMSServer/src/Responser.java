@@ -1161,14 +1161,35 @@ public class Responser
 	}
 	
 	//관리자 - 납부 여부 조회 및 관리 - 업데이트 버튼 클릭 시
-	public static void admin_paymentManagePage_onUpdate(Protocol protocol, SocketHelper socketHelper)
-	{
-		//1. 클라이언트로부터 받은 학번, 생활관명, 학기로 납부여부 테이블에서 조회한다.
-		//2-1. 해당되는 데이터가 있으면 DB에 UPDATE쿼리를 쏜다.
-		//	   (납부여부를 클라이언트에게서 받은 T/F로 UPDATE한다)
-		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
-		//3. UPDATE 쿼리 결과를 클라이언트에게 알려준다.
-	}
+		public static void admin_paymentManagePage_onUpdate(Protocol protocol, SocketHelper socketHelper)
+		{
+			//1. 클라이언트로부터 받은 학번, 생활관명, 학기로 납부여부 테이블에서 조회한다.
+			
+			//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
+			Application ap = null;
+			try 
+			{
+				ap = (Application) ProtocolHelper.deserialization(protocol.getBody());
+			}
+			catch (ClassNotFoundException | IOException e) 
+			{
+				System.out.println("역직렬화 실패");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 데이터가 없습니다."));
+				return;
+			}
+			//2-1. 해당되는 데이터가 있으면 DB에 UPDATE쿼리를 쏜다.
+					//	   (납부여부를 클라이언트에게서 받은 T/F로 UPDATE한다)	
+			
+			try {
+				ApplicationParser.updatePayCheck(ap);				
+			} 
+			catch(Exception e) {
+				System.out.println("납부 여부 갱신 실패");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "납부 여부 갱신에 실패했습니다."));
+				return;
+			}
+			
+		}
 	
 	//관리자 - 납부 여부 조회 및 관리 - CSV 업로드 버튼 클릭 시
 	public static void admin_paymentManagePage_onUpload(Protocol protocol, SocketHelper socketHelper)
