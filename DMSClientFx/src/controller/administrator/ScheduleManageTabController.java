@@ -235,6 +235,9 @@ public class ScheduleManageTabController extends InnerPageController
 			{
 				//입력했던 항목들 클리어
 				delete_id_textfield.setText(null);
+				
+				//일정 테이블 리프레쉬
+				checkSchdules();
 			}
 			
 			//성공/실패 메시지 표시
@@ -300,6 +303,9 @@ public class ScheduleManageTabController extends InnerPageController
     		{
     			//입력했던 항목들 클리어
     			clearInsertInfo();
+    			
+				//일정 테이블 리프레쉬
+				checkSchdules();
     		}
     		//성공/실패 메시지 표시
     		IOHandler.getInstance().showAlert(resultTuple.obj2);

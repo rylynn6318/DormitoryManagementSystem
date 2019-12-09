@@ -131,7 +131,6 @@ public class ScheduleParser
 			try
 			{
 				sqlStartDate = rsSchedule.getDate("시작일");
-				System.out.println("시작일 가져옴");
 			}
 			catch(Exception e)
 			{
@@ -141,7 +140,6 @@ public class ScheduleParser
 			try
 			{
 				sqlEndDate = rsSchedule.getDate("종료일");
-				System.out.println("종료일 가져옴");
 			}
 			catch(Exception e)
 			{
@@ -153,8 +151,7 @@ public class ScheduleParser
 			@SuppressWarnings("deprecation")
 			java.util.Date endDate = sqlDateToUtilDate(sqlEndDate);
 			
-			System.out.println("시작일 : " + startDate);
-			System.out.println("종료일 : " + endDate);
+			//현재 긁어오면 시간이 안긁어와짐; 누가 고쳐줘 (2019-12-10 명근)
 			
 			int scheduleId = rsSchedule.getInt("ID");
 			int code = rsSchedule.getInt("스케쥴 할일 코드_ID");

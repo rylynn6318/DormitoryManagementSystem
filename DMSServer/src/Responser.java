@@ -822,6 +822,14 @@ public class Responser
 			return;
 		}
 		
+		//시간 순서가 엇갈리는가?
+		if(schedule.startDate.after(schedule.endDate))
+		{
+			System.out.println("시간 순서가 엇갈림.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "시간 순서가 엇갈립니다."));
+			return;
+		}
+		
 		//중복체크
 		boolean isExist = false;
 		try
