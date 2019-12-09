@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import enums.Code1.Page;
+import models.Application;
 import models.Schedule;
 import models.ScheduleCode;
 
@@ -25,10 +26,16 @@ public class ScheduleParser
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet resultSet = state.executeQuery();
-		resultSet.next();
-				
-		start = resultSet.getTimestamp("시작일");
-		end = resultSet.getTimestamp("종료일");		
+		
+		if(resultSet.next())
+		{
+			start = resultSet.getTimestamp("시작일");
+			end = resultSet.getTimestamp("종료일");		
+		}
+		
+		//널값 반환해야되는게 맞는데;
+		if(start == null || end == null)
+			throw new SQLException("isAdmissible : end와 start가 조회된 결과가 없습니다.");
 		
 		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 		String time1 = format1.format(start);			
@@ -41,6 +48,7 @@ public class ScheduleParser
 		int result1 = day.compareTo(start);
 		int result2 = day.compareTo(end);
 
+		//자원 반환
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 
@@ -72,9 +80,14 @@ public class ScheduleParser
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet resultSet = state.executeQuery();
-		resultSet.next();
-		String result;
-		result = resultSet.getString("비고");
+		
+		String result = null;
+		if(resultSet.next())
+		{
+			result = resultSet.getString("비고");
+		}
+		
+		//자원 반환
 		resultSet.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 		
@@ -125,6 +138,9 @@ public class ScheduleParser
 			schedule.add(temp);
 		}
 		
+		rsSchedule.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		
 		return schedule;
 	}
 	
@@ -136,11 +152,61 @@ public class ScheduleParser
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
 		ArrayList<ScheduleCode> s = new ArrayList<ScheduleCode>();
+		
 		while(rs.next())
 		{
 			ScheduleCode sc = new ScheduleCode(rs.getInt("코드"), rs.getString("이름"));
 			s.add(sc);
 		}
+		
+		rs.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		
 		return s;
+	}
+	
+	public static boolean isExist(String scheduleId) throws SQLException
+	{
+		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE ID = '" + scheduleId + "'";
+		System.out.println(sql);
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet resultSet = state.executeQuery();
+		
+		boolean isExist = false;
+		if(resultSet.next())
+		{
+			isExist = true;
+		}
+		
+		//자원 반환
+		resultSet.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		
+		return isExist;
+	}
+	
+	public static boolean deleteSchedule(String scheduleId) throws SQLException
+	{
+		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".스케쥴 WHERE ID ='" + scheduleId + "'";
+		
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		
+		boolean isSucceed = false;
+		
+		try
+		{
+			preparedStatement.executeUpdate(sql);
+			isSucceed = true;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		DBHandler.INSTANCE.returnConnection(connection);
+		
+		return isSucceed;
 	}
 }

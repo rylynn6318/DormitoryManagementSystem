@@ -738,6 +738,52 @@ public class Responser
 		//3-1. DB에 해당 ID가 존재한다. -> DB에 DELETE 요청
 		//3-2. DB에 해당 ID가 존재하지 않는다. -> 없다고 클라이언트에게 알려줌.
 		//4. DELETE 요청 결과를 클라이언트에게 알려준다. (성공/실패/아마존 사망...etc)
+		
+		String scheduleId = null;
+		try
+		{
+			scheduleId = (String) ProtocolHelper.deserialization(protocol.getBody());
+		}
+		catch(Exception e)
+		{
+			System.out.println("클라이언트에서 받아온 스케쥴아이디가 없습니다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버에서 빈 아이디를 수신했습니다."));
+			return;
+		}
+		
+		boolean isExist = false;
+		
+		try
+		{
+			ScheduleParser.isExist(scheduleId);
+		}
+		catch(Exception e)
+		{
+			System.out.println("스케쥴 ID로 조회 중 예외 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 ID로 조회 중 예외 발생했습니다."));
+			return;
+		}
+		
+		if(!isExist)
+		{
+			System.out.println("조회된 스케쥴이 없음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "조회된 스케쥴이 없습니다."));
+			return;
+		}
+		
+		//스케쥴 DELETE 메소드 호출해라.
+		try
+		{
+			ScheduleParser.deleteSchedule(scheduleId);
+		}
+		catch(Exception e)
+		{
+			System.out.println("스케쥴 삭제 쿼리 실패.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 삭제에 실패하였습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.TRUE, "스케쥴 삭제에 성공하였습니다."));
 	}
 	
 	//관리자 - 선발 일정 조회 및 관리 - 등록 버튼 클릭 시

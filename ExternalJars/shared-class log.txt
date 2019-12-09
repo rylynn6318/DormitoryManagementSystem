@@ -105,3 +105,7 @@ shared-class update log
 	Protocol 내부적으로 처리가능한 예외 처리하고
 	OutOfIndex 외에 예외 안던지게 바꿈
 	Shared Class Export해서 적용함.
+	
+2019-12-09 22:54 v2.16
+	PlacementHistory 생성자에 int형에 null 박는거 -1로 바꿈.
+	Shared Class Export해서 적용함.
