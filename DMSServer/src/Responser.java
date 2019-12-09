@@ -1124,80 +1124,81 @@ public class Responser
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 등록 버튼 클릭 시
-		@SuppressWarnings("unchecked")
-		public static void admin_boarderManagePage_onInsert(Protocol protocol, SocketHelper socketHelper)
+	@SuppressWarnings("unchecked")
+	public static void admin_boarderManagePage_onInsert(Protocol protocol, SocketHelper socketHelper)
+	{
+		//배정내역에 학생을 임의로 추가하기 위한 기능
+		//배정내역에 학생을 넣고, 신청 테이블에도 몇일식인지, 코골이여부를 기록하기 위해 INSERT해야됨.
+		Tuple<PlacementHistory, Application> tuple;
+		try 
 		{
-			//배정내역에 학생을 임의로 추가하기 위한 기능
-			//배정내역에 학생을 넣고, 신청 테이블에도 몇일식인지, 코골이여부를 기록하기 위해 INSERT해야됨.
-			Tuple<PlacementHistory, Application> tuple;
-			try 
-			{
-				tuple = (Tuple<PlacementHistory, Application>) ProtocolHelper.deserialization(protocol.getBody());
-			} 
-			catch (ClassNotFoundException | IOException e) {
-				System.out.println("역직렬화 실패");
-				eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록에 실패했습니다."));
-				return;
-			}
-			
-			PlacementHistory ph = tuple.obj1;
-			Application app = tuple.obj2;
-			
-			boolean isExistPh;
-			try 
-			{
-				isExistPh = PlacementHistoryParser.isExistPlcementHistory(ph.studentId);
-			}
-			catch (ClassNotFoundException | SQLException e) 
-			{
-				System.out.println("isExistPlacementHistory 에러");
-				eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록에 실패했습니다."));
-				return;
-			}
-			
-			if(isExistPh)
-			{
-				System.out.println("이미 같은 학번의 입사자가 존재합니다.");
-				eventReply(socketHelper, createMessage(Bool.FALSE, "이미 같은 학번의 입사자가 존재합니다."));
-				return;
-			}
-			else
-			{
-				char charGender;
-				try 
-				{
-					if(StudentParser.getGender(ph.studentId) == Gender.Female)
-						charGender = 'F';
-					else
-						charGender = 'M';
-				}
-				catch (Exception e1)
-				{
-					System.out.println("성별 알아내는데 실패");
-					eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록에 실패했습니다."));
-					return;
-				}
-				
-				try
-				{
-					ApplicationParser.insertApplication(4, app.getMealType(), app.isSnore(), ph.dormitoryName, charGender, ph.semester, ph.studentId);
-				}
-				catch (SQLException e)
-				{
-					System.out.println("Insert 실패");
-					eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록에 실패했습니다."));
-					return;
-				}
-				
-				eventReply(socketHelper, new Tuple<Bool, String>(Bool.TRUE, "등록 완료"));
-			}
-			//1. 클라이언트에게서 학번, 호, 학기, 생활관명, 자리, 퇴사예정일, 몇일식, 코골이여부를 받는다.
-			//2. 배정내역 테이블에서 학번, 호, 학기, 생활관명으로 중복되는 값이 있는지 체크한다.
-			//3-1. 기존 값이 존재하면 기존 값 삭제하라고 클라이언트에게 알려준다.
-			//3-2. 기존 값이 존재하지 않으면 INSERT한다.
-			//	   신청 테이블에도 몇일식, 코골이여부 넣어주기위해 INSERT해줘야 한다.
-			//4. INSERT 수행에 대한 결과를 클라이언트에게 알려준다 (성공/실패/아마존사망...etc)
+			tuple = (Tuple<PlacementHistory, Application>) ProtocolHelper.deserialization(protocol.getBody());
+		} 
+		catch (ClassNotFoundException | IOException e) {
+			System.out.println("역직렬화 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록에 실패했습니다."));
+			return;
 		}
+		
+		PlacementHistory ph = tuple.obj1;
+		Application app = tuple.obj2;
+		
+		boolean isExistPh;
+		try 
+		{
+			isExistPh = PlacementHistoryParser.isExistPlcementHistory(ph.studentId);
+		}
+		catch (ClassNotFoundException | SQLException e) 
+		{
+			System.out.println("isExistPlacementHistory 에러");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록에 실패했습니다."));
+			return;
+		}
+		
+		if(isExistPh)
+		{
+			System.out.println("이미 같은 학번의 입사자가 존재합니다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "이미 같은 학번의 입사자가 존재합니다."));
+			return;
+		}
+		else
+		{
+			char charGender;
+			try 
+			{
+				if(StudentParser.getGender(ph.studentId) == Gender.Female)
+					charGender = 'F';
+				else
+					charGender = 'M';
+			}
+			catch (Exception e1)
+			{
+				System.out.println("성별 알아내는데 실패");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록에 실패했습니다."));
+				return;
+			}
+			
+			try
+			{
+				ApplicationParser.insertApplication(4, app.getMealType(), app.isSnore(), ph.dormitoryName, charGender, ph.semester, ph.studentId);
+				PlacementHistoryParser.insertPlacementHistory(ph);
+			}
+			catch (SQLException e)
+			{
+				System.out.println("Insert 실패");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록에 실패했습니다."));
+				return;
+			}
+			
+			eventReply(socketHelper, new Tuple<Bool, String>(Bool.TRUE, "등록 완료"));
+		}
+		//1. 클라이언트에게서 학번, 호, 학기, 생활관명, 자리, 퇴사예정일, 몇일식, 코골이여부를 받는다.
+		//2. 배정내역 테이블에서 학번, 호, 학기, 생활관명으로 중복되는 값이 있는지 체크한다.
+		//3-1. 기존 값이 존재하면 기존 값 삭제하라고 클라이언트에게 알려준다.
+		//3-2. 기존 값이 존재하지 않으면 INSERT한다.
+		//	   신청 테이블에도 몇일식, 코골이여부 넣어주기위해 INSERT해줘야 한다.
+		//4. INSERT 수행에 대한 결과를 클라이언트에게 알려준다 (성공/실패/아마존사망...etc)
+	}
 	
 	//-------------------------------------------------------------------------
 	

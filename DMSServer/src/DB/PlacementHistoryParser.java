@@ -45,6 +45,21 @@ public class PlacementHistoryParser
 		return history;
 	}
 	
+	public static void insertPlacementHistory(PlacementHistory ph) throws SQLException
+	{
+		@SuppressWarnings("deprecation")
+		java.sql.Date date = new java.sql.Date(ph.checkout.getYear(), ph.checkout.getMonth(), ph.checkout.getDay());
+		
+		String sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역(학생_학번, 호실정보_호, 호실정보_학기, 호실정보_생활관명, 자리, 퇴사예정일) VALUES (" + ph.studentId + ", " + ph.roomId + ", " + ph.semester + ", " + ph.dormitoryName + ", " + ph.seat + ", " + date + ")";
+		System.out.println(sql);
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		state.execute();
+		
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+	}
+	
 	public static void deletePlacamentHistory(String studentId) throws ClassNotFoundException, SQLException
 	{
 		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".배정내역 WHERE 학생_학번 = '" + studentId + "' AND 호실정보_학기 = '" + CurrentSemesterParser.getCurrentSemester() + "'";
