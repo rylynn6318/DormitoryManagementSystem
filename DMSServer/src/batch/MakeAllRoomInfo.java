@@ -1,9 +1,26 @@
 package batch;
 
+import java.sql.SQLException;
+import DB.DormParser;
+
 public class MakeAllRoomInfo {
-	public static AssignRoomInfo[] getO1()
+	static int maxO1, maxO2, maxO3, maxP1, maxP2, maxP3, maxP4, maxSN, maxSY;
+	public static void getCapacity() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] O1 = new AssignRoomInfo[134+1];
+		int maxCapacity[] = DormParser.getMaxCapacity();
+		maxO1 = maxCapacity[0];
+		maxO2 = maxCapacity[1];
+		maxO3 = maxCapacity[2];
+		maxP1 = maxCapacity[3];
+		maxP2 = maxCapacity[4];
+		maxP3 = maxCapacity[5];
+		maxP4 = maxCapacity[6];
+		maxSN = maxCapacity[7];
+		maxSY = maxCapacity[8];
+	}
+	public static AssignRoomInfo[] getO1() throws ClassNotFoundException, SQLException
+	{
+		AssignRoomInfo[] O1 = new AssignRoomInfo[maxO1];
 		for(int i = 1; i < O1.length; i++)
 		{
 			O1[i] = new AssignRoomInfo();
@@ -22,7 +39,7 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getO2()
 	{
-		AssignRoomInfo[] O2 = new AssignRoomInfo[302+1];
+		AssignRoomInfo[] O2 = new AssignRoomInfo[maxO2];
 		for(int i = 1; i < O2.length; i++)
 		{
 			O2[i] = new AssignRoomInfo();
@@ -41,7 +58,7 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getO3()
 	{
-		AssignRoomInfo[] O3 = new AssignRoomInfo[452+1];
+		AssignRoomInfo[] O3 = new AssignRoomInfo[maxO3];
 		for(int i = 1; i < O3.length; i++)
 		{
 			O3[i] = new AssignRoomInfo();
@@ -60,7 +77,7 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getP1()
 	{
-		AssignRoomInfo[] P1 = new AssignRoomInfo[232+1];
+		AssignRoomInfo[] P1 = new AssignRoomInfo[maxP1];
 		for(int i = 1; i < P1.length; i++)
 		{
 			P1[i] = new AssignRoomInfo();
@@ -79,7 +96,7 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getP2()
 	{
-		AssignRoomInfo[] P2 = new AssignRoomInfo[328+1];
+		AssignRoomInfo[] P2 = new AssignRoomInfo[maxP2];
 		for(int i = 1; i < P2.length; i++)
 		{
 			P2[i] = new AssignRoomInfo();
@@ -98,7 +115,7 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getP3()
 	{
-		AssignRoomInfo[] P3 = new AssignRoomInfo[320+1];
+		AssignRoomInfo[] P3 = new AssignRoomInfo[maxP3];
 		for(int i = 1; i < P3.length; i++)
 		{
 			P3[i] = new AssignRoomInfo();
@@ -125,7 +142,7 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getP4()
 	{
-		AssignRoomInfo[] P4 = new AssignRoomInfo[344+1];
+		AssignRoomInfo[] P4 = new AssignRoomInfo[maxP4];
 		for(int i = 1; i < P4.length; i++)
 		{
 			P4[i] = new AssignRoomInfo();
@@ -152,7 +169,7 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getSN()
 	{
-		AssignRoomInfo[] SN = new AssignRoomInfo[102+1];
+		AssignRoomInfo[] SN = new AssignRoomInfo[maxSN];
 		for(int i = 1; i < SN.length; i++)
 		{
 			SN[i] = new AssignRoomInfo();
@@ -171,7 +188,7 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getSY()
 	{
-		AssignRoomInfo[] SY = new AssignRoomInfo[32+1];
+		AssignRoomInfo[] SY = new AssignRoomInfo[maxSY];
 		for(int i = 1; i < SY.length; i++)
 		{
 			SY[i] = new AssignRoomInfo();

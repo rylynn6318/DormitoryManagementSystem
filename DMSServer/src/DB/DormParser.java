@@ -124,4 +124,50 @@ public class DormParser {
 		
 		return cost;
 	}
+	
+	public static int[] getMaxCapacity() throws SQLException, ClassNotFoundException
+	{
+		int[] maxCapacity = new int[9];
+		String sql = "SELECT `생활관명`, `수용인원`" + DBHandler.DB_NAME + ".생활관정보 WHERE `학기` = '"+ CurrentSemesterParser.getCurrentSemester() +"'";
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+		while(rs.next())
+		{
+			switch(rs.getString("생활관명"))
+			{
+			case "오름1":
+				maxCapacity[0] = rs.getInt("수용인원");
+				break;
+			case "오름2":
+				maxCapacity[1] = rs.getInt("수용인원");
+				break;
+			case "오름3":
+				maxCapacity[2] = rs.getInt("수용인원");
+				break;
+			case "푸름1":
+				maxCapacity[3] = rs.getInt("수용인원");
+				break;
+			case "푸름2":
+				maxCapacity[4] = rs.getInt("수용인원");
+				break;
+			case "푸름3":
+				maxCapacity[5] = rs.getInt("수용인원");
+				break;
+			case "푸름4":
+				maxCapacity[6] = rs.getInt("수용인원");
+				break;
+			case "신평남":
+				maxCapacity[7] = rs.getInt("수용인원");
+				break;
+			case "신평여":
+				maxCapacity[8] = rs.getInt("수용인원");
+				break;
+			}
+		}
+			
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		return maxCapacity;
+	}
 }
