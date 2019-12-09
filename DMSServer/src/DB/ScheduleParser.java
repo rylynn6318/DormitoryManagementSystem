@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import enums.Code1.Page;
+import models.Application;
 import models.Schedule;
 import models.ScheduleCode;
 
@@ -183,5 +184,29 @@ public class ScheduleParser
 		DBHandler.INSTANCE.returnConnection(connection);
 		
 		return isExist;
+	}
+	
+	public static boolean deleteSchedule(String scheduleId) throws SQLException
+	{
+		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".스케쥴 WHERE ID ='" + scheduleId + "'";
+		
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		
+		boolean isSucceed = false;
+		
+		try
+		{
+			preparedStatement.executeUpdate(sql);
+			isSucceed = true;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		DBHandler.INSTANCE.returnConnection(connection);
+		
+		return isSucceed;
 	}
 }

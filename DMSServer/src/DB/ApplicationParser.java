@@ -13,25 +13,23 @@ import models.Application;
 import models.Score;
 
 public class ApplicationParser {
-	public static Boolean isExist(String studentID) throws SQLException
+	public static boolean isExist(String studentID) throws SQLException
 	{
 		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ studentID;
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
-		boolean isNext = rs.next();
+		boolean isNext = false;
+		
+		if(rs.next())
+		{
+			isNext = true;
+		}
+		
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 
-		if(isNext)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-
+		return isNext;
 	}
 	
 	public static void deleteApplication(Application app) throws SQLException
@@ -42,7 +40,7 @@ public class ApplicationParser {
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 		preparedStatement.executeUpdate(sql);
 		
-		connection.close();
+		DBHandler.INSTANCE.returnConnection(connection);
 	}
 	public static void deleteApplication(String id) throws SQLException, ClassNotFoundException
 	{
@@ -53,7 +51,7 @@ public class ApplicationParser {
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 		preparedStatement.executeUpdate(sql);
 		
-		connection.close();
+		DBHandler.INSTANCE.returnConnection(connection);
 	}
 	
 	public static ArrayList<Application> getAllApplications() throws SQLException
@@ -70,6 +68,9 @@ public class ApplicationParser {
 			ApplicationList.add(temp);
 		}
 		
+		apps.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		
 		return ApplicationList;
 	}
 
@@ -79,8 +80,13 @@ public class ApplicationParser {
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
-		rs.next();
-		int result = rs.getInt("학기");
+		
+		int result = -1;
+		if(rs.next())
+		{
+			result = rs.getInt("학기");	
+		}
+		
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 
@@ -302,6 +308,7 @@ public class ApplicationParser {
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(setPassed);
 		preparedStatement.executeUpdate();
+		
 		preparedStatement.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
@@ -318,6 +325,7 @@ public class ApplicationParser {
 		PreparedStatement state = connection.prepareStatement(sql);
 		System.out.println(sql);
 		state.executeUpdate(sql);
+		
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
@@ -359,7 +367,7 @@ public class ApplicationParser {
 		return application;
 	}
 	
-	//이것도 누구야 대가리박아 -명근 (2019-12-09 오후 6:43 WHERE 이후 AND연산자 빠짐. FORM이후 띄워쓰기안됨.)
+	//이것도 누구야 -명근 (2019-12-09 오후 6:43 WHERE 이후 AND연산자 빠짐. FORM이후 띄워쓰기안됨.)
 	//그리고 합격여부 Y인것만 가져와야지, 왜 그냥 가져오냐. 대가리박아라 진짜
 	public static ArrayList<Application> getPassedApplication(String id) throws SQLException, ClassNotFoundException
 	{
@@ -405,15 +413,17 @@ public class ApplicationParser {
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
+		
+		boolean isExist = false;
+		
 		if(rs.next())
 		{
-			state.close();
-			DBHandler.INSTANCE.returnConnection(connection);
-			return true;
+			isExist = true;
 		}
+		
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
-		return false;
+		return isExist;
 	}
 
 }

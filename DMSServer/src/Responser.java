@@ -772,6 +772,18 @@ public class Responser
 		}
 		
 		//스케쥴 DELETE 메소드 호출해라.
+		try
+		{
+			ScheduleParser.deleteSchedule(scheduleId);
+		}
+		catch(Exception e)
+		{
+			System.out.println("스케쥴 삭제 쿼리 실패.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 삭제에 실패하였습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.TRUE, "스케쥴 삭제에 성공하였습니다."));
 	}
 	
 	//관리자 - 선발 일정 조회 및 관리 - 등록 버튼 클릭 시
