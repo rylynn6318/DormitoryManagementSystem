@@ -15,16 +15,19 @@ public class PlacementHistoryParser
 {
 	public static PlacementHistory getPlacementResult(String id) throws SQLException, ClassNotFoundException
 	{
-		String sql = "SELECT 호실정보_호, 자리 FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 학번 = "+ id + "and 호실정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
+		String sql = "SELECT 호실정보_호, 자리 FROM " + DBHandler.DB_NAME + ".배정내역 WHERE 학생_학번 = '"+ id + "' AND 호실정보_학기 = '" + CurrentSemesterParser.getCurrentSemester() + "'";
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
-		rs.next();
-		PlacementHistory ph = new PlacementHistory(rs.getString("호실정보_호"), Seat.get(rs.getString("자리")));
+		
+		PlacementHistory history = null;
+		if(rs.next())
+			history = new PlacementHistory(rs.getString("호실정보_호"), Seat.get(rs.getString("자리")));
 		
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
-		return ph;
+		return history;
 	}
 	
 	public static ArrayList<PlacementHistory> getAllResidence() throws SQLException, ClassNotFoundException

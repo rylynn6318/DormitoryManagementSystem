@@ -1,5 +1,6 @@
 package controller.student;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -99,10 +100,10 @@ public class CheckRoomTabController extends InnerPageController
     private void checkRoom()
     {
     	//여기는 뭐 검사할 필요없이 바로 서버로 요청날림.
-    	Tuple<Application, PlacementHistory> resultTuple = Responser.student_checkRoomPage_onCheck();
-    	
+    	Serializable result = Responser.student_checkRoomPage_onCheck();
+
     	//서버랑 통신이 됬는가?
-        if(resultTuple == null)
+        if(result == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
         	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
@@ -113,6 +114,15 @@ public class CheckRoomTabController extends InnerPageController
         	}
         }
         
+    	Tuple<Bool, String> checkTuple = (Tuple<Bool, String>) result;
+    	if(checkTuple.obj1 == Bool.FALSE)
+    	{
+    		IOHandler.getInstance().showAlert(checkTuple.obj2);
+    		return;
+    	}
+        
+    	Tuple<Application, PlacementHistory> resultTuple = (Tuple<Application, PlacementHistory>) result;
+    	
         //받은 신청, 배정내역 분리 및 명시
         Application application = resultTuple.obj1;
         PlacementHistory placementHistory = resultTuple.obj2;

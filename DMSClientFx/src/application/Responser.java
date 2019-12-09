@@ -180,7 +180,7 @@ public class Responser
 	}
 	
 	//학생 - 생활관 호실 조회 - 조회 버튼 클릭 시 (2019-12-08 명근 수정)
-	public static Tuple<Application, PlacementHistory> student_checkRoomPage_onCheck()
+	public static Serializable student_checkRoomPage_onCheck()
 	{
 		//1. 서버에게 생활관 호실 조회 요청을 한다.   
 		//(2. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 최종합격여부가 T인 내역 조회) 
@@ -191,7 +191,7 @@ public class Responser
 		//6. 서버로부터 받은 신청, 배정내역을 역직렬화, UI에 표기한다
 		
 		Protocol protocol = eventProtocolBuilder(Code1.Page.호실조회, Code2.Event.CHECK, UserInfo.getInstance().account);
-		Tuple<Application, PlacementHistory> result = (Tuple<Application, PlacementHistory>) sendAndReceive(protocol);
+		Serializable result = (Tuple<Application, PlacementHistory>) sendAndReceive(protocol);
 		return result;
 	}
 	

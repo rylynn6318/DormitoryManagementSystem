@@ -480,51 +480,94 @@ public class Responser
 	public static void student_checkRoomPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴을 확인하고 호실 조회 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-		if(ScheduleParser.isAdmissible((Page)protocol.code1))
+		boolean isAdmissible = false;
+		try
 		{
-			//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
-			String notice = ScheduleParser.getDescription((Page)protocol.code1);
-			//3. 스케쥴 객체를 클라이언트에게 전송한다.
-			Tuple<Bool,String> resultTuple = new Tuple(Bool.TRUE, notice);
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(resultTuple)).build());
-			//(4. 클라이언트에서는 받은 비고(안내사항)을 표시한다)
+			isAdmissible = ScheduleParser.isAdmissible((Page)protocol.code1);
 		}
-		else
+		catch(Exception e)
 		{
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization("신청조회기간이 아닙니다.")).build());
+			System.out.println("스케쥴 조회 중 오류 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 조회 중 오류가 발생했습니다."));
+			return;
 		}
+		
+		if(!isAdmissible)
+		{
+			System.out.println("호실 조회 기간 아님.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "호실 조회 기간이 아닙니다."));
+			return;
+		}
+		
+		//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
+		String notice = "";
+		try
+		{
+			notice = ScheduleParser.getDescription((Page)protocol.code1);
+		}
+		catch(Exception e)
+		{
+			System.out.println("안내사항 조회 중 오류가 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "안내사항 조회 중 오류가 발생하였습니다."));
+			return;
+		}
+		//3. 스케쥴 객체를 클라이언트에게 전송한다.
+		eventReply(socketHelper, createMessage(Bool.TRUE, notice));
+		//(4. 클라이언트에서는 받은 비고(안내사항)을 표시한다)
 	}
 	
 	//학생 - 생활관 호실 조회 - 조회 버튼 클릭 시
 	public static void student_checkRoomPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
 	{
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
-		String id = a.accountId;
+		Account account = (Account) ProtocolHelper.deserialization(protocol.getBody());		
+		String studentId = account.accountId;
 		
 		//3-2. 내역이 있는 경우 신청 테이블에서 최종합격여부, 납부여부, 식비구분, 생활관, 호실유형(이건 일반실 고정)을 조회한다.
-		Application lastPassedApplication = ApplicationParser.getLastPassedApplication(id);
+		Application lastPassedApplication;
+		try
+		{
+			lastPassedApplication = ApplicationParser.getLastPassedApplication(studentId);
+		}
+		catch(Exception e)
+		{
+			System.out.println("신청내역 조회 중 오류가 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청내역 조회 중 오류가 발생하였습니다."));
+			return;
+		}
+		
+		if(lastPassedApplication == null)
+		{
+			System.out.println("신청내역이 존재하지 않습니다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청내역이 존재하지 않습니다."));
+			return;
+		}
+		
 		//4. 배정내역 테이블에서 해당 학번이 배정되있는 호실과 침대번호를 가져온다.
-		PlacementHistory ph = PlacementHistoryParser.getPlacementResult(id);
+		PlacementHistory history;
+		try
+		{
+			history = PlacementHistoryParser.getPlacementResult(studentId);
+		}
+		catch(Exception e)
+		{
+			System.out.println("배정내역 조회 중 오류가 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "배정내역 조회 중 오류가 발생하였습니다."));
+			return;
+		}
+		
+		if(history == null)
+		{
+			System.out.println("배정내역이 존재하지 않습니다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "배정내역이 존재하지 않습니다."));
+			return;
+		}
+		
 		//어플리케이션과 히스토리를 묶어서 보내주자
+		Tuple<Application, PlacementHistory> resultTuple = new Tuple(lastPassedApplication, history);
+		
 		//5. 3-2와 4를 합쳐 객체화한다. 그리고 이것을 클라이언트에게 전송한다.
-		Tuple<Application, PlacementHistory> resultTuple = new Tuple(lastPassedApplication, ph);
-		socketHelper.write(new Protocol.Builder(
-				ProtocolType.EVENT, 
-				Direction.TO_CLIENT, 
-				Code1.NULL, 
-				Code2.NULL
-				).body(ProtocolHelper.serialization(resultTuple)).build());
+		eventReply(socketHelper, resultTuple);
 		//(6. 클라이언트는 받은 객체를 역직렬화, UI에 표기한다)
 	}
 	

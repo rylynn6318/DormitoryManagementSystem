@@ -21,6 +21,7 @@ public class ScheduleParser
 
 		// String.valueOf((int)page)를 String.valueOf((int)page.getCode())로 수정함. by ssm
 		String sql = "SELECT 시작일, 종료일 FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE (`스케쥴 할일 코드_ID` =" + String.valueOf((int)page.getCode()) + ")";
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet resultSet = state.executeQuery();
@@ -62,6 +63,7 @@ public class ScheduleParser
 	{
 		//5. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
 		String sql = "SELECT 비고 FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE (`스케쥴 할일 코드_ID` =" + String.valueOf(page.getCode()) + ")";
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet resultSet = state.executeQuery();
