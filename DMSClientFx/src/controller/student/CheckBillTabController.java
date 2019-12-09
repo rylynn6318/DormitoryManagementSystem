@@ -105,10 +105,10 @@ public class CheckBillTabController extends InnerPageController
 	        // BufferedWriter 와 FileWriter를 조합하여 사용 (속도 향상)
 			String userPath = System.getProperty("user.home");
 			String fileSavePath = userPath + "\\Desktop\\" + "고지서.txt";
-	        BufferedWriter fw = new BufferedWriter(new FileWriter(fileSavePath, true));
+	        BufferedWriter fw = new BufferedWriter(new FileWriter(fileSavePath, false));
 	         
 	        // 파일안에 문자열 쓰기
-	        String content = bill.bankName + ", " + bill.accountNum + ", " + bill.cost + "원" ;
+	        String content = "은행 : " + bill.bankName + "\n계좌번호 : " + bill.accountNum + "\n금액 : " + bill.cost + "원" ;
 	        fw.write(content);
 	        fw.flush();
 
