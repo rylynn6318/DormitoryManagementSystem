@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -55,19 +56,23 @@
             </Button>
          </children>
       </HBox>
-      <TableView fx:id="check_placementHistory_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-        <columns>
-          <TableColumn fx:id="check_placementHistory_column_studentId" prefWidth="75.0" style="-fx-alignment: CENTER;" text="학번" />
-          <TableColumn fx:id="check_placementHistory_column_roomNumber" prefWidth="75.0" style="-fx-alignment: CENTER;" text="호" />
-            <TableColumn fx:id="check_placementHistory_column_semester" prefWidth="75.0" style="-fx-alignment: CENTER;" text="학기" />
-            <TableColumn fx:id="check_placementHistory_column_dormName" prefWidth="75.0" style="-fx-alignment: CENTER;" text="생활관명" />
-            <TableColumn fx:id="check_placementHistory_column_seat" prefWidth="75.0" style="-fx-alignment: CENTER;" text="자리" />
-            <TableColumn fx:id="check_placementHistory_column_checkout" prefWidth="75.0" style="-fx-alignment: CENTER;" text="퇴사예정일" />
-        </columns>
-         <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-         </columnResizePolicy>
-      </TableView>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="150.0" prefWidth="200.0" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+         <content>
+            <TableView fx:id="check_placementHistory_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+              <columns>
+                <TableColumn fx:id="check_placementHistory_column_studentId" prefWidth="75.0" style="-fx-alignment: CENTER;" text="학번" />
+                <TableColumn fx:id="check_placementHistory_column_roomNumber" prefWidth="75.0" style="-fx-alignment: CENTER;" text="호" />
+                  <TableColumn fx:id="check_placementHistory_column_semester" prefWidth="75.0" style="-fx-alignment: CENTER;" text="학기" />
+                  <TableColumn fx:id="check_placementHistory_column_dormName" prefWidth="75.0" style="-fx-alignment: CENTER;" text="생활관명" />
+                  <TableColumn fx:id="check_placementHistory_column_seat" prefWidth="75.0" style="-fx-alignment: CENTER;" text="자리" />
+                  <TableColumn fx:id="check_placementHistory_column_checkout" prefWidth="75.0" style="-fx-alignment: CENTER;" text="퇴사예정일" />
+              </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+         </content>
+      </ScrollPane>
       <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <VBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

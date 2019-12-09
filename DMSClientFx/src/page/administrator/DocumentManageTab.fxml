@@ -40,19 +40,23 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </VBox.margin>
       </HBox>
-      <TableView fx:id="check_document_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="130.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="check_document_column_studentId" prefWidth="75.0" style="-fx-alignment: CENTER;" text="학번" />
-          <TableColumn fx:id="check_document_column_docType" prefWidth="75.0" style="-fx-alignment: CENTER;" text="서류유형" />
-            <TableColumn fx:id="check_document_column_submissionDate" prefWidth="75.0" style="-fx-alignment: CENTER;" text="제출일" />
-            <TableColumn fx:id="check_document_column_diagnosisDate" prefWidth="75.0" style="-fx-alignment: CENTER;" text="진단일" />
-            <TableColumn fx:id="check_document_column_docStoragePath" prefWidth="75.0" style="-fx-alignment: CENTER;" text="서류저장경로" />
-            <TableColumn fx:id="check_document_column_isValid" prefWidth="75.0" style="-fx-alignment: CENTER;" text="유효여부" />
-        </columns>
-         <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-         </columnResizePolicy>
-      </TableView>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="130.0" prefWidth="200.0" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+         <content>
+            <TableView fx:id="check_document_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+              <columns>
+                  <TableColumn fx:id="check_document_column_studentId" prefWidth="75.0" style="-fx-alignment: CENTER;" text="학번" />
+                <TableColumn fx:id="check_document_column_docType" prefWidth="75.0" style="-fx-alignment: CENTER;" text="서류유형" />
+                  <TableColumn fx:id="check_document_column_submissionDate" prefWidth="75.0" style="-fx-alignment: CENTER;" text="제출일" />
+                  <TableColumn fx:id="check_document_column_diagnosisDate" prefWidth="75.0" style="-fx-alignment: CENTER;" text="진단일" />
+                  <TableColumn fx:id="check_document_column_docStoragePath" prefWidth="75.0" style="-fx-alignment: CENTER;" text="서류저장경로" />
+                  <TableColumn fx:id="check_document_column_isValid" prefWidth="75.0" style="-fx-alignment: CENTER;" text="유효여부" />
+              </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+         </content>
+      </ScrollPane>
       <BorderPane VBox.vgrow="NEVER">
          <left>
             <Label text="서류 삭제" BorderPane.alignment="CENTER">

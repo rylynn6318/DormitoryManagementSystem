@@ -42,23 +42,27 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </VBox.margin>
       </HBox>
-      <TableView fx:id="check_application_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="check_application_column_id" prefWidth="75.0" style="-fx-alignment: CENTER;" text="학번" />
-          <TableColumn fx:id="check_application_column_dormName" prefWidth="75.0" style="-fx-alignment: CENTER;" text="생활관명" />
-            <TableColumn fx:id="check_application_column_gender" prefWidth="75.0" style="-fx-alignment: CENTER;" text="성별" />
-            <TableColumn fx:id="check_application_column_semester" prefWidth="75.0" style="-fx-alignment: CENTER;" text="학기" />
-          <TableColumn fx:id="check_application_column_choice" prefWidth="75.0" style="-fx-alignment: CENTER;" text="지망" />
-            <TableColumn fx:id="check_application_column_mealType" prefWidth="75.0" style="-fx-alignment: CENTER;" text="몇일식" />
-            <TableColumn fx:id="check_application_column_isPaid" prefWidth="75.0" style="-fx-alignment: CENTER;" text="납부여부" />
-            <TableColumn fx:id="check_application_column_isPassed" prefWidth="75.0" style="-fx-alignment: CENTER;" text="합격여부" />
-            <TableColumn fx:id="check_application_column_isLastPassed" prefWidth="75.0" style="-fx-alignment: CENTER;" text="최종결과" />
-            <TableColumn fx:id="check_application_column_isSnore" prefWidth="75.0" style="-fx-alignment: CENTER;" text="코골이여부" />
-        </columns>
-         <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-         </columnResizePolicy>
-      </TableView>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="150.0" prefWidth="200.0" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+         <content>
+            <TableView fx:id="check_application_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+              <columns>
+                  <TableColumn fx:id="check_application_column_id" prefWidth="75.0" style="-fx-alignment: CENTER;" text="학번" />
+                <TableColumn fx:id="check_application_column_dormName" prefWidth="75.0" style="-fx-alignment: CENTER;" text="생활관명" />
+                  <TableColumn fx:id="check_application_column_gender" prefWidth="75.0" style="-fx-alignment: CENTER;" text="성별" />
+                  <TableColumn fx:id="check_application_column_semester" prefWidth="75.0" style="-fx-alignment: CENTER;" text="학기" />
+                <TableColumn fx:id="check_application_column_choice" prefWidth="75.0" style="-fx-alignment: CENTER;" text="지망" />
+                  <TableColumn fx:id="check_application_column_mealType" prefWidth="75.0" style="-fx-alignment: CENTER;" text="몇일식" />
+                  <TableColumn fx:id="check_application_column_isPaid" prefWidth="75.0" style="-fx-alignment: CENTER;" text="납부여부" />
+                  <TableColumn fx:id="check_application_column_isPassed" prefWidth="75.0" style="-fx-alignment: CENTER;" text="합격여부" />
+                  <TableColumn fx:id="check_application_column_isLastPassed" prefWidth="75.0" style="-fx-alignment: CENTER;" text="최종결과" />
+                  <TableColumn fx:id="check_application_column_isSnore" prefWidth="75.0" style="-fx-alignment: CENTER;" text="코골이여부" />
+              </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+         </content>
+      </ScrollPane>
       <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
          <right>
             <Button fx:id="update_button" mnemonicParsing="false" onAction="#on_update_button_actioned" text="UPDATE" BorderPane.alignment="CENTER">

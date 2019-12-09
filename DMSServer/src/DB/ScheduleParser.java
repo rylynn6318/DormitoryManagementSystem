@@ -115,7 +115,7 @@ public class ScheduleParser
 //		return schedule;
 //	}
 	
-	public static ArrayList<Schedule> getAllSchedule() throws SQLException
+	public static ArrayList<Schedule> getAllSchedule() throws Exception
 	{
 		ArrayList<Schedule> schedule = new ArrayList<Schedule>();
 		String getAllScheduleSql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴";
@@ -126,15 +126,41 @@ public class ScheduleParser
 		
 		while(rsSchedule.next())
 		{
-			java.sql.Date sqlStartDate = rsSchedule.getDate("시작일");
-			java.sql.Date sqlEndDate = rsSchedule.getDate("종료일");
+			java.sql.Date sqlStartDate = null;
+			java.sql.Date sqlEndDate = null;
+			try
+			{
+				sqlStartDate = rsSchedule.getDate("시작일");
+				System.out.println("시작일 가져옴");
+			}
+			catch(Exception e)
+			{
+				throw new Exception("시작일 가져오는 중 오류 발생.");
+			}
+			
+			try
+			{
+				sqlEndDate = rsSchedule.getDate("종료일");
+				System.out.println("종료일 가져옴");
+			}
+			catch(Exception e)
+			{
+				throw new Exception("종료일 가져오는 중 오류 발생.");
+			}
 			
 			@SuppressWarnings("deprecation")
-			java.util.Date startDate = new java.util.Date(sqlStartDate.getYear(), sqlStartDate.getMonth(), sqlStartDate.getDay());
+			java.util.Date startDate = sqlDateToUtilDate(sqlStartDate);
 			@SuppressWarnings("deprecation")
-			java.util.Date endDate = new java.util.Date(sqlEndDate.getYear(), sqlEndDate.getMonth(), sqlEndDate.getDay());
+			java.util.Date endDate = sqlDateToUtilDate(sqlEndDate);
 			
-			Schedule temp = new Schedule(rsSchedule.getInt("ID"), rsSchedule.getInt("`스케쥴 할일 코드_ID`"), startDate, endDate, rsSchedule.getString("비고"));
+			System.out.println("시작일 : " + startDate);
+			System.out.println("종료일 : " + endDate);
+			
+			int scheduleId = rsSchedule.getInt("ID");
+			int code = rsSchedule.getInt("스케쥴 할일 코드_ID");
+			String description =  rsSchedule.getString("비고");
+			
+			Schedule temp = new Schedule(scheduleId, code, startDate, endDate, description);
 			schedule.add(temp);
 		}
 		
@@ -250,8 +276,14 @@ public class ScheduleParser
 		Date endDate = schedule.endDate;
 		String description = schedule.description != null ? schedule.description : "" ;
 		
+		System.out.println(startDate.toString());
+		System.out.println(endDate.toString());
+		
 		java.sql.Date sqlStartDate = utilDateToSqlDate(startDate);
 		java.sql.Date sqlEndDate = utilDateToSqlDate(endDate);
+		
+		System.out.println(sqlStartDate);
+		System.out.println(sqlEndDate);
 		
 		String sql = "INSERT INTO " + DBHandler.INSTANCE.DB_NAME+".스케쥴 VALUES('" + String.valueOf(newId) + "','" + todoCode + "','"+ sqlStartDate +
 				"','"+ sqlEndDate + "','" + description + "')";
@@ -303,7 +335,7 @@ public class ScheduleParser
 	
 	public static java.sql.Date utilDateToSqlDate(java.util.Date utilDate)
 	{
-		return new java.sql.Date(utilDate.getYear(), utilDate.getMonth(), utilDate.getDay());
+		return new java.sql.Date(utilDate.getYear(), utilDate.getMonth(), utilDate.getDay() + 1);
 		
 	}
 	
