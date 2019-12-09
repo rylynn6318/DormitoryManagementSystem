@@ -8,9 +8,19 @@ public class AssignRoomInfo {
 	private int semesterCode;			//학기코드(외래키)
 	private String roomNumber;			//호, 몇호실
 	private char gender;				//성별(외래키)
+	private Boolean isNew;
 	
 	//키가 아닌 컬럼
 	private int capacity;				//몇인실
+	
+	public Boolean getIsNew()
+	{
+		return isNew;
+	}
+	public void setIsNew(Boolean isNew)
+	{
+		this.isNew = isNew;
+	}
 	
 	public String getDormitoryName()
 	{

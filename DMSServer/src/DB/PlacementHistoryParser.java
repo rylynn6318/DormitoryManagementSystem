@@ -52,18 +52,21 @@ public class PlacementHistoryParser
 	
 	public static Boolean isExistPlcementHistory(String studentID) throws SQLException, ClassNotFoundException
 	{
-		String sql = "SELECT `학생_학번` FROM "+ DBHandler.DB_NAME + ".배정내역 WHERE `학생_학번` = ' "+ studentID + "' and `호실정보_학기` = '" + CurrentSemesterParser.getCurrentSemester() + "'";
+		String sql = "SELECT `학생_학번` FROM "+ DBHandler.DB_NAME + ".배정내역 WHERE `학생_학번` = '"+ studentID + "' and `호실정보_학기` = '" + CurrentSemesterParser.getCurrentSemester() + "'";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
-		if(rs.next())
-		{
-			state.close();
-			DBHandler.INSTANCE.returnConnection(connection);
-			return true;
-		}
+		boolean isNext = rs.next();
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
-		return false;
+
+		if(isNext)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }
