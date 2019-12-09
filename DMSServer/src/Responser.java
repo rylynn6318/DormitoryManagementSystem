@@ -874,21 +874,23 @@ public class Responser
 	
 	//-------------------------------------------------------------------------
 	
-	//관리자 - 생활관 조회 및 관리 - 들어왔을 때
-	public static void admin_dormitoryManagePage_onEnter(Protocol protocol, SocketHelper socketHelper)
-	{
-		//1. 식사의무 ENUM을 배열화해서 목록을 만든다.
-		//2. 배열화한 목록을 직렬화해서 클라이언트로 전송한다.
-		//(3. 클라이언트는 받은 ENUM 배열을 역직렬화하여 식사의무 combobox에 표시한다)
-		
-		//[ENUM 배열화 예시]
-		//arrayList<MealDuty> data = new arrayList<MealDuty>(MealDuty.NOMEAL, MealDuty.MEAL5, MealDuty.MEAL7);
-	}
-	
 	//관리자 - 생활관 조회 및 관리 - 조회 버튼 클릭 시
 	public static void admin_dormitoryManagePage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 생활관 정보 테이블에서 모든 정보를 가져와 객체화한다. (생활관명, 학기, 수용인원, 식사의무, 5일식 식비, 7일식 식비, 기숙사비
+		ArrayList<Dormitory> dorm;
+		try
+		{
+			dorm = DormParser.getAllDormitories();
+		}
+		catch (SQLException e)
+		{
+			System.out.println("생활관 목록 불러오기 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "생활관 목록을 불러오지 못했습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, new Tuple<Bool, ArrayList<Dormitory>>(Bool.TRUE, dorm));
 		//2. 배열화한다.
 		//3. 직렬화해서 클라이언트에 전송한다.
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
