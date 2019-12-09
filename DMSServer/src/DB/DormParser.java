@@ -112,11 +112,13 @@ public class DormParser {
 	{
 		int cost;
 		String sql = "SELECT 몇일식, 생활관명 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번=" + id + "and 합격여부 = 'Y' and 생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
 		rs.next();
 		String sql1 = "SELECT "+rs.getInt("몇일식")+"일식, 기숙사비 FROM " + DBHandler.DB_NAME + ".생활관정보 WHERE 생활관명 = "+ rs.getString("생활관명") + "and 학기 = " + CurrentSemesterParser.getCurrentSemester();
+		System.out.println(sql1);
 		PreparedStatement state1 = connection.prepareStatement(sql1);
 		ResultSet rs1 = state1.executeQuery();
 		rs1.next();

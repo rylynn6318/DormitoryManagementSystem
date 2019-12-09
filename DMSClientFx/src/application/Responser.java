@@ -150,7 +150,7 @@ public class Responser
 	}
 	
 	//학생 - 생활관 고지서 조회 - 조회 버튼 클릭 시 (2019-12-08 명근 수정)
-	public static String student_CheckBillPage_onCheck()
+	public static Serializable student_CheckBillPage_onCheck()
 	{
 		//1. 서버에게 생활관 고지서 조회 요청을 한다.
 		//(2. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역 조회 -> 내역 있으면 다음으로, 없으면 없다고 클라이언트에게 알려줌)
@@ -160,7 +160,7 @@ public class Responser
 		//6. 서버가 보낸 정보를 받아서 대충 메모장으로 띄워준다.
 		
 		Protocol protocol = eventProtocolBuilder(Code1.Page.고지서조회, Code2.Event.CHECK, UserInfo.getInstance().account);
-		String result = (String) sendAndReceive(protocol);
+		Serializable result = sendAndReceive(protocol);
 		return result;
 	}
 	

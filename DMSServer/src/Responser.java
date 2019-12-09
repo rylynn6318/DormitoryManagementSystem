@@ -380,6 +380,7 @@ public class Responser
 			System.out.println("선발결과 조회 중 오류 발생");
 			Tuple<String, ArrayList<Application>> failMessage = new Tuple<String, ArrayList<Application>>("선발 결과 조회 중 오류가 발생하였습니다.", null);
 			eventReply(socketHelper, failMessage);
+			return;
 		}
 		
 		//신청 목록, 선발 결과 전송
@@ -394,64 +395,84 @@ public class Responser
 	public static void student_CheckBillPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴을 확인하고 고지서 조회 가능한 날짜인지 조회 -> TRUE이면 괜찮다고 클라이언트에게 전송, FALSE이면 못들어가게 막음
-		boolean accessible;
-		if(ScheduleParser.isAdmissible((Page)protocol.code1))
+		boolean isAdmissible = false;
+		try
 		{
-			accessible = true;
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(accessible)).build());
+			//클라이언트에게서 받은 프로토콜의 페이지코드가 고지서조회로 설정되있음.
+			//아래는 고지서 조회가 진입가능한지 묻는 코드임.
+			isAdmissible = ScheduleParser.isAdmissible((Page)protocol.code1);
 		}
-		else
+		catch(Exception e)
 		{
-			accessible = false;
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(accessible)).build());
+			eventReply(socketHelper, createMessage(Bool.FALSE, "고지서 조회 중 오류가 발생하였습니다."));
+			return;
 		}
+		
+		if(!isAdmissible)
+		{
+			eventReply(socketHelper, createMessage(Bool.FALSE, "고지서 조회 기간이 아닙니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.TRUE, "고지서 조회 가능."));
+	
 	}
 	
 	//학생 - 생활관 고지서 조회 - 조회 버튼 클릭 시
 	public static void student_CheckBillPage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
 	{
-		int cost;
 		//1. 받은 요청의 헤더에서 학번을 알아낸다. 
-		Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
-		String id = a.accountId;
+		Account account = (Account) ProtocolHelper.deserialization(protocol.getBody());		
+		String studentId = account.accountId;
+		
+		boolean isExist = false;
+		
 		//2. 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 합격여부가 T인 내역 조회 -> 내역 있으면 다음으로, 없으면 없다고 클라이언트에게 알려줌
-		try {
-			if(!ApplicationParser.isExistPassState(id))
-			{
-				socketHelper.write(new Protocol.Builder(
-						ProtocolType.EVENT, 
-						Direction.TO_CLIENT, 
-						Code1.NULL, 
-						Code2.NULL
-						).body(ProtocolHelper.serialization("고지서 내역이 없습니다.")).build());
-				return;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		try
+		{
+			isExist = ApplicationParser.isExistPassState(studentId);
 		}
+		catch(Exception e)
+		{
+			System.out.println("합격 여부 조회 중 오류 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "합격 여부 조회 중 오류가 발생하였습니다."));
+			return;
+		}
+		
+		if(!isExist)
+		{
+			System.out.println("합격 내역이 존재하지 않음");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "합격 내역이 존재하지 않습니다."));
+			return;
+		}
+		
 		//3. 합격한 신청 내역에 관한 납부해야 할 비용을 저장
-		cost = DormParser.getCheckBillCost(id);
+		int cost = -1;
+		try
+		{
+			cost = DormParser.getCheckBillCost(studentId);			
+		}
+		catch(Exception e)
+		{
+			System.out.println("납부비용 조회 중 오류 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "납부비용 조회에 실패하였습니다."));
+			return;
+		}
+		
 		//4. 랜덤 생성한 계좌번호와, 은행 명, 계산한 비용을 객체화해서 클라이언트에게 전송한다.
+		Bill bill = createRandBill(cost);
+		Tuple<Bool, Bill> sendData = new Tuple<Bool, Bill>(Bool.TRUE, bill);
+		eventReply(socketHelper, sendData);
+		//(. 클라이언트는 이걸 받아서 대충 메모장으로 띄워준다.)
+	}
+	
+	//이런건 좀 함수로 분리하세요... (명근, 2019-12-09 19:23 수정)
+	private static Bill createRandBill(int cost)
+	{
 		Random rand = new Random();
 		int accountNum = rand.nextInt(100)+1000;
-		Bill bill = new Bill("농협",accountNum,cost);
-		socketHelper.write(new Protocol.Builder(
-				ProtocolType.EVENT, 
-				Direction.TO_CLIENT, 
-				Code1.NULL, 
-				Code2.NULL
-				).body(ProtocolHelper.serialization(bill)).build());
-		//(. 클라이언트는 이걸 받아서 대충 메모장으로 띄워준다.)
+		Bill bill = new Bill("농협", accountNum, cost);
+		return bill;
 	}
 	//------------------------------------------------------------------------
 	

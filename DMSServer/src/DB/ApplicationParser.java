@@ -324,7 +324,8 @@ public class ApplicationParser {
 	
 	public static Boolean isExistPassState(String id) throws SQLException, ClassNotFoundException
 	{
-		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번=" + id + "and 합격여부 = 'Y' and 생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
+		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = '" + id + "' and 합격여부 = 'Y' AND 생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
