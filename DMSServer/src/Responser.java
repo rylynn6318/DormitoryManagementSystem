@@ -28,6 +28,7 @@ import models.Document;
 import models.Dormitory;
 import models.PlacementHistory;
 import models.Schedule;
+import models.ScheduleCode;
 import models.Tuple;
 import utils.Protocol;
 import utils.ProtocolHelper;
@@ -555,6 +556,7 @@ public class Responser
 	public static void admin_scheduleManagePage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴 할일 코드 테이블에서 '코드', '이름' 을 객체로 만들어 배열로 가져온다.
+		ArrayList<ScheduleCode> s = ScheduleParser.getScheduleCode();
 		//2. 객체 배열을 직렬화하여 클라이언트로 전송한다.
 		//(3. 클라이언트는 등록 gridView 안의 유형 combobox에 값을 채워준다.)
 	}
