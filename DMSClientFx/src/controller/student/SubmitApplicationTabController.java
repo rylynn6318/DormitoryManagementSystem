@@ -211,6 +211,13 @@ public class SubmitApplicationTabController extends InnerPageController
     	Bool isSnore = isSnore_checkbox.isSelected() ? Bool.TRUE : Bool.FALSE;
     	
     	ArrayList<Application> applicationList = getApplicationList(isSnore);
+    	
+    	if(applicationList.isEmpty())
+    	{
+    		IOHandler.getInstance().showAlert("신청 내용이 비어있습니다.");
+    		return;
+    	}
+    	
     	Tuple<Bool, String> result = Responser.student_submitApplicationPage_onSubmit(applicationList);
     	
     	if(result == null)
@@ -281,6 +288,7 @@ public class SubmitApplicationTabController extends InnerPageController
     //콤보박스 내 아이템을 설정하는 메소드
     private void setComboboxItem(ComboBox<String> nameCombobox, ArrayList<Dormitory> dormList)
     {
+		nameCombobox.getItems().add(null);
     	for(Dormitory dorm : dormList)
     	{
     		nameCombobox.getItems().add(dorm.dormitoryName);
@@ -303,6 +311,11 @@ class ComboboxChangeListener implements ChangeListener<String>
 	public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue)
 	{
 		mealTypeCombobox.getItems().clear();
+		mealTypeCombobox.getItems().add(null);
+		
+		if(newValue == null)
+			return;
+		
 		for(Dormitory dorm : dormList)
 		{
 			if(newValue.equals(dorm.dormitoryName))
