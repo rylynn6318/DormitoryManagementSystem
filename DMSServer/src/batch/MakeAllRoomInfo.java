@@ -63,7 +63,7 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getP1() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] P1 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름1") + 1];
+		AssignRoomInfo[] P1 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름1") + 11];
 		for(int i = 1; i < P1.length; i++)
 		{
 			P1[i] = new AssignRoomInfo();
@@ -82,7 +82,7 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getP2() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] P2 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름2") + 1];
+		AssignRoomInfo[] P2 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름2") + 11];
 		for(int i = 1; i < P2.length; i++)
 		{
 			P2[i] = new AssignRoomInfo();
@@ -101,7 +101,7 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getP3() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] P3 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름3") + 1];
+		AssignRoomInfo[] P3 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름3") + 11];
 		for(int i = 1; i < P3.length; i++)
 		{
 			P3[i] = new AssignRoomInfo();
@@ -128,7 +128,7 @@ public class MakeAllRoomInfo {
 	
 	public static AssignRoomInfo[] getP4() throws ClassNotFoundException, SQLException
 	{
-		AssignRoomInfo[] P4 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름4") + 1];
+		AssignRoomInfo[] P4 = new AssignRoomInfo[DormParser.getMaxCapacity("푸름4") + 11];
 		for(int i = 1; i < P4.length; i++)
 		{
 			P4[i] = new AssignRoomInfo();

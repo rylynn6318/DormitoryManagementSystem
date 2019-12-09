@@ -45,16 +45,16 @@ public class AssignAlgorithm
 		switch(currentSemester % 10)
 		{
 		case 1:
-			availablePeriod = (currentSemester - 1) * 100 + 620; // 1학기
+			availablePeriod = (currentSemester - 1) * 100 + 615; // 1학기
 			break;
 		case 2:
-			availablePeriod = (currentSemester - 2) * 100 + 820; // 여름
+			availablePeriod = (currentSemester - 2) * 100 + 815; // 여름
 			break;
 		case 3:
-			availablePeriod = (currentSemester - 3) * 100 + 1220; // 2학기
+			availablePeriod = (currentSemester - 3) * 100 + 1215; // 2학기
 			break;
 		case 4:
-			availablePeriod = (currentSemester - 4) * 100 + 10220; // 겨울
+			availablePeriod = (currentSemester - 4) * 100 + 10215; // 겨울
 			break;
 		}
 	}
@@ -64,18 +64,18 @@ public class AssignAlgorithm
 		switch(currentSemester % 10)
 		{
 		case 1:
-			checkOutDate1 = (currentSemester - 1) * 100 + 615;	// 1학기 
-			checkOutDate2 = (currentSemester - 1) * 100 + 1215; // 1년 신청일 경우
+			checkOutDate1 = (currentSemester - 1) * 100 + 620;	// 1학기 
+			checkOutDate2 = (currentSemester - 1) * 100 + 1220; // 1년 신청일 경우
 			break;
 		case 2:
-			checkOutDate1 = (currentSemester - 2) * 100 + 815;	// 여름
+			checkOutDate1 = (currentSemester - 2) * 100 + 820;	// 여름
 			break;
 		case 3:
-			checkOutDate1 = (currentSemester - 3) * 100 + 1215;	// 2학기
-			checkOutDate2 = (currentSemester - 3) * 100 + 10615;
+			checkOutDate1 = (currentSemester - 3) * 100 + 1220;	// 2학기
+			checkOutDate2 = (currentSemester - 3) * 100 + 10620;
 			break;
 		case 4:
-			checkOutDate1 = (currentSemester - 4) * 100 + 10115; //	겨울
+			checkOutDate1 = (currentSemester - 4) * 100 + 10120; //	겨울
 			break;
 		}
 	}
@@ -255,6 +255,7 @@ public class AssignAlgorithm
 		while(rs1.next())
 		{
 			arr.add(rs1.getString("학생_학번"));
+			System.out.println(rs1.getString("학생_학번"));
 			switch (rs1.getString("호실정보_생활관명"))
 			{
 			case "오름1" :
@@ -366,8 +367,10 @@ public class AssignAlgorithm
 		ResultSet rs2 = state2.executeQuery(sql);		
 		while(rs2.next())
 		{
-			if(arr.contains(rs2.getString("학번")) != true)
+			if(arr.contains(rs2.getString("학번")) != true)			
 			{
+				System.out.println(rs2.getString("학번"));
+				System.out.println(arr.contains(rs2.getString("학번")));
 			switch (rs2.getString("생활관정보_생활관명"))
 			{
 			case "오름1" :
@@ -442,7 +445,7 @@ public class AssignAlgorithm
 				{
 					if(P1[i].getStudentId() == null)
 					{
-						if(P1[i].getSeat().equals("B") && P1[i].getRoomNumber().compareTo("500호") > 0) // 탑층 자리이면 넣지마라는 뜻
+						if(P1[i].getSeat().equals("B") && P1[i].getRoomNumber().compareTo("500호") >= 0) // 탑층 자리이면 넣지마라는 뜻
 						{
 						}
 						else if(rs2.getInt("지망") == 0)
@@ -470,7 +473,7 @@ public class AssignAlgorithm
 				{
 					if(P2[i].getStudentId() == null)
 					{
-						if(P2[i].getSeat().equals("B") && P2[i].getRoomNumber().compareTo("500호") > 0) // 탑층 자리이면 넣지마라는 뜻
+						if(P2[i].getSeat().equals("B") && P2[i].getRoomNumber().compareTo("500호") >= 0) // 탑층 자리이면 넣지마라는 뜻
 						{
 						}
 						else if(rs2.getInt("지망") == 0)
@@ -498,7 +501,7 @@ public class AssignAlgorithm
 				{
 					if(P3[i].getStudentId() == null)
 					{
-						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("600호") > 0) // 탑층 자리이면 넣지마라는 뜻
+						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("600호") >= 0) // 탑층 자리이면 넣지마라는 뜻
 						{
 						}
 						else if(rs2.getInt("지망") == 0)
@@ -526,7 +529,7 @@ public class AssignAlgorithm
 				{
 					if(P4[i].getStudentId() == null)
 					{
-						if((P4[i].getSeat().equals("B") || P4[i].getSeat().equals("D"))&& P4[i].getRoomNumber().compareTo("600호") > 0) // 탑층 자리이면 넣지마라는 뜻
+						if((P4[i].getSeat().equals("B") || P4[i].getSeat().equals("D"))&& P4[i].getRoomNumber().compareTo("600호") >= 0) // 탑층 자리이면 넣지마라는 뜻
 						{
 						}
 						else if(rs2.getInt("지망") == 0)
@@ -592,7 +595,7 @@ public class AssignAlgorithm
 				}
 				break;
 			}
-			case "푸름탑1" :
+			case "푸름1 탑층" :
 			{
 				for (int i = 1; i < P1.length; i++)
 				{
@@ -621,7 +624,7 @@ public class AssignAlgorithm
 				}
 				break;
 			}
-			case "푸름탑2" :
+			case "푸름2 탑층" :
 			{
 				for (int i = 1; i < P2.length; i++)
 				{
@@ -650,7 +653,7 @@ public class AssignAlgorithm
 				}
 				break;
 			}
-			case "푸름탑3" :
+			case "푸름3 탑층" :
 			{
 				for (int i = 1; i < P3.length; i++)
 				{
@@ -679,7 +682,7 @@ public class AssignAlgorithm
 				}
 				break;
 			}
-			case "푸름탑4" :
+			case "푸름4 탑층" :
 			{
 				for (int i = 1; i < P3.length; i++)
 				{
@@ -767,6 +770,7 @@ public class AssignAlgorithm
 			if(P4[i].getIsNew() != null && P4[i].getIsNew())
 			{
 			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P4[i].getStudentId() + "', '" + P4[i].getRoomNumber() + "', '"+ P4[i].getSemesterCode() + "', '푸름4', '" + P4[i].getSeat() + "', '" + P4[i].getCheckOut() +"')";
+			System.out.println(sql);
 			state3.executeUpdate(sql);
 			}
 		}
