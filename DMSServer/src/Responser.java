@@ -289,30 +289,36 @@ public class Responser
 	public static void student_CheckApplicationPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴을 확인하고 신청내역 조회 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-		if(ScheduleParser.isAdmissible((Page)protocol.code1))
+		boolean isAdmissible = false;
+		try
 		{
-			//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
-			String notice = ScheduleParser.getDescription((Page)protocol.code1);
-			//3. 스케쥴 객체를 클라이언트에게 전송한다.
-			Tuple<Bool,String> resultTuple = new Tuple(Bool.TRUE, notice);
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(resultTuple)).build());
-			//(4. 클라이언트에서는 받은 비고(안내사항)을 표시한다)
+			isAdmissible = ScheduleParser.isAdmissible((Page)protocol.code1);
 		}
-		else
+		catch(Exception e)
 		{
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization("신청조회기간이 아닙니다.")).build());
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 조회 중 오류가 발생했습니다."));
 		}
 		
+		if(!isAdmissible)
+		{
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청조회기간이 아닙니다."));
+			
+		}
+		
+		//2. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
+		String notice = "";
+		try
+		{
+			notice = ScheduleParser.getDescription((Page)protocol.code1);
+		}
+		catch(Exception e)
+		{
+			eventReply(socketHelper, createMessage(Bool.FALSE, "안내사항 조회 중 오류가 발생했습니다."));
+			return;
+		}
+		//3. 스케쥴 객체를 클라이언트에게 전송한다.
+		eventReply(socketHelper, createMessage(Bool.TRUE, notice));
+		//(4. 클라이언트에서는 받은 비고(안내사항)을 표시한다)
 	}
 	
 	//학생 - 생활관 신청 조회 - 조회 버튼 클릭 시
