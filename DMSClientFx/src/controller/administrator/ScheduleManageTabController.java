@@ -1,5 +1,6 @@
 package controller.administrator;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -111,10 +112,10 @@ public class ScheduleManageTabController extends InnerPageController
     private void onEnter()
     {
     	//서버에게서 스케쥴 코드 목록을 받아 저장해둔다.
-    	scheduleCodeList = Responser.admin_scheduleManagePage_onEnter();
+    	Serializable result = Responser.admin_scheduleManagePage_onEnter();
     	
     	//서버랑 통신이 됬는가?
-        if(scheduleCodeList == null)
+        if(result == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
         	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
@@ -124,6 +125,21 @@ public class ScheduleManageTabController extends InnerPageController
         		return;
         	}
         }
+        
+        //제대로 왔는지 체크
+        Tuple<Bool, String> checkTuple = (Tuple<Bool, String>) result;
+        
+        //스케쥴 코드 받아오는데 실패했는가?
+        if(checkTuple.obj1 == Bool.FALSE)
+        {
+        	//받아온 오류메시지 표시
+        	IOHandler.getInstance().showAlert(checkTuple.obj2);
+        	return;
+        }
+        
+        //성공적으로 받아왔으면 저장.
+        Tuple<Bool, ArrayList<ScheduleCode>> resultTuple = (Tuple<Bool, ArrayList<ScheduleCode>>) result; 
+        scheduleCodeList = resultTuple.obj2;
         
         if(scheduleCodeList != null)
         {

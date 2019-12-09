@@ -122,7 +122,7 @@ public class Responser
 	public static void student_submitApplicationPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴을 확인하고 입사 신청 가능한 날짜인지 조회 -> TRUE이면 다음으로, FALSE이면 못들어가게 막음
-		boolean isAdmissible = ScheduleParser.isAdmissible(Code1.Page.입사신청);
+		boolean isAdmissible = ScheduleParser.isAdmissible((Page)protocol.code1);
 		System.out.println("스케쥴 체크됨");
 		Tuple<String, ArrayList<Dormitory>> failMessage;
 		if(!isAdmissible)
@@ -683,14 +683,21 @@ public class Responser
 		}
 		catch(Exception e)
 		{
-			
+			System.out.println("스케쥴 할일 코드 조회 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 할일 코드 조회에 실패하였습니다."));
+			return;
 		}
 		
 		if(scheduleList == null)
 		{
+			System.out.println("스케쥴 할일 코드 목록 비어있음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 할일 코드 목록이 비어있습니다."));
 			return;
 		}
+		
 		//2. 객체 배열을 직렬화하여 클라이언트로 전송한다.
+		eventReply(socketHelper, new Tuple<Bool, ArrayList<ScheduleCode>>(Bool.TRUE, scheduleList));
+		
 		//(3. 클라이언트는 등록 gridView 안의 유형 combobox에 값을 채워준다.)
 	}
 	
@@ -1008,20 +1015,13 @@ public class Responser
 	public static void admin_documentManagePage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 서류유형 ENUM을 배열화해서 목록을 만든다.
-		ArrayList<FileType> docuTypeList = new ArrayList<>();
-		docuTypeList.add(FileType.CSV);
-		docuTypeList.add(FileType.MEDICAL_REPORT);
-		docuTypeList.add(FileType.OATH);
 		//2. 배열화한 목록을 직렬화해서 클라이언트로 전송한다.
-		socketHelper.write(new Protocol.Builder(
-				ProtocolType.EVENT, 
-				Direction.TO_CLIENT, 
-				Code1.NULL, 
-				Code2.NULL
-				).body(ProtocolHelper.serialization(docuTypeList)).build());
 		//(3. 클라이언트는 받은 ENUM 배열을 역직렬화하여 서류유형 combobox에 표시한다)
 		//[ENUM 배열화 예시]
 		//arrayList<DocumentType> data = new arrayList<DocumentType>(DocumentType.MEDICAL, DocumentType.OATH);
+		
+		sendDocumentType(socketHelper);
+		return;
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 조회 버튼 클릭 시
