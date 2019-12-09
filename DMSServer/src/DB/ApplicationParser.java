@@ -34,11 +34,24 @@ public class ApplicationParser {
 	
 	public static void deleteApplication(Application app) throws SQLException
 	{
-		String deleteApplication = "DELETE FROM " + DBHandler.DB_NAME + ".신청 WHERE 학생_ID=" + app.getStudentId() + " AND 생활관정보_생활관명=" + app.getDormitoryName() + " AND 학기=" + app.getSemesterCode() + " AND 지망=" + app.getChoice();
+		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".신청 WHERE 학생_ID=" + app.getStudentId() + " AND 생활관정보_생활관명=" + app.getDormitoryName() + " AND 학기=" + app.getSemesterCode() + " AND 지망=" + app.getChoice();
 		
 		Connection connection = DBHandler.INSTANCE.getConnection();
-		PreparedStatement preparedStatement = connection.prepareStatement(deleteApplication);
-		preparedStatement.execute();
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		preparedStatement.executeUpdate(sql);
+		
+		connection.close();
+	}
+	public static void deleteApplication(String id) throws SQLException, ClassNotFoundException
+	{
+		int semester = CurrentSemesterParser.getCurrentSemester();
+		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".신청 WHERE ( 학생_ID='" + id + "' AND 학기='"+String.valueOf(semester)+"')";
+		
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		preparedStatement.executeUpdate(sql);
+		
+		connection.close();
 	}
 	
 	public static ArrayList<Application> getAllApplications() throws SQLException
