@@ -190,7 +190,7 @@ public class Responser
 	}
 	
 	//학생 - 생활관 입사 신청 - 취소 버튼 클릭 시 (2019-12-08 명근 수정)
-		public static void student_submitApplicationPage_onCancel(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException
+		public static void student_submitApplicationPage_onCancel(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, IOException, SQLException
 		{
 			//1. 받은 요청의 헤더에서 학번을 알아낸다. 
 			Account a = (Account) ProtocolHelper.deserialization(protocol.getBody());		
@@ -206,14 +206,38 @@ public class Responser
 			
 			if(!isExist)
 			{
-				//없다고 알려줌
+				socketHelper.write(new Protocol.Builder(
+						ProtocolType.EVENT, 
+						Direction.TO_CLIENT, 
+						Code1.NULL, 
+						Code2.NULL
+						).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.FALSE,"신청내역 없음"))).build());
 				return;
 			}
 			
-			//-미구현-
 			
-			//3. DB에 삭제 요청을 한다.
-			//4. 클라이언트에게 삭제 성공 여부를 알려준다.
+			try
+			{
+				ApplicationParser.deleteApplication(id);
+				socketHelper.write(new Protocol.Builder(
+						ProtocolType.EVENT, 
+						Direction.TO_CLIENT, 
+						Code1.NULL, 
+						Code2.NULL
+						).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.TRUE,"삭제 성공했습니다"))).build());
+				return;
+			}
+			catch(Exception e)
+			{
+				socketHelper.write(new Protocol.Builder(
+						ProtocolType.EVENT, 
+						Direction.TO_CLIENT, 
+						Code1.NULL, 
+						Code2.NULL
+						).body(ProtocolHelper.serialization(new Tuple<Bool, String>(Bool.FALSE,"삭제에 실패했습니다"))).build());
+				return;
+			}
+			
 		}
 	
 	//------------------------------------------------------------------------
