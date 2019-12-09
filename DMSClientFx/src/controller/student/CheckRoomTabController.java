@@ -71,7 +71,6 @@ public class CheckRoomTabController extends InnerPageController
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
         	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
         	{
-        		//여기서 페이지 닫게 해주자.
         		close();
         		return;
         	}
@@ -84,8 +83,11 @@ public class CheckRoomTabController extends InnerPageController
             if(resultTuple.obj1 == Bool.FALSE)
             {
             	IOHandler.getInstance().showAlert(resultTuple.obj2);
-            	//여기서 페이지 닫게 해주자.
-            	//return;
+            	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+            	{
+            		close();
+            		return;
+            	}
             }
             else
             {

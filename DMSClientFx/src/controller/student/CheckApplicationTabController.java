@@ -104,8 +104,12 @@ public class CheckApplicationTabController extends InnerPageController
             if(resultTuple.obj1 == Bool.FALSE)
             {
             	IOHandler.getInstance().showAlert(resultTuple.obj2);
-            	//여기서 페이지 닫게 해주자.
-            	//return;
+            	if(!IOHandler.getInstance().showDialog("디버그", "계속 진행하시겠습니까?"))
+            	{
+            		//여기서 페이지 닫게 해주자.
+            		close();
+            		return;
+            	}
             }
             else
             {
