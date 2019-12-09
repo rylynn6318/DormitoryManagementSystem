@@ -20,7 +20,7 @@ public class PlacementHistoryParser
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
 		rs.next();
-		PlacementHistory ph = new PlacementHistory(rs.getInt("호실정보_호"), Seat.get(rs.getString("자리")));
+		PlacementHistory ph = new PlacementHistory(rs.getString("호실정보_호"), Seat.get(rs.getString("자리")));
 		
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);

@@ -112,7 +112,7 @@ public class ScheduleParser
 			@SuppressWarnings("deprecation")
 			java.util.Date endDate = new java.util.Date(sqlEndDate.getYear(), sqlEndDate.getMonth(), sqlEndDate.getDay());
 			
-			Schedule temp = new Schedule(rsSchedule.getString("ID"), rsSchedule.getInt("`스케쥴 할일 코드_ID`"), startDate, endDate, rsSchedule.getString("비고"));
+			Schedule temp = new Schedule(rsSchedule.getInt("ID"), rsSchedule.getInt("`스케쥴 할일 코드_ID`"), startDate, endDate, rsSchedule.getString("비고"));
 			schedule.add(temp);
 		}
 		
