@@ -15,9 +15,9 @@ public class ScheduleViewModel
 	private StringProperty endDateStr;
 	private StringProperty descriptionStr;
 	
-	public ScheduleViewModel(String scheduleId, String toDo, Date startDate, Date endDate, String description)
+	public ScheduleViewModel(int scheduleId, String toDo, Date startDate, Date endDate, String description)
 	{
-		scheduleIdStr = new SimpleStringProperty(scheduleId);
+		scheduleIdStr = new SimpleStringProperty(String.valueOf(scheduleId));
 		codeStr = new SimpleStringProperty(toDo);
 		startDateStr = new SimpleStringProperty(startDate.toString());
 		endDateStr = new SimpleStringProperty(endDate.toString());

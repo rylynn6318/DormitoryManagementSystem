@@ -230,7 +230,7 @@ public class BoarderManageTabController extends InnerPageController
     		return;
     	}
 
-    	PlacementHistory data = new PlacementHistory(id, Integer.parseInt(roomNumber), Integer.parseInt(semester), dormName);
+    	PlacementHistory data = new PlacementHistory(id, roomNumber, Integer.parseInt(semester), dormName);
     	Tuple<Bool, String> resultTuple = Responser.admin_boarderManagePage_onDelete(data);
     	
     	//서버랑 통신이 됬는가?
@@ -321,7 +321,7 @@ public class BoarderManageTabController extends InnerPageController
     	Date checkout = localDateToDate(checkout_l);
     	
     	//배정내역 객체 생성
-    	PlacementHistory history = new PlacementHistory(id, Integer.parseInt(roomNumber), Integer.parseInt(semester), dormName, 
+    	PlacementHistory history = new PlacementHistory(id, roomNumber, Integer.parseInt(semester), dormName, 
     			Seat.get(seat), checkout);
     	
     	//신청 객체 생성

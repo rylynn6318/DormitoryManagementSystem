@@ -356,6 +356,7 @@ public class Responser
 		//(4. INSERT 수행에 대한 결과를 클라이언트에게 알려준다 (성공/실패/아마존사망...etc))
 		//5. 성공/실패여부를 알려준다.
 		
+		//이거 서버한테 스케쥴아이디는 -1로 전달됨. 스케쥴아이디는 DB에서 마지막값 찾아서 +1시킨걸로 해주면됨.
 		Protocol protocol = eventProtocolBuilder(Code1.Page.선발일정관리, Code2.Event.SUBMIT, schedule);
 		Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
 		return result;

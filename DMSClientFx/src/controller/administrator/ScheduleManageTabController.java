@@ -254,7 +254,7 @@ public class ScheduleManageTabController extends InnerPageController
     		
     	
     	//스케쥴 객체 생성.
-    	Schedule schedule = new Schedule("-1", code, startDate, endDate, etc);
+    	Schedule schedule = new Schedule(-1, code, startDate, endDate, etc);
     	
     	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
     	Tuple<Bool, String> resultTuple = Responser.admin_scheduleManagePage_onInsert(schedule);
