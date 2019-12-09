@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import enums.Bool;
 import enums.Code1;
@@ -39,7 +40,7 @@ public class DocumentParser
         return documentList;
 	}
 	
-	public static ObservableList<Document> getAllDocuments(int semester) throws SQLException
+	public static ArrayList<Document> getAllDocuments(int semester) throws SQLException
 	{
 //		java.util.Date start = new java.util.Date();
 //		java.util.Date end = new java.util.Date();
@@ -57,7 +58,7 @@ public class DocumentParser
 		ResultSet documents = preparedStatement.executeQuery();
 		
 		
-		ObservableList<Document> documentList = FXCollections.observableArrayList();
+		ArrayList<Document> documentList = new ArrayList<Document>();
 
         while (documents.next()) 
         {
