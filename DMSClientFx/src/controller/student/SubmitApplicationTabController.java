@@ -186,24 +186,10 @@ public class SubmitApplicationTabController extends InnerPageController
     
     private Application comboboxToApplication(int choice, String dormName, String mealTypeStr)
     {
-    	int mealType = -1;
-    	
-    	switch(mealTypeStr)
-    	{
-    	case "식사안함":
-    		mealType = 0;
-    		break;
-    	case "5일식":
-    		mealType = 5;
-    		break;
-    	case "7일식":
-    		mealType = 7;
-    		break;
-    	}
-    	
-    	return new Application(choice, dormName, mealType);
+    	return new Application(choice, dormName, mealTypeStrToInt(mealTypeStr));
     }
     
+  //------------------------------------------------------------------------
     
     private void submitApplication()
     {
@@ -223,12 +209,30 @@ public class SubmitApplicationTabController extends InnerPageController
     	if(result == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-        	
         	return;
         }
-        
-        IOHandler.getInstance().showAlert(result.obj2);
+    	
+    	//신청에 성공했으면 넣었던 입력값들 비워준다.
+    	if(result.obj1 == Bool.TRUE)
+    	{
+    		clearSubmitInfo();
+    	}
+    	IOHandler.getInstance().showAlert(result.obj2);
     }
+    
+    private void clearSubmitInfo()
+    {
+    	oneYear_dorm_combobox.getSelectionModel().select(null);
+    	oneYear_meal_combobox.getSelectionModel().select(null);
+    	firstChoice_dorm_combobox.getSelectionModel().select(null);
+    	firstChoice_meal_combobox.getSelectionModel().select(null);
+    	secondChoice_dorm_combobox.getSelectionModel().select(null);
+    	secondChoice_meal_combobox.getSelectionModel().select(null);
+    	thirdChoice_dorm_combobox.getSelectionModel().select(null);
+    	thirdChoice_meal_combobox.getSelectionModel().select(null);
+    }
+    
+    //------------------------------------------------------------------------
     
     private void cancelApplication()
     {
@@ -282,7 +286,6 @@ public class SubmitApplicationTabController extends InnerPageController
     	setComboboxItem(firstChoice_dorm_combobox, halfYear);
     	setComboboxItem(secondChoice_dorm_combobox, halfYear);
     	setComboboxItem(thirdChoice_dorm_combobox, halfYear);
-    	
     }
     
     //콤보박스 내 아이템을 설정하는 메소드
@@ -314,8 +317,10 @@ class ComboboxChangeListener implements ChangeListener<String>
 		mealTypeCombobox.getItems().add(null);
 		
 		if(newValue == null)
+		{
 			return;
-		
+		}
+			
 		for(Dormitory dorm : dormList)
 		{
 			if(newValue.equals(dorm.dormitoryName))
