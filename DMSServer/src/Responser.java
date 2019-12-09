@@ -106,6 +106,16 @@ public class Responser
 		return new Tuple<Bool, String>(isSucceed, msg);
 	}
 	
+	private static void sendDocumentType(SocketHelper socketHelper)
+	{
+		ArrayList<FileType> fileTypeList = new ArrayList<FileType>();
+		fileTypeList.add(FileType.MEDICAL_REPORT);
+		fileTypeList.add(FileType.OATH);
+		
+		eventReply(socketHelper, fileTypeList);
+		return;
+	}
+	
 	//------------------------------------------------------------------------------------------------
 	
 	//학생 - 생활관 입사 신청 - 들어왔을 때
@@ -578,16 +588,8 @@ public class Responser
 	{
 		//실제 원스톱을 기반으로, 학생이 서류 제출하는건 아무때나 할 수 있다고 하였다.
 		//1. 서류 유형을 객체화 배열화하여 클라이언트로 전송한다.
-		ArrayList<FileType> docuTypeList = new ArrayList<>();
-		docuTypeList.add(FileType.CSV);
-		docuTypeList.add(FileType.MEDICAL_REPORT);
-		docuTypeList.add(FileType.OATH);
-		socketHelper.write(new Protocol.Builder(
-				ProtocolType.EVENT, 
-				Direction.TO_CLIENT, 
-				Code1.NULL, 
-				Code2.NULL
-				).body(ProtocolHelper.serialization(docuTypeList)).build());
+		sendDocumentType(socketHelper);
+		return;
 		//(2. 클라이언트는 받은 배열을 역직렬화하여 서류유형 combobox에 표시한다)
 	}
 	
@@ -608,21 +610,7 @@ public class Responser
 	public static void student_checkDocumentPage_onEnter(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 서류 유형을 객체화 배열화하여 클라이언트로 전송한다.
-		ArrayList<Code1.FileType> fileType = new ArrayList<Code1.FileType>();
-		fileType.add(FileType.MEDICAL_REPORT);
-		fileType.add(FileType.OATH);
-
-		try {
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(fileType)).build());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		sendDocumentType(socketHelper);
 		return;
 		//(2. 클라이언트는 받은 배열을 역직렬화하여 서류유형 combobox에 표시한다)
 	}
