@@ -40,6 +40,9 @@ public class PaymentManageTabController extends InnerPageController
 
     @FXML
     private TableColumn<ApplicationViewModel, String> check_application_column_dormName;
+    
+    @FXML
+    private TableColumn<ApplicationViewModel, String> check_application_column_gender;
 
     @FXML
     private TableColumn<ApplicationViewModel, String> check_application_column_semester;
@@ -70,6 +73,9 @@ public class PaymentManageTabController extends InnerPageController
 
     @FXML
     private TextField update_dormName_textfield;
+    
+    @FXML
+    private TextField update_gender_textfield;
 
     @FXML
     private TextField update_semester_textfield;
@@ -165,6 +171,7 @@ public class PaymentManageTabController extends InnerPageController
     	//서버에서 받아온거 표시하게 만듬.
     	check_application_column_id.setCellValueFactory(cellData -> cellData.getValue().studentIdProperty());
     	check_application_column_dormName.setCellValueFactory(cellData -> cellData.getValue().dormNameProperty());
+    	check_application_column_gender.setCellValueFactory(cellData -> cellData.getValue().genderProperty());
     	check_application_column_semester.setCellValueFactory(cellData -> cellData.getValue().semesterProperty());
     	check_application_column_choice.setCellValueFactory(cellData -> cellData.getValue().choiceProperty());
     	check_application_column_mealType.setCellValueFactory(cellData -> cellData.getValue().mealTypeProperty());
@@ -181,6 +188,7 @@ public class PaymentManageTabController extends InnerPageController
     {
     	String id = update_id_textfield.getText();
     	String dormName = update_dormName_textfield.getText();
+    	String gender = update_gender_textfield.getText();
     	String semester = update_semester_textfield.getText();
     	String isPaid = update_isPaid_combobox.getSelectionModel().getSelectedItem();
     	
@@ -196,6 +204,12 @@ public class PaymentManageTabController extends InnerPageController
     		IOHandler.getInstance().showAlert("생활관명이 비어있습니다.");
     		return;
     	}
+    	else if(gender == null || gender.isEmpty())
+    	{
+    		//성별이 없음
+    		IOHandler.getInstance().showAlert("성별이 비어있습니다.");
+    		return;
+    	}
     	else if(semester == null || semester.isEmpty())
     	{
     		//학기가 없음
@@ -204,12 +218,13 @@ public class PaymentManageTabController extends InnerPageController
     	}
     	else if(isPaid == null || isPaid.isEmpty())
     	{
-    		//성별 비어있음
+    		//납부여부 비어있음
     		IOHandler.getInstance().showAlert("납부여부가 비어있습니다.");
     		return;
     	}
     	
     	Application data = new Application(id, dormName, Integer.parseInt(semester), -1);
+    	data.setGender(gender.charAt(0));
     	data.setPaid(isPaid.equals("T") ? Bool.TRUE : Bool.FALSE);
     	
     	Tuple<Bool, String> resultTuple = Responser.admin_paymentManagePage_onUpdate(data);

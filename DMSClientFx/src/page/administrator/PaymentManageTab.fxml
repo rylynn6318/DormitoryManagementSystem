@@ -46,6 +46,7 @@
         <columns>
             <TableColumn fx:id="check_application_column_id" prefWidth="75.0" style="-fx-alignment: CENTER;" text="학번" />
           <TableColumn fx:id="check_application_column_dormName" prefWidth="75.0" style="-fx-alignment: CENTER;" text="생활관명" />
+            <TableColumn fx:id="check_application_column_gender" prefWidth="75.0" style="-fx-alignment: CENTER;" text="성별" />
             <TableColumn fx:id="check_application_column_semester" prefWidth="75.0" style="-fx-alignment: CENTER;" text="학기" />
           <TableColumn fx:id="check_application_column_choice" prefWidth="75.0" style="-fx-alignment: CENTER;" text="지망" />
             <TableColumn fx:id="check_application_column_mealType" prefWidth="75.0" style="-fx-alignment: CENTER;" text="몇일식" />
@@ -82,6 +83,7 @@
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -90,12 +92,14 @@
          <children>
             <Label text="학번" />
             <TextField fx:id="update_id_textfield" promptText="ID를 입력해주세요." GridPane.rowIndex="1" />
-            <Label text="납부여부" GridPane.columnIndex="3" />
-            <ComboBox fx:id="update_isPaid_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Label text="납부여부" GridPane.columnIndex="4" />
+            <ComboBox fx:id="update_isPaid_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="4" GridPane.rowIndex="1" />
             <Label text="생활관명" GridPane.columnIndex="1" />
-            <Label text="학기" GridPane.columnIndex="2" />
+            <Label text="학기" GridPane.columnIndex="3" />
             <TextField fx:id="update_dormName_textfield" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="update_semester_textfield" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="update_semester_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Label text="성별" GridPane.columnIndex="2" />
+            <TextField fx:id="update_gender_textfield" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
          <VBox.margin>
             <Insets />
