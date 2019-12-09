@@ -15,13 +15,11 @@ public class CurrentSemesterParser
 		Date time = new Date();
 		SimpleDateFormat format1 = new SimpleDateFormat ("yyyy-MM-dd");					
 		String time1 = format1.format(time);
-		int result;
-		
-		String sql1 = "SELECT `스케쥴 할일 코드_ID`, 시작일, 종료일, 비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID`%'10' = '6' AND 시작일>=" + time.getYear() + "0101"; 
-		String sql2 = "SELECT `스케쥴 할일 코드_ID`, 시작일, 종료일 , 비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID`%'10' = '7' AND 시작일>=" + time.getYear() + "0101";
-		String sql3 = "SELECT `스케쥴 할일 코드_ID`, 시작일, 종료일 , 비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID`%'10' = '8' AND 시작일>=" + time.getYear() + "0101"; 
-		String sql4 = "SELECT `스케쥴 할일 코드_ID`, 시작일, 종료일 , 비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID`%'10' = '9' AND 시작일>=" + time.getYear() + "0101"; 
-		
+		int result;	
+		String sql1 = "SELECT `스케쥴 할일 코드_ID`, 시작일, 종료일, 비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID`%'10' = '6' AND `시작일`>='" + (time.getYear()+1900) + "0101' AND `시작일`<='"+(time.getYear()+1900)+"1231'";
+		String sql2 = "SELECT `스케쥴 할일 코드_ID`, 시작일, 종료일 , 비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID`%'10' = '7' AND `시작일`>='" + (time.getYear()+1900) + "0101' AND `시작일`<='"+(time.getYear()+1900)+"1231'";
+		String sql3 = "SELECT `스케쥴 할일 코드_ID`, 시작일, 종료일 , 비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID`%'10' = '8' AND `시작일`>='" + (time.getYear()+1900) + "0101' AND `시작일`<='"+(time.getYear()+1900)+"1231'";
+		String sql4 = "SELECT `스케쥴 할일 코드_ID`, 시작일, 종료일 , 비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID`%'10' = '9' AND `시작일`>='" + (time.getYear()+1900) + "0101' AND `시작일`<='"+(time.getYear()+1900)+"1231'";
 //		String sql = "SELECT `스케쥴 할일 코드`, 비고 FROM " + DBinfo.DB_NAME + ".스케쥴 <![CDATA[ WHERE 시작일 <="+time1+" and "+time1 + "<= 종료일   ]]>"; //만약 위 방법이 안되면 사용할것		 
 
 		Connection connection = DBHandler.INSTANCE.getConnection();
@@ -73,9 +71,9 @@ public class CurrentSemesterParser
 			return 0;
 		}			
 	}
-//	public static void main(String args[]) throws ClassNotFoundException, SQLException	//테스트용 Main문
-//	{
-//		int a = getCurrentSemester();
-//		System.out.println(a);
-//	}
+	public static void main(String args[]) throws ClassNotFoundException, SQLException	//테스트용 Main문
+	{
+		int a = getCurrentSemester();
+		System.out.println(a);
+	}
 }
