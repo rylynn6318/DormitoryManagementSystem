@@ -149,7 +149,7 @@ public class CheckRoomTabController extends InnerPageController
     {
     	String roomTypeStr = "일반실";
     	String roomIdStr = String.valueOf(placementHistory.roomId);
-    	String seatStr = String.valueOf(placementHistory.roomId);
+    	String seatStr = String.valueOf(placementHistory.seat);
     	
     	roomType_label.setText(roomTypeStr);
     	roomAndBed_label.setText(roomIdStr + " / " + seatStr);

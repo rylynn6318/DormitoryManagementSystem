@@ -42,7 +42,7 @@ public final class PlacementHistory implements Serializable
 	public PlacementHistory(String roomId, Seat seat)
 	{
 		this.studentId = null;
-		this.semester = (Integer) null;
+		this.semester = -1;
 		this.dormitoryName = null;
 		this.checkout = null;
 		this.roomId = roomId;

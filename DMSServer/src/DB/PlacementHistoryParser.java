@@ -22,11 +22,26 @@ public class PlacementHistoryParser
 		ResultSet rs = state.executeQuery();
 		
 		PlacementHistory history = null;
-		if(rs.next())
-			history = new PlacementHistory(rs.getString("호실정보_호"), Seat.get(rs.getString("자리")));
+		String roomId = null;
+		String seat = null;
 		
+		if(rs.next())
+		{
+			roomId = rs.getString("호실정보_호");
+			seat = rs.getString("자리");
+		}
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
+		
+		try
+		{
+			history = new PlacementHistory(roomId, Seat.get(seat));
+		}
+		catch(Exception e)
+		{
+			System.out.println("PlacementHistory 생성 도중 예외 발생.");
+			e.printStackTrace();
+		}
 		return history;
 	}
 	
