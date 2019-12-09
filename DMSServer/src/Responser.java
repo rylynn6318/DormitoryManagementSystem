@@ -347,11 +347,13 @@ public class Responser
 		catch(Exception e)
 		{
 			//계정 조회 중 오류 발생.
+			System.out.println("계정 조회 중 오류 발생");
 			Tuple<String, ArrayList<Application>> failMessage = new Tuple<String, ArrayList<Application>>("해당 계정이 존재하지 않습니다.", null);
 			eventReply(socketHelper, failMessage);
 			return;
 		}
 		
+		//신청 목록 조회
 		ArrayList<Application> applicationResult;
 		try
 		{
@@ -360,15 +362,13 @@ public class Responser
 		catch(Exception e)
 		{
 			//신청 목록 조회 중 오류 발생
+			System.out.println("신청 목록 조회 중 오류 발생");
 			Tuple<String, ArrayList<Application>> failMessage = new Tuple<String, ArrayList<Application>>("신청 목록 조회 중 오류가 발생하였습니다.", null);
 			eventReply(socketHelper, failMessage);
 			return;
 		}
 		
-		//조회 성공한 신청 목록 전송
-		Tuple<String, ArrayList<Application>> appList = new Tuple<String, ArrayList<Application>>(null, applicationResult);
-		eventReply(socketHelper, appList);
-		
+		//선발결과 조회. 합격여부 Y인것만 가져와라
 		ArrayList<Application> passedApplicationResult = null;
 		try
 		{
@@ -377,12 +377,14 @@ public class Responser
 		catch(Exception e)
 		{
 			//선발결과 조회 중 오류 발생
+			System.out.println("선발결과 조회 중 오류 발생");
 			Tuple<String, ArrayList<Application>> failMessage = new Tuple<String, ArrayList<Application>>("선발 결과 조회 중 오류가 발생하였습니다.", null);
 			eventReply(socketHelper, failMessage);
 		}
 		
-		//조회 성공한 선발결과 목록 전송
-		Tuple<String, ArrayList<Application>> passList = new Tuple<String, ArrayList<Application>>(null, passedApplicationResult);
+		//신청 목록, 선발 결과 전송
+		System.out.println("신청 목록, 선발 결과 전송");
+		Tuple<ArrayList<Application>, ArrayList<Application>> passList = new Tuple<ArrayList<Application>, ArrayList<Application>>(applicationResult, passedApplicationResult);
 		eventReply(socketHelper, passList);
 	}
 	

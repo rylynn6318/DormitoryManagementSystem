@@ -340,35 +340,40 @@ public class ApplicationParser {
 		return false;
 	}
 	
+	//이거만든놈 누구야 -명근 (2019-12-09 오후 6:43 고침)
 	public static ArrayList<Application> getApplicationResult(String id) throws ClassNotFoundException, SQLException
 	{
-		ArrayList<Application> dorm = new ArrayList<>();
-		String sql = "SELECT 지망, 생활관명, 몇일식 FROM" + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ id + "생활관정보_학기 = " +CurrentSemesterParser.getCurrentSemester();
+		ArrayList<Application> application = new ArrayList<>();
+		String sql = "SELECT 지망, 생활관정보_생활관명, 몇일식 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = '"+ id + "' AND 생활관정보_학기 = '" +CurrentSemesterParser.getCurrentSemester() + "'";
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
-		
 		while(rs.next())
 		{
-			dorm.add(new Application(rs.getInt("지망"), rs.getString("생활관명"), rs.getInt("몇일식")));
+			application.add(new Application(rs.getInt("지망"), rs.getString("생활관정보_생활관명"), rs.getInt("몇일식")));
 		}
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
-		return dorm;
+		return application;
 	}
 	
+	//이것도 누구야 대가리박아 -명근 (2019-12-09 오후 6:43 WHERE 이후 AND연산자 빠짐. FORM이후 띄워쓰기안됨.)
+	//그리고 합격여부 Y인것만 가져와야지, 왜 그냥 가져오냐. 대가리박아라 진짜
 	public static ArrayList<Application> getPassedApplication(String id) throws SQLException, ClassNotFoundException
 	{
-		ArrayList<Application> applications = new ArrayList<>();
-		String sql = "SELECT 지망, 생활관명, 몇일식, 합격여부, 납부여부 FROM" + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ id + "생활관정보_학기 = " +CurrentSemesterParser.getCurrentSemester();
+		String sql = "SELECT 지망, 생활관정보_생활관명, 몇일식, 합격여부, 납부여부 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = '"+ id + "' AND 생활관정보_학기 = '" +CurrentSemesterParser.getCurrentSemester() + "' AND 합격여부 = 'Y'";
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
 		
+		ArrayList<Application> applications = new ArrayList<>();
 		while(rs.next())
 		{
-			applications.add(new Application(rs.getInt("지망"), rs.getString("생활관명"), rs.getInt("몇일식"), Bool.get(rs.getString("합격여부")), Bool.get(rs.getString("납부여부"))));
-	
+			Application app = new Application(rs.getInt("지망"), rs.getString("생활관정보_생활관명"), rs.getInt("몇일식"), Bool.get(rs.getString("합격여부")), Bool.get(rs.getString("납부여부")));
+			applications.add(app);
+			System.out.println(app.getChoice() + ", " + app.getDormitoryName() + ", " + app.getMealType() + ", " + app.isPassed() + ", " + app.isPaid());
 		}
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);

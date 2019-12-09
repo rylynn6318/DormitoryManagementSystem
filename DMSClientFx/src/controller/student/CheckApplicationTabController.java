@@ -1,5 +1,6 @@
 package controller.student;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -124,14 +125,25 @@ public class CheckApplicationTabController extends InnerPageController
     {
     	//여기는 뭐 검사할 필요없이 바로 서버로 요청날림.
     	//서버로 요청날리고 받아온 후 refreshApplicationTable 호출
-    	Tuple<ArrayList<Application>, ArrayList<Application>> resultTuple = Responser.student_CheckApplicationPage_onCheck();
+    	Serializable result = Responser.student_CheckApplicationPage_onCheck();
     	
     	//서버랑 통신이 됬는가?
-        if(resultTuple == null)
+        if(result == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
         	return;
         }
+        
+        Tuple<String, ArrayList<Application>> checkTuple = (Tuple<String, ArrayList<Application>>) result;
+        if(checkTuple.obj2 == null)
+        {
+        	//실패한경우 메시지 표시
+        	System.out.println(checkTuple.obj1);
+        	return;
+        }
+        
+        //성공적으로 받은거 같으면 테이블1, 테이블2로 변환
+        Tuple<ArrayList<Application>, ArrayList<Application>> resultTuple = (Tuple<ArrayList<Application>, ArrayList<Application>>) result;
         
         //서버에서 받아온 데이터
         ArrayList<Application> receivedApplicationList1 = resultTuple.obj1;		//생활관 입사지원 내역(지망, 생활관명, 식사구분만 받아옴)

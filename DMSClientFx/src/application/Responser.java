@@ -122,7 +122,7 @@ public class Responser
 	}
 	
 	//학생 - 생활관 신청 조회 - 조회 버튼 클릭 시 (2019-12-08 명근 수정)
-	public static Tuple<ArrayList<Application>, ArrayList<Application>> student_CheckApplicationPage_onCheck()
+	public static Serializable student_CheckApplicationPage_onCheck()
 	{
 		//1. 서버에게 생활관 신청 조회 요청을 한다. 
 		//(2. 서버는 신청 테이블에서 해당 학번이 이번 학기에 신청한 내역 중 지망, 생활관명, 식사구분을 조회.
@@ -131,29 +131,10 @@ public class Responser
 		//	  '생활관 선발 결과' 테이블뷰에 표시할 것임)
 		//(4. 조회된 내역을 객체화, 배열에 담아 클라이언트에게 반환한다.)
 		//5. 서버로부터 받은 내역을 각각 두개의 테이블에 표시한다.
-		
 		Protocol protocol = eventProtocolBuilder(Code1.Page.신청조회, Code2.Event.CHECK, UserInfo.getInstance().account);
-		Tuple<String, ArrayList<Application>> result = (Tuple<String, ArrayList<Application>>) sendAndReceive(protocol);
-		if(result.obj2 == null)
-		{
-			//첫번째 수신 결과 오류
-			//obj1에있는 오류문자 넘겨주도록 나중에 고쳐라 TODO
-			return null;
-		}
-		else
-		{
-			Tuple<String, ArrayList<Application>> result2 = (Tuple<String, ArrayList<Application>>) sendAndReceive(protocol);
-			if(result2.obj2 == null)
-			{
-				//두번째 수신 결과 오류
-				//obj1에있는 오류문자 넘겨주도록 나중에 고쳐라 TODO
-				return null;
-			}
-			else
-			{
-				return new Tuple<ArrayList<Application>, ArrayList<Application>>(result.obj2, result2.obj2);
-			}
-		}
+		Serializable result =  sendAndReceive(protocol);
+		
+		return result;
 	}
 	
 	//------------------------------------------------------------------------
