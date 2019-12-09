@@ -705,18 +705,28 @@ public class Responser
 	public static void admin_scheduleManagePage_onCheck(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴 할일 코드 테이블에서 목록을 객체로 만들어 배열로 가져온다. (ID, 할일코드, 시작일, 종료일, 비고)
-		ArrayList<Schedule> schedule = ScheduleParser.getAllSchedule();
-		//2. 스케쥴 테이블에서 목록을 객체로 만들어 배열로 가져온다. (코드, 이름)
-			
-						//해야함
+		ArrayList<Schedule> scheduleList = null;
+		try
+		{
+			scheduleList = ScheduleParser.getAllSchedule();
+		}
+		catch(Exception e)
+		{
+			System.out.println("스케쥴 조회 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 조회에 실패하였습니다."));
+			return;
+		}
+		
+		if(scheduleList == null)
+		{
+			System.out.println("스케쥴 조회 목록이 비어있음");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "스케쥴 조회 목록이 비어있습니다."));
+			return;
+		}
 		
 		//3. 스케쥴 객체 배열을 클라이언트로 전송한다.
-		socketHelper.write(new Protocol.Builder(
-				ProtocolType.EVENT, 
-				Direction.TO_CLIENT, 
-				Code1.NULL, 
-				Code2.NULL
-				).body(ProtocolHelper.serialization(schedule)).build());
+		eventReply(socketHelper, new Tuple<Bool, ArrayList<Schedule>>(Bool.TRUE, scheduleList));
+		
 		//(4. 클라이언트는 받아서 tableView에 표시한다. 클라이언트에는 ID, 할일이름, 시작일, 종료일, 비고가 표시된다)
 	}
 	

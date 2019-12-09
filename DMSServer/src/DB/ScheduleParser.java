@@ -101,6 +101,7 @@ public class ScheduleParser
 	{
 		ArrayList<Schedule> schedule = new ArrayList<Schedule>();
 		String getAllScheduleSql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴";
+		System.out.println(getAllScheduleSql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(getAllScheduleSql);
 		ResultSet rsSchedule = state.executeQuery();

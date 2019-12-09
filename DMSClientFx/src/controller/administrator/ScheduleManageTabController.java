@@ -162,7 +162,7 @@ public class ScheduleManageTabController extends InnerPageController
     {
     	//네트워킹해서 스케쥴 테이블 쫙 긁어와야됨.
     	//긁어올때 스케쥴 할일 코드 테이블도 긁어와야됨.
-    	ArrayList<Schedule> resultList = Responser.admin_scheduleManagePage_onCheck();
+    	Serializable result = Responser.admin_scheduleManagePage_onCheck();
     	
     	//서버랑 통신이 됬는가?
         if(scheduleCodeList == null)
@@ -171,11 +171,24 @@ public class ScheduleManageTabController extends InnerPageController
         	return;
         }
         
+        Tuple<Bool, String> checkTuple = (Tuple<Bool, String>) result;
+        
+        //성공했는가?
+        if(checkTuple.obj1 == Bool.FALSE)
+        {
+        	//오류메시지 원인 표시
+        	IOHandler.getInstance().showAlert(checkTuple.obj2);
+        	return;
+        }
+        
+	    Tuple<Bool, ArrayList<Schedule>> resultTuple = (Tuple<Bool, ArrayList<Schedule>>) result;
+	    ArrayList<Schedule> scheduleList = resultTuple.obj2;
+        
         if(scheduleCodeList != null)
         {
         	ObservableList<ScheduleViewModel> scheduleViewModels = FXCollections.observableArrayList();
         	
-        	for(Schedule sc : resultList)
+        	for(Schedule sc : scheduleList)
         	{
         		scheduleViewModels.add(scheduleToViewModel(sc, scheduleCodeList));
         	}
