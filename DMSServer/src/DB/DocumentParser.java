@@ -1,6 +1,7 @@
 package DB;
 
 import java.sql.Connection;
+
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,6 +22,40 @@ public class DocumentParser
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(getDocuments);
 		ResultSet documents = preparedStatement.executeQuery();
+		
+		ObservableList<Document> documentList = FXCollections.observableArrayList();
+
+        while (documents.next()) 
+        {
+            java.util.Date submissionDate = new java.util.Date(documents.getDate("제출일").getTime());
+            java.util.Date diagnosisDate = new java.util.Date(documents.getDate("진단일").getTime());
+            Document temp = new Document(documents.getString("학번"), Code1.FileType.get((byte)documents.getInt("서류유형")), submissionDate, diagnosisDate, documents.getString("서류저장경로"), Bool.get( documents.getString("유효여부")));
+            documentList.add(temp);
+        }
+
+        preparedStatement.close();
+        DBHandler.INSTANCE.returnConnection(connection);
+        
+        return documentList;
+	}
+	
+	public static ObservableList<Document> getAllDocuments(int semester) throws SQLException
+	{
+//		java.util.Date start = new java.util.Date();
+//		java.util.Date end = new java.util.Date();
+//		String sql1 = "SELECT 시작일 FROM"+ DBHandler.DB_NAME + ".스케쥴 WHERE 비고="+semester;
+//		String sql2 = "SELECT 종료일 FROM"+ DBHandler.DB_NAME + ".스케쥴 WHERE 비고="+semester;						
+//		PreparedStatement state1 = connection.prepareStatement(sql1);
+//		ResultSet rs1 = state1.executeQuery();//		
+//		PreparedStatement state2 = connection.prepareStatement(sql2);
+//		ResultSet rs2 = state2.executeQuery();//		
+//		start = rs1.getDate("시작일");
+//		end = rs2.getDate("종료일");		
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		String getDocuments = "SELECT * FROM " + DBHandler.DB_NAME + ".서류 WHERE 비고 = "+semester;
+		PreparedStatement preparedStatement = connection.prepareStatement(getDocuments);
+		ResultSet documents = preparedStatement.executeQuery();
+		
 		
 		ObservableList<Document> documentList = FXCollections.observableArrayList();
 
