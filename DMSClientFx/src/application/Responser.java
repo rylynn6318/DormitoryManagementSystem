@@ -247,7 +247,7 @@ public class Responser
 	}
 	
 	//학생 - 서류 조회 - 조회 버튼 클릭 시 (2019-12-08 명근 수정)
-	public static Tuple<Bool, Document> student_checkDocumentPage_onCheck(Code1.FileType fileType)
+	public static Serializable student_checkDocumentPage_onCheck(Code1.FileType fileType)
 	{
 		//1. 서버에게 서류 조회 요청을 한다.(서류유형을 보내서, 어떤 서류를 조회하려는지 알려준다)
 		//(2. 서버는 서류 테이블에서 해당 학번이 이번 학기에 제출한 내역 중 서류유형이 일치하는 것을 찾는다. -> 있으면 진행, 없으면 없다고 알려줌)
@@ -262,7 +262,7 @@ public class Responser
 		
 		//통신하고 받았을 때 Bool이 True이면 정상적인 Document, False이면 서류 내역이 존재하지 않음.
 		//객체가 null이면 통신실패다. 즉, Bool=True -> 성공, Bool=False -> 내역없음, null=통신실패
-		Tuple<Bool, Document> result = (Tuple<Bool, Document>) sendAndReceive(protocol);
+		Serializable result = sendAndReceive(protocol);
 		
 		return result;
 	}

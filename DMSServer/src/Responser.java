@@ -656,17 +656,7 @@ public class Responser
 		//2. 서류 테이블에서 해당 학번이 이번 학기에 제출한 내역 중 서류유형이 일치하는 것을 찾는다. -> 있으면 진행, 없으면 없다고 알려줌
 		//3. 서류 테이블에서 서류유형, 제출일시, 진단일시, 파일경로를 알아내어 객체화한다.
 		//4. 클라이언트에게 전송한다.
-		try {
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(document)).build());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		eventReply(socketHelper, new Tuple<Bool, Document>(Bool.TRUE, document));
 	}
 	
 	//학생 - 서류 조회 - 다운로드 버튼 클릭 시(파일 다운로드)
@@ -686,7 +676,20 @@ public class Responser
 	public static void admin_scheduleManagePage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
 		//1. 스케쥴 할일 코드 테이블에서 '코드', '이름' 을 객체로 만들어 배열로 가져온다.
-		ArrayList<ScheduleCode> s = ScheduleParser.getScheduleCode();
+		ArrayList<ScheduleCode> scheduleList = null;
+		try
+		{
+			scheduleList = ScheduleParser.getScheduleCode();			
+		}
+		catch(Exception e)
+		{
+			
+		}
+		
+		if(scheduleList == null)
+		{
+			return;
+		}
 		//2. 객체 배열을 직렬화하여 클라이언트로 전송한다.
 		//(3. 클라이언트는 등록 gridView 안의 유형 combobox에 값을 채워준다.)
 	}
