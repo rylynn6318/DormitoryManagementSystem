@@ -1227,7 +1227,7 @@ public class Responser
 			return;
 		}
 		
-		eventReply(socketHelper, new Tuple<Bool, ArrayList<Application>>(Bool.TRUE, apps));
+		eventReply(socketHelper, apps);
 		//3. 직렬화해서 클라이언트에 전송한다.
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 	}
