@@ -3,18 +3,19 @@ package controller.student;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import application.IOHandler;
 import application.Responser;
 import controller.InnerPageController;
-import enums.Bool;
+import enums.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import models.Tuple;
+import models.*;
 
 public class CheckBillTabController extends InnerPageController 
 {
@@ -75,7 +76,7 @@ public class CheckBillTabController extends InnerPageController
 	private void checkBill()
 	{
 		//여기는 뭐 검사할 필요없이 바로 서버로 요청날림.
-		String result = Responser.student_CheckBillPage_onCheck();
+		Serializable result = Responser.student_CheckBillPage_onCheck();
 		
 		if(result == null)
 		{
@@ -83,27 +84,36 @@ public class CheckBillTabController extends InnerPageController
 			return;
 		}
 		
-		saveToDesktop(result);
+		Tuple<Bool, String> checkTuple = (Tuple<Bool, String>) result;
+		if(checkTuple.obj1 == Bool.FALSE)
+		{
+			//조회 실패
+			IOHandler.getInstance().showAlert(checkTuple.obj2);
+			return;
+		}
+		
+		Tuple<Bool, Bill> resultTuple = (Tuple<Bool, Bill>) result;
+		
+		saveToDesktop(resultTuple.obj2);
 		IOHandler.getInstance().showAlert("바탕화면에 고지서 파일이 저장되었습니다.");
 	}
 	
-	private void saveToDesktop(String str)
+	private void saveToDesktop(Bill bill)
 	{
 		try
 		{
 	        // BufferedWriter 와 FileWriter를 조합하여 사용 (속도 향상)
 			String userPath = System.getProperty("user.home");
 			String fileSavePath = userPath + "\\Desktop\\" + "고지서.txt";
-	        BufferedWriter fw = new BufferedWriter(new FileWriter(fileSavePath, true));
+	        BufferedWriter fw = new BufferedWriter(new FileWriter(fileSavePath, false));
 	         
 	        // 파일안에 문자열 쓰기
-	        fw.write(str);
+	        String content = "은행 : " + bill.bankName + "\n계좌번호 : " + bill.accountNum + "\n금액 : " + bill.cost + "원" ;
+	        fw.write(content);
 	        fw.flush();
 
 	        // 객체 닫기
 	        fw.close();
-	         
-	         
 	    }
 		catch(Exception e)
 		{

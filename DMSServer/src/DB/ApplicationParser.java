@@ -324,7 +324,8 @@ public class ApplicationParser {
 	
 	public static Boolean isExistPassState(String id) throws SQLException, ClassNotFoundException
 	{
-		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번=" + id + "and 합격여부 = 'Y' and 생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
+		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = '" + id + "' and 합격여부 = 'Y' AND 생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
@@ -382,12 +383,15 @@ public class ApplicationParser {
 	
 	public static Application getLastPassedApplication(String id) throws SQLException, ClassNotFoundException
 	{
-		String sql = "SELECT 최종합격여부, 납부여부, 몇일식, 생활관명 FROM" + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ id + "생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
+		String sql = "SELECT 최종결과, 납부여부, 몇일식, 생활관정보_생활관명 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = '"+ id + "' AND 생활관정보_학기 = '" + CurrentSemesterParser.getCurrentSemester() + "'";
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
-		rs.next();
-		Application application = new Application(Bool.get(rs.getString("최종합격여부")), Bool.get(rs.getString("납부여부")), rs.getInt("몇일식"), rs.getString("생활관명"));
+		
+		Application application = null;
+		if(rs.next())
+			application = new Application(Bool.get(rs.getString("최종결과")), Bool.get(rs.getString("납부여부")), rs.getInt("몇일식"), rs.getString("생활관정보_생활관명"));
 		
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
@@ -397,6 +401,7 @@ public class ApplicationParser {
 	public static Boolean isExistLastPass(String id) throws SQLException, ClassNotFoundException
 	{
 		String sql = "SELECT 최종합격여부" + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ id + "생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();

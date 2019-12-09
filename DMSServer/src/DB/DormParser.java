@@ -108,21 +108,43 @@ public class DormParser {
 		return dorm;
 	}
 	
+	//조보아씨, 한번 와보세요. 아래가 수정전인데, 
+	//SELECT 몇일식, 생활관명 FROM Prototype.신청 WHERE 학번=20161185and 합격여부 = 'Y' and 생활관정보_학기 = 201903
+	//sql 띄워쓰기 안해요? sql1도 그렇고 sql2도 안돼있네... 코드 다고침(명근, 2019-12-09 19:38 수정함)
 	public static int getCheckBillCost(String id) throws ClassNotFoundException, SQLException
 	{
-		int cost;
-		String sql = "SELECT 몇일식, 생활관명 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번=" + id + "and 합격여부 = 'Y' and 생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
+		int curSemester = CurrentSemesterParser.getCurrentSemester();
+		String sql1 = "SELECT 몇일식, 생활관정보_생활관명 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = '" + id + 
+				"' AND 합격여부 = 'Y' and 생활관정보_학기 = '" + curSemester + "'";
+		System.out.println(sql1);
 		Connection connection = DBHandler.INSTANCE.getConnection();
-		PreparedStatement state = connection.prepareStatement(sql);
-		ResultSet rs = state.executeQuery();
-		rs.next();
-		String sql1 = "SELECT "+rs.getInt("몇일식")+"일식, 기숙사비 FROM " + DBHandler.DB_NAME + ".생활관정보 WHERE 생활관명 = "+ rs.getString("생활관명") + "and 학기 = " + CurrentSemesterParser.getCurrentSemester();
-		PreparedStatement state1 = connection.prepareStatement(sql1);
-		ResultSet rs1 = state1.executeQuery();
+		PreparedStatement state = connection.prepareStatement(sql1);
+		ResultSet rs1 = state.executeQuery();
 		rs1.next();
-		cost = rs1.getInt(rs.getInt("몇일식")+"일식") + rs1.getInt("기숙사비");
 		
-		return cost;
+		int mealType = rs1.getInt("몇일식");
+		String mealTypeColumn = String.valueOf(mealType)+"일식_식비"; 
+		String dormName = rs1.getString("생활관정보_생활관명");
+		
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		
+		String sql2 = "SELECT `"+ mealTypeColumn +"`, `기숙사비` FROM " + DBHandler.DB_NAME + ".생활관정보 WHERE 생활관명 = '" +
+				dormName + "' AND 학기 = '" + curSemester + "'";
+		System.out.println(sql2);
+		PreparedStatement state1 = connection.prepareStatement(sql2);
+		ResultSet rs2 = state1.executeQuery();
+		rs2.next();
+		
+		int mealCost = rs2.getInt(mealTypeColumn);
+		System.out.println("식사비 : " + mealCost);
+		int boardingFee = rs2.getInt("기숙사비");
+		System.out.println("기숙사비 : " + boardingFee);
+		
+		state1.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		
+		return mealCost + boardingFee;
 	}
 	
 	public static int getMaxCapacity(String dormitoryName) throws SQLException, ClassNotFoundException
