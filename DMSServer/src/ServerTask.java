@@ -322,7 +322,7 @@ public class ServerTask implements Runnable {
                         break;
                     case 입사선발자관리:
                         switch ((Code2.Event) protocol.code2) {
-                            case REFRESH:
+                            case SELECTION:
                                 try {
                                     Responser.admin_selecteesManagePage_onSelection(protocol, socketHelper);
                                 } catch (Exception e) {
