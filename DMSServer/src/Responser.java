@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -79,6 +80,33 @@ public class Responser
 //		Networking(rs);
 //	}
 	
+	//----------------------------------유틸리티---------------------------------------------------
+	
+	//클라이언트 이벤트에 대한 회신
+	private static void eventReply(SocketHelper socketHelper, Serializable data)
+	{
+		try
+		{
+			socketHelper.write(new Protocol.Builder(
+					ProtocolType.EVENT, 
+					Direction.TO_CLIENT, 
+					null, 
+					null
+					).body(ProtocolHelper.serialization(data)).build());
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return;
+	}
+	
+	private static Tuple<Bool, String> createMessage(Bool isSucceed, String msg)
+	{
+		return new Tuple<Bool, String>(isSucceed, msg);
+	}
+	
+	//------------------------------------------------------------------------------------------------
+	
 	//학생 - 생활관 입사 신청 - 들어왔을 때
 	public static void student_submitApplicationPage_onEnter(Protocol protocol, SocketHelper socketHelper) throws Exception
 	{
@@ -87,43 +115,55 @@ public class Responser
 		System.out.println("스케쥴 체크됨");
 		if(!isAdmissible)
 		{
-			//이렇게 튜플로 보내주는 이유는, 아래에서 스케쥴 체크에서 성공했을때 튜플로 보내기 때문임.
+			//스케쥴 때문에 진입 불가한 경우
 			Tuple<String, ArrayList<Dormitory>> failMessage = new Tuple<String, ArrayList<Dormitory>>("현재 생활관 입사 신청 기간이 아닙니다.", null);
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(failMessage)).build());
+			eventReply(socketHelper, failMessage);
 			return;
 		}
 		
 		//2. 받은 요청의 헤더에서 학번을 알아낸다.
 		Account account = (Account) ProtocolHelper.deserialization(protocol.getBody());
+		System.out.println("전달받은 학번 : " + account.accountId);
 		
 		//3. 학생테이블에서 학번으로 조회하여 성별을 알아낸다.
 		Gender gender = StudentParser.getGender(account.accountId);
+		if(gender == null)
+		{
+			//학생이 조회되지 않은 경우
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당 학생이 조회되지 않았습니다. 관리자에게 문의하세요."));
+			return ;
+		}
 		System.out.println("성별 불러옴 : " + gender.toString() );
 		
 		//4. 생활관 테이블에서 이번 학기에 해당하고, 성별에 해당하는 기숙사 정보 목록을 가져온다.
 		//	 가져와야할 정보는 생활관 테이블의 생활관명, 기간구분(없으면말고), 식사구분, 5일식 식비, 7일식 식비, 관리비,
-		int semester;
-		semester = CurrentSemesterParser.getCurrentSemester();											//나중에 이런 코드 만들어서 쓰게해야됨.
+		int semester = CurrentSemesterParser.getCurrentSemester();
+		if(semester == 0)
+		{
+			//현재 학기 조회 실패
+			eventReply(socketHelper, createMessage(Bool.FALSE, "현재 학기 조회 실패. 관리자에게 문의하세요."));
+		}
+		
 		ArrayList<Dormitory> dormitoryList = DormParser.getDormitoryList(semester, gender);
+		if(dormitoryList == null)
+		{
+			//기숙사 목록 조회 실패
+			eventReply(socketHelper, createMessage(Bool.FALSE, "기숙사 목록 조회 실패. 관리자에게 문의하세요."));
+		}
 		
 		//5. 스케쥴 테이블에서 비고(안내사항)를 가져온다.
 		String description = ScheduleParser.getDescription(Code1.Page.입사신청);
+		if(description == null)
+		{
+			//기숙사 목록 조회 실패
+			eventReply(socketHelper, createMessage(Bool.FALSE, "안내사항 조회 실패. 관리자에게 문의하세요."));
+		}
 		
 		//6. 해당 정보를 객체화, 배열로 만들어 클라이언트에게 전송한다.
 		Tuple<String, ArrayList<Dormitory>> resultTuple = new Tuple(description, dormitoryList);
 		
 		//전송한다.
-		socketHelper.write(new Protocol.Builder(
-				ProtocolType.EVENT, 
-				Direction.TO_CLIENT, 
-				Code1.NULL, 
-				Code2.NULL
-				).body(ProtocolHelper.serialization(resultTuple)).build());
+		eventReply(socketHelper, resultTuple);
 	}
 	
 	//학생 - 생활관 입사 신청 - 등록 버튼 클릭 시
