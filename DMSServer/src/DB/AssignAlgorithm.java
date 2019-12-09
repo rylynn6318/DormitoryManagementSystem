@@ -114,7 +114,6 @@ public class AssignAlgorithm
 						{
 							O1[j].setRoomNumber(rs.getString("호"));
 							O1[j].setSemesterCode(rs.getInt("학기"));
-							System.out.println(j);
 						}
 					}
 				}
@@ -189,7 +188,6 @@ public class AssignAlgorithm
 						{
 							P3[j].setRoomNumber(rs.getString("호"));
 							P3[j].setSemesterCode(rs.getInt("학기"));
-							System.out.println(j);
 						}
 					}
 				}
@@ -255,7 +253,6 @@ public class AssignAlgorithm
 		while(rs1.next())
 		{
 			arr.add(rs1.getString("학생_학번"));
-			System.out.println(rs1.getString("학생_학번"));
 			switch (rs1.getString("호실정보_생활관명"))
 			{
 			case "오름1" :
@@ -369,8 +366,6 @@ public class AssignAlgorithm
 		{
 			if(arr.contains(rs2.getString("학번")) != true)			
 			{
-				System.out.println(rs2.getString("학번"));
-				System.out.println(arr.contains(rs2.getString("학번")));
 			switch (rs2.getString("생활관정보_생활관명"))
 			{
 			case "오름1" :
