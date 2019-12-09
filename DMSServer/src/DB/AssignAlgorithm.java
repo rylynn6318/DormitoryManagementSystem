@@ -17,7 +17,7 @@ public class AssignAlgorithm
 	
 	public static void passUpdate() throws SQLException, ClassNotFoundException
 	{	
-		String sql ="SELECT `ID`, `납부여부`, `합격여부`, `최종결과` FROM " + DBHandler.DB_NAME + ".신청";
+		String sql ="SELECT `학번`, `납부여부`, `합격여부`, `최종결과` FROM " + DBHandler.DB_NAME + ".신청";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet purs = state.executeQuery();				// rs 는 지금 id 납부여부 합격여부가 최종결과가 들어있다 신청테이블의
@@ -26,10 +26,10 @@ public class AssignAlgorithm
 		while(purs.next())
 		{
 			boolean document = false; // 유효여부, 진단일, 서류유형이 적합하면 document = true
-			String sql1 = "SELECT `확인여부` FROM " + DBHandler.DB_NAME + ".서류 WHERE `서류유형` = '1' and `유효여부` = 'Y' ' and `학생_ID` = '" + purs.getString("ID")+"'";
+			String sql1 = "SELECT `확인여부` FROM " + DBHandler.DB_NAME + ".서류 WHERE `서류유형` = '1' and `유효여부` = 'Y' ' and `학번` = '" + purs.getString("학번")+"'";
 			state1 = connection.prepareStatement(sql1);
 			ResultSet purs1 = state1.executeQuery();
-			String sql2 = "update Prototype.신청  set `최종결과` = 'Y' WHERE ID = '" + purs1.getString("학생_ID")+"'";   // 납부여부 Y 결핵 통과 Y 합격여부 Y면 해당 ID의 최종결과 Y 
+			String sql2 = "update Prototype.신청  set `최종결과` = 'Y' WHERE ID = '" + purs1.getString("학번")+"'";   // 납부여부 Y 결핵 통과 Y 합격여부 Y면 해당 ID의 최종결과 Y 
 			state2 = connection.prepareStatement(sql2);
 
 			if(purs1.next())
@@ -52,12 +52,12 @@ public class AssignAlgorithm
 	
 	public static void setCurrentSemester() throws ClassNotFoundException, SQLException
 	{
-		String sql = "SELECT `학기` FROM " + DBHandler.DB_NAME + ".신청 ORDER BY `학기` DESC LIMIT '1'"; //신청테이블에서 하나만 가져와서 그 학기를 봄
+		String sql = "SELECT `생활관정보_학기` FROM " + DBHandler.DB_NAME + ".신청 ORDER BY `생활관정보_학기` DESC LIMIT '1'"; //신청테이블에서 하나만 가져와서 그 학기를 봄
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery(sql);
 		rs.next();
-		currentSemester = rs.getInt("학기");
+		currentSemester = rs.getInt("생활관정보_학기");
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
@@ -272,7 +272,7 @@ public class AssignAlgorithm
 		
 		while(rs1.next())
 		{
-			switch (rs1.getString("생활관명"))
+			switch (rs1.getString("생활관정보_생활관명"))
 			{
 			case "오름1" :
 			{
@@ -377,12 +377,12 @@ public class AssignAlgorithm
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//신청자가 신청한 생활관을 가져와서 메모리에 있는 현재 배정된 내역과 대조하면서 방에 넣어줌
-		sql = "SELECT `ID`, `생활관명`, `지망` FROM " + DBHandler.DB_NAME + ".신청 WHERE `최종결과` = 'Y' order by `생활관명`, `코골이여부`";  // 최종결과가 Y인 신청에 대해 정보를 가져옴
+		sql = "SELECT `학번`, `생활관정보_생활관명`, `지망` FROM " + DBHandler.DB_NAME + ".신청 WHERE `최종결과` = 'Y' order by `생활관정보_생활관명`, `코골이여부`";  // 최종결과가 Y인 신청에 대해 정보를 가져옴
 		PreparedStatement state2 = connection.prepareStatement(sql);
 		ResultSet rs2 = state2.executeQuery(sql);		
 		while(rs2.next())
 		{
-			switch (rs2.getString("생활관명"))
+			switch (rs2.getString("생활관정보_생활관명"))
 			{
 			case "오름1" :
 			{
@@ -390,7 +390,7 @@ public class AssignAlgorithm
 				{
 					if(O1[i].getStudentId() == null)
 					{
-						O1[i].setStudentId(rs2.getString("ID"));
+						O1[i].setStudentId(rs2.getString("학번"));
 						if(rs2.getInt("지망") == 0)
 						{
 							O1[i].setCheckout(checkOutDate2);
@@ -409,7 +409,7 @@ public class AssignAlgorithm
 				{
 					if(O2[i].getStudentId() == null)
 					{
-						O2[i].setStudentId(rs2.getString("ID"));
+						O2[i].setStudentId(rs2.getString("학번"));
 						if(rs2.getInt("지망") == 0)
 						{
 							O2[i].setCheckout(checkOutDate2);
@@ -428,7 +428,7 @@ public class AssignAlgorithm
 				{
 					if(O3[i].getStudentId() == null)
 					{
-						O3[i].setStudentId(rs2.getString("ID"));
+						O3[i].setStudentId(rs2.getString("학번"));
 						if(rs2.getInt("지망") == 0)
 						{
 							O3[i].setCheckout(checkOutDate2);
@@ -447,20 +447,20 @@ public class AssignAlgorithm
 				{
 					if(P1[i].getStudentId() == null)
 					{
-						P1[i].setStudentId(rs2.getString("ID"));
-						if(P1[i].getSeat().equals("B") && P1[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣지마라는 뜻
+						P1[i].setStudentId(rs2.getString("학번"));
+						if(P1[i].getSeat().equals("B") && P1[i].getRoomNumber().compareTo("500호") > 0) // 탑층 자리이면 넣지마라는 뜻
 						{
 						}
 						else if(rs2.getInt("지망") == 0)
 						{
 							P1[i].setCheckout(checkOutDate2);
-							P1[i].setStudentId(rs2.getString("ID"));
+							P1[i].setStudentId(rs2.getString("학번"));
 
 						}
 						else 
 						{
 							P1[i].setCheckout(checkOutDate1);
-							P1[i].setStudentId(rs2.getString("ID"));
+							P1[i].setStudentId(rs2.getString("학번"));
 
 						}
 					}
@@ -473,19 +473,19 @@ public class AssignAlgorithm
 				{
 					if(P2[i].getStudentId() == null)
 					{
-						if(P2[i].getSeat().equals("B") && P2[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣지마라는 뜻
+						if(P2[i].getSeat().equals("B") && P2[i].getRoomNumber().compareTo("500호") > 0) // 탑층 자리이면 넣지마라는 뜻
 						{
 						}
 						else if(rs2.getInt("지망") == 0)
 						{
 							P2[i].setCheckout(checkOutDate2);
-							P2[i].setStudentId(rs2.getString("ID"));
+							P2[i].setStudentId(rs2.getString("학번"));
 
 						}
 						else 
 						{
 							P2[i].setCheckout(checkOutDate1);
-							P2[i].setStudentId(rs2.getString("ID"));
+							P2[i].setStudentId(rs2.getString("학번"));
 
 						}
 					}
@@ -498,19 +498,19 @@ public class AssignAlgorithm
 				{
 					if(P3[i].getStudentId() == null)
 					{
-						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣지마라는 뜻
+						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("600호") > 0) // 탑층 자리이면 넣지마라는 뜻
 						{
 						}
 						else if(rs2.getInt("지망") == 0)
 						{
 							P3[i].setCheckout(checkOutDate2);
-							P3[i].setStudentId(rs2.getString("ID"));
+							P3[i].setStudentId(rs2.getString("학번"));
 
 						}
 						else 
 						{
 							P3[i].setCheckout(checkOutDate1);
-							P3[i].setStudentId(rs2.getString("ID"));
+							P3[i].setStudentId(rs2.getString("학번"));
 
 						}
 					}
@@ -523,18 +523,18 @@ public class AssignAlgorithm
 				{
 					if(P4[i].getStudentId() == null)
 					{
-						if((P4[i].getSeat().equals("B") || P4[i].getSeat().equals("D"))&& P4[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣지마라는 뜻
+						if((P4[i].getSeat().equals("B") || P4[i].getSeat().equals("D"))&& P4[i].getRoomNumber().compareTo("600호") > 0) // 탑층 자리이면 넣지마라는 뜻
 						{
 						}
 						else if(rs2.getInt("지망") == 0)
 						{
 							P4[i].setCheckout(checkOutDate2);
-							P4[i].setStudentId(rs2.getString("ID"));
+							P4[i].setStudentId(rs2.getString("학번"));
 						}
 						else 
 						{
 							P4[i].setCheckout(checkOutDate1);
-							P4[i].setStudentId(rs2.getString("ID"));
+							P4[i].setStudentId(rs2.getString("학번"));
 
 						}
 					}
@@ -547,7 +547,7 @@ public class AssignAlgorithm
 				{
 					if(SN[i].getStudentId() == null)
 					{
-						SN[i].setStudentId(rs2.getString("ID"));
+						SN[i].setStudentId(rs2.getString("학번"));
 						if(rs2.getInt("지망") == 0)
 						{
 							SN[i].setCheckout(checkOutDate2);
@@ -566,7 +566,7 @@ public class AssignAlgorithm
 				{
 					if(SY[i].getStudentId() == null)
 					{
-						SY[i].setStudentId(rs2.getString("ID"));
+						SY[i].setStudentId(rs2.getString("학번"));
 						if(rs2.getInt("지망") == 0)
 						{
 							SY[i].setCheckout(checkOutDate2);
@@ -585,7 +585,7 @@ public class AssignAlgorithm
 				{
 					if(P1[i].getStudentId() == null)
 					{
-						P1[i].setStudentId(rs2.getString("ID"));
+						P1[i].setStudentId(rs2.getString("학번"));
 						if(P1[i].getSeat().equals("B") && P1[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣으라는 뜻
 						{
 							if(rs2.getInt("지망") == 0)
@@ -611,7 +611,7 @@ public class AssignAlgorithm
 				{
 					if(P2[i].getStudentId() == null)
 					{
-						P2[i].setStudentId(rs2.getString("ID"));
+						P2[i].setStudentId(rs2.getString("학번"));
 						if(P2[i].getSeat().equals("B") && P2[i].getRoomNumber().compareTo("500") > 0) // 탑층 자리이면 넣으라는 뜻
 						{
 							if(rs2.getInt("지망") == 0)
@@ -637,7 +637,7 @@ public class AssignAlgorithm
 				{
 					if(P3[i].getStudentId() == null)
 					{
-						P3[i].setStudentId(rs2.getString("ID"));
+						P3[i].setStudentId(rs2.getString("학번"));
 						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D")) && P2[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣으라는 뜻
 						{
 							if(rs2.getInt("지망") == 0)
@@ -663,7 +663,7 @@ public class AssignAlgorithm
 				{
 					if(P4[i].getStudentId() == null)
 					{
-						P4[i].setStudentId(rs2.getString("ID"));
+						P4[i].setStudentId(rs2.getString("학번"));
 						if((P4[i].getSeat().equals("B") || P4[i].getSeat().equals("D")) && P4[i].getRoomNumber().compareTo("600") > 0) // 탑층 자리이면 넣으라는 뜻
 						{
 							if(rs2.getInt("지망") == 0)
@@ -690,47 +690,47 @@ public class AssignAlgorithm
 		PreparedStatement state3 = connection.prepareStatement(sql);	
 		for(int i = 1; i < O1.length; i++)
 		{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O1[i].getStudentId() + "', '" + O1[i].getSeat()+ "', '"+O1[i].getCheckOut()+ "', '오름1', '" + O1[i].getSemesterCode() + "', '" + O1[i].getRoomNumber() +"')";
+			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학생_학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O1[i].getStudentId() + "', '" + O1[i].getSeat()+ "', '"+O1[i].getCheckOut()+ "', '오름1', '" + O1[i].getSemesterCode() + "', '" + O1[i].getRoomNumber() +"')";
 			state3.executeUpdate(sql);
 		}
 		for(int i = 1; i < O2.length; i++)
 		{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O2[i].getStudentId() + "', '" + O2[i].getSeat()+ "', '"+O2[i].getCheckOut()+ "', '오름2', '" + O2[i].getSemesterCode() + "', '" + O2[i].getRoomNumber() +"')";
+			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학생_학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O2[i].getStudentId() + "', '" + O2[i].getSeat()+ "', '"+O2[i].getCheckOut()+ "', '오름2', '" + O2[i].getSemesterCode() + "', '" + O2[i].getRoomNumber() +"')";
 			state3.executeUpdate(sql);
 		}
 		for(int i = 1; i < O3.length; i++)
 		{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O3[i].getStudentId() + "', '" + O3[i].getSeat()+ "', '"+O3[i].getCheckOut()+ "', '오름3', '" + O3[i].getSemesterCode() + "', '" + O3[i].getRoomNumber() +"')";
+			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학생_학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + O3[i].getStudentId() + "', '" + O3[i].getSeat()+ "', '"+O3[i].getCheckOut()+ "', '오름3', '" + O3[i].getSemesterCode() + "', '" + O3[i].getRoomNumber() +"')";
 			state3.executeUpdate(sql);
 		}
 		for(int i = 1; i < P1.length; i++)
 		{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P1[i].getStudentId() + "', '" + P1[i].getSeat()+ "', '"+P1[i].getCheckOut()+ "', '푸름1', '" + P1[i].getSemesterCode() + "', '" + P1[i].getRoomNumber() +"')";
+			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학생_학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P1[i].getStudentId() + "', '" + P1[i].getSeat()+ "', '"+P1[i].getCheckOut()+ "', '푸름1', '" + P1[i].getSemesterCode() + "', '" + P1[i].getRoomNumber() +"')";
 			state3.executeUpdate(sql);
 		}
 		for(int i = 1; i < P2.length; i++)
 		{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P2[i].getStudentId() + "', '" + P2[i].getSeat()+ "', '"+P2[i].getCheckOut()+ "', '푸름2', '" + P2[i].getSemesterCode() + "', '" + P2[i].getRoomNumber() +"')";
+			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학생_학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P2[i].getStudentId() + "', '" + P2[i].getSeat()+ "', '"+P2[i].getCheckOut()+ "', '푸름2', '" + P2[i].getSemesterCode() + "', '" + P2[i].getRoomNumber() +"')";
 			state3.executeUpdate(sql);
 		}
 		for(int i = 1; i < P3.length; i++)
 		{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P3[i].getStudentId() + "', '" + P3[i].getSeat()+ "', '"+P3[i].getCheckOut()+ "', '푸름3', '" + P3[i].getSemesterCode() + "', '" + P3[i].getRoomNumber() +"')";
+			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학생_학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P3[i].getStudentId() + "', '" + P3[i].getSeat()+ "', '"+P3[i].getCheckOut()+ "', '푸름3', '" + P3[i].getSemesterCode() + "', '" + P3[i].getRoomNumber() +"')";
 			state3.executeUpdate(sql);
 		}
 		for(int i = 1; i < P4.length; i++)
 		{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P4[i].getStudentId() + "', '" + P4[i].getSeat()+ "', '"+P4[i].getCheckOut()+ "', '푸름4', '" + P4[i].getSemesterCode() + "', '" + P4[i].getRoomNumber() +"')";
+			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학생_학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + P4[i].getStudentId() + "', '" + P4[i].getSeat()+ "', '"+P4[i].getCheckOut()+ "', '푸름4', '" + P4[i].getSemesterCode() + "', '" + P4[i].getRoomNumber() +"')";
 			state3.executeUpdate(sql);
 		}
 		for(int i = 1; i < SN.length; i++)
 		{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + SN[i].getStudentId() + "', '" + SN[i].getSeat()+ "', '"+SN[i].getCheckOut()+ "', '신평남', '" + SN[i].getSemesterCode() + "', '" + SN[i].getRoomNumber() +"')";
+			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학생_학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + SN[i].getStudentId() + "', '" + SN[i].getSeat()+ "', '"+SN[i].getCheckOut()+ "', '신평남', '" + SN[i].getSemesterCode() + "', '" + SN[i].getRoomNumber() +"')";
 			state3.executeUpdate(sql);
 		}
 		for(int i = 1; i < SY.length; i++)
 		{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + SY[i].getStudentId() + "', '" + SY[i].getSeat()+ "', '"+SY[i].getCheckOut()+ "', '신평여', '" + SY[i].getSemesterCode() + "', '" + SY[i].getRoomNumber() +"')";
+			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역' ('학생_학번', '자리', '퇴사예정일', '호실정보_생활관명', '호실정보_학기', '호실정보_호') VALUES ('" + SY[i].getStudentId() + "', '" + SY[i].getSeat()+ "', '"+SY[i].getCheckOut()+ "', '신평여', '" + SY[i].getSemesterCode() + "', '" + SY[i].getRoomNumber() +"')";
 			state3.executeUpdate(sql);
 		}
 		state.close();
