@@ -10,7 +10,6 @@ import batch.AssignRoomInfo;
 import batch.MakeAllRoomInfo;
 
 
-
 public class AssignAlgorithm 
 {
 	private static int currentSemester;
