@@ -71,9 +71,9 @@ public class CurrentSemesterParser
 			return 0;
 		}			
 	}
-	public static void main(String args[]) throws ClassNotFoundException, SQLException	//테스트용 Main문
-	{
-		int a = getCurrentSemester();
-		System.out.println(a);
-	}
+//	public static void main(String args[]) throws ClassNotFoundException, SQLException	//테스트용 Main문
+//	{
+//		int a = getCurrentSemester();
+//		System.out.println(a);
+//	}
 }
