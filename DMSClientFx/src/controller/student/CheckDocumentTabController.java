@@ -176,9 +176,7 @@ public class CheckDocumentTabController extends InnerPageController
     		IOHandler.getInstance().showAlert("파일경로가 비어있습니다.");
     		return;
     	}
-    	
-    	//TODO 네트워킹해서 파일 다운로드해라.
-    	//저장위치는 대충 바탕화면에 저장하셈.
+
 		Protocol result = null;
 		try {
 			result = Responser.student_checkDocumentPage_onDownlaod(selectedFileType);

@@ -346,30 +346,21 @@ public class DocumentManageTabController extends InnerPageController
     	}
     	
 		//전송
-		
+
 		//전송하기전에 파일이 존재하는지 체크
 		File file = new File(fileDirectory);
-		if(file.exists())
-		{
+		if (file.exists()) {
 			//TODO 여기서 파일전송해라!!!! 파일전송하는 프로토콜
-			Responser.admin_documentManagePage_onUpload();
-			
-			boolean isSucceed = true;
-			if(isSucceed)
-			{
-				IOHandler.getInstance().showAlert("서류가 제출되었습니다.");
-				//전송한 정보값 UI에서 비워준다.
-				clearUploadInfo();
-			}
-			else
-			{
-				//실패했으면
+			try {
+				if (Responser.admin_documentManagePage_onUpload(id, stringToFileType(documentType), file).bool) {
+					IOHandler.getInstance().showAlert("서류가 제출되었습니다.");
+					clearUploadInfo();
+				} else IOHandler.getInstance().showAlert("서버 측 오류로 파일 업로드에 실패했습니다.");
+			} catch (Exception e) {
 				IOHandler.getInstance().showAlert("파일 업로드에 실패했습니다.");
+				e.printStackTrace();
 			}
-			
-		}
-		else
-		{
+		} else {
 			IOHandler.getInstance().showAlert("파일이 존재하지 않습니다!");
 		}
 	
