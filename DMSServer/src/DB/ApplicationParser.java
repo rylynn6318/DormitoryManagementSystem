@@ -122,8 +122,8 @@ public class ApplicationParser {
 	
 	public static int getNumOfLeftSeat(String dormName, int semester) throws SQLException
 	{
-		String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명='" + dormName + "' AND 학기=" + semester + " AND 합격여부='Y')";
-		String getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명='" + dormName + "' AND 학기=" + semester;
+		String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM " + DBHandler.DB_NAME + ".신청 WHERE 생활관정보_생활관명='" + dormName + "' AND 생활관정보_학기='" + semester + "' AND 합격여부='Y'";
+		String getCapacityQuery = "SELECT 수용인원 FROM " + DBHandler.DB_NAME + ".생활관정보 WHERE 생활관명='" + dormName + "' AND 학기='" + semester + "'";
 
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement passedState = connection.prepareStatement(getNumOfPassedAppsQuery);
@@ -134,6 +134,7 @@ public class ApplicationParser {
 			passed = passedState.executeQuery();
 		} catch (SQLException e) {
 			System.out.println("합격자 수 가져오는 SQL 실행 도중 에러 발생");
+			System.out.println(getNumOfPassedAppsQuery);
 			return 0;
 		}
 		ResultSet capacity;
@@ -141,6 +142,7 @@ public class ApplicationParser {
 			capacity = capacityState.executeQuery();
 		} catch (SQLException e) {
 			System.out.println("남은 자리 수 가져오는 SQL 실행 도중 에러 발생");
+			System.out.println(getCapacityQuery);
 			return 0;
 		}
 		
@@ -193,7 +195,7 @@ public class ApplicationParser {
 	{
 		TreeSet<Application> sortedApps = new TreeSet<Application>();
 		
-		String getUnsortedAppsQuery = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 생활관명='" + dormName + "' AND 지망=" + choice + "학기=201901 AND 합격여부='N'";
+		String getUnsortedAppsQuery = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 생활관정보_생활관명='" + dormName + "' AND 지망=" + choice + " AND 생활관정보_학기=201901 AND 합격여부='N'";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(getUnsortedAppsQuery);
 		ResultSet apps = preparedStatement.executeQuery();
@@ -204,7 +206,7 @@ public class ApplicationParser {
 			
 //			if(choice != 01)		//최소 지망일 때는 스킵하게 하고싶은데 어떤건 0지망이 제일 낮고 어떤건 1지망이 제일 낮아서 생각중임
 //			{
-				String havePassedApp = "SELECT COUNT(*) FROM (SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 합격여부='Y' AND 학기=" + temp.getSemesterCode();
+				String havePassedApp = "SELECT COUNT(*) FROM " + DBHandler.DB_NAME + ".신청 WHERE 합격여부='Y' AND 학기=" + temp.getSemesterCode();
 				PreparedStatement havePassedAppState = connection.prepareStatement(havePassedApp);
 				ResultSet numOfPassed = havePassedAppState.executeQuery();
 				numOfPassed.next();
