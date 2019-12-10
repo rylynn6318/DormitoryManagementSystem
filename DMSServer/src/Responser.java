@@ -1099,11 +1099,11 @@ public class Responser
 			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 삭제 신청을 읽는데 실패하였습니다."));
 			return;
 		}
-		
+		boolean success=false;
 		//DB에 삭제요청
 		try
 		{
-			DB.ApplicationParser.deleteApplication(receivedApp);
+			success= DB.ApplicationParser.deleteApplication(receivedApp);
 		}
 		catch(Exception e)
 		{
@@ -1111,9 +1111,17 @@ public class Responser
 			eventReply(socketHelper, createMessage(Bool.FALSE, "신청 삭제 도중 오류가 발생하였습니다."));
 			return;
 		}
+		if(success==false)
+		{
+			System.out.println("신청 삭제 도중 오류가 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당 신청이 없습니다."));
+			return;
+		}		
 		
-
-		eventReply(socketHelper, createMessage(Bool.TRUE, "신청 삭제에 성공하였습니다."));
+		else
+		{
+			eventReply(socketHelper, createMessage(Bool.TRUE, "신청 삭제에 성공하였습니다."));
+		}
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
