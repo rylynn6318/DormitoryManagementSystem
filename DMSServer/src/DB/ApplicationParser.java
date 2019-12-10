@@ -104,7 +104,7 @@ public class ApplicationParser {
 
 	public static int getSemester() throws SQLException 
 	{
-		String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 학기 = (SELECT max(학기) FROM " + DBHandler.DB_NAME + ".신청)";
+		String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 생활관정보_학기 = (SELECT max(학기) FROM " + DBHandler.DB_NAME + ".신청)";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
@@ -197,26 +197,57 @@ public class ApplicationParser {
 	{
 		TreeSet<Application> sortedApps = new TreeSet<Application>();
 		
-		String getUnsortedAppsQuery = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 생활관정보_생활관명='" + dormName + "' AND 지망=" + choice + " AND 생활관정보_학기=201901 AND 합격여부='N'";
+		String getUnsortedAppsQuery = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 생활관정보_생활관명='" + dormName + "' AND 지망=" + choice + " AND 생활관정보_학기=" + semester +" AND 합격여부='N'";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(getUnsortedAppsQuery);
-		ResultSet apps = preparedStatement.executeQuery();
+		
+		ResultSet apps;
+		try {
+			apps = preparedStatement.executeQuery();
+		} catch (SQLException e) {
+			System.out.println("정렬되기 이전 신청 목록 가져오는데 실패함");
+			System.out.println(getUnsortedAppsQuery);
+			return null;
+		}
 		
 		while(apps.next())
 		{
-			Application temp = new Application(apps.getString("학번"), apps.getString("생활관정보_생활관명"), apps.getString("생활관정보_성별"), apps.getInt("생활관정보_학기"), apps.getInt("지망"), getFinalScore(apps.getString("학번"), apps.getInt("학기")));
+			System.out.println("학번 = " + apps.getString("학번") + ", 생활관명 = " + apps.getString("생활관정보_생활관명") + ", 성별 = " + apps.getString("생활관정보_성별") + ", 학기 = " + apps.getInt("생활관정보_학기")+ ", 지망 = " + apps.getInt("지망") + "인 신청 처리중");
+			Application temp;
+			try {
+				temp = new Application(apps.getString("학번"), apps.getString("생활관정보_생활관명"), apps.getString("생활관정보_성별"), apps.getInt("생활관정보_학기"), apps.getInt("지망"), getFinalScore(apps.getString("학번"), apps.getInt("생활관정보_학기")));
+			} catch (SQLException e1) {
+				System.out.println("가져온 resultSet의 정보로 객체 생성 도중 에러 발생");
+				return null;
+			}
 			
 //			if(choice != 01)		//최소 지망일 때는 스킵하게 하고싶은데 어떤건 0지망이 제일 낮고 어떤건 1지망이 제일 낮아서 생각중임
 //			{
-				String havePassedApp = "SELECT COUNT(*) FROM " + DBHandler.DB_NAME + ".신청 WHERE 합격여부='Y' AND 학기=" + temp.getSemesterCode();
+				String havePassedApp = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 합격여부='Y' AND 생활관정보_학기=" + temp.getSemesterCode() + " AND 학번='" + apps.getString("학번") + "'";
 				PreparedStatement havePassedAppState = connection.prepareStatement(havePassedApp);
-				ResultSet numOfPassed = havePassedAppState.executeQuery();
-				numOfPassed.next();
-				if(numOfPassed.getInt("COUNT(*)") == 0)
-					sortedApps.add(temp);
+				
+				ResultSet passedApp;
+				try {
+					passedApp = havePassedAppState.executeQuery();
+				} catch (SQLException e) {
+					System.out.println("동일한 학기에 이미 합격한 신청이 있는지 확인하는 도중 에러");
+					System.out.println(havePassedApp);
+					return null;
+				}
+				
+				try {
+					if(!passedApp.next())
+					{
+						sortedApps.add(temp);
+						System.out.println("더해짐");
+					}
+					else
+						System.out.println(passedApp.getString("학번") + "은 이미 " + passedApp.getInt("지망") + "지망의 신청이 합격한 상태입니다.");
+				} catch (SQLException e) {
+					System.out.println("COUNT(*) 값 가져오다가 실패");
+					return null;
+				}
 //			}
-			
-			
 		}
 
 		preparedStatement.close();
@@ -226,9 +257,16 @@ public class ApplicationParser {
 	}
 	
 //	여기서부터--------------------------------------------------------
-	public static double getFinalScore(String studentId, int semester) throws ClassNotFoundException, SQLException
+	public static double getFinalScore(String studentId, int semester)// throws ClassNotFoundException, SQLException
 	{	
-		TreeSet<Score> score = ApplicationParser.getScores(studentId, pastTwo(semester), pastOne(semester));
+		ArrayList<Score> score;
+		
+		try {
+			score = ApplicationParser.getScores(studentId, pastTwo(semester), pastOne(semester));
+		} catch (SQLException e) {
+			System.out.println("getScores에서 터짐");
+			return 0;
+		}
 
 		double sumOfTakenGrade = 0;
 		double sumOfTakenCredit = 0;
@@ -270,7 +308,14 @@ public class ApplicationParser {
 			}
 		}
 		
-		return (sumOfTakenGrade/sumOfTakenCredit + getDistanceScore(ApplicationParser.getZipCode(studentId)));
+		try {
+			return (sumOfTakenGrade/sumOfTakenCredit + getDistanceScore(ApplicationParser.getZipCode(studentId)));
+		} catch (SQLException e) {
+			System.out.println("결과 계산 도중 사망");
+			return 0;
+		}
+		
+		
 	}
 	
 	public static double getDistanceScore(String s)
@@ -332,17 +377,25 @@ public class ApplicationParser {
 	}
 //	여기까지--------------------------------------------------------는 getSortedApps를 위한 로직임
 	
-	public static TreeSet<Score> getScores(String studentId, int twoSemesterBefore, int lastSemester) throws SQLException
+	public static ArrayList<Score> getScores(String studentId, int twoSemesterBefore, int lastSemester) throws SQLException
 	{
-		String getScoresQuery = "SELECT 학점,등급 FROM " + DBHandler.DB_NAME + ".점수 WHERE 학번='" + studentId + "' AND 학기 BETWEEN '" + twoSemesterBefore + "' AND '" + lastSemester + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
+		String getScoresQuery = "SELECT 학점, 성적등급 FROM " + DBHandler.DB_NAME + ".성적 WHERE 학번='" + studentId + "' AND 학기 BETWEEN '" + twoSemesterBefore + "' AND '" + lastSemester + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(getScoresQuery);
-		ResultSet scores = preparedStatement.executeQuery();
+		
+		ResultSet scores;
+		try {
+			scores = preparedStatement.executeQuery();
+		} catch (SQLException e) {
+			System.out.println("점수 목록을 가져오다가 사망");
+			System.out.println(getScoresQuery);
+			return null;
+		}
 
-		TreeSet<Score> score = new TreeSet<Score>();
+		ArrayList<Score> score = new ArrayList<Score>();
 		while(scores.next())
 		{	
-			score.add(new Score(null, null, 0, scores.getInt("학점"), Grade.get(scores.getString("등급"))));
+			score.add(new Score(null, null, 0, scores.getInt("학점"), Grade.get(scores.getString("성적등급"))));
 		}
 
 		preparedStatement.close();
@@ -368,20 +421,26 @@ public class ApplicationParser {
 		return zipcode;
 	}
 
-	public static void updatePasser(Application temp) throws SQLException 
+	public static int updatePasser(Application temp) throws SQLException 
 	{
 		String setPassed = "UPDATE " + DBHandler.DB_NAME + ".신청 SET 합격여부='Y' WHERE 학번='" + temp.getStudentId() + "' AND 지망=" + temp.getChoice() + " AND 생활관정보_학기=" + temp.getSemesterCode();
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(setPassed);
+		
+		int changedCnt = 0;
 		try {
-			preparedStatement.executeUpdate();
+			changedCnt = preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println("합격여부를 Y로 만드는 UPDATE 실패");
-			return;
+			preparedStatement.close();
+			DBHandler.INSTANCE.returnConnection(connection);
+			return 0;
 		}
 		
 		preparedStatement.close();
 		DBHandler.INSTANCE.returnConnection(connection);
+		
+		return changedCnt;
 	}
 	
 	public static int updatePayCheck(Collection<String> list) {
