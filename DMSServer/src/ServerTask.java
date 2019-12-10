@@ -67,7 +67,7 @@ public class ServerTask implements Runnable {
                                     String id = body.obj1;
 
                                     int nowSemester = CurrentSemesterParser.getCurrentSemester();
-                                    Path path = Paths.get(fileType.name(), String.valueOf(nowSemester), id + fileType.extension);
+                                    Path path = IOHandler.getFilePath(fileType, id);
 
                                     IOHandler.INSTANCE.write(path, body.obj2);
 

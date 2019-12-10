@@ -15,6 +15,9 @@ public enum IOHandler {
 
     public void write(Path path, byte[] bytes) throws IOException {
         File file = path.toFile();
+        if(!file.exists())
+            path.getParent().toFile().mkdirs();
+
         FileOutputStream fos = new FileOutputStream(file);
         fos.write(bytes);
         fos.close();

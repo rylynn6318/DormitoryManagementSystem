@@ -1,15 +1,10 @@
 package DB;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Date;
-import java.sql.SQLException;
+import java.sql.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.mysql.cj.result.SqlDateValueFactory;
 import enums.Bool;
 import enums.Code1;
 import enums.Code1.FileType;
@@ -38,9 +33,15 @@ public class DocumentParser {
             ResultSet documents = preparedStatement.executeQuery();
 
             while (documents.next()) {
-                java.util.Date submissionDate = new java.util.Date(documents.getDate("제출일").getTime());
+                java.util.Date submissionDate = new java.util.Date(documents.getTimestamp("제출일").getTime());
                 java.util.Date diagnosisDate = new java.util.Date(documents.getDate("진단일").getTime());
-                Document temp = new Document(documents.getString("학번"), Code1.FileType.get((byte) documents.getInt("서류유형")), submissionDate, diagnosisDate, documents.getString("서류저장경로"), Bool.get(documents.getString("유효여부")));
+                Document temp = new Document(
+                        documents.getString("학번"),
+                        Code1.FileType.valueOf(documents.getString("서류유형")),
+                        submissionDate,
+                        diagnosisDate,
+                        documents.getString("서류저장경로"),
+                        Bool.get(documents.getString("유효여부")));
                 documentList.add(temp);
             }
 
@@ -87,13 +88,14 @@ public class DocumentParser {
     public static int renewDocument(Document doc) {
         int result = -2;
 
+        // 제출일은 서버 기본값 사용
         String query =
-                "INSERT INTO 서류 (학번, 서류유형, 제출일, 진단일, 서류저장경로, 유효여부) " +
-                        "VALUES (?, ?, ?, ?, ?, ?) " +
+                "INSERT INTO 서류 (학번, 서류유형, 진단일, 서류저장경로, 유효여부) " +
+                        "VALUES (?, ?, ?, ?, ?) " +
                         "ON DUPLICATE KEY UPDATE " +
                         "학번 = VALUES(학번), " +
                         "서류유형 = VALUES(서류유형), " +
-                        "제출일 = VALUES(제출일), " +
+                        //"제출일 = VALUES(제출일), " +
                         "진단일 = VALUES(진단일), " +
                         "서류저장경로 = VALUES(서류저장경로), " +
                         "유효여부 = VALUES(유효여부)";
@@ -110,13 +112,12 @@ public class DocumentParser {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
             preparedStatement.setString(1, doc.studentId);
-            preparedStatement.setInt(2, doc.documentType.ordinal());
-            preparedStatement.setDate(3, ScheduleParser.utilDateToSqlDate(doc.submissionDate));
-            preparedStatement.setDate(4, ScheduleParser.utilDateToSqlDate(doc.diagnosisDate));
-            preparedStatement.setString(5, doc.documentStoragePath);
+            preparedStatement.setString(2, doc.documentType.name());
+            preparedStatement.setDate(3, ScheduleParser.utilDateToSqlDate(doc.diagnosisDate));
+            preparedStatement.setString(4, doc.documentStoragePath);
             preparedStatement.setString(5, doc.isValid.yn);
 
-            result = preparedStatement.executeUpdate(query);
+            result = preparedStatement.executeUpdate();
 
             preparedStatement.close();
         } catch (SQLException e) {
@@ -199,7 +200,7 @@ public class DocumentParser {
         String filePath;
 
         if (foundDocument.next()) {
-            submissionDate = new java.util.Date(foundDocument.getDate("제출일").getTime());
+            submissionDate = new java.util.Date(foundDocument.getTimestamp("제출일").getTime());
             diagnosisDate = new java.util.Date(foundDocument.getDate("진단일").getTime());
             isValidStr = foundDocument.getString("유효여부");
             parsedId = foundDocument.getString("학번");
