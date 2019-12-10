@@ -196,10 +196,11 @@ public class DocumentManageTabController extends InnerPageController
         	return;
         }
         
+        
         Tuple<Bool, ArrayList<Document>> resultTuple = (Tuple<Bool, ArrayList<Document>>) result;
         ArrayList<Document> documentList = resultTuple.obj2;
         
-        if(result != null)
+        if(documentList != null)
         {
         	//객체를 테이블뷰 모델로 변환
         	ObservableList<DocumentViewModel> documentModels = FXCollections.observableArrayList();

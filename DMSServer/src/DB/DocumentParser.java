@@ -18,23 +18,33 @@ public class DocumentParser {
         ArrayList<Document> documentList = new ArrayList<>();
 
         String getDocuments = "SELECT * FROM " + DBHandler.DB_NAME + ".서류 ";
+        System.out.println(getDocuments);
 
         Connection connection;
-        try {
+        try 
+        {
             connection = DBHandler.INSTANCE.getConnection();
-        } catch (SQLException e) {
+        } 
+        catch (SQLException e) 
+        {
             e.printStackTrace();
             return documentList;
         }
 
-        try {
+        try 
+        {
             PreparedStatement preparedStatement = connection.prepareStatement(getDocuments);
 
             ResultSet documents = preparedStatement.executeQuery();
 
-            while (documents.next()) {
+            while (documents.next()) 
+            {
                 java.util.Date submissionDate = new java.util.Date(documents.getTimestamp("제출일").getTime());
-                java.util.Date diagnosisDate = new java.util.Date(documents.getDate("진단일").getTime());
+                Date nullCheck = documents.getDate("진단일");
+                java.util.Date diagnosisDate = null;
+                if(nullCheck != null)
+                	diagnosisDate = new java.util.Date(nullCheck.getTime());
+                
                 Document temp = new Document(
                         documents.getString("학번"),
                         Code1.FileType.valueOf(documents.getString("서류유형")),

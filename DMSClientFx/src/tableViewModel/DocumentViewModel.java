@@ -26,7 +26,12 @@ public class DocumentViewModel
 		this.studentIdStr = new SimpleStringProperty(studentId);
 		this.documentTypeStr = new SimpleStringProperty(convertDocumentType(documentType));
 		this.submissionDateStr = new SimpleStringProperty(submissionDate.toString());
-		this.diagnosisDateStr = new SimpleStringProperty(diagnosisDate.toString());
+		
+		if(diagnosisDate != null)
+			this.diagnosisDateStr = new SimpleStringProperty(diagnosisDate.toString());
+		else
+			this.diagnosisDateStr = new SimpleStringProperty("");
+		
 		this.documentStoragePathStr = new SimpleStringProperty(documentStoragePath);
 		this.isValidStr = new SimpleStringProperty(isValid == Bool.TRUE ? "T" : "F");
 	}
