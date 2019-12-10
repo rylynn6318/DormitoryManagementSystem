@@ -528,7 +528,7 @@ public class Responser
 	//-------------------------------------------------------------------------
 	
 	//관리자 - 납부 여부 조회 및 관리 - 조회 버튼 클릭 시
-	public static ArrayList<Application> admin_paymentManagePage_onCheck()
+	public static Serializable admin_paymentManagePage_onCheck()
 	{
 		//1. 신청 테이블에서 이번 학기 신청 목록을 가져와 객체화한다. (학번, 생활관명, 학기, 지망, 몇일식, 납부여부, 합격여부, 최종결과, 코골이여부)
 		//   (합격여부 Y 인 학생만 가져온다)
@@ -536,8 +536,8 @@ public class Responser
 		//3. 직렬화해서 클라이언트에 전송한다.
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 		
-		Protocol protocol = eventProtocolBuilder(Code1.Page.납부관리, Code2.Event.REFRESH, null);
-		ArrayList<Application> result = (ArrayList<Application>) sendAndReceive(protocol);
+		Protocol protocol = eventProtocolBuilder(Code1.Page.납부관리, Code2.Event.CHECK, null);
+		Serializable result = sendAndReceive(protocol);
 		return result;
 	}
 	
