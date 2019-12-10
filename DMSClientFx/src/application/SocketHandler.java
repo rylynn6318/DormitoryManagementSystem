@@ -7,10 +7,14 @@ import java.net.Socket;
 // 클라이언트에서는 이 싱글톤을 통해서만 통신하고
 // 여기선 소켓 생성부터 결과값까지 하나의 함수로 처리함.
 public enum SocketHandler {
+	
     INSTANCE;
+	
+	//String ip = SocketHelper.localhost;		//localhost
+	String ip = "192.168.208.31";				//ip
 
     public Protocol request(Protocol protocol) throws Exception {
-        Socket socket = new Socket(SocketHelper.localhost,SocketHelper.port);
+        Socket socket = new Socket(ip,SocketHelper.port);
         SocketHelper socketHelper = new SocketHelper(socket);
 
         socketHelper.write(protocol);
