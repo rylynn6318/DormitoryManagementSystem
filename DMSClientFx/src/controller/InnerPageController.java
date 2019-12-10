@@ -18,10 +18,12 @@ import models.Document;
 import models.PlacementHistory;
 import models.Schedule;
 import models.ScheduleCode;
+import models.Student;
 import tableViewModel.ApplicationViewModel;
 import tableViewModel.DocumentViewModel;
 import tableViewModel.PlacementHistoryViewModel;
 import tableViewModel.ScheduleViewModel;
+import tableViewModel.StudentViewModel;
 
 //Login, Main을 제외한 페이지가 공통적으로 가지는 메소드를 가짐.
 public class InnerPageController implements Initializable 
@@ -178,6 +180,12 @@ public class InnerPageController implements Initializable
     {
     	return new PlacementHistoryViewModel(history.studentId, history.roomId, history.semester, 
     			history.dormitoryName, history.seat, history.checkout);
+    }
+    
+    public StudentViewModel studentToViewModel(Student student)
+    {
+    	return new StudentViewModel(student.studentId, student.name, student.gender, student.departmentName, 
+    			student.year, student.rrn, student.contact, student.parentZipCode, student.parentAddress);
     }
     
     
