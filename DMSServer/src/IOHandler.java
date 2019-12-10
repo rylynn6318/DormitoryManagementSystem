@@ -31,7 +31,7 @@ public enum IOHandler {
     public boolean delete(Path path) throws IOException
     {
     	File file = path.toFile();
-        if(!file.exists())
+        if(file.exists())
         {
         	if(file.delete())
         	{

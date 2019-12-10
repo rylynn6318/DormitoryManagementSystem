@@ -1576,8 +1576,8 @@ public class Responser
 		
 		try
 		{
-			Path filePath = Paths.get(doc.documentStoragePath);
-			boolean isSucceed = IOHandler.INSTANCE.delete(filePath);
+			Path path = IOHandler.getFilePath(fileType, id);
+			boolean isSucceed = IOHandler.INSTANCE.delete(path);
 			if(!isSucceed)
 			{
 				System.out.println("DB에서는 삭제 완료, 로컬 서류 파일 삭제 실패.");
@@ -1591,7 +1591,7 @@ public class Responser
 			System.out.println("DB에서는 삭제 완료, 로컬 서류 파일 존재하지 않음.");
 		}
 		
-		eventReply(socketHelper, createMessage(Bool.FALSE, "서류가 삭제되었습니다."));
+		eventReply(socketHelper, createMessage(Bool.TRUE, "서류가 삭제되었습니다."));
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 업로드 버튼 클릭 시
