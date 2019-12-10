@@ -440,7 +440,7 @@ public class DocumentManageTabController extends InnerPageController
     	
     	Date diagnosisDate = null;
     	if(diagnosisDate_l != null)
-    		localDateToDate(diagnosisDate_l);
+    		diagnosisDate = localDateToDate(diagnosisDate_l);
     	Bool isValid = isValidStr.equals("T") ? Bool.TRUE : Bool.FALSE;
     	
     	Document data = new Document(id, stringToFileType(documentType), null, diagnosisDate, null, isValid);

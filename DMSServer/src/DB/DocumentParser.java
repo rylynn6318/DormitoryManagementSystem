@@ -211,7 +211,7 @@ public class DocumentParser {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
             preparedStatement.setString(1, doc.isValid.yn);
-            preparedStatement.setDate(1, ScheduleParser.utilDateToSqlDate(doc.diagnosisDate));
+            preparedStatement.setDate(2, ScheduleParser.utilDateToSqlDate(doc.diagnosisDate));
             preparedStatement.setString(3, doc.studentId);
             preparedStatement.setString(4, doc.documentType.name());
 
