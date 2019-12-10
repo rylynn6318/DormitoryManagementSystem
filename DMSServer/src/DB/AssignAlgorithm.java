@@ -158,8 +158,14 @@ public class AssignAlgorithm
 			{
 				for(int i = 0; i < P4.length; i += 4)
 				{
-					P4[i].setRoomNumber(rs.getString("호"));
-					P4[i].setSemesterCode(rs.getInt("학기"));
+					if(P4[i].getRoomNumber() == null)
+					{
+						for(int j = i; j < P4.length; j++)
+						{
+							P4[j].setRoomNumber(rs.getString("호"));
+							P4[j].setSemesterCode(rs.getInt("학기"));
+						}
+					}
 				}
 				break;
 			}
