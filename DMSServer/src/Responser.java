@@ -1509,14 +1509,14 @@ public class Responser
 		}
 
 		String id = doc.studentId;
-		Code1.FileType filetype = doc.documentType;
+		Code1.FileType fileType = doc.documentType;
 		
 		boolean isExist = false;
 		
 		try
 		{
 			//이거 누가 짜줘
-//			isExist = DocumentParser.isExist(id, fileType);
+			isExist = DocumentParser.isExist(id, fileType);
 		}
 		catch(Exception e)
 		{
@@ -1536,7 +1536,7 @@ public class Responser
 		int result = -1;
 		try
 		{
-			result = DocumentParser.deleteDocument(filetype, id);
+			result = DocumentParser.deleteDocument(fileType, id);
 		}
 		catch(Exception e)
 		{
@@ -1582,7 +1582,7 @@ public class Responser
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. UPDATE 쿼리 결과를 클라이언트에게 알려준다.
 		
-		Document document;
+		Document document = null;
 		try	
 		{
 			document = (Document) ProtocolHelper.deserialization(protocol.getBody());
@@ -1595,11 +1595,13 @@ public class Responser
 		}
 		
 		boolean isExist = false;
+		String id = document.studentId;
+		FileType fileType = document.documentType;
 		
 		try
 		{
 			//이거 누가 짜줘(이거 위에서 호출한번 됬었는데, 똑같은거임. 예승이가 짜러감)
-//			isExist = DocumentParser.isExist(id, fileType);
+			isExist = DocumentParser.isExist(id, fileType);
 		}
 		catch(Exception e)
 		{
@@ -1646,7 +1648,7 @@ public class Responser
 		ArrayList<Student> students = null;
 		try 
 		{
-//			students = StudentParser.getAllStudent();
+			students = StudentParser.getAllStudent();
 		} 
 		catch (Exception e) 
 		{
