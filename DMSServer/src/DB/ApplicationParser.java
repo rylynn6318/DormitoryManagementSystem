@@ -2,6 +2,7 @@ package DB;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -383,25 +384,49 @@ public class ApplicationParser {
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
 	
-	public static void updatePayCheck(Application temp) throws SQLException 
-	{
+	public static int updatePayCheck(Collection<String> list) throws SQLException {
 		String sql =
-			"UPDATE " + DBHandler.DB_NAME + ".신청 " +
-				"SET 납부여부 = '" + temp.isPaid().yn + "' " +
-			"WHERE 학번 = '" + temp.getStudentId() + "' " +
-				"AND 생활관정보_생활관명 = '" + temp.getDormitoryName() + "' " +
-				"AND 생활관정보_학기 = '" + temp.getSemesterCode() + "' " +
-				"AND 생활관정보_성별 = '" + temp.getGender() + "'";
+				"UPDATE 신청 " +
+						"SET 납부여부 = ? " +
+						"WHERE 학번 = ? " +
+						"AND 합격여부 = ? ";
+
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+
+		state.setString(1, Bool.TRUE.yn);
+		state.setString(2, Bool.TRUE.yn);
+
+		int effected_raw = 0;
+		for (String id : list) {
+			state.setString(2, id);
+			effected_raw += state.executeUpdate();
+		}
+
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+
+		return effected_raw;
+	}
+
+	public static void updatePayCheck(Application temp) throws SQLException {
+		String sql =
+				"UPDATE " + DBHandler.DB_NAME + ".신청 " +
+						"SET 납부여부 = '" + Bool.TRUE.yn + "' " +
+						"WHERE 학번 = '" + temp.getStudentId() + "' " +
+						"AND 생활관정보_생활관명 = '" + temp.getDormitoryName() + "' " +
+						"AND 생활관정보_학기 = '" + temp.getSemesterCode() + "' " +
+						"AND 생활관정보_성별 = '" + temp.getGender() + "'";
 		System.out.println(sql);
-		Connection connection = DBHandler.INSTANCE.getConnection();		
+		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 
 		state.executeUpdate();
-		
-		state.close();		
+
+		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
-	
+
 	 
 	public static void insertApplication(int choice, int mealType, Bool isSnore, String dormitoryName, char gender , int semesterCode, String id) throws SQLException
 	{
