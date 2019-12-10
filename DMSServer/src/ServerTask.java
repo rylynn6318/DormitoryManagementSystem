@@ -12,6 +12,7 @@ import DB.StudentParser;
 import enums.*;
 import logic.*;
 import models.*;
+import sun.rmi.runtime.Log;
 import utils.*;
 
 public class ServerTask implements Runnable {
@@ -84,7 +85,7 @@ public class ServerTask implements Runnable {
                                 		throw new ClassNotFoundException("학생이 조회되지 않음.");
 
                                     int nowSemester = CurrentSemesterParser.getCurrentSemester();
-                                    Path path = IOHandler.getFilePath(fileType, id);
+                                    Path path = IOHandler.INSTANCE.getFilePath(fileType, id);
 
                                     IOHandler.INSTANCE.write(path, body.obj2);
 
@@ -147,12 +148,11 @@ public class ServerTask implements Runnable {
                         // body에는 csv 파일 바이트만 있는 상황
                         // 적당한곳에 csv파일 저장하고 로직 수행
                         try {
-                            IOHandler.INSTANCE.write(IOHandler.csvFilePath, protocol.getBody());
-
-                            // TODO 업데이트 하는 로직
+                            Responser.admin_paymentManagePage_onUpload(protocol, socketHelper);
 
                             isSuccess = Code2.FileCode.SUCCESS;
                         } catch (IOException e) {
+                            Logger.INSTANCE.print("CSV 파일 분석 및 납부 내역 갱신 실패!");
                             e.printStackTrace();
                         }
 
