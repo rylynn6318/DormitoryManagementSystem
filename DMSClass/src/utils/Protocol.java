@@ -56,14 +56,14 @@ public final class Protocol implements Comparable<Protocol> {
 
         public Builder(byte[] packet) {
             // 빅 엔디안으로 읽음
-            this.length = ProtocolHelper.bytesToShort(packet[0], packet[1]);
-            this.type = ProtocolType.get(packet[2]);
-            this.direction = Direction.get(packet[3]);
-            this.code1 = Code1.get(this.type, packet[4]);
-            this.code2 = Code2.get(this.type, packet[5]);
-            this.is_splitted = Bool.get(packet[6]);
-            this.is_last = Bool.get(packet[7]);
-            this.sequence = ProtocolHelper.bytesToInt(new byte[]{packet[8], packet[9], packet[10], packet[11]});
+            this.length = ProtocolHelper.bytesToInt(new byte[]{packet[0], packet[1], packet[2], packet[3]});
+            this.type = ProtocolType.get(packet[4]);
+            this.direction = Direction.get(packet[5]);
+            this.code1 = Code1.get(this.type, packet[6]);
+            this.code2 = Code2.get(this.type, packet[7]);
+            this.is_splitted = Bool.get(packet[8]);
+            this.is_last = Bool.get(packet[9]);
+            this.sequence = ProtocolHelper.bytesToInt(new byte[]{packet[10], packet[11], packet[12], packet[13]});
 
             this.body_bytes = Arrays.copyOfRange(packet, HEADER_LENGTH, packet.length);
         }
@@ -85,7 +85,7 @@ public final class Protocol implements Comparable<Protocol> {
     final Bool is_last; // 1바이트, 마지막 프로토콜인지 여부
     final int sequence; // 4바이트, 시퀀스 넘버
     // body 시작 인덱스를 알기 위해 자신의 길이를 가지고 있다.
-    public static final int HEADER_LENGTH = 12;
+    public static final int HEADER_LENGTH = 14;
 
     // Body
     private final byte[] body_bytes;
@@ -112,7 +112,7 @@ public final class Protocol implements Comparable<Protocol> {
     byte[] getPacket() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-            baos.write(ProtocolHelper.shortToBytes((short) length));
+            baos.write(ProtocolHelper.intToBytes(length));
             baos.write(type.getCode());
             baos.write(direction.getCode());
             baos.write(code1.getCode());

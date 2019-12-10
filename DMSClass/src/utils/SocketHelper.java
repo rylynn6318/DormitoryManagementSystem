@@ -1,10 +1,12 @@
 package utils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import enums.Bool;
@@ -23,34 +25,42 @@ public final class SocketHelper implements Closeable {
     }
 
     public void write(Protocol p) {
-        List<Protocol> protocols = ProtocolHelper.split(p);
-        for (Protocol protocol : protocols) {
-            byte[] packet = protocol.getPacket();
+        //List<Protocol> protocols = ProtocolHelper.split(p);
+        //for (Protocol protocol : protocols) {
+            byte[] packet = p.getPacket();
             try {
                 socket.getOutputStream().write(packet);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        //}
     }
 
     public Protocol read() {
         List<Protocol> protocols = new ArrayList<>();
         byte[] buffer = new byte[send_buffer_size];
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        Bool isLast = Bool.FALSE;
-        while (!isLast.bool) {
-            try {
-                socket.getInputStream().read(buffer);
-                Protocol tmp = new Protocol.Builder(buffer).build();
-                protocols.add(tmp);
-                isLast = tmp.is_last;
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            int bytesRead = socket.getInputStream().read(buffer, 0, buffer.length);
+            int packet_length = ProtocolHelper.bytesToInt(Arrays.copyOfRange(buffer, 0, 4));
+            int current = bytesRead;
+            baos.write(buffer);
+
+            while (current < packet_length) {
+                bytesRead = socket.getInputStream().read(buffer);
+                if (bytesRead > 0) {
+                    baos.write(buffer);
+                    current += bytesRead;
+                }
             }
+        }catch (Exception e) {
+            System.out.println("----프로토콜 read 중 오류 발생 여기부터----");
+            e.printStackTrace();
+            System.out.println("----프로토콜 read 중 오류 발생 여기까지----");
         }
 
-        return ProtocolHelper.merge(protocols);
+        return new Protocol.Builder(baos.toByteArray()).build();
     }
 
     public InetAddress getInetAddress(){
