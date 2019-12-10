@@ -264,5 +264,6 @@ public class SelecteesManageTabController extends InnerPageController
 		delete_dormName_textfield.setText(null);
 		delete_semester_textfield.setText(null);
 		delete_choice_textfield.setText(null);
+		check_application_column_gender.setText(null);
     }
 }
