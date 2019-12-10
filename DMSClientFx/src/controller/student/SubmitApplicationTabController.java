@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import com.sun.javafx.binding.SelectBinding.AsLong;
+
 import application.IOHandler;
 import application.Responser;
 import controller.InnerPageController;
@@ -55,13 +57,16 @@ public class SubmitApplicationTabController extends InnerPageController
 
     @FXML
     private TextArea info_textarea;
-
+    
+    private final ArrayList<String> oneYearDormList = new ArrayList<>();
+    
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
 		System.out.println("생활관 입사 신청 새로고침됨");
 		
 		//네트워킹
+		addOneYearDorms();
 		checkSchedule();
 	}
 	
@@ -82,6 +87,13 @@ public class SubmitApplicationTabController extends InnerPageController
     }
     
     //---------------------로직---------------------
+    
+    public void addOneYearDorms()
+	{
+		oneYearDormList.add("푸름1");
+		oneYearDormList.add("푸름2");
+		oneYearDormList.add("푸름3");
+	}
     
     private void checkSchedule()
     {
@@ -255,10 +267,10 @@ public class SubmitApplicationTabController extends InnerPageController
     	ArrayList<Dormitory> halfYear = new ArrayList<Dormitory>();
     	
     	//서버에서 받아온 기숙사 목록에서 1년짜리와 반년짜리를 분리함.
-    	//현재로써 1년과 1년이 아닌 기숙사를 분리할 방법이 없어서 임시로 1년이라는 글자가 기숙사명에 포함되있는지로 가름.
     	for(Dormitory dorm : dormList)
     	{
-    		if(dorm.dormitoryName.contains("1년"))
+    		//일단 하드코딩된 1년 기숙사 목록 검사함.
+    		if(oneYearDormList.contains(dorm.dormitoryName))
     		{
     			oneYear.add(dorm);
     		}
