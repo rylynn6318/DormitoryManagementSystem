@@ -926,9 +926,8 @@ public class Responser
 		
 		boolean isExist = false;
 		try
-		{
-			//이거 파서 누가 대신 만들어줘
-//			isExist = DormParser.isExist(dormName, semester);
+		{			
+			isExist = DormParser.isExist(dormName, semester);
 		}
 		catch(Exception e)
 		{
@@ -945,9 +944,8 @@ public class Responser
 		
 		boolean isSucceed = false;
 		try
-		{
-			//이것도 파서필요함
-//			isSucceed = DormParser.deleteDormitory(dormName, semester);	
+		{			
+			isSucceed = DormParser.deleteDormitory(dormName, semester);	
 		}
 		catch(Exception e)
 		{		
