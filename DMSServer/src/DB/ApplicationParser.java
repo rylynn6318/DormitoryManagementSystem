@@ -32,15 +32,40 @@ public class ApplicationParser {
 		return isNext;
 	}
 	
-	public static void deleteApplication(Application app) throws SQLException
+	public static boolean deleteApplication(Application app) throws SQLException
 	{
-		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번=" + app.getStudentId() + " AND 생활관정보_생활관명=" + app.getDormitoryName() + " AND 학기=" + app.getSemesterCode() + " AND 지망=" + app.getChoice();
+		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번='" + app.getStudentId() + "' AND 생활관정보_생활관명='" + app.getDormitoryName() + "' AND 생활관정보_학기='" + app.getSemesterCode() + "' AND 지망='" + app.getChoice()+"'";
 		
-		Connection connection = DBHandler.INSTANCE.getConnection();
-		PreparedStatement preparedStatement = connection.prepareStatement(sql);
-		preparedStatement.executeUpdate(sql);
+		Connection connection = null;
+		PreparedStatement preparedStatement =null;
+		System.out.println(sql);
+				
+		try
+		{
+			connection = DBHandler.INSTANCE.getConnection();
+			preparedStatement = connection.prepareStatement(sql);
+			int result = preparedStatement.executeUpdate();
+			if(result==0)
+			{
+				System.out.println("삭제 실패");
+				preparedStatement.close();
+				DBHandler.INSTANCE.returnConnection(connection);
+				return false;
+			}
+			else
+			{
+				preparedStatement.close();
+				DBHandler.INSTANCE.returnConnection(connection);
+				return true;
+			}
+		}
+		catch(SQLException e)
+		{
+			System.out.println("신청 내역 삭제 쿼리문 실패");
+			return false;
+		}
 		
-		DBHandler.INSTANCE.returnConnection(connection);
+		
 	}
 	public static void deleteApplication(String id) throws SQLException, ClassNotFoundException
 	{
@@ -51,6 +76,7 @@ public class ApplicationParser {
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 		preparedStatement.executeUpdate(sql);
 		
+		preparedStatement.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
 	
