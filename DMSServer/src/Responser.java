@@ -1341,7 +1341,7 @@ public class Responser
 			}
 			catch (Exception e)
 			{
-				System.out.println("입사자 등록 도중 오류 발생(신청테이블)");
+				System.out.println("입사자 등록 도중 오류 발생(신청테이블), 유효한 칼럼값인지 확인해주세요.");
 				eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록 도중 오류가 발생했습니다.(신청테이블)"));
 				return;
 			}
