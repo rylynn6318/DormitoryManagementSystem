@@ -112,6 +112,7 @@
          </rowConstraints>
          <children>
             <Label text="생활관명" />
+            <Label text="성별" GridPane.columnIndex="1" />
             <Label text="학기" GridPane.columnIndex="2" />
             <Label text="수용인원" GridPane.columnIndex="3" />
             <Label text="식사의무" GridPane.columnIndex="4" />
@@ -119,14 +120,13 @@
             <Label text="7일식 식비" GridPane.columnIndex="6" />
             <Label text="기숙사비" GridPane.columnIndex="7" />
             <TextField fx:id="insert_dormName_textfield" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_gender_textfield" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="insert_semester_textfield" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <TextField fx:id="insert_capacity_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <ComboBox fx:id="insert_mealDuty_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="4" GridPane.rowIndex="1" />
             <TextField fx:id="insert_mealCost5_textfield" GridPane.columnIndex="5" GridPane.rowIndex="1" />
             <TextField fx:id="insert_mealCost7_textfield" GridPane.columnIndex="6" GridPane.rowIndex="1" />
             <TextField fx:id="insert_boradingFees_textfield" GridPane.columnIndex="7" GridPane.rowIndex="1" />
-            <ComboBox fx:id="insert_mealDuty_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <Label text="성별" GridPane.columnIndex="1" />
-            <TextField fx:id="insert_gender_textfield" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>

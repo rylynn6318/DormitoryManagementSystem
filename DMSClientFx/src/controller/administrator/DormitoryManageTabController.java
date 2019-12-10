@@ -208,7 +208,8 @@ public class DormitoryManageTabController extends InnerPageController
     	{
     		if(resultTuple.obj1 == Bool.TRUE)
     		{
-    			clearDeleteInfo();    			
+    			clearDeleteInfo();
+    			checkDormitories();
     		}
     		IOHandler.getInstance().showAlert(resultTuple.obj2);
     	}
@@ -306,7 +307,8 @@ public class DormitoryManageTabController extends InnerPageController
     	{
     		if(resultTuple.obj1 == Bool.TRUE)
     		{
-    			clearInsertInfo();    			
+    			clearInsertInfo();
+    			checkDormitories();
     		}
     		IOHandler.getInstance().showAlert(resultTuple.obj2);
     	}

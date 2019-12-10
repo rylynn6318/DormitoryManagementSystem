@@ -30,6 +30,7 @@ import models.Dormitory;
 import models.PlacementHistory;
 import models.Schedule;
 import models.ScheduleCode;
+import models.Student;
 import models.Tuple;
 import utils.Protocol;
 import utils.ProtocolHelper;
@@ -1099,11 +1100,11 @@ public class Responser
 			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 삭제 신청을 읽는데 실패하였습니다."));
 			return;
 		}
-		
+		boolean success=false;
 		//DB에 삭제요청
 		try
 		{
-			DB.ApplicationParser.deleteApplication(receivedApp);
+			success= DB.ApplicationParser.deleteApplication(receivedApp);
 		}
 		catch(Exception e)
 		{
@@ -1111,9 +1112,17 @@ public class Responser
 			eventReply(socketHelper, createMessage(Bool.FALSE, "신청 삭제 도중 오류가 발생하였습니다."));
 			return;
 		}
+		if(success==false)
+		{
+			System.out.println("신청 삭제 도중 오류가 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당 신청이 없습니다."));
+			return;
+		}		
 		
-
-		eventReply(socketHelper, createMessage(Bool.TRUE, "신청 삭제에 성공하였습니다."));
+		else
+		{
+			eventReply(socketHelper, createMessage(Bool.TRUE, "신청 삭제에 성공하였습니다."));
+		}
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
@@ -1488,26 +1497,63 @@ public class Responser
 	public static void admin_documentManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
 		Document doc;
-		try	{
+		try	
+		{
 			doc = (Document) ProtocolHelper.deserialization(protocol.getBody());
-		} catch (ClassNotFoundException | IOException e) {
-			System.out.println("역직렬화 실패");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 데이터가 없습니다."));
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("클라이언트에서 온 요청 분석 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 요청 분석에 실패했습니다."));
 			return;
 		}
 
 		String id = doc.studentId;
-		Code1.FileType filetype = doc.documentType;
-		Date date = doc.submissionDate;
+		Code1.FileType fileType = doc.documentType;
+		
+		boolean isExist = false;
+		
+		try
+		{
+			//이거 누가 짜줘
+			isExist = DocumentParser.isExist(id, fileType);
+		}
+		catch(Exception e)
+		{
+			System.out.println("서류 존재 조회 도중 오류 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 존재 조회 도중 오류가 발생했습니다."));
+			return;
+		}
+		
+		if(!isExist)
+		{
+			System.out.println("해당되는 서류가 없음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 서류가 없습니다."));
+			return;
+		}
+		
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
-		int result = DocumentParser.deleteDocument(filetype, id);
+		int result = -1;
+		try
+		{
+			result = DocumentParser.deleteDocument(fileType, id);
+		}
+		catch(Exception e)
+		{
+			System.out.println("서류 삭제 도중 오류 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 삭제 도중 오류가 발생하였습니다."));
+			return;
+		}
+		
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
-		if (result > 0)
-			eventReply(socketHelper, createMessage(Bool.TRUE, "서류 삭제 성공"));
-		else if (result == 0)
-			eventReply(socketHelper, createMessage(Bool.TRUE, "삭제된 서류 없음"));
-		else
-			eventReply(socketHelper, createMessage(Bool.FALSE, "오류 발생"));
+		if(result == 0)
+		{
+			System.out.println("삭제된 서류 없음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "삭제된 서류가 없습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.FALSE, "서류가 삭제되었습니다."));
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 업로드 버튼 클릭 시
@@ -1535,6 +1581,98 @@ public class Responser
 		//	   (유효여부를 클라이언트에게서 받은 T/F로 UPDATE한다)
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. UPDATE 쿼리 결과를 클라이언트에게 알려준다.
+		
+		Document document = null;
+		try	
+		{
+			document = (Document) ProtocolHelper.deserialization(protocol.getBody());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("클라이언트에서 온 요청 분석 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 요청 분석에 실패했습니다."));
+			return;
+		}
+		
+		boolean isExist = false;
+		String id = document.studentId;
+		FileType fileType = document.documentType;
+		
+		try
+		{
+			//이거 누가 짜줘(이거 위에서 호출한번 됬었는데, 똑같은거임. 예승이가 짜러감)
+			isExist = DocumentParser.isExist(id, fileType);
+		}
+		catch(Exception e)
+		{
+			System.out.println("서류 존재 조회 도중 오류 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 존재 조회 도중 오류가 발생했습니다."));
+			return;
+		}
+		
+		if(!isExist)
+		{
+			System.out.println("해당되는 서류가 없음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 서류가 없습니다."));
+			return;
+		}
+		
+		boolean isSucceed = false;
+		try
+		{
+			//누가짜줘
+//			isSucceed = DocumentParser.updateDocument(document);
+		}
+		catch(Exception e)
+		{
+			System.out.println("서류 갱신 도중 오류 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 갱신 도중 오류가 발생했습니다."));
+			return;
+		}
+		
+		if(!isSucceed)
+		{
+			System.out.println("서류 갱신 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 갱신에 실패하였습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.TRUE, "서류 갱신에 성공하였습니다."));
+	}
+	
+	//-------------------------------------------------------------------------
+	
+	//관리자 - 학생 조회 - 조회 버튼 클릭 시
+	public static void admin_studentCheckPage_onCheck(Protocol protocol, SocketHelper socketHelper)
+	{
+		ArrayList<Student> students = null;
+		try 
+		{
+			students = StudentParser.getAllStudent();
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("학생목록 조회 도중 오류 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "학생목록 조회 도중 오류가 발생하였습니다."));
+			return;
+		}
+		
+		if(students == null)
+		{
+			System.out.println("학생목록 조회에 실패.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "학생목록 조회에 실패했습니다."));
+			return;
+		}
+		
+		if(students.isEmpty())
+		{
+			System.out.println("학생목록이 비어있음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "학생목록이 비어있습니다."));
+			return;
+		}
+		
+		//3. 직렬화해서 클라이언트에 전송한다.
+		eventReply(socketHelper, new Tuple<Bool, ArrayList<Student>>(Bool.TRUE, students));
 	}
 }
 

@@ -435,6 +435,18 @@ public class ServerTask implements Runnable {
                                 break;
                         }
                         break;
+                    case 학생조회:
+                    	switch((Code2.Event) protocol.code2)
+                    	{
+                    	case CHECK:
+                    		try {
+                                Responser.admin_studentCheckPage_onCheck(protocol, socketHelper);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                    		break;
+                    	}
+                    	break;
                 }
         }
 

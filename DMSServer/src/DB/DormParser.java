@@ -53,7 +53,7 @@ public class DormParser {
 		else
 			mealDuty = "F";
 		
-		String sql = "INSERT INTO " + DBHandler.DB_NAME + ".생활관정보(생활관명, 성별, 학기, 수용인원, 식사의무, 5일식_식비, 7일식_식비, 기숙사비) VALUES (" + dormitory.dormitoryName + ", " + gender + ", " + dormitory.semesterCode + ", " + dormitory.capacity + ", " + mealDuty + ", " + dormitory.mealCost5 + ", " + dormitory.mealCost7 + ", " + dormitory.boardingFees + ")";
+		String sql = "INSERT INTO " + DBHandler.DB_NAME + ".생활관정보(생활관명, 성별, 학기, 수용인원, 식사의무, 5일식_식비, 7일식_식비, 기숙사비) VALUES ('" + dormitory.dormitoryName + "', '" + gender + "', " + dormitory.semesterCode + ", " + dormitory.capacity + ", '" + mealDuty + "', " + dormitory.mealCost5 + ", " + dormitory.mealCost7 + ", " + dormitory.boardingFees + ")";
 		System.out.println(sql);
 		Connection connection;
 

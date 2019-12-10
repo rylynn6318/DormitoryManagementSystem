@@ -252,6 +252,7 @@ public class PaymentManageTabController extends InnerPageController
 			{
 				//입력했던 항목들 클리어
 				clearUpdateInfo();
+				checkApplications();
 			}
 			
 			//성공/실패 메시지 표시
@@ -310,6 +311,7 @@ public class PaymentManageTabController extends InnerPageController
 				Responser.admin_paymentManagePage_onUpload();
 				
 				file_directory_label.setText("N/A");
+				checkApplications();
 			}
 			else
 			{

@@ -117,3 +117,7 @@ shared-class update log
 2019-12-10 13:55 v2.18
 	프로토콜 시퀀스 넘버 타입 int로 변경
 	Shared Class Export해서 적용함.
+	
+2019-12-10 16:53 v2.19
+	프로토콜에 code1.page에 학생조회 추가.
+	Shared Class Export해서 적용함.

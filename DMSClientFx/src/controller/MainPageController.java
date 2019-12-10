@@ -105,8 +105,9 @@ public class MainPageController implements Initializable
 		NavigationTab tab4 = new NavigationTab("입사자 조회 및 관리", TabType.BoarderManage);
 		NavigationTab tab5 = new NavigationTab("납부 여부 조회 및 관리", TabType.PaymentManage);
 		NavigationTab tab6 = new NavigationTab("서류 조회 및 제출", TabType.DocumentManage);
+		NavigationTab tab7 = new NavigationTab("학생 조회", TabType.StudentCheck);
 		
-		NavigationListView.getItems().addAll(tab1, tab2, tab3, tab4, tab5, tab6);
+		NavigationListView.getItems().addAll(tab1, tab2, tab3, tab4, tab5, tab6, tab7);
 	}
 	
 	private void initializeNavigationTabs()
@@ -270,6 +271,8 @@ class NavigationTab extends Tab
 			return "/page/administrator/PaymentManageTab.fxml";
 		case DocumentManage:
 			return "/page/administrator/DocumentManageTab.fxml";
+		case StudentCheck:
+			return "/page/administrator/StudentCheckTab.fxml";
 		default:
 			return null;
 		}
@@ -279,7 +282,7 @@ class NavigationTab extends Tab
 enum TabType
 {
 	SubmitApplication(0), CheckApplication(1), CheckBill(2), CheckRoom(3), SubmitDocument(4), CheckDocument(5),
-	ScheduleManage(6), DormitoryManage(7), SelecteesManage(8), BoarderManage(9), PaymentManage(10), DocumentManage(11);
+	ScheduleManage(6), DormitoryManage(7), SelecteesManage(8), BoarderManage(9), PaymentManage(10), DocumentManage(11), StudentCheck(12);
 	
 	private final int value;
 	private TabType(int value)

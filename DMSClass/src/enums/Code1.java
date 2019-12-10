@@ -67,7 +67,7 @@ public class Code1 {
     public static enum Page implements ICode1 {
         입사신청((byte) 0x01), 신청조회((byte) 0x02), 고지서조회((byte) 0x03), 호실조회((byte) 0x04), 서류제출((byte) 0x05),
         서류조회((byte) 0x06), 선발일정관리((byte) 0x07), 생활관관리((byte) 0x08), 입사선발자관리((byte) 0x09), 입사자관리((byte) 0x0A),
-        납부관리((byte) 0x0B), 서류관리((byte) 0x0C);
+        납부관리((byte) 0x0B), 서류관리((byte) 0x0C), 학생조회((byte) 0x0D);
 
         private final byte code;
 
@@ -106,6 +106,8 @@ public class Code1 {
                 return 납부관리;
             case 0x0C:
                 return 서류관리;
+            case 0x0D:
+            	return 학생조회;
             default:
                 return null;
             }

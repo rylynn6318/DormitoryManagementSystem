@@ -79,7 +79,7 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <TextArea fx:id="info_textarea" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+            <TextArea fx:id="info_textarea" editable="false" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
    </children>

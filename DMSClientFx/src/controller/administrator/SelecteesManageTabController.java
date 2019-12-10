@@ -128,7 +128,11 @@ public class SelecteesManageTabController extends InnerPageController
         
         if(resultTuple != null)
         {
-        	//이건 성공/실패 여부에 따른 동작이 똑같음.
+        	//성공하면 테이블 조회
+        	if(resultTuple.obj1 == Bool.TRUE)
+        	{
+        		checkApplications();
+        	}
         	IOHandler.getInstance().showAlert(resultTuple.obj2);
         }
     }
@@ -247,6 +251,7 @@ public class SelecteesManageTabController extends InnerPageController
         	if(resultTuple.obj1 == Bool.TRUE)
         	{
         		clearDeleteInfo();
+        		checkApplications();
         	}
         	IOHandler.getInstance().showAlert(resultTuple.obj2);
         }

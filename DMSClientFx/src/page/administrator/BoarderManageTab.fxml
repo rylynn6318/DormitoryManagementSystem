@@ -97,12 +97,12 @@
          </rowConstraints>
          <children>
             <Label text="학번" />
-            <Label text="학기" GridPane.columnIndex="2" />
-            <TextField fx:id="delete_id_textfield" promptText="ex) 20191234" GridPane.rowIndex="1" />
-            <TextField fx:id="delete_semester_textfield" promptText="ex) 201901" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <Label text="호" GridPane.columnIndex="1" />
+            <Label text="학기" GridPane.columnIndex="2" />
             <Label text="생활관명" GridPane.columnIndex="3" />
+            <TextField fx:id="delete_id_textfield" promptText="ex) 20191234" GridPane.rowIndex="1" />
             <TextField fx:id="delete_roomNumber_textfield" promptText="ex) 101" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="delete_semester_textfield" promptText="ex) 201901" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <TextField fx:id="delete_dormName_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />
          </children>
       </GridPane>
@@ -142,18 +142,18 @@
             <Label text="학번" />
             <Label text="호" GridPane.columnIndex="1" />
             <Label text="학기" GridPane.columnIndex="2" />
+            <Label text="생활관명" GridPane.columnIndex="3" />
             <Label text="자리" GridPane.columnIndex="4" />
             <Label text="퇴사예정일" GridPane.columnIndex="5" />
             <Label text="몇일식" GridPane.columnIndex="6" />
+            <Label text="코골이여부" GridPane.columnIndex="7" />
             <TextField fx:id="insert_id_textfield" GridPane.rowIndex="1" />
             <TextField fx:id="insert_roomNumber_textfield" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="insert_semester_textfield" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <TextField fx:id="insert_seat_textfield" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <TextField fx:id="insert_mealType_textfield" GridPane.columnIndex="6" GridPane.rowIndex="1" />
-            <Label text="생활관명" GridPane.columnIndex="3" />
-            <Label text="코골이여부" GridPane.columnIndex="7" />
             <TextField fx:id="insert_dormName_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_seat_textfield" GridPane.columnIndex="4" GridPane.rowIndex="1" />
             <DatePicker fx:id="insert_checkout_datepicker" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+            <TextField fx:id="insert_mealType_textfield" GridPane.columnIndex="6" GridPane.rowIndex="1" />
             <CheckBox fx:id="insert_snore_checkbox" mnemonicParsing="false" GridPane.columnIndex="7" GridPane.rowIndex="1" />
          </children>
       </GridPane>
