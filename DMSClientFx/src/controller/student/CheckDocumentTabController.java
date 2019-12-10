@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -16,6 +17,7 @@ import application.Responser;
 import controller.InnerPageController;
 import enums.Bool;
 import enums.Code1;
+import enums.Code2;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,6 +25,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import models.Document;
 import models.Tuple;
+import utils.Protocol;
+import utils.ProtocolHelper;
 
 public class CheckDocumentTabController extends InnerPageController 
 {
@@ -174,56 +178,25 @@ public class CheckDocumentTabController extends InnerPageController
     	
     	//TODO 네트워킹해서 파일 다운로드해라.
     	//저장위치는 대충 바탕화면에 저장하셈.
-    	File result = Responser.student_checkDocumentPage_onDownlaod(selectedFileType);
-    	
-    	//서버랑 통신이 됬는가?
-    	if(result == null)
-    	{
-    		IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
-        	return;
-    	}
-    	
-    	copyFile(result);
-    }
-    
-    //서버로부터 받은 파일을 바탕화면에 저장한다
-    private void copyFile(File orginal)
-    {
-    	String userPath = System.getProperty("user.home");
-		String fileSavePath = userPath + "\\Desktop\\" + "서류.jpg";
-		
-		File copiedFile = new File(fileSavePath);
-		
-		try
-		{
-			FileInputStream fis = new FileInputStream(orginal);
-			FileOutputStream fos = new FileOutputStream(copiedFile);
-			
-			int fileByte = 0;
-			
-			while((fileByte = fis.read()) != -1)
-			{
-				fos.write(fileByte);
-			}
-			
-			fis.close();
-			fos.close();
-			
-			IOHandler.getInstance().showAlert("바탕화면에 서류.jpg로 저장되었습니다.");
-		}
-		catch(FileNotFoundException e)
-		{
-			System.out.println("파일을 복사하는 도중 파일을 찾을 수 없음");
-		}
-		catch(IOException e)
-		{
-			System.out.println("파일을 복사하는 도중 입출력 오류 발생");
-		}
-		catch(Exception e)
-		{
-			System.out.println("파일을 복사하는 도중 알 수 없는 오류 발생");
+		Protocol result = null;
+		try {
+			result = Responser.student_checkDocumentPage_onDownlaod(selectedFileType);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		//서버랑 통신이 됬는가?
+    	if(result == null) {
+    		IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+    	}else if(result.code2 == Code2.FileCode.FAIL){
+			try {
+				IOHandler.getInstance().showAlert((String) ProtocolHelper.deserialization(result.getBody()));
+			} catch (ClassNotFoundException | IOException e) {
+				IOHandler.getInstance().showAlert("알 수 없는 이유로 다운로드에 실패했습니다.");
+			}
+		}else{
+			Code1.FileType type = (Code1.FileType) result.code1;
+    		IOHandler.getInstance().write(Paths.get(type.name() + type.extension), result.getBody());
+		}
     }
-    
 }

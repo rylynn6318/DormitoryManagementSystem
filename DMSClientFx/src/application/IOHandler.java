@@ -1,6 +1,7 @@
 package application;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -104,13 +105,24 @@ public class IOHandler
 		return null;
     }
 
-	public void write(Path path, byte[] bytes) throws IOException {
+	public void write(Path path, byte[] bytes) {
 		File file = path.toFile();
 
 		if(!file.exists())
 			path.getParent().toFile().mkdirs();
-		FileOutputStream fos = new FileOutputStream(file);
-		fos.write(bytes);
-		fos.close();
+
+
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(file);
+			fos.write(bytes);
+			fos.close();
+		} catch (FileNotFoundException e) {
+			IOHandler.getInstance().showAlert(file.getAbsolutePath() + "\n작성해야할 파일의 경로를 찾을 수 없습니다!");
+			e.printStackTrace();
+		} catch (IOException e) {
+			IOHandler.getInstance().showAlert(file.getAbsolutePath() + "\n해당 경로에 파일을 작성할 수 없습니다!");
+			e.printStackTrace();
+		}
 	}
 }
