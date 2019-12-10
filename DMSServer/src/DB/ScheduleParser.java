@@ -16,12 +16,13 @@ public class ScheduleParser
 	public static boolean isAdmissible(Page page) throws ClassNotFoundException, SQLException
 	{
 		// 지금 DB가 datetime 타입이 아니라 시분초설정이 오전9시로 고정되어있음 ㅇㅇ 그거 수정하고 다시 검사필요
-		Date day = new Date(); //현재시간
+		Date time = new Date(); //현재시간
 		Timestamp start = null;
 		Timestamp end = null;		
 	
 		// String.valueOf((int)page)를 String.valueOf((int)page.getCode())로 수정함. by ssm
-		String sql = "SELECT 시작일, 종료일 FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE (`스케쥴 할일 코드_ID` ='" + String.valueOf((int)page.getCode()) + "')";
+//		String sql = "SELECT 시작일, 종료일 FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE (`스케쥴 할일 코드_ID` ='" + String.valueOf((int)page.getCode()) + "')";
+		String sql = "SELECT `스케쥴 할일 코드_ID`, 시작일, 종료일, 비고 FROM " + DB.DBHandler.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID`='"+String.valueOf((int)page.getCode()) +"' AND `시작일`>='" + (time.getYear()+1900) + "0101' AND `시작일`<='"+(time.getYear()+1900)+"1231'";
 		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
@@ -40,13 +41,13 @@ public class ScheduleParser
 		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 		String time1 = format1.format(start);			
 		String time2 = format1.format(end);		
-		String time3 = format1.format(day);
+		String time3 = format1.format(time);
 		System.out.println("현재시간: " + time3);
 		System.out.println("시작일: "+time1);
 		System.out.println("종료일: "+time2);
 		
-		int result1 = day.compareTo(start);
-		int result2 = day.compareTo(end);
+		int result1 = time.compareTo(start);
+		int result2 = time.compareTo(end);
 
 		//자원 반환
 		state.close();
