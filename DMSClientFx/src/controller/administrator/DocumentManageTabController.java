@@ -318,7 +318,8 @@ public class DocumentManageTabController extends InnerPageController
         {
         	if(resultTuple.obj1 == Bool.TRUE)
         	{
-        		clearDeleteInfo();	
+        		clearDeleteInfo();
+        		checkDocuments();
         	}
         	IOHandler.getInstance().showAlert(resultTuple.obj2);
         }
@@ -466,6 +467,7 @@ public class DocumentManageTabController extends InnerPageController
         	if(resultTuple.obj1 == Bool.TRUE)
         	{
         		clearUpdateInfo();	
+        		checkDocuments();
         	}
         	IOHandler.getInstance().showAlert(resultTuple.obj2);
         }

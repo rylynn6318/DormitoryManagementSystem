@@ -65,16 +65,9 @@ public class DocumentParser {
     }
     
     public static boolean isExist(String id, Code1.FileType documentType) throws SQLException
-    {
-    	int fileType;
-    	if(documentType == Code1.FileType.MEDICAL_REPORT)
-    		fileType = 1;
-    	else if(documentType == Code1.FileType.OATH)
-    		fileType = 2;
-    	else
-    		fileType = 3;
-    	
-    	String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".서류 WHERE 학번='" + id + "' AND 서류유형=" + fileType;
+    {   	
+    	String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".서류 WHERE 학번='" + id + "' AND 서류유형 = '" + documentType.name() + "'";
+    	System.out.println(sql);
     	
     	Connection connection;
 		connection = DBHandler.INSTANCE.getConnection();
@@ -113,7 +106,8 @@ public class DocumentParser {
     public static int deleteDocument(Code1.FileType documentType, String studentId) {
         int result = -2;
 
-        String deleteDocumentQuery = "DELETE FROM 서류 WHERE 학번=" + studentId + " AND 서류유형=" + documentType.ordinal();
+        String deleteDocumentQuery = "DELETE FROM " + DBHandler.DB_NAME + ".서류 WHERE 학번 = '" + studentId + "' AND 서류유형 = '" + documentType.name() + "'";
+        System.out.println(deleteDocumentQuery);
 
         Connection connection;
         try {
