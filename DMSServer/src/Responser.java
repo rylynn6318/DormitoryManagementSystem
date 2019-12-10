@@ -1573,7 +1573,7 @@ public class Responser
 		
 		try
 		{
-			Path path = IOHandler.getFilePath(fileType, id);
+			Path path = IOHandler.INSTANCE.getFilePath(fileType, id);
 			boolean isSucceed = IOHandler.INSTANCE.delete(path);
 			if(!isSucceed)
 			{

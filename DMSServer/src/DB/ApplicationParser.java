@@ -395,7 +395,7 @@ public class ApplicationParser {
 		PreparedStatement state = connection.prepareStatement(sql);
 
 		state.setString(1, Bool.TRUE.yn);
-		state.setString(2, Bool.TRUE.yn);
+		state.setString(3, Bool.TRUE.yn);
 
 		int effected_raw = 0;
 		for (String id : list) {
