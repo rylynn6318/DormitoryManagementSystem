@@ -153,7 +153,7 @@ public class DocumentParser {
         // 제출일은 서버 기본값 사용
         String query =
                 "INSERT INTO 서류 (학번, 서류유형, 진단일, 서류저장경로, 유효여부) " +
-                        "VALUES (?, ?, Now(), ?, ?, ?) " +
+                        "VALUES (?, ?, CURRENT_TIMESTAMP, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE " +
                         "학번 = VALUES(학번), " +
                         "서류유형 = VALUES(서류유형), " +
