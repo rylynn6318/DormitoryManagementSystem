@@ -181,28 +181,29 @@ public class DocumentParser {
             return null;
         }
 
-        String sFileType = fileType == FileType.MEDICAL_REPORT ? "1" : "2";
-
         //필요한 값 꺼내고 제발 커넥션 종료하십시오.
         preparedStatement.close();
         DBHandler.INSTANCE.returnConnection(connection);
 
         //2차 SQL
-        String getDocument = "SELECT * FROM " + DBHandler.DB_NAME + ".서류 WHERE 학번=" + studentId + " AND 서류유형=" + sFileType + " AND 제출일 BETWEEN DATE('" + startDate + "') AND DATE('" + endDate + "')";
+        // 여기서 부터는 내가 바꿈
+        String getDocument = "SELECT * FROM " + DBHandler.DB_NAME + ".서류 WHERE 학번='" + studentId + "' AND 서류유형='" + fileType.name() + "' AND 제출일 BETWEEN DATE('" + startDate + "') AND DATE('" + endDate + "')";
         System.out.println(getDocument);
         PreparedStatement preparedStatement2 = connection.prepareStatement(getDocument);
         ResultSet foundDocument = preparedStatement2.executeQuery();
 
         java.util.Date submissionDate;
-        java.util.Date diagnosisDate;
-        String isValidStr;
+        java.util.Date diagnosisDate = null;
+        Bool isValid;
         String parsedId;
         String filePath;
 
         if (foundDocument.next()) {
             submissionDate = new java.util.Date(foundDocument.getTimestamp("제출일").getTime());
-            diagnosisDate = new java.util.Date(foundDocument.getDate("진단일").getTime());
-            isValidStr = foundDocument.getString("유효여부");
+            java.sql.Date jindan = foundDocument.getDate("진단일");
+            if (jindan != null)
+                diagnosisDate = new java.util.Date(jindan.getTime());
+            isValid = Bool.get(foundDocument.getString("유효여부"));
             parsedId = foundDocument.getString("학번");
             filePath = foundDocument.getString("서류저장경로");
         } else {
@@ -211,24 +212,10 @@ public class DocumentParser {
             return null;
         }
 
-        //파일 찾은거 객체화.
-
         //필요한 값 꺼내고 제발...또 제발 커넥션 종료하십시오.
         preparedStatement2.close();
         DBHandler.INSTANCE.returnConnection(connection);
 
-        //예외처리한다.
-        Bool isValid = null;
-        if (isValidStr != null)
-            isValid = isValidStr.equals("Y") ? Bool.TRUE : Bool.FALSE;
-
-        //문서객체 만들다가 예외가 날수있으니...
-        Document document = null;
-        try {
-            document = new Document(parsedId, fileType, submissionDate, diagnosisDate, filePath, isValid);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return document;
+        return new Document(parsedId, fileType, submissionDate, diagnosisDate, filePath, isValid);
     }
 }
