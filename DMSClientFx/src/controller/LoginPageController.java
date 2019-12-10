@@ -39,7 +39,7 @@ public class LoginPageController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("로그인 페이지 생성됨");
-
+        ServerAddressField.setText(SocketHandler.INSTANCE.ip);
     }
 
     //---------------------------------------------------------------------------
