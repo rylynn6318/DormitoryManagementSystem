@@ -262,8 +262,8 @@ public class SelecteesManageTabController extends InnerPageController
     	//선택한 항목들 클리어
 		delete_id_textfield.setText(null);
 		delete_dormName_textfield.setText(null);
+		delete_gender_textfield.setText(null);
 		delete_semester_textfield.setText(null);
 		delete_choice_textfield.setText(null);
-		check_application_column_gender.setText(null);
     }
 }

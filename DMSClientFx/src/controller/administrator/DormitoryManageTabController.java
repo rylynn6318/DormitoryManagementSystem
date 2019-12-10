@@ -13,17 +13,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import models.Dormitory;
-import models.Schedule;
 import models.Tuple;
 import tableViewModel.DormitoryViewModel;
-import tableViewModel.ScheduleViewModel;
 
 //생활관 조회 및 관리
 public class DormitoryManageTabController extends InnerPageController 
@@ -319,6 +316,7 @@ public class DormitoryManageTabController extends InnerPageController
     {
     	//선택한 항목들 클리어
 		insert_dormName_textfield.setText(null);
+		insert_gender_textfield.setText(null);
 		insert_semester_textfield.setText(null);
 		insert_capacity_textfield.setText(null);
 		insert_mealDuty_combobox.getSelectionModel().select(-1);

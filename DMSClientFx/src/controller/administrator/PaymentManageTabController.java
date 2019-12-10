@@ -266,6 +266,7 @@ public class PaymentManageTabController extends InnerPageController
     	//선택한 항목들 클리어
 		update_id_textfield.setText(null);
 		update_dormName_textfield.setText(null);
+		update_gender_textfield.setText(null);
 		update_semester_textfield.setText(null);
 		update_isPaid_combobox.getSelectionModel().select(-1);
     }
