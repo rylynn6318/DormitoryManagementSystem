@@ -278,7 +278,7 @@ public class ScheduleParser
 		
 		java.sql.Date sqlStartDate = utilDateToSqlDate(startDate);
 		java.sql.Date sqlEndDate = utilDateToSqlDate(endDate);
-		sqlEndDate = new java.sql.Date(sqlEndDate.getYear(), sqlEndDate.getMonth(), sqlEndDate.getDay()+8);
+		
 		System.out.println(sqlStartDate);
 		System.out.println(sqlEndDate);
 		
