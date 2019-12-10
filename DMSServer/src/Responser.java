@@ -1255,97 +1255,116 @@ public class Responser
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 등록 버튼 클릭 시
-	@SuppressWarnings("unchecked")
-	public static void admin_boarderManagePage_onInsert(Protocol protocol, SocketHelper socketHelper)
-	{
-		//배정내역에 학생을 임의로 추가하기 위한 기능
-		//배정내역에 학생을 넣고, 신청 테이블에도 몇일식인지, 코골이여부를 기록하기 위해 INSERT해야됨.
-		Tuple<PlacementHistory, Application> tuple = null;
-		try 
+		@SuppressWarnings("unchecked")
+		public static void admin_boarderManagePage_onInsert(Protocol protocol, SocketHelper socketHelper) throws SQLException
 		{
-			tuple = (Tuple<PlacementHistory, Application>) ProtocolHelper.deserialization(protocol.getBody());
-		} 
-		catch (Exception e) 
-		{
-			System.out.println("클라이언트에서 받은 튜플 분석 실패.");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 요청을 분석하는데 실패했습니다."));
-			return;
+			//배정내역에 학생을 임의로 추가하기 위한 기능
+			//배정내역에 학생을 넣고, 신청 테이블에도 몇일식인지, 코골이여부를 기록하기 위해 INSERT해야됨.
+			Tuple<PlacementHistory, Application> tuple = null;
+			try 
+			{
+				tuple = (Tuple<PlacementHistory, Application>) ProtocolHelper.deserialization(protocol.getBody());
+			} 
+			catch (Exception e) 
+			{
+				System.out.println("클라이언트에서 받은 튜플 분석 실패.");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 요청을 분석하는데 실패했습니다."));
+				return;
+			}
+			
+			PlacementHistory history = tuple.obj1;
+			Application application = tuple.obj2;
+			
+			boolean isExistAp = false;
+			try 
+			{
+				isExistAp = ApplicationParser.isExist(history.studentId,history.dormitoryName, history.semester);
+			}
+			catch (Exception e) 
+			{
+				System.out.println("신청내역 조회 도중 오류가 발생");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "신청내역 조회 도중 오류가 발생하였습니다."));
+				return;
+			}
+			
+			if(isExistAp)
+			{
+				System.out.println("이미 같은 신청이 존재합니다.");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "이미 같은 신청이 존재합니다."));
+				return;
+			}
+			
+			boolean isExistPh = false;
+			try 
+			{
+				isExistPh = PlacementHistoryParser.isExistPlcementHistory(history.studentId, history.semester);
+			}
+			catch (Exception e) 
+			{
+				System.out.println("배정내역 조회 도중 오류가 발생");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "배정내역 조회 도중 오류가 발생하였습니다."));
+				return;
+			}
+			
+			if(isExistPh)
+			{
+				System.out.println("이미 같은 학번의 입사자가 존재.");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "이미 같은 학번의 입사자가 존재합니다."));
+				return;
+			}
+			
+			Gender gender = null;
+			try 
+			{
+				gender = StudentParser.getGender(history.studentId); 
+			}
+			catch (Exception e1)
+			{
+				System.out.println("성별 알아내는데 실패");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "해당 학번의 성별을 조회하는데 실패했습니다."));
+				return;
+			}
+			
+			//getGender가 null로 반환됬을때 예외임... 혹시몰라 넣음.
+			if(gender == null)
+			{
+				System.out.println("성별 알아내는데 실패. getGender가 null로 반환됨");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "해당 학번의 성별을 조회하는데 실패했습니다."));
+				return;
+			}
+			
+			try
+			{
+				char charGender = gender.gender.charAt(0);
+				ApplicationParser.insertApplication(4, application.getMealType(), application.isSnore(), history.dormitoryName, 
+						charGender, history.semester, history.studentId);
+			}
+			catch (Exception e)
+			{
+				System.out.println("입사자 등록 도중 오류 발생(신청테이블)");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록 도중 오류가 발생했습니다.(신청테이블)"));
+				return;
+			}
+			
+			try
+			{
+				PlacementHistoryParser.insertPlacementHistory(history);
+			}
+			catch (SQLException e)
+			{
+				System.out.println("입사자 등록 도중 오류 발생(배정내역 테이블) 신청테이블에 값 들어갔으니 지워주세요.");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록 도중 오류가 발생했습니다.(배정내역 테이블) 신청테이블에 값 들어갔으니 지워주세요."));
+				return;
+			}
+			
+			eventReply(socketHelper, new Tuple<Bool, String>(Bool.TRUE, "입사자 등록에 성공했습니다."));
+			//1. 클라이언트에게서 학번, 호, 학기, 생활관명, 자리, 퇴사예정일, 몇일식, 코골이여부를 받는다.
+			//2. 배정내역 테이블에서 학번, 호, 학기, 생활관명으로 중복되는 값이 있는지 체크한다.
+			//3-1. 기존 값이 존재하면 기존 값 삭제하라고 클라이언트에게 알려준다.
+			//3-2. 기존 값이 존재하지 않으면 INSERT한다.
+			//	   신청 테이블에도 몇일식, 코골이여부 넣어주기위해 INSERT해줘야 한다.
+			//4. INSERT 수행에 대한 결과를 클라이언트에게 알려준다 (성공/실패/아마존사망...etc)
 		}
-		
-		PlacementHistory history = tuple.obj1;
-		Application application = tuple.obj2;
-		
-		boolean isExistPh = false;
-		try 
-		{
-			isExistPh = PlacementHistoryParser.isExistPlcementHistory(history.studentId);
-		}
-		catch (Exception e) 
-		{
-			System.out.println("배정내역 조회 도중 오류가 발생");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "배정내역 조회 도중 오류가 발생하였습니다."));
-			return;
-		}
-		
-		if(isExistPh)
-		{
-			System.out.println("이미 같은 학번의 입사자가 존재.");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "이미 같은 학번의 입사자가 존재합니다."));
-			return;
-		}
-		
-		Gender gender = null;
-		try 
-		{
-			gender = StudentParser.getGender(history.studentId); 
-		}
-		catch (Exception e1)
-		{
-			System.out.println("성별 알아내는데 실패");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "해당 학번의 성별을 조회하는데 실패했습니다."));
-			return;
-		}
-		
-		//getGender가 null로 반환됬을때 예외임... 혹시몰라 넣음.
-		if(gender == null)
-		{
-			System.out.println("성별 알아내는데 실패. getGender가 null로 반환됨");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "해당 학번의 성별을 조회하는데 실패했습니다."));
-			return;
-		}
-		
-		try
-		{
-			char charGender = gender.gender.charAt(0);
-			ApplicationParser.insertApplication(4, application.getMealType(), application.isSnore(), history.dormitoryName, 
-					charGender, history.semester, history.studentId);
-		}
-		catch (Exception e)
-		{
-			System.out.println("입사자 등록 도중 오류 발생(신청테이블)");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록 도중 오류가 발생했습니다.(신청테이블)"));
-			return;
-		}
-		
-		try
-		{
-			PlacementHistoryParser.insertPlacementHistory(history);
-		}
-		catch (SQLException e)
-		{
-			System.out.println("입사자 등록 도중 오류 발생(배정내역 테이블) 신청테이블에 값 들어갔으니 지워주세요.");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록 도중 오류가 발생했습니다.(배정내역 테이블) 신청테이블에 값 들어갔으니 지워주세요."));
-			return;
-		}
-		
-		eventReply(socketHelper, new Tuple<Bool, String>(Bool.TRUE, "입사자 등록에 성공했습니다."));
-		//1. 클라이언트에게서 학번, 호, 학기, 생활관명, 자리, 퇴사예정일, 몇일식, 코골이여부를 받는다.
-		//2. 배정내역 테이블에서 학번, 호, 학기, 생활관명으로 중복되는 값이 있는지 체크한다.
-		//3-1. 기존 값이 존재하면 기존 값 삭제하라고 클라이언트에게 알려준다.
-		//3-2. 기존 값이 존재하지 않으면 INSERT한다.
-		//	   신청 테이블에도 몇일식, 코골이여부 넣어주기위해 INSERT해줘야 한다.
-		//4. INSERT 수행에 대한 결과를 클라이언트에게 알려준다 (성공/실패/아마존사망...etc)
-	}
 	
 	//-------------------------------------------------------------------------
 	
