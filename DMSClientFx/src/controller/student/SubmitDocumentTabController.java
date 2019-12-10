@@ -91,7 +91,7 @@ public class SubmitDocumentTabController extends InnerPageController
         else
         {
         	//안내사항 표기
-        	info_textarea.setText("서류는 10MB를 넘지 않는 jpg 이미지 파일로 올려주시기 바랍니다. 재제출시 파일은 덮어씌워지니 주의하시기 바랍니다.");	//이건 걍 통신안하기로 함
+        	info_textarea.setText("서류는 8MB를 넘지 않는 jpg 이미지 파일로 올려주시기 바랍니다. 재제출시 파일은 덮어씌워지니 주의하시기 바랍니다.");	//이건 걍 통신안하기로 함
         	
         	//서버에게서 받아온 파일타입 목록을 콤보박스에 추가한다.
         	ArrayList<String> fileTypeList = new ArrayList<String>();
