@@ -217,7 +217,7 @@ public class ScheduleParser
 	{
 		int code = schedule.code;
 		java.sql.Date statDate = utilDateToSqlDate(schedule.startDate);
-		java.sql.Date endDate = utilDateToSqlDate(schedule.startDate);
+		java.sql.Date endDate = utilDateToSqlDate(schedule.endDate);
 		
 		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".스케쥴  WHERE `스케쥴 할일 코드_ID` = '" + String.valueOf(code) + 
 				"' AND `시작일` = '" + statDate + "' AND 종료일 = '" + endDate + "'";
@@ -278,7 +278,7 @@ public class ScheduleParser
 		
 		java.sql.Date sqlStartDate = utilDateToSqlDate(startDate);
 		java.sql.Date sqlEndDate = utilDateToSqlDate(endDate);
-		
+		sqlEndDate = new java.sql.Date(sqlEndDate.getYear(), sqlEndDate.getMonth(), sqlEndDate.getDay()+9);
 		System.out.println(sqlStartDate);
 		System.out.println(sqlEndDate);
 		
@@ -332,7 +332,7 @@ public class ScheduleParser
 	
 	public static java.sql.Date utilDateToSqlDate(java.util.Date utilDate)
 	{
-		return new java.sql.Date(utilDate.getYear(), utilDate.getMonth(), utilDate.getDay() + 1);
+		return new java.sql.Date(utilDate.getYear(), utilDate.getMonth(), utilDate.getDay()+8);
 		
 	}
 	
