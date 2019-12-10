@@ -1332,7 +1332,7 @@ public class Responser
 			}
 			catch (Exception e)
 			{
-				System.out.println("입사자 등록 도중 오류 발생(신청테이블)");
+				System.out.println("입사자 등록 도중 오류 발생(신청테이블), 유효한 칼럼값인지 확인해주세요.");
 				eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록 도중 오류가 발생했습니다.(신청테이블)"));
 				return;
 			}
@@ -1573,8 +1573,8 @@ public class Responser
 		
 		try
 		{
-			Path filePath = Paths.get(doc.documentStoragePath);
-			boolean isSucceed = IOHandler.INSTANCE.delete(filePath);
+			Path path = IOHandler.getFilePath(fileType, id);
+			boolean isSucceed = IOHandler.INSTANCE.delete(path);
 			if(!isSucceed)
 			{
 				System.out.println("DB에서는 삭제 완료, 로컬 서류 파일 삭제 실패.");
@@ -1588,7 +1588,7 @@ public class Responser
 			System.out.println("DB에서는 삭제 완료, 로컬 서류 파일 존재하지 않음.");
 		}
 		
-		eventReply(socketHelper, createMessage(Bool.FALSE, "서류가 삭제되었습니다."));
+		eventReply(socketHelper, createMessage(Bool.TRUE, "서류가 삭제되었습니다."));
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 업로드 버튼 클릭 시
@@ -1656,7 +1656,7 @@ public class Responser
 		try
 		{
 			//누가짜줘
-//			isSucceed = DocumentParser.updateDocument(document);
+			isSucceed = DocumentParser.renewDocument(document) != -2 ? true : false;
 		}
 		catch(Exception e)
 		{
