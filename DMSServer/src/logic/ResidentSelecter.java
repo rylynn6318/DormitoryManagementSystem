@@ -53,8 +53,8 @@ public class ResidentSelecter
 			passerSelection("오름1", choice);
 			passerSelection("오름2", choice);
 			passerSelection("오름3", choice);
-			passerSelection("신평_남", choice);
-			passerSelection("신평_여", choice);
+			passerSelection("신평남", choice);
+			passerSelection("신평여", choice);
 		}
 	}
 	

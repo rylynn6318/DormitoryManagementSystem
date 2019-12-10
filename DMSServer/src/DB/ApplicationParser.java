@@ -154,7 +154,7 @@ public class ApplicationParser {
 				result = capacity.getInt("수용인원");
 			else
 			{
-				System.out.println("생활관과 합격한 신청이 존재하지 않음");
+				System.out.println("생활관이 존재하지 않음");
 				return 0;
 			}
 		} catch (SQLException e) {
