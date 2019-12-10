@@ -2,10 +2,11 @@ package DB;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import org.omg.CORBA.StringHolder;
+import com.sun.media.jfxmedia.logging.Logger;
 
 import enums.Bool;
 import enums.Grade;
@@ -383,24 +384,64 @@ public class ApplicationParser {
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
 	
-	public static void updatePayCheck(Application temp) throws SQLException 
-	{		
-		String a;
-		if(temp.isPaid().bool)
-			a="Y";
-		else
-			a="N";
-		
-		String sql = "UPDATE  "+DBHandler.INSTANCE.DB_NAME+".신청 SET 납부여부 = '"+a+ "' WHERE 학번='"+temp.getStudentId()+"' AND 생활관정보_생활관명 = '"+temp.getDormitoryName()+"' AND 생활관정보_학기 = '"+temp.getSemesterCode()+"' AND 생활관정보_성별 ='"+temp.getGender()+"'";
+	public static int updatePayCheck(Collection<String> list) {
+		String sql =
+				"UPDATE 신청 " +
+						"SET 납부여부 = ? " +
+						"WHERE 학번 = ? " +
+						"AND 합격여부 = ? ";
+		int effected_raw = 0;
+
+		Connection connection = null;
+		PreparedStatement state = null;
+		try {
+			connection = DBHandler.INSTANCE.getConnection();
+			state = connection.prepareStatement(sql);
+			state.setString(1, Bool.TRUE.yn);
+			state.setString(3, Bool.TRUE.yn);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			effected_raw = -2;
+			return effected_raw;
+		}
+
+		for (String id : list) {
+			try {
+				state.setString(2, id);
+				effected_raw += state.executeUpdate();
+			} catch (SQLException e) {
+				System.out.println("[ 일괄 updatePayCheck ERROR ] " + id + " 납부내역 갱신 실패");
+			}
+		}
+
+		try {
+			state.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		DBHandler.INSTANCE.returnConnection(connection);
+
+		return effected_raw;
+	}
+
+	public static void updatePayCheck(Application temp) throws SQLException {
+		String sql =
+				"UPDATE " + DBHandler.DB_NAME + ".신청 " +
+						"SET 납부여부 = '" + Bool.TRUE.yn + "' " +
+						"WHERE 학번 = '" + temp.getStudentId() + "' " +
+						"AND 생활관정보_생활관명 = '" + temp.getDormitoryName() + "' " +
+						"AND 생활관정보_학기 = '" + temp.getSemesterCode() + "' " +
+						"AND 생활관정보_성별 = '" + temp.getGender() + "'";
 		System.out.println(sql);
-		Connection connection = DBHandler.INSTANCE.getConnection();		
-		PreparedStatement state= connection.prepareStatement(sql);
-		state.executeUpdate(sql);
-		
-		state.close();		
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+
+		state.executeUpdate();
+
+		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
-	
+
 	 
 	public static void insertApplication(int choice, int mealType, Bool isSnore, String dormitoryName, char gender , int semesterCode, String id) throws SQLException
 	{

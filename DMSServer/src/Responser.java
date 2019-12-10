@@ -2,20 +2,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 
-import DB.ApplicationParser;
-import DB.AssignAlgorithm;
-import DB.CurrentSemesterParser;
-import DB.DocumentParser;
-import DB.DormParser;
-import DB.PlacementHistoryParser;
-import DB.ScheduleParser;
-import DB.StudentParser;
+import DB.*;
 import enums.Bool;
 import enums.Code1;
 import enums.Code1.FileType;
@@ -1455,17 +1446,21 @@ public class Responser
 	}
 	
 	//관리자 - 납부 여부 조회 및 관리 - CSV 업로드 버튼 클릭 시
-	public static void admin_paymentManagePage_onUpload(Protocol protocol, SocketHelper socketHelper)
-	{
+	public static void admin_paymentManagePage_onUpload(Protocol protocol, SocketHelper socketHelper) throws IOException {
 		//클라이언트로부터 CSV파일을 다운로드 받고, 이 CSV 파일로 신청 테이블에 납부여부를 Y로 바꾸기 위함.
 		
 		//(1. 클라이언트가 파일을 업로드 시도한다.)
 		//2. 서버는 자신의 남은 용량이 10MB 이상인지 체크한다 -> 10MB 이상이면 진행, 10MB 이하이면 못받는다고 클라이언트에게 알려줌
+			// 이 예외는 "예외" 임으로 IOException 잡힐듯? 이정도는 알려줄 필요 없다ㅎ
 		//3. 서버는 어느 위치에 CSV 파일을 저장한다.
+
 		//4. 저장한 CSV 파일을 열어 학번 목록을 읽는다.
+
 		//5. 신청 테이블에서 이번 학기에, CSV파일 내 학번이 존재하면 납부내역을 T로 UPDATE한다.
+
 		//6. 만약 CSV파일 내에 학번이 존재하는데, 신청 테이블에 없는 경우 로그로 남기거나, 클라이언트에게 알려주면 좋겠다.
 		//7. 결과를 클라이언트에게 알려준다. (학번 + 성공여부 String으로 보내줘도될듯, ex) 20191234 성공, 20191235 성공, 20191236 실패)
+			// 메세지만 보냄ㅎ
 	}
 	
 	//-------------------------------------------------------------------------
@@ -1576,7 +1571,7 @@ public class Responser
 		
 		try
 		{
-			Path path = IOHandler.getFilePath(fileType, id);
+			Path path = IOHandler.INSTANCE.getFilePath(fileType, id);
 			boolean isSucceed = IOHandler.INSTANCE.delete(path);
 			if(!isSucceed)
 			{
