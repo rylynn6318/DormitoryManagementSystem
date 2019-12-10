@@ -195,7 +195,7 @@ public class DocumentParser {
         int result = -2;
 
         String query =
-                "Update 서류 Set 유효여부 = ? " +
+                "Update 서류 Set 유효여부 = ?, 진단일 = ? " +
                         "Where 학번 = ? " +
                         "And 서류유형 = ?";
 
@@ -211,8 +211,9 @@ public class DocumentParser {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
             preparedStatement.setString(1, doc.isValid.yn);
-            preparedStatement.setString(2, doc.studentId);
-            preparedStatement.setString(3, doc.documentType.name());
+            preparedStatement.setDate(1, ScheduleParser.utilDateToSqlDate(doc.diagnosisDate));
+            preparedStatement.setString(3, doc.studentId);
+            preparedStatement.setString(4, doc.documentType.name());
 
             result = preparedStatement.executeUpdate();
 
