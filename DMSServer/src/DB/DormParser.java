@@ -212,16 +212,24 @@ public class DormParser {
 	public static boolean deleteDormitory(String dormName, String semester) {
 		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".생활관정보 WHERE `학기` = '"+ semester+"' AND `생활관명` = '" + dormName + "'";
 		Connection connection =null;
-		PreparedStatement state =null;		
+		PreparedStatement state =null;	
+		int result;
 		try
 		{
 			connection = DBHandler.INSTANCE.getConnection();
 			System.out.println(sql);
 			state = connection.prepareStatement(sql);
-			if(state.executeUpdate()>0)
+			result = state.executeUpdate(sql);
+			if(result>0)
+			{
+				state.close();
+				DBHandler.INSTANCE.returnConnection(connection);
 				return true;
+			}
 			else
 			{
+				state.close();
+				DBHandler.INSTANCE.returnConnection(connection);
 				System.out.println("해당생활관없음");
 				return false;
 			}
