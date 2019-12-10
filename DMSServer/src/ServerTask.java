@@ -4,11 +4,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.Collection;
 
-import DB.AccountParser;
-import DB.CurrentSemesterParser;
-import DB.DocumentParser;
-import DB.StudentParser;
+import DB.*;
 import enums.*;
 import logic.*;
 import models.*;
@@ -147,9 +145,20 @@ public class ServerTask implements Runnable {
                         // CSV 파일의 경우 일방적인 전송밖에 없다
                         // body에는 csv 파일 바이트만 있는 상황
                         // 적당한곳에 csv파일 저장하고 로직 수행
+                        String msg = "납부내역 갱신 실패!";
                         try {
+                            IOHandler.INSTANCE.write(IOHandler.csvFilePath, protocol.getBody());
                             Responser.admin_paymentManagePage_onUpload(protocol, socketHelper);
 
+                            Collection<String> list = IOHandler.INSTANCE.readCsv(IOHandler.csvFilePath);
+                            int effected_raw = ApplicationParser.updatePayCheck(list);
+
+                            msg = "리스트에 담긴 " + list.size() + "명 중 " + effected_raw + "명에 대해 update 성공했습니다.";
+
+                            result = new Protocol
+                                    .Builder(ProtocolType.EVENT, Direction.TO_CLIENT, Code1.FileType.CSV, Code2.FileCode.SUCCESS)
+                                    .body(ProtocolHelper.serialization(msg))
+                                    .build();
                             isSuccess = Code2.FileCode.SUCCESS;
                         } catch (IOException e) {
                             Logger.INSTANCE.print("CSV 파일 분석 및 납부 내역 갱신 실패!");
@@ -159,6 +168,7 @@ public class ServerTask implements Runnable {
                         result = new Protocol
                                 .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
                                 .build();
+
                         socketHelper.write(result);
                         break;
                 }

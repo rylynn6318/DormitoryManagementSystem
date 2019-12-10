@@ -1453,16 +1453,14 @@ public class Responser
 		//2. 서버는 자신의 남은 용량이 10MB 이상인지 체크한다 -> 10MB 이상이면 진행, 10MB 이하이면 못받는다고 클라이언트에게 알려줌
 			// 이 예외는 "예외" 임으로 IOException 잡힐듯? 이정도는 알려줄 필요 없다ㅎ
 		//3. 서버는 어느 위치에 CSV 파일을 저장한다.
-		IOHandler.INSTANCE.write(IOHandler.csvFilePath, protocol.getBody());
+
 		//4. 저장한 CSV 파일을 열어 학번 목록을 읽는다.
-		Collection<String> list = IOHandler.INSTANCE.readCsv(IOHandler.csvFilePath);
-
-
-
 
 		//5. 신청 테이블에서 이번 학기에, CSV파일 내 학번이 존재하면 납부내역을 T로 UPDATE한다.
+
 		//6. 만약 CSV파일 내에 학번이 존재하는데, 신청 테이블에 없는 경우 로그로 남기거나, 클라이언트에게 알려주면 좋겠다.
 		//7. 결과를 클라이언트에게 알려준다. (학번 + 성공여부 String으로 보내줘도될듯, ex) 20191234 성공, 20191235 성공, 20191236 실패)
+			// 메세지만 보냄ㅎ
 	}
 	
 	//-------------------------------------------------------------------------

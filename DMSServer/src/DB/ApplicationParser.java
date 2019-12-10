@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import org.omg.CORBA.StringHolder;
+import com.sun.media.jfxmedia.logging.Logger;
 
 import enums.Bool;
 import enums.Grade;
@@ -384,26 +384,41 @@ public class ApplicationParser {
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
 	
-	public static int updatePayCheck(Collection<String> list) throws SQLException {
+	public static int updatePayCheck(Collection<String> list) {
 		String sql =
 				"UPDATE 신청 " +
 						"SET 납부여부 = ? " +
 						"WHERE 학번 = ? " +
 						"AND 합격여부 = ? ";
-
-		Connection connection = DBHandler.INSTANCE.getConnection();
-		PreparedStatement state = connection.prepareStatement(sql);
-
-		state.setString(1, Bool.TRUE.yn);
-		state.setString(3, Bool.TRUE.yn);
-
 		int effected_raw = 0;
-		for (String id : list) {
-			state.setString(2, id);
-			effected_raw += state.executeUpdate();
+
+		Connection connection = null;
+		PreparedStatement state = null;
+		try {
+			connection = DBHandler.INSTANCE.getConnection();
+			state = connection.prepareStatement(sql);
+			state.setString(1, Bool.TRUE.yn);
+			state.setString(3, Bool.TRUE.yn);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			effected_raw = -2;
+			return effected_raw;
 		}
 
-		state.close();
+		for (String id : list) {
+			try {
+				state.setString(2, id);
+				effected_raw += state.executeUpdate();
+			} catch (SQLException e) {
+				System.out.println("[ 일괄 updatePayCheck ERROR ] " + id + " 납부내역 갱신 실패");
+			}
+		}
+
+		try {
+			state.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		DBHandler.INSTANCE.returnConnection(connection);
 
 		return effected_raw;
