@@ -107,16 +107,16 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <Label text="지망" GridPane.columnIndex="4" />
-            <TextField fx:id="delete_choice_textfield" GridPane.columnIndex="4" GridPane.rowIndex="1" />
             <Label text="학번" />
+            <Label text="성별" GridPane.columnIndex="2" />
             <Label text="생활관명" GridPane.columnIndex="1" />
             <Label text="학기" GridPane.columnIndex="3" />
+            <Label text="지망" GridPane.columnIndex="4" />
             <TextField fx:id="delete_id_textfield" GridPane.rowIndex="1" />
             <TextField fx:id="delete_dormName_textfield" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="delete_semester_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <Label text="성별" GridPane.columnIndex="2" />
             <TextField fx:id="delete_gender_textfield" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="delete_semester_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <TextField fx:id="delete_choice_textfield" GridPane.columnIndex="4" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>
