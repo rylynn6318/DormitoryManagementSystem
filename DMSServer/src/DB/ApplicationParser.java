@@ -154,7 +154,7 @@ public class ApplicationParser {
 				result = capacity.getInt("수용인원");
 			else
 			{
-				System.out.println("생활관 과 합격한 신청이 존재하지 않음");
+				System.out.println("생활관과 합격한 신청이 존재하지 않음");
 				return 0;
 			}
 		} catch (SQLException e) {
@@ -162,16 +162,17 @@ public class ApplicationParser {
 			return 0;
 		}
 		
-		if((semester%10) != 01)		//0지망 처리 구문
+		if((semester%10) != 1)		//0지망 처리 구문
 		{
 			int firstSemester = (semester / 10) * 10 + 1;
-			String getNumOfZeroChoiceQuery = "SELECT COUNT(*) FROM (SELECT * FROM " + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명='" + dormName + "' AND 학기=" + firstSemester + " AND 합격여부='Y' AND 지망=0)";
+			String getNumOfZeroChoiceQuery = "SELECT COUNT(*) FROM " + DBHandler.DB_NAME + ".배정내역 WHERE 호실정보_생활관명='" + dormName + "' AND 호실정보_학기=" + firstSemester + " AND 퇴사예정일>=" + (semester/100 + 1) + "0101";
 			PreparedStatement passedZeroState = connection.prepareStatement(getNumOfZeroChoiceQuery);
 			ResultSet passedZero;
 			try {
 				passedZero = passedZeroState.executeQuery();
 			} catch (SQLException e) {
 				System.out.println("이전 학기에 합격한 1년 입사자 구하는는 도중 에러 발생");
+				System.out.println(getNumOfZeroChoiceQuery);
 				return 0;
 			}
 			

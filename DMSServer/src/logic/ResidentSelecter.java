@@ -105,7 +105,7 @@ public class ResidentSelecter
 			}
 		}
 		
-		System.out.println("완료");
+		System.out.println(dormName + " " + choice + "지망 완료");
 	}
 	
 }
