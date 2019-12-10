@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -906,6 +907,60 @@ public class Responser
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
+		
+		String dormName = null;
+		String semester = null;
+		
+		try
+		{
+			Tuple<String, String> receivedTuple = (Tuple<String, String>) ProtocolHelper.deserialization(protocol.getBody());
+			dormName = receivedTuple.obj1;
+			semester = receivedTuple.obj2;
+		}
+		catch (Exception e)
+		{
+			System.out.println("클라이언트에서 받아온 생활관명 학기 읽기 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 생활관명, 학기를 읽는데 실패하였습니다."));
+			return;
+		}
+		
+		boolean isExist = false;
+		try
+		{			
+			isExist = DormParser.isExist(dormName, semester);
+		}
+		catch(Exception e)
+		{
+			System.out.println("생활관 존재여부 확인 중 에러 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "생활관 존재여부 확인 중 에러가 발생하였습니다."));
+			return;
+		}
+		if(!isExist)
+		{
+			System.out.println("해당되는 생활관을 찾지 못하였습니다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 생활관을 찾지 못하였습니다."));
+			return;
+		}
+		
+		boolean isSucceed = false;
+		try
+		{			
+			isSucceed = DormParser.deleteDormitory(dormName, semester);	
+		}
+		catch(Exception e)
+		{		
+			System.out.println("생활관 삭제 도중 에러 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "생활관 삭제 중 에러가 발생하였습니다."));
+			return;
+		}
+		if(!isSucceed)
+		{
+			System.out.println("생활관 삭제에 실패하였습니다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "생활관 삭제에 실패하였습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.TRUE, "생활관 삭제에 성공하였습니다."));
 	}
 	
 	//관리자 - 생활관 조회 및 관리 - 등록 버튼 클릭 시
@@ -916,6 +971,41 @@ public class Responser
 		//3-1. 기존 값이 존재하면 기존 값 삭제하라고 클라이언트에게 알려준다.
 		//3-2. 기존 값이 존재하지 않으면 INSERT한다.
 		//4. INSERT 수행에 대한 결과를 클라이언트에게 알려준다 (성공/실패/아마존사망...etc)
+		
+		Dormitory dormitory = null;
+		
+		try
+		{
+			dormitory = (Dormitory) ProtocolHelper.deserialization(protocol.getBody());
+		}
+		catch (Exception e)
+		{
+			System.out.println("클라이언트에서 받아온 생활관 읽기 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 생활관을 읽는데 실패하였습니다."));
+			return;
+		}
+		
+		boolean isSucceed = false;
+		try
+		{
+			//누가좀 해줘. 기숙사 삭제하는 SQL임
+//			isSucceed = DormParser.insertDormitory(dormitory);	
+		}
+		catch (Exception e)
+		{
+			System.out.println("생활관 등록 도중 오류 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "생활관 등록 도중 오류가 발생하였습니다."));
+			return;
+		}
+		
+		if(!isSucceed)
+		{
+			System.out.println("생활관 등록에 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "생활관 등록에 실패하였습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.TRUE, "생활관 등록에 성공하였습니다."));
 	}
 	
 	//-------------------------------------------------------------------------
@@ -998,36 +1088,33 @@ public class Responser
 	//관리자 - 입사 선발자 조회 및 관리 - 삭제 버튼 클릭 시
 	public static void admin_selecteesManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
-		Bool isSucceed = Bool.TRUE;
 		//1. 클라이언트로부터 받은 학번, 생활관명, 학기, 지망으로 신청 테이블에서 조회한다.
-		Application temp;
-		try {
-			temp = (Application) ProtocolHelper.deserialization(protocol.getBody());
-			DB.ApplicationParser.deleteApplication(temp);
-		} catch (ClassNotFoundException | IOException | SQLException e1) {
-			// TODO Auto-generated catch block
-			isSucceed = Bool.FALSE;
-			e1.printStackTrace();
+		Application receivedApp;
+		try 
+		{
+			receivedApp = (Application) ProtocolHelper.deserialization(protocol.getBody());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("클라이언트에서 받아온 삭제 신청 읽기 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 삭제 신청을 읽는데 실패하였습니다."));
+			return;
 		}
 		
-		Tuple<Bool,String> result;
-		if(isSucceed == Bool.TRUE)
-			result = new Tuple<Bool,String>(Bool.TRUE, "성공했습니다");
-		else
-			result = new Tuple<Bool,String>(Bool.FALSE, "실패했습니다");
-		
-		try {
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(result)).build());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		//DB에 삭제요청
+		try
+		{
+			DB.ApplicationParser.deleteApplication(receivedApp);
 		}
-		return;
+		catch(Exception e)
+		{
+			System.out.println("신청 삭제 도중 오류가 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청 삭제 도중 오류가 발생하였습니다."));
+			return;
+		}
+		
+
+		eventReply(socketHelper, createMessage(Bool.TRUE, "신청 삭제에 성공하였습니다."));
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
@@ -1039,7 +1126,7 @@ public class Responser
 	public static void admin_boarderManagePage_onAllocate(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, SQLException
 	{
 		//입사자 등록(배정) 버튼은 신청 목록에서 합격여부를 Y, 납부내역 Y, 결핵진단서 Y인 신청의 최종합격여부를 Y로 바꾼다.
-		
+	
 		//이거 AssignAlgorithm.passUpdate(); 하시면 위 내용대로 동작합니다.
 		//그리고나서 배정내역에 최종합격여부가 Y인 학생들을 배정한다.
 		
@@ -1054,9 +1141,21 @@ public class Responser
 		// 4.그 정보에 맞게 DB에 업데이트
 		
 		//이걸 batchStart로 묶어놨으니 그냥 이것만 실행하면 됨
-		AssignAlgorithm.batchStart();
 		
-		//3. 결과를 클라이언트에게 알려준다(성공/실패?)
+		//(명근, 2019-12-10 14:57, 그래서 passUpdate야 아니면 batchStart야? 일단 batchStart가 주석해제되있어서 batchStart로 해둠
+		try
+		{
+			//입사다 등록(배정) 실행
+			AssignAlgorithm.batchStart();
+		}
+		catch(Exception e)
+		{
+			System.out.println("입사자 등록(배정) 도중 오류가 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록(배정) 도중 오류가 발생하였습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.TRUE, "입사자 등록(배정)에 성공하였습니다."));
 	}
 	
 	//관리자 - 입사자 조회 및 관리 - 조회 버튼 클릭 시
@@ -1064,28 +1163,28 @@ public class Responser
 	{
 		//1. 배정내역 테이블에서 이번 학기 배정내역 목록을 가져와 객체화한다. (학번, 호, 학기, 생활관명, 자리, 퇴사예정일)
 		//2. 배열화한다.
-		ArrayList<PlacementHistory> ph = new ArrayList<PlacementHistory>();
+		ArrayList<PlacementHistory> history = null;
 		try 
 		{
-			ph = PlacementHistoryParser.getAllResidence();
+			history = PlacementHistoryParser.getAllResidence();
 		} 
-		catch (ClassNotFoundException | SQLException e) 
+		catch (Exception e) 
 		{
-			System.out.println("배정내역 조회에 실패했습니다.");
+			System.out.println("배정내역 조회에 실패.");
 			eventReply(socketHelper, createMessage(Bool.FALSE, "배정내역 조회에 실패했습니다."));
 			return;
 		}
 		
-		if(ph.isEmpty())
+		if(history.isEmpty())
 		{
-			System.out.println("배정내역이 비어있습니다.");
+			System.out.println("배정내역이 비어있음.");
 			eventReply(socketHelper, createMessage(Bool.FALSE, "배정내역이 비어있습니다."));
 			return;
 		}
 		
 		//3. 직렬화해서 클라이언트에 전송한다.
 		
-		eventReply(socketHelper, new Tuple<Bool, ArrayList<PlacementHistory>>(Bool.TRUE, ph));
+		eventReply(socketHelper, new Tuple<Bool, ArrayList<PlacementHistory>>(Bool.TRUE, history));
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 	}
 	
@@ -1093,39 +1192,56 @@ public class Responser
 	public static void admin_boarderManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트로부터 받은 학번, 호, 학기, 생활관명으로 배정내역 테이블에서 조회한다.
-		PlacementHistory ph;
-		try 
-		{
-			ph = (PlacementHistory) ProtocolHelper.deserialization(protocol.getBody());
-		}
-		catch (ClassNotFoundException | IOException e) 
-		{
-			System.out.println("역직렬화 실패");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 삭제에 실패했습니다."));
-			return;
-		}
-		
-		try {
-				if(PlacementHistoryParser.isExistPlcementHistory(ph.studentId))
-				{
-					PlacementHistoryParser.deletePlacamentHistory(ph.studentId);
-					eventReply(socketHelper,new Tuple<Bool, String>(Bool.FALSE, "입사자 삭제에 실패했습니다."));
-				}
-				else
-				{
-					System.out.println("해당 입사자가 존재하지 않음");
-					eventReply(socketHelper, createMessage(Bool.FALSE, "해당 입사자가 존재하지 않습니다."));
-					return;
-				}
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Parser 오류");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 삭제에 실패했습니다."));
-			return;
-		}
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//	   (신청 테이블에서 최종합격여부를 N으로 UPDATE해야할지는 모르겠음...)
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
+		
+		PlacementHistory history = null;
+		try 
+		{
+			history = (PlacementHistory) ProtocolHelper.deserialization(protocol.getBody());
+		}
+		catch (Exception e) 
+		{
+			System.out.println("배정내역 역직렬화 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버에서 배정내역을 읽는데 실패했습니다."));
+			return;
+		}
+		
+		boolean isExist = false;
+		try 
+		{
+			isExist = PlacementHistoryParser.isExistPlcementHistory(history.studentId);
+			
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("배정내역 존재여부 확인 중 오류 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "배정내역 존재여부 확인 중 오류가 발생했습니다."));
+			return;
+		}
+		
+		if(!isExist)
+		{
+			System.out.println("해당 배정내역이 존재하지 않음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당 배정내역이 존재하지 않습니다."));
+			return;
+		}
+		
+		try
+		{
+			PlacementHistoryParser.deletePlacamentHistory(history.studentId);
+		}
+		catch (Exception e) 
+		{
+			System.out.println("입사자 삭제 도중 오류 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 삭제 도중 오류가 발생했습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.TRUE, "입사자 삭제에 성공했습니다."));
+		
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 등록 버튼 클릭 시
@@ -1134,69 +1250,85 @@ public class Responser
 	{
 		//배정내역에 학생을 임의로 추가하기 위한 기능
 		//배정내역에 학생을 넣고, 신청 테이블에도 몇일식인지, 코골이여부를 기록하기 위해 INSERT해야됨.
-		Tuple<PlacementHistory, Application> tuple;
+		Tuple<PlacementHistory, Application> tuple = null;
 		try 
 		{
 			tuple = (Tuple<PlacementHistory, Application>) ProtocolHelper.deserialization(protocol.getBody());
 		} 
-		catch (ClassNotFoundException | IOException e) {
-			System.out.println("역직렬화 실패");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록에 실패했습니다."));
+		catch (Exception e) 
+		{
+			System.out.println("클라이언트에서 받은 튜플 분석 실패.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 요청을 분석하는데 실패했습니다."));
 			return;
 		}
 		
-		PlacementHistory ph = tuple.obj1;
-		Application app = tuple.obj2;
+		PlacementHistory history = tuple.obj1;
+		Application application = tuple.obj2;
 		
-		boolean isExistPh;
+		boolean isExistPh = false;
 		try 
 		{
-			isExistPh = PlacementHistoryParser.isExistPlcementHistory(ph.studentId);
+			isExistPh = PlacementHistoryParser.isExistPlcementHistory(history.studentId);
 		}
-		catch (ClassNotFoundException | SQLException e) 
+		catch (Exception e) 
 		{
-			System.out.println("isExistPlacementHistory 에러");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록에 실패했습니다."));
+			System.out.println("배정내역 조회 도중 오류가 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "배정내역 조회 도중 오류가 발생하였습니다."));
 			return;
 		}
 		
 		if(isExistPh)
 		{
-			System.out.println("이미 같은 학번의 입사자가 존재합니다.");
+			System.out.println("이미 같은 학번의 입사자가 존재.");
 			eventReply(socketHelper, createMessage(Bool.FALSE, "이미 같은 학번의 입사자가 존재합니다."));
 			return;
 		}
-		else
+		
+		Gender gender = null;
+		try 
 		{
-			char charGender;
-			try 
-			{
-				if(StudentParser.getGender(ph.studentId) == Gender.Female)
-					charGender = 'F';
-				else
-					charGender = 'M';
-			}
-			catch (Exception e1)
-			{
-				System.out.println("성별 알아내는데 실패");
-				eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록에 실패했습니다."));
-				return;
-			}
-			
-			try
-			{
-				ApplicationParser.insertApplication(4, app.getMealType(), app.isSnore(), ph.dormitoryName, charGender, ph.semester, ph.studentId);
-				PlacementHistoryParser.insertPlacementHistory(ph);
-			}
-			catch (SQLException e)
-			{
-				System.out.println("Insert 실패");
-				eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록에 실패했습니다."));
-				return;
-			}
-			
-			eventReply(socketHelper, new Tuple<Bool, String>(Bool.TRUE, "등록 완료"));
+			gender = StudentParser.getGender(history.studentId); 
 		}
+		catch (Exception e1)
+		{
+			System.out.println("성별 알아내는데 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당 학번의 성별을 조회하는데 실패했습니다."));
+			return;
+		}
+		
+		//getGender가 null로 반환됬을때 예외임... 혹시몰라 넣음.
+		if(gender == null)
+		{
+			System.out.println("성별 알아내는데 실패. getGender가 null로 반환됨");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당 학번의 성별을 조회하는데 실패했습니다."));
+			return;
+		}
+		
+		try
+		{
+			char charGender = gender.gender.charAt(0);
+			ApplicationParser.insertApplication(4, application.getMealType(), application.isSnore(), history.dormitoryName, 
+					charGender, history.semester, history.studentId);
+		}
+		catch (Exception e)
+		{
+			System.out.println("입사자 등록 도중 오류 발생(신청테이블)");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록 도중 오류가 발생했습니다.(신청테이블)"));
+			return;
+		}
+		
+		try
+		{
+			PlacementHistoryParser.insertPlacementHistory(history);
+		}
+		catch (SQLException e)
+		{
+			System.out.println("입사자 등록 도중 오류 발생(배정내역 테이블)");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록 도중 오류가 발생했습니다.(배정내역 테이블)"));
+			return;
+		}
+		
+		eventReply(socketHelper, new Tuple<Bool, String>(Bool.TRUE, "입사자 등록에 성공했습니다."));
 		//1. 클라이언트에게서 학번, 호, 학기, 생활관명, 자리, 퇴사예정일, 몇일식, 코골이여부를 받는다.
 		//2. 배정내역 테이블에서 학번, 호, 학기, 생활관명으로 중복되는 값이 있는지 체크한다.
 		//3-1. 기존 값이 존재하면 기존 값 삭제하라고 클라이언트에게 알려준다.
@@ -1333,9 +1465,34 @@ public class Responser
 	public static void admin_documentManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트로부터 받은 학번, 서류유형, 제출일로 서류 테이블에서 조회한다.
-		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
+		Document docu = null;
+		try 
+		{
+			docu = (Document) ProtocolHelper.deserialization(protocol.getBody());
+			String id = docu.studentId;
+			Code1.FileType filetype = docu.documentType;
+			Date date = docu.submissionDate;
+			//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
+			try 
+			{
+				DocumentParser.deleteDocument(id, filetype, date);
+				//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
+				eventReply(socketHelper, createMessage(Bool.TRUE, "서류 삭제 성공"));
+			} 
+			catch (SQLException e)
+			{
+				System.out.println("서류 조회 및 제출 - delete문 쿼리 실패");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "서류 삭제 실패"));
+			}
+		}
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
-		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
+		catch (ClassNotFoundException | IOException e) 
+		{
+			System.out.println("역직렬화 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 데이터가 없습니다."));
+			return;
+		}		
+		
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 업로드 버튼 클릭 시

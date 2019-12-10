@@ -179,4 +179,71 @@ public class DormParser {
 		DBHandler.INSTANCE.returnConnection(connection);
 		return capacity;
 	}
+
+	public static boolean isExist(String dormName, String semester) throws SQLException  {
+		String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".생활관정보 WHERE `학기` = '"+ semester+"' AND `생활관명` = '" + dormName + "'";
+		boolean empty = false;	
+		Connection connection =null;
+		PreparedStatement state =null;
+		ResultSet rs =null;
+		try
+		{
+			connection = DBHandler.INSTANCE.getConnection();
+			System.out.println(sql);
+			state = connection.prepareStatement(sql);
+			rs = state.executeQuery();			
+			empty = rs.next();
+		}
+		catch(SQLException e)
+		{
+			System.out.println("생활관 isExist 쿼리문 실패");
+		}				
+		
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		if(empty)
+		{
+			return true;
+		}
+		return false;
+	}
+
+
+	public static boolean deleteDormitory(String dormName, String semester) {
+		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".생활관정보 WHERE `학기` = '"+ semester+"' AND `생활관명` = '" + dormName + "'";
+		Connection connection =null;
+		PreparedStatement state =null;	
+		int result;
+		try
+		{
+			connection = DBHandler.INSTANCE.getConnection();
+			System.out.println(sql);
+			state = connection.prepareStatement(sql);
+			result = state.executeUpdate(sql);
+			if(result>0)
+			{
+				state.close();
+				DBHandler.INSTANCE.returnConnection(connection);
+				return true;
+			}
+			else
+			{
+				state.close();
+				DBHandler.INSTANCE.returnConnection(connection);
+				System.out.println("해당생활관없음");
+				return false;
+			}
+		}
+		catch(SQLException e)
+		{
+			System.out.println("생활관 삭제 쿼리문 실패");
+			return false;
+		}	
+	}
+//		 테스트용 메인문
+//		public static void main(String args[]) throws SQLException
+//		{
+//			Boolean b = deleteDormitory("푸름5", "201902");
+//			System.out.println(b);
+//		}
 }
