@@ -129,22 +129,57 @@ public class ApplicationParser {
 		PreparedStatement passedState = connection.prepareStatement(getNumOfPassedAppsQuery);
 		PreparedStatement capacityState = connection.prepareStatement(getCapacityQuery);
 
-		ResultSet passed = passedState.executeQuery();
-		ResultSet capacity = capacityState.executeQuery();
+		ResultSet passed;
+		try {
+			passed = passedState.executeQuery();
+		} catch (SQLException e) {
+			System.out.println("합격자 수 가져오는 SQL 실행 도중 에러 발생");
+			return 0;
+		}
+		ResultSet capacity;
+		try {
+			capacity = capacityState.executeQuery();
+		} catch (SQLException e) {
+			System.out.println("남은 자리 수 가져오는 SQL 실행 도중 에러 발생");
+			return 0;
+		}
 		
-		capacity.next();
-		passed.next();
-
-		int result = capacity.getInt("수용인원") - passed.getInt("COUNT(*)");
+		int result;
+		try {
+			if(capacity.next() && passed.next())
+				result = capacity.getInt("수용인원") - passed.getInt("COUNT(*)");
+			else if(capacity.next() && !passed.next())
+				result = capacity.getInt("수용인원");
+			else
+			{
+				System.out.println("생활관 과 합격한 신청이 존재하지 않음");
+				return 0;
+			}
+		} catch (SQLException e) {
+			System.out.println("result 구하는 도중 에러 발생");
+			return 0;
+		}
 		
 		if((semester%10) != 01)		//0지망 처리 구문
 		{
 			int firstSemester = (semester / 10) * 10 + 1;
 			String getNumOfZeroChoiceQuery = "SELECT COUNT(*) FROM (SELECT * FROM " + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명='" + dormName + "' AND 학기=" + firstSemester + " AND 합격여부='Y' AND 지망=0)";
 			PreparedStatement passedZeroState = connection.prepareStatement(getNumOfZeroChoiceQuery);
-			ResultSet passedZero = passedZeroState.executeQuery();
-			passedZero.next();
-			result -= passedZero.getInt("COUNT(*)");
+			ResultSet passedZero;
+			try {
+				passedZero = passedZeroState.executeQuery();
+			} catch (SQLException e) {
+				System.out.println("이전 학기에 합격한 1년 입사자 구하는는 도중 에러 발생");
+				return 0;
+			}
+			
+			try {
+				if(passedZero.next())
+					result -= passedZero.getInt("COUNT(*)");
+			} catch (SQLException e) {
+				System.out.println("result에 1년 입사자 수 빼는 도중 에러 발생");
+				return 0;
+			}
 		}
 
 		passedState.close();
