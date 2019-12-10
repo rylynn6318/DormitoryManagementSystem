@@ -5,6 +5,7 @@ import DB.CurrentSemesterParser;
 import DB.DBHandler;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 import models.*;
@@ -37,28 +38,15 @@ public class ResidentSelecter
 		
 	public static void selectionByChoice() throws ClassNotFoundException, SQLException
 	{
-		passerSelection("푸름1", 0);
-		passerSelection("푸름1_탑층", 0);
-		passerSelection("푸름2", 0);
-		passerSelection("푸름2_탑층", 0);
-		passerSelection("푸름3", 0);
-		passerSelection("푸름3_탑층", 0);
+		ArrayList<String> dorms = ApplicationParser.getDormList();
+		ArrayList<String> yearDorms = ApplicationParser.getYearDormList();
+		
+		for(String name : yearDorms)
+			passerSelection(name, 0);
+		
 		for(int choice = 1; choice < 4; choice++)
-		{
-			passerSelection("푸름1", choice);
-			passerSelection("푸름1_탑층", choice);
-			passerSelection("푸름2", choice);
-			passerSelection("푸름2_탑층", choice);
-			passerSelection("푸름3", choice);
-			passerSelection("푸름3_탑층", choice);
-			passerSelection("푸름4", choice);
-			passerSelection("푸름4_탑층", choice);
-			passerSelection("오름1", choice);
-			passerSelection("오름2", choice);
-			passerSelection("오름3", choice);
-			passerSelection("신평남", choice);
-			passerSelection("신평여", choice);
-		}
+			for(String name : dorms)
+				passerSelection(name, choice);
 	}
 	
 	public static void passerSelection(String dormName, int choice) //throws ClassNotFoundException, SQLException
