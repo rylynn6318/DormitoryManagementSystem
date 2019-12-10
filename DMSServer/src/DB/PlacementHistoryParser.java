@@ -50,7 +50,7 @@ public class PlacementHistoryParser
 		@SuppressWarnings("deprecation")
 		java.sql.Date date = new java.sql.Date(ph.checkout.getYear(), ph.checkout.getMonth(), ph.checkout.getDay());
 		
-		String sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역(학생_학번, 호실정보_호, 호실정보_학기, 호실정보_생활관명, 자리, 퇴사예정일) VALUES (" + ph.studentId + ", " + ph.roomId + ", " + ph.semester + ", " + ph.dormitoryName + ", " + ph.seat + ", " + date + ")";
+		String sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역(학생_학번, 호실정보_호, 호실정보_학기, 호실정보_생활관명, 자리, 퇴사예정일) VALUES ('" + ph.studentId + "', '" + ph.roomId + "', '" + ph.semester + "', '" + ph.dormitoryName + "', '" + ph.seat.abcd + "', '" + date + "')";
 		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
@@ -99,6 +99,25 @@ public class PlacementHistoryParser
 	public static Boolean isExistPlcementHistory(String studentID) throws SQLException, ClassNotFoundException
 	{
 		String sql = "SELECT `학생_학번` FROM "+ DBHandler.DB_NAME + ".배정내역 WHERE `학생_학번` = '"+ studentID + "' and `호실정보_학기` = '" + CurrentSemesterParser.getCurrentSemester() + "'";
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+		boolean isNext = rs.next();
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+
+		if(isNext)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public static boolean isExistPlcementHistory(String studentId, int semester) throws SQLException {
+		String sql = "SELECT `학생_학번` FROM "+ DBHandler.DB_NAME + ".배정내역 WHERE `학생_학번` = '"+ studentId + "' and `호실정보_학기` = '" + semester+ "'";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
