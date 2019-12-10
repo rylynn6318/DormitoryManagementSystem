@@ -81,12 +81,16 @@ public class AssignAlgorithm
 			{
 			case "오름1" :
 			{
-				for(int i = 0; i < O1.length; i++)
+				for(int i = 0; i < O1.length; i+=2)
 				{
 					if(O1[i].getRoomNumber() == null)
 					{
 							O1[i].setRoomNumber(rs.getString("호"));
 							O1[i].setSemesterCode(rs.getInt("학기"));
+							O1[i+1].setRoomNumber(rs.getString("호"));
+							O1[i+1].setSemesterCode(rs.getInt("학기"));
+							
+						
 						break;
 					}
 				}
@@ -94,13 +98,15 @@ public class AssignAlgorithm
 			}
 			case "오름2" :
 			{
-				for(int i = 0; i < O2.length; i++)
+				for(int i = 0; i < O2.length; i+=2)
 				{
 					if(O2[i].getRoomNumber() == null)
 					{
 			
-							O2[i].setRoomNumber(rs.getString("호"));
-							O2[i].setSemesterCode(rs.getInt("학기"));
+						O2[i].setRoomNumber(rs.getString("호"));
+						O2[i].setSemesterCode(rs.getInt("학기"));
+						O2[i+1].setRoomNumber(rs.getString("호"));
+						O2[i+1].setSemesterCode(rs.getInt("학기"));
 						break;
 					}
 				}
@@ -108,12 +114,14 @@ public class AssignAlgorithm
 			}
 			case "오름3" :
 			{
-				for(int i = 0; i < O3.length; i++)
+				for(int i = 0; i < O3.length; i+=2)
 				{
 					if(O3[i].getRoomNumber() == null)
 					{
-							O3[i].setRoomNumber(rs.getString("호"));
-							O3[i].setSemesterCode(rs.getInt("학기"));
+						O3[i].setRoomNumber(rs.getString("호"));
+						O3[i].setSemesterCode(rs.getInt("학기"));
+						O3[i+1].setRoomNumber(rs.getString("호"));
+						O3[i+1].setSemesterCode(rs.getInt("학기"));
 						break;
 					}
 				}
@@ -121,26 +129,32 @@ public class AssignAlgorithm
 			}
 			case "푸름1" :
 			{
-				for(int i = 0; i < P1.length; i++)
+				for(int i = 0; i < P1.length; i+=2)
 				{
 					if(P1[i].getRoomNumber() == null)
 					{
 						
-							P1[i].setRoomNumber(rs.getString("호"));
-							P1[i].setSemesterCode(rs.getInt("학기"));
+						P1[i].setRoomNumber(rs.getString("호"));
+						P1[i].setSemesterCode(rs.getInt("학기"));
+						P1[i+1].setRoomNumber(rs.getString("호"));
+						P1[i+1].setSemesterCode(rs.getInt("학기"));
 						break;
 					}
 				}
 			}
 			case "푸름2" :
 			{
-				for(int i = 0; i < P2.length; i++)
+				for(int i = 0; i < P2.length; i+=2)
 				{
 					if(P2[i].getRoomNumber() == null)
 					{
 						
+						
 							P2[i].setRoomNumber(rs.getString("호"));
 							P2[i].setSemesterCode(rs.getInt("학기"));
+							P2[i+1].setRoomNumber(rs.getString("호"));
+							P2[i+1].setSemesterCode(rs.getInt("학기"));
+						
 						break;
 					}
 				}
@@ -148,13 +162,22 @@ public class AssignAlgorithm
 			}
 			case "푸름3" :
 			{
-				for(int i = 0; i < P3.length; i++)
+				for(int i = 0; i < P3.length; i+=4)
 				{
 					if(P3[i].getRoomNumber() == null)
 					{
 						
-							P3[i].setRoomNumber(rs.getString("호"));
-							P3[i].setSemesterCode(rs.getInt("학기"));
+						P3[i].setRoomNumber(rs.getString("호"));
+						P3[i].setSemesterCode(rs.getInt("학기"));
+						P3[i+1].setRoomNumber(rs.getString("호"));
+						P3[i+1].setSemesterCode(rs.getInt("학기"));
+						if(i+2<P4.length)
+						{
+						P3[i+2].setRoomNumber(rs.getString("호"));
+						P3[i+2].setSemesterCode(rs.getInt("학기"));
+						P3[i+3].setRoomNumber(rs.getString("호"));
+						P3[i+3].setSemesterCode(rs.getInt("학기"));
+						}
 						break;
 					}
 				}
@@ -162,13 +185,23 @@ public class AssignAlgorithm
 			}
 			case "푸름4" :
 			{
-				for(int i = 0; i < P4.length; i++)
+				for(int i = 0; i < P4.length; i+=4)
 				{
 					if(P4[i].getRoomNumber() == null)
 					{
 						
 							P4[i].setRoomNumber(rs.getString("호"));
 							P4[i].setSemesterCode(rs.getInt("학기"));
+							P4[i+1].setRoomNumber(rs.getString("호"));
+							P4[i+1].setSemesterCode(rs.getInt("학기"));
+							if(i+2<P4.length)
+							{
+							P4[i+2].setRoomNumber(rs.getString("호"));
+							P4[i+2].setSemesterCode(rs.getInt("학기"));
+							P4[i+3].setRoomNumber(rs.getString("호"));
+							P4[i+3].setSemesterCode(rs.getInt("학기"));
+							}
+						
 						break;
 					}
 				}
@@ -176,13 +209,15 @@ public class AssignAlgorithm
 			}
 			case "신평남" :
 			{
-				for(int i = 0; i < SN.length; i++)
+				for(int i = 0; i < SN.length; i+=2)
 				{
 					if(SN[i].getRoomNumber() == null)
 					{
 						
-							SN[i].setRoomNumber(rs.getString("호"));
-							SN[i].setSemesterCode(rs.getInt("학기"));
+						SN[i].setRoomNumber(rs.getString("호"));
+						SN[i].setSemesterCode(rs.getInt("학기"));
+						SN[i+1].setRoomNumber(rs.getString("호"));
+						SN[i+1].setSemesterCode(rs.getInt("학기"));
 						break;
 					}
 				}
@@ -190,13 +225,15 @@ public class AssignAlgorithm
 			}
 			case "신평여" :
 			{
-				for(int i = 0; i < SY.length; i++)
+				for(int i = 0; i < SY.length; i+=2)
 				{
 					if(SY[i].getRoomNumber() == null)
 					{
 						
-							SY[i].setRoomNumber(rs.getString("호"));
-							SY[i].setSemesterCode(rs.getInt("학기"));
+						SY[i].setRoomNumber(rs.getString("호"));
+						SY[i].setSemesterCode(rs.getInt("학기"));
+						SY[i+1].setRoomNumber(rs.getString("호"));
+						SY[i+1].setSemesterCode(rs.getInt("학기"));
 						break;
 					}
 				}
