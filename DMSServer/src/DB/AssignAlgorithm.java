@@ -29,7 +29,7 @@ public class AssignAlgorithm
 		}
 		for(int i = 0; i < as.size(); i++)
 		{
-		String sql1 = "UPDATE Prototype.신청 SET `최종결과` = 'Y' WHERE 학번 = '" + as.get(i) + "'";
+		String sql1 = "UPDATE Prototype.신청 SET `최종결과` = 'Y' WHERE 학번 = '" + as.get(i) + "' AND 합격여부 = 'Y'";
 		state.executeUpdate(sql1);
 		}
 		}
