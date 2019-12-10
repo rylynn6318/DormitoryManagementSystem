@@ -1655,6 +1655,13 @@ public class Responser
 			return;
 		}
 		
+		if(students == null)
+		{
+			System.out.println("학생목록 조회에 실패.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "학생목록 조회에 실패했습니다."));
+			return;
+		}
+		
 		if(students.isEmpty())
 		{
 			System.out.println("학생목록이 비어있음.");
