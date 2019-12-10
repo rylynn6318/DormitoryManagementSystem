@@ -334,15 +334,15 @@ public class ScheduleParser
 	public static java.sql.Date utilDateToSqlDate(java.util.Date utilDate)
 	{
 		if (utilDate != null)
-			return new java.sql.Date(utilDate.getYear(), utilDate.getMonth(), utilDate.getDay() + 1);
+			return new java.sql.Date(utilDate.getTime());
 		else
 			return null;
 	}
 	
-	public static java.util.Date sqlDateToUtilDate(java.sql.Date utilDate)
+	public static java.util.Date sqlDateToUtilDate(java.sql.Date sqlDate)
 	{
-		if (utilDate != null)
-			return new java.util.Date(utilDate.getTime());
+		if (sqlDate != null)
+			return new java.util.Date(sqlDate.getTime());
 		else
 			return null;
 	}
