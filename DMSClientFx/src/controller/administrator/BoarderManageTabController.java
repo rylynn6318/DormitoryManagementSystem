@@ -150,6 +150,11 @@ public class BoarderManageTabController extends InnerPageController
         
         if(resultTuple != null)
         {
+        	//성공하면 테이블 조회
+        	if(resultTuple.obj1 == Bool.TRUE)
+        	{
+        		checkBoarders();
+        	}
         	//성공/실패 메시지 표시
         	IOHandler.getInstance().showAlert(resultTuple.obj2);
         }
@@ -253,11 +258,13 @@ public class BoarderManageTabController extends InnerPageController
         
         if(resultTuple != null)
         {
-        	//성공/실패 메시지 표시
+        	//성공하면 테이블 조회
         	if(resultTuple.obj1 == Bool.TRUE)
         	{
         		clearDeleteInfo();
+        		checkBoarders();
         	}
+        	//성공/실패 메시지 표시
         	IOHandler.getInstance().showAlert(resultTuple.obj2);
         	
         }
@@ -351,11 +358,12 @@ public class BoarderManageTabController extends InnerPageController
         
         if(resultTuple != null)
         {
-        	//성공/실패 메시지 표시
         	if(resultTuple.obj1 == Bool.TRUE)
         	{
         		clearInsertInfo();
+        		checkBoarders();
         	}
+        	//성공/실패 메시지 표시
         	IOHandler.getInstance().showAlert(resultTuple.obj2);
         	
         }
