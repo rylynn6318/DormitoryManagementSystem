@@ -291,11 +291,11 @@ public class ServerTask implements Runnable {
                     case 생활관관리:
                         switch ((Code2.Event) protocol.code2) {
                             case REFRESH:
-                                try {
-                                    Responser.admin_dormitoryManagePage_onEnter(protocol, socketHelper);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+//                                try {
+//                                    Responser.admin_dormitoryManagePage_onEnter(protocol, socketHelper);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
                                 break;
                             case CHECK:
                                 try {

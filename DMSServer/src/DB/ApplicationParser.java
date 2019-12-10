@@ -56,7 +56,8 @@ public class ApplicationParser {
 	
 	public static ArrayList<Application> getAllApplications() throws SQLException
 	{
-		String getUnsortedAppsQuery = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 학기=(select max(학기) from " + DBHandler.DB_NAME + ".신청)";
+		String getUnsortedAppsQuery = "SELECT * FROM " + DBHandler.DB_NAME + ".신청";
+		System.out.println(getUnsortedAppsQuery);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(getUnsortedAppsQuery);
 		ResultSet apps = preparedStatement.executeQuery();
