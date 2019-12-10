@@ -273,11 +273,10 @@ public class SubmitApplicationTabController extends InnerPageController
     		if(oneYearDormList.contains(dorm.dormitoryName))
     		{
     			oneYear.add(dorm);
-    		}
-    		else
-    		{
-    			halfYear.add(dorm);
-    		}
+    		}    		
+    		
+    		halfYear.add(dorm);
+    		
     	}
     	
     	//콤보박스 이벤트 설정
