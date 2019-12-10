@@ -1659,7 +1659,7 @@ public class Responser
 		try
 		{
 			//누가짜줘
-//			isSucceed = DocumentParser.updateDocument(document);
+			isSucceed = DocumentParser.renewDocument(document) != -2 ? true : false;
 		}
 		catch(Exception e)
 		{

@@ -36,7 +36,7 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label text="※ 0지망은 1년  입사입니다" textFill="RED">
+            <Label text="※ 0지망은 1년  입사입니다. 4지망은 오프라인 신청입니다." textFill="RED">
                <VBox.margin>
                   <Insets top="5.0" />
                </VBox.margin>
