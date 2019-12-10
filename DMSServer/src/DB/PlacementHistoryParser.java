@@ -76,7 +76,8 @@ public class PlacementHistoryParser
 	{
 		ArrayList<PlacementHistory> phArray = new ArrayList<PlacementHistory>();
 		
-		String sql = "SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 호실정보_학기=" + CurrentSemesterParser.getCurrentSemester();
+		String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".배정내역 WHERE 호실정보_학기 = '" + CurrentSemesterParser.getCurrentSemester() + "'";
+		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet ph = state.executeQuery();
@@ -85,7 +86,7 @@ public class PlacementHistoryParser
 		{
 			//혹시 나중에 sql.date를 util.date로 변환하는데 문제가 있으면 java.util.Date newDate = result.getTimestamp("VALUEDATE");를 사용해보시오.
 			java.util.Date checkOut = new java.util.Date(ph.getDate("퇴사예정일").getTime());
-			PlacementHistory temp = new PlacementHistory(ph.getString("학번"), ph.getString("호실정보_호"), ph.getInt("호실정보_학기"), ph.getString("호실정보_생활관명"), Seat.get(ph.getString("자리")), checkOut);
+			PlacementHistory temp = new PlacementHistory(ph.getString("학생_학번"), ph.getString("호실정보_호"), ph.getInt("호실정보_학기"), ph.getString("호실정보_생활관명"), Seat.get(ph.getString("자리")), checkOut);
 			phArray.add(temp);
 		}
 		

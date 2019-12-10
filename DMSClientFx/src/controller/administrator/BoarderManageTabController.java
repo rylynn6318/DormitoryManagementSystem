@@ -1,5 +1,6 @@
 package controller.administrator;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -159,27 +160,37 @@ public class BoarderManageTabController extends InnerPageController
     private void checkBoarders()
     {
     	//배정내역 테이블 조회 요청
-    	ArrayList<PlacementHistory> resultList = Responser.admin_boarderManagePage_onCheck();
+    	Serializable result = Responser.admin_boarderManagePage_onCheck();
     	
     	//서버랑 통신이 됬는가?
-        if(resultList == null)
+        if(result == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
         	return;
         }
         
-        if(resultList != null)
+        Tuple<Bool, String> checkTuple = (Tuple<Bool, String>) result;
+        
+        if(checkTuple.obj1 == Bool.FALSE)
+        {
+        	IOHandler.getInstance().showAlert(checkTuple.obj2);
+        	return;
+        }
+        
+        Tuple<Bool, ArrayList<PlacementHistory>> resultTuple = (Tuple<Bool, ArrayList<PlacementHistory>>) result;
+        ArrayList<PlacementHistory> historyList = resultTuple.obj2;
+        if(historyList != null)
         {
         	//객체를 테이블뷰 모델로 변환
-        	ObservableList<PlacementHistoryViewModel> historyList = FXCollections.observableArrayList();
+        	ObservableList<PlacementHistoryViewModel> historyModels = FXCollections.observableArrayList();
         	
-        	for(PlacementHistory history : resultList)
+        	for(PlacementHistory history : historyList)
         	{
-        		historyList.add(placementHistoryToViewModel(history));
+        		historyModels.add(placementHistoryToViewModel(history));
         	}
         	
             //테이블뷰에 추가
-            setPlacementHistoryTableView(historyList);
+            setPlacementHistoryTableView(historyModels);
         }
     }
     
