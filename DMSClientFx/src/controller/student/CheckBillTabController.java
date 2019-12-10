@@ -108,7 +108,7 @@ public class CheckBillTabController extends InnerPageController
 	        BufferedWriter fw = new BufferedWriter(new FileWriter(fileSavePath, false));
 	         
 	        // 파일안에 문자열 쓰기
-	        String content = "은행 : " + bill.bankName + "\n계좌번호 : " + bill.accountNum + "\n금액 : " + bill.cost + "원" ;
+	        String content = "은행 : " + bill.bankName + "\n 계좌번호 : " + bill.accountNum + "\n 금액 : " + bill.cost + "원" ;
 	        fw.write(content);
 	        fw.flush();
 
