@@ -100,9 +100,6 @@ public class DocumentManageTabController extends InnerPageController
 
     @FXML
     private ComboBox<String> update_documentType_combobox;
-
-    @FXML
-    private DatePicker update_submitDate_datepicker;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
@@ -409,7 +406,6 @@ public class DocumentManageTabController extends InnerPageController
     {
     	String id = update_id_textfield.getText();
     	String documentType = update_documentType_combobox.getSelectionModel().getSelectedItem();
-    	LocalDate submitDate_l = update_submitDate_datepicker.getValue();
     	LocalDate diagnosisDate_l = update_diagnosisDate_datepicker.getValue();
     	String isValidStr = update_isValid_combobox.getSelectionModel().getSelectedItem();
     	
@@ -423,12 +419,6 @@ public class DocumentManageTabController extends InnerPageController
     	{
     		//서류유형 비어있음
     		IOHandler.getInstance().showAlert("서류유형이 비어있습니다.");
-    		return;
-    	}
-    	else if(submitDate_l == null || submitDate_l.toString().equals(""))
-    	{
-    		//제출일이 없음
-    		IOHandler.getInstance().showAlert("제출일이 비어있습니다.");
     		return;
     	}
     	else if(isValidStr == null || isValidStr.toString().equals(""))
@@ -448,13 +438,12 @@ public class DocumentManageTabController extends InnerPageController
     		}
     	}
     	
-    	Date submitDate = localDateToDate(submitDate_l);
     	Date diagnosisDate = null;
     	if(diagnosisDate_l != null)
     		localDateToDate(diagnosisDate_l);
     	Bool isValid = isValidStr.equals("T") ? Bool.TRUE : Bool.FALSE;
     	
-    	Document data = new Document(id, stringToFileType(documentType), submitDate, diagnosisDate, null, isValid);
+    	Document data = new Document(id, stringToFileType(documentType), null, diagnosisDate, null, isValid);
     	Tuple<Bool, String> resultTuple = Responser.admin_documentManagePage_onUpdate(data);
     	
     	//서버랑 통신이 됬는가?
@@ -481,7 +470,6 @@ public class DocumentManageTabController extends InnerPageController
 		//선택한 항목들 클리어
 		update_id_textfield.setText(null);
 		update_documentType_combobox.getSelectionModel().select(-1);
-		update_submitDate_datepicker.setValue(null);
 		update_diagnosisDate_datepicker.setValue(null);
 		update_isValid_combobox.getSelectionModel().select(-1);
 	}
