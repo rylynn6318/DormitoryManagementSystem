@@ -274,9 +274,9 @@ public class DocumentManageTabController extends InnerPageController
 				}
 			}else{
 				Code1.FileType type = (Code1.FileType) result.code1;
-				Path downloadpath = Paths.get(IOHandler.downloadDirectoryName,type.name() + type.extension);
+				Path downloadpath = Paths.get(type.name(),document.studentId + type.extension);
 				IOHandler.getInstance().write(downloadpath, result.getBody());
-				IOHandler.getInstance().showAlert(downloadpath.toFile().getAbsolutePath() + "\n위 위치에 저장되었습니다.");
+				IOHandler.getInstance().showAlert("\"" + downloadpath.toFile().getAbsolutePath() + "\" 에 저장되었습니다.");
 			}
         }
     }
