@@ -1,6 +1,8 @@
 package logic;
 
 import DB.ApplicationParser;
+import DB.CurrentSemesterParser;
+import DB.DBHandler;
 
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -56,12 +58,31 @@ public class ResidentSelecter
 		}
 	}
 	
-	public static void passerSelection(String dormName, int choice) throws ClassNotFoundException, SQLException
+	public static void passerSelection(String dormName, int choice) //throws ClassNotFoundException, SQLException
 	{
-		int semester = ApplicationParser.getSemester();
+		int semester;
+		try {
+			semester = CurrentSemesterParser.getCurrentSemester();
+		} catch (SQLException e) {
+			System.out.println("학기 가져오는 도중 에러 발생");
+			return;
+		}
 		
-		int leftCapacity = ApplicationParser.getNumOfLeftSeat(dormName, semester);
-		TreeSet<Application> apps = ApplicationParser.getSortedApps(dormName, choice, semester);
+		int leftCapacity;
+		try {
+			leftCapacity = ApplicationParser.getNumOfLeftSeat(dormName, semester);
+		} catch (SQLException e) {
+			System.out.println(dormName + "의 남은 자리 수 가져오는 도중 에러 발생");
+			return;
+		}
+		
+		TreeSet<Application> apps;
+		try {
+			apps = ApplicationParser.getSortedApps(dormName, choice, semester);
+		} catch (ClassNotFoundException | SQLException e) {
+			System.out.println(dormName + "의 정렬된" + choice + "지망 신청 가져오는 도중 에러 발생");
+			return;
+		}
 		
 		Iterator<Application> iterator = apps.iterator();
 		
@@ -70,7 +91,12 @@ public class ResidentSelecter
 			if(iterator.hasNext())
 			{
 				Application temp = iterator.next();
-				ApplicationParser.updatePasser(temp);
+				try {
+					ApplicationParser.updatePasser(temp);
+				} catch (SQLException e) {
+					System.out.println("합격여부를 Y로 업데이트 하는 도중 에러 발생");
+					return;
+				}
 			}
 			else
 			{
