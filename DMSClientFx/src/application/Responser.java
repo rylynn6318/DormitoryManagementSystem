@@ -219,7 +219,6 @@ public class Responser
 		//(3. 서버는파일 저장 성공/실패 여부를 클라이언트에게 알려준다.)
 		
 		//3. 결과를 메시지로 띄운다.
-		// TODO 성공 실패만 반환한다. 테스트는 안해봤는데 될것같음.
 		Tuple<String, byte[]> idWithFile = new Tuple<>(UserInfo.account.accountId, Files.readAllBytes(file.toPath()));
 		Protocol protocol = new Protocol
 				.Builder(ProtocolType.FILE, Direction.TO_SERVER, fileType, FileCode.UPLOAD)
@@ -270,7 +269,7 @@ public class Responser
 	
 	//학생 - 서류 조회 - 다운로드 버튼 클릭 시(파일 다운로드) (2019-12-08 명근 수정)
 	// 구현 수정함 자세한건 커밋 로그 보셈 by ㅅㅁ
-	public static Protocol student_checkDocumentPage_onDownlaod(Code1.FileType fileType) throws Exception {
+	public static Protocol student_checkDocumentPage_onDownlaod(Document doc) throws Exception {
 		//1. 남은 용량이 10MB 이상인지 체크한다 -> 10MB 이상이면 다음, 10MB 이하면 중단
 		//2. 서버에게 서류 조회 요청을 한다.(파일경로를 보내서, 어떤 파일을 다운하려는지 알려준다)
 		//(3. 서버는 해당 파일 경로로 파일을 찾는다. -> 파일이 있으면 진행, 없으면 없다고 알려줌(이땐 버그라고 봐야할듯))
@@ -278,7 +277,7 @@ public class Responser
 		//5. 다운로드 받은 파일을 대충 바탕화면에 저장하고 연다.
 		
 		//파일 다운로드 요청 프로토콜 생성
-		Protocol protocol = fileProtocolBuilder(fileType, FileCode.REQUEST, UserInfo.account.accountId);
+		Protocol protocol = fileProtocolBuilder(doc.documentType, FileCode.REQUEST, doc.studentId);
 
 		return SocketHandler.INSTANCE.request(protocol);
 	}
@@ -593,8 +592,7 @@ public class Responser
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 업로드 버튼 클릭 시
-	public static void admin_documentManagePage_onUpload()
-	{
+	public static Bool admin_documentManagePage_onUpload(String id, Code1.FileType fileType, File file) throws Exception {
 		//학생으로부터 오프라인으로 받은 서류를 대리제출 하기 위함.
 		
 		//아래 로직은 student_submitDocumentPage_onSubmit와 거의 동일하다! 
@@ -607,6 +605,17 @@ public class Responser
 		//4. 어느폴더\학번\학기\학번+결핵진단서or서약서.jpg 와 같은 형식으로 저장된다.
 		//	 (학기가 겹치면 덮어씌워진다. 즉, 한학기에 한 파일만 유효함)
 		//5. 파일 저장 성공/실패 여부를 클라이언트에게 알려준다.
+		Tuple<String, byte[]> idWithFile = new Tuple<>(UserInfo.account.accountId, Files.readAllBytes(file.toPath()));
+		Protocol protocol = new Protocol
+				.Builder(ProtocolType.FILE, Direction.TO_SERVER, fileType, FileCode.UPLOAD)
+				.body(ProtocolHelper.serialization(idWithFile))
+				.build();
+		protocol = SocketHandler.INSTANCE.request(protocol);
+
+		if (FileCode.SUCCESS == (Code2.FileCode)protocol.code2)
+			return Bool.TRUE;
+		else
+			return Bool.FALSE;
 	}
 	
 	//관리자 - 서류 조회 및 제출 - UPDATE 버튼 클릭 시

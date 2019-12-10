@@ -1,8 +1,11 @@
 package controller.administrator;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +32,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import models.*;
 import tableViewModel.*;
+import utils.Protocol;
+import utils.ProtocolHelper;
 
 //서류 조회 및 제출
 public class DocumentManageTabController extends InnerPageController 
@@ -246,13 +251,34 @@ public class DocumentManageTabController extends InnerPageController
     	     }
     	});
     }
-    
+
+    // 학생 쪽 코드랑 거의 같음
     private void downloadDocument(Document document)
     {
-    	if(IOHandler.getInstance().showDialog("다운로드", "다운로드하시겠습니까?"))
+    	if (IOHandler.getInstance().showDialog("다운로드", "다운로드하시겠습니까?"))
         {
-			//다운로드
-//    		downloadMethod(document);
+			Protocol result = null;
+			try {
+				result = Responser.student_checkDocumentPage_onDownlaod(document);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			//서버랑 통신이 됬는가?
+			if(result == null) {
+				IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
+			}else if(result.code2 == Code2.FileCode.FAIL){
+				try {
+					IOHandler.getInstance().showAlert((String) ProtocolHelper.deserialization(result.getBody()));
+				} catch (ClassNotFoundException | IOException e) {
+					IOHandler.getInstance().showAlert("알 수 없는 이유로 다운로드에 실패했습니다.");
+				}
+			}else{
+				Code1.FileType type = (Code1.FileType) result.code1;
+				Path downloadpath = Paths.get(type.name(),document.studentId + type.extension);
+				IOHandler.getInstance().write(downloadpath, result.getBody());
+				IOHandler.getInstance().showAlert("\"" + downloadpath.toFile().getAbsolutePath() + "\" 에 저장되었습니다.");
+			}
         }
     }
     
@@ -347,30 +373,21 @@ public class DocumentManageTabController extends InnerPageController
     	}
     	
 		//전송
-		
+
 		//전송하기전에 파일이 존재하는지 체크
 		File file = new File(fileDirectory);
-		if(file.exists())
-		{
+		if (file.exists()) {
 			//TODO 여기서 파일전송해라!!!! 파일전송하는 프로토콜
-			Responser.admin_documentManagePage_onUpload();
-			
-			boolean isSucceed = true;
-			if(isSucceed)
-			{
-				IOHandler.getInstance().showAlert("서류가 제출되었습니다.");
-				//전송한 정보값 UI에서 비워준다.
-				clearUploadInfo();
-			}
-			else
-			{
-				//실패했으면
+			try {
+				if (Responser.admin_documentManagePage_onUpload(id, stringToFileType(documentType), file).bool) {
+					IOHandler.getInstance().showAlert("서류가 제출되었습니다.");
+					clearUploadInfo();
+				} else IOHandler.getInstance().showAlert("서버 측 오류로 파일 업로드에 실패했습니다.");
+			} catch (Exception e) {
 				IOHandler.getInstance().showAlert("파일 업로드에 실패했습니다.");
+				e.printStackTrace();
 			}
-			
-		}
-		else
-		{
+		} else {
 			IOHandler.getInstance().showAlert("파일이 존재하지 않습니다!");
 		}
 	
