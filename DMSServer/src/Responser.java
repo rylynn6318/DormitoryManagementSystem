@@ -906,6 +906,62 @@ public class Responser
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
+		
+		String dormName = null;
+		String semester = null;
+		
+		try
+		{
+			Tuple<String, String> receivedTuple = (Tuple<String, String>) ProtocolHelper.deserialization(protocol.getBody());
+			dormName = receivedTuple.obj1;
+			semester = receivedTuple.obj2;
+		}
+		catch (Exception e)
+		{
+			System.out.println("클라이언트에서 받아온 생활관명 학기 읽기 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 생활관명, 학기를 읽는데 실패하였습니다."));
+			return;
+		}
+		
+		boolean isExist = false;
+		try
+		{
+			//이거 파서 누가 대신 만들어줘
+//			isExist = DormParser.isExist(dormName, semester);
+		}
+		catch(Exception e)
+		{
+			System.out.println("생활관 존재여부 확인 중 에러 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "생활관 존재여부 확인 중 에러가 발생하였습니다."));
+			return;
+		}
+		if(!isExist)
+		{
+			System.out.println("해당되는 생활관을 찾지 못하였습니다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 생활관을 찾지 못하였습니다."));
+			return;
+		}
+		
+		boolean isSucceed = false;
+		try
+		{
+			//이것도 파서필요함
+//			isSucceed = DormParser.deleteDormitory(dormName, semester);	
+		}
+		catch(Exception e)
+		{		
+			System.out.println("생활관 삭제 도중 에러 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "생활관 삭제 중 에러가 발생하였습니다."));
+			return;
+		}
+		if(!isSucceed)
+		{
+			System.out.println("생활관 삭제에 실패하였습니다.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "생활관 삭제에 실패하였습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.TRUE, "생활관 삭제에 성공하였습니다."));
 	}
 	
 	//관리자 - 생활관 조회 및 관리 - 등록 버튼 클릭 시
@@ -916,6 +972,21 @@ public class Responser
 		//3-1. 기존 값이 존재하면 기존 값 삭제하라고 클라이언트에게 알려준다.
 		//3-2. 기존 값이 존재하지 않으면 INSERT한다.
 		//4. INSERT 수행에 대한 결과를 클라이언트에게 알려준다 (성공/실패/아마존사망...etc)
+		
+		Dormitory dormitory = null;
+		
+		try
+		{
+			dormitory = (Dormitory) ProtocolHelper.deserialization(protocol.getBody());
+		}
+		catch (Exception e)
+		{
+			System.out.println("클라이언트에서 받아온 생활관 읽기 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 생활관을 읽는데 실패하였습니다."));
+			return;
+		}
+		
+		//누가좀 해줘
 	}
 	
 	//-------------------------------------------------------------------------
