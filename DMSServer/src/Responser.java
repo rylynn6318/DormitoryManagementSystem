@@ -1456,16 +1456,24 @@ public class Responser
 	//관리자 - 서류 조회 및 제출 - 조회 버튼 클릭 시
 	public static void admin_documentManagePage_onCheck(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, SQLException
 	{
-		//1. 서류 테이블에서 이번 학기 서류제출내역 목록을 가져와 객체화한다. (학번, 서류유형, 제출일, 진단일, 서류저장경로, 유효여부)
+		//1. 서류 테이블에서 모든 학기 서류제출내역 목록을 가져와 객체화한다. (학번, 서류유형, 제출일, 진단일, 서류저장경로, 유효여부)
 		//2. 배열화한다.
-		int semester = CurrentSemesterParser.getCurrentSemester();
-		ArrayList<Document> dList;
+		ArrayList<Document> dList = null;
 
-		dList = (ArrayList<Document>) DocumentParser.getAllDocuments();
+		try
+		{
+			dList = (ArrayList<Document>) DocumentParser.getAllDocuments();
+		}
+		catch(Exception e)
+		{
+			System.out.println("문서 목록 조회 중 오류가 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "문서 목록 조회 중 오류가 발생하였습니다."));
+			return;
+		}
 		
 		if(dList.isEmpty())
 		{
-			System.out.println("서류 테이블이 비어있습니다.");
+			System.out.println("서류 테이블이 비어있음.");
 			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 테이블이 비어있습니다."));
 			return;
 		}

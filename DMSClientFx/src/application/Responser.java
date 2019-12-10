@@ -586,14 +586,14 @@ public class Responser
 	}
 	
 	//관리자 - 서류 조회 및 제출(관리) - 조회 버튼 클릭 시
-	public static ArrayList<Document> admin_documentManagePage_onCheck()
+	public static Serializable admin_documentManagePage_onCheck()
 	{
 		//1. 서류 테이블에서 이번 학기 서류제출내역 목록을 가져와 객체화한다. (학번, 서류유형, 제출일, 진단일, 서류저장경로, 유효여부)
 		//2. 배열화한다.
 		//3. 직렬화해서 클라이언트에 전송한다.
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 		Protocol protocol = eventProtocolBuilder(Code1.Page.서류관리, Code2.Event.CHECK, null);
-		ArrayList<Document> result = (ArrayList<Document>) sendAndReceive(protocol);
+		Serializable result = sendAndReceive(protocol);
 		return result;
 	}
 	
