@@ -39,13 +39,11 @@ public class ResidentSelecter
 	public static void selectionByChoice() throws ClassNotFoundException, SQLException
 	{
 		ArrayList<String> dorms = ApplicationParser.getDormList();
+		ArrayList<String> yearDorms = ApplicationParser.getYearDormList();
 		
-		passerSelection("푸름1", 0);
-		passerSelection("푸름1_탑층", 0);
-		passerSelection("푸름2", 0);
-		passerSelection("푸름2_탑층", 0);
-		passerSelection("푸름3", 0);
-		passerSelection("푸름3_탑층", 0);
+		for(String name : yearDorms)
+			passerSelection(name, 0);
+		
 		for(int choice = 1; choice < 4; choice++)
 			for(String name : dorms)
 				passerSelection(name, choice);
