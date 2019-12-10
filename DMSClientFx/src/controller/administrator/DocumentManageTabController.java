@@ -383,6 +383,7 @@ public class DocumentManageTabController extends InnerPageController
 				if (Responser.admin_documentManagePage_onUpload(id, stringToFileType(documentType), file).bool) {
 					IOHandler.getInstance().showAlert("서류가 제출되었습니다.");
 					clearUploadInfo();
+					checkDocuments();
 				} else IOHandler.getInstance().showAlert("서버 측 오류로 파일 업로드에 실패했습니다.");
 			} catch (Exception e) {
 				IOHandler.getInstance().showAlert("파일 업로드에 실패했습니다.");

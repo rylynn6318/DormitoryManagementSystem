@@ -605,7 +605,7 @@ public class Responser
 		//4. 어느폴더\학번\학기\학번+결핵진단서or서약서.jpg 와 같은 형식으로 저장된다.
 		//	 (학기가 겹치면 덮어씌워진다. 즉, 한학기에 한 파일만 유효함)
 		//5. 파일 저장 성공/실패 여부를 클라이언트에게 알려준다.
-		Tuple<String, byte[]> idWithFile = new Tuple<>(UserInfo.account.accountId, Files.readAllBytes(file.toPath()));
+		Tuple<String, byte[]> idWithFile = new Tuple<>(id, Files.readAllBytes(file.toPath()));
 		Protocol protocol = new Protocol
 				.Builder(ProtocolType.FILE, Direction.TO_SERVER, fileType, FileCode.UPLOAD)
 				.body(ProtocolHelper.serialization(idWithFile))
