@@ -13,7 +13,7 @@ import enums.Bool;
 public final class SocketHelper implements Closeable {
     public final static String localhost = "127.0.0.1";
     public final static int port = 4444;
-    public final static int sendbuffer_size = 1024;
+    public final static int sendbuffer_size = 8192;
     public final static int timeout = 15000; // 15초, 아직 안씀
 
     private Socket socket = null;

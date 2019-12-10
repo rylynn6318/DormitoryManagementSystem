@@ -109,3 +109,7 @@ shared-class update log
 2019-12-09 22:54 v2.16
 	PlacementHistory 생성자에 int형에 null 박는거 -1로 바꿈.
 	Shared Class Export해서 적용함.
+
+2019-12-10 13:55 v2.17
+	sendbuffer_size 1024(1kb) -> 8192(8kb)로 변경
+	Shared Class Export해서 적용함.
