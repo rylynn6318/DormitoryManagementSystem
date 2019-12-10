@@ -618,7 +618,7 @@ public class AssignAlgorithm
 				{
 					if(P3[i].getStudentId() == null)
 					{
-						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D")) && P2[i].getRoomNumber().compareTo("500호") >= 0) // 탑층 자리이면 넣으라는 뜻
+						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D")) && P3[i].getRoomNumber().compareTo("500호") >= 0) // 탑층 자리이면 넣으라는 뜻
 						{
 							P3[i].setStudentId(rs2.getString("학번"));
 							P3[i].setIsNew(true);
