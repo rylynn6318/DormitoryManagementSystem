@@ -369,10 +369,15 @@ public class ApplicationParser {
 
 	public static void updatePasser(Application temp) throws SQLException 
 	{
-		String setPassed = "UPDATE " + DBHandler.DB_NAME + ".신청 SET 합격여부='Y' WHERE 학번='" + temp.getStudentId() + "' AND 지망=" + temp.getChoice() + " AND 학기=" + temp.getSemesterCode();
+		String setPassed = "UPDATE " + DBHandler.DB_NAME + ".신청 SET 합격여부='Y' WHERE 학번='" + temp.getStudentId() + "' AND 지망=" + temp.getChoice() + " AND 생활관정보_학기=" + temp.getSemesterCode();
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(setPassed);
-		preparedStatement.executeUpdate();
+		try {
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("합격여부를 Y로 만드는 UPDATE 실패");
+			return;
+		}
 		
 		preparedStatement.close();
 		DBHandler.INSTANCE.returnConnection(connection);
