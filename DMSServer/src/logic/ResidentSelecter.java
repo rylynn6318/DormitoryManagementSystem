@@ -85,6 +85,11 @@ public class ResidentSelecter
 		}
 		
 		Iterator<Application> iterator = apps.iterator();
+		if(apps.isEmpty())
+		{
+			System.out.println(dormName + "의 " + choice + "지망 신청이 존재하지 않거나 이미 다른 신청이 합격한 학생의 신청만 존재");
+			return;
+		}
 		
 		for(int i = 0; i < leftCapacity; i++)
 		{
@@ -92,7 +97,7 @@ public class ResidentSelecter
 			{
 				Application temp = iterator.next();
 				try {
-					ApplicationParser.updatePasser(temp);
+					System.out.println(ApplicationParser.updatePasser(temp) + "개의 신청이 합격으로 처리됨");
 				} catch (SQLException e) {
 					System.out.println("합격여부를 Y로 업데이트 하는 도중 에러 발생");
 					return;
