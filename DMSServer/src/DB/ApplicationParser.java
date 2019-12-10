@@ -85,7 +85,7 @@ public class ApplicationParser {
 		
 		while(dorms.next())
 		{
-			dormList.add(dorms.getString("생활관정보_생활관명"));
+			dormList.add(dorms.getString("생활관명"));
 		}
 		
 		return dormList;
