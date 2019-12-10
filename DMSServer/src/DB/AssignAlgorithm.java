@@ -11,9 +11,6 @@ import batch.MakeAllRoomInfo;
 public class AssignAlgorithm 
 {
 	private static int currentSemester;
-	private static int availablePeriod;
-	private static int checkOutDate1; //이건 1학기나 계절학기 신청자들의 기숙사 종료일 어차피 현재 받고있는 신청자들의 학기에 따라 변수 알아서 바뀌니 걱정 ㄴ
-	private static int checkOutDate2; //이건 1년 신청자들의 기숙사 종료일
 	
 	public static void lastPassUpdate() throws SQLException
 	{
@@ -37,45 +34,6 @@ public class AssignAlgorithm
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
 	
-	public static void setAvailablePeriod()
-	{
-		switch(currentSemester % 10)
-		{
-		case 1:
-			availablePeriod = (currentSemester - 1) * 100 + 615; // 1학기
-			break;
-		case 2:
-			availablePeriod = (currentSemester - 2) * 100 + 815; // 여름
-			break;
-		case 3:
-			availablePeriod = (currentSemester - 3) * 100 + 1215; // 2학기
-			break;
-		case 4:
-			availablePeriod = (currentSemester - 4) * 100 + 10215; // 겨울
-			break;
-		}
-	}
-	
-	public static void setCheckOutPeriod()
-	{
-		switch(currentSemester % 10)
-		{
-		case 1:
-			checkOutDate1 = (currentSemester - 1) * 100 + 620;	// 1학기 
-			checkOutDate2 = (currentSemester - 1) * 100 + 1220; // 1년 신청일 경우
-			break;
-		case 2:
-			checkOutDate1 = (currentSemester - 2) * 100 + 820;	// 여름
-			break;
-		case 3:
-			checkOutDate1 = (currentSemester - 3) * 100 + 1220;	// 2학기
-			checkOutDate2 = (currentSemester - 3) * 100 + 10620;
-			break;
-		case 4:
-			checkOutDate1 = (currentSemester - 4) * 100 + 10120; //	겨울
-			break;
-		}
-	}
 
 		
 				
@@ -97,6 +55,8 @@ public class AssignAlgorithm
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery(sql);
+		
+		
 		
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// DB에 있는 생활관 호실 정보를 가져와서 서버 메모리 에 올림
@@ -242,8 +202,8 @@ public class AssignAlgorithm
 		}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//배정내역을 불러와서 서버 메모리에 있는 해당 생활관 호실에 배정내역이 있으면 생활관 호실에 학번을 넣어줌
-		String sql1 = "SELECT `호실정보_호`, `자리`, `학생_학번`, `호실정보_생활관명` FROM " + DBHandler.DB_NAME + ".배정내역 WHERE `퇴사예정일` >= '"+ availablePeriod + "'";// 여러 배정내역 (몇년 전꺼까지도) 중에서 아직 쓰고있는 방 예를들어 지금 2학기인데 1학기 1년 입사자
-										//호 옆에 생활관명 넣어야함
+		String sql1 = "SELECT `호실정보_호`, `자리`, `학생_학번`, `호실정보_생활관명` FROM "+DBHandler.DB_NAME+".배정내역 WHERE `퇴사예정일` > (SELECT  시작일  FROM Prototype.스케쥴 WHERE `비고` = '" +currentSemester+"')";// 여러 배정내역 (몇년 전꺼까지도) 중에서 아직 쓰고있는 방 예를들어 지금 2학기인데 1학기 1년 입사자
+							//호 옆에 생활관명 넣어야함
 		PreparedStatement state1 = connection.prepareStatement(sql1);
 		ResultSet rs1 = state1.executeQuery(sql1);
 		ArrayList<String> arr = new ArrayList<String>();
@@ -378,14 +338,10 @@ public class AssignAlgorithm
 						O1[i].setIsNew(true);
 						if(rs2.getInt("지망") == 0)
 						{
-							O1[i].setCheckout(checkOutDate2);
+							O1[i].setCheckout(0);
 							break;
 						}
-						else 
-						{
-							O1[i].setCheckout(checkOutDate1);
-							break;
-						}
+						break;
 					}
 				}
 				break;
@@ -400,14 +356,10 @@ public class AssignAlgorithm
 						O2[i].setIsNew(true);
 						if(rs2.getInt("지망") == 0)
 						{
-							O2[i].setCheckout(checkOutDate2);
+							O2[i].setCheckout(0);
 							break;
 						}
-						else 
-						{
-							O2[i].setCheckout(checkOutDate1);
-							break;
-						}
+						break;
 					}
 				}
 				break;
@@ -422,14 +374,10 @@ public class AssignAlgorithm
 						O3[i].setIsNew(true);
 						if(rs2.getInt("지망") == 0)
 						{
-							O3[i].setCheckout(checkOutDate2);
+							O3[i].setCheckout(0);
 							break;
 						}
-						else 
-						{
-							O3[i].setCheckout(checkOutDate1);
-							break;
-						}
+						break;
 					}
 				}
 				break;
@@ -442,17 +390,17 @@ public class AssignAlgorithm
 					{
 						if(P1[i].getSeat().equals("B") && P1[i].getRoomNumber().compareTo("500호") >= 0) // 탑층 자리이면 넣지마라는 뜻
 						{
+							break;
 						}
 						else if(rs2.getInt("지망") == 0)
 						{
-							P1[i].setCheckout(checkOutDate2);
+							P1[i].setCheckout(0);
 							P1[i].setStudentId(rs2.getString("학번"));
 							P1[i].setIsNew(true);
 							break;
 						}
 						else 
 						{
-							P1[i].setCheckout(checkOutDate1);
 							P1[i].setStudentId(rs2.getString("학번"));
 							P1[i].setIsNew(true);
 							break;
@@ -469,10 +417,11 @@ public class AssignAlgorithm
 					{
 						if(P2[i].getSeat().equals("B") && P2[i].getRoomNumber().compareTo("500호") >= 0) // 탑층 자리이면 넣지마라는 뜻
 						{
+							break;
 						}
 						else if(rs2.getInt("지망") == 0)
 						{
-							P2[i].setCheckout(checkOutDate2);
+							P2[i].setCheckout(0);
 							P2[i].setStudentId(rs2.getString("학번"));
 							P2[i].setIsNew(true);
 							break;
@@ -480,7 +429,6 @@ public class AssignAlgorithm
 						}
 						else 
 						{
-							P2[i].setCheckout(checkOutDate1);
 							P2[i].setStudentId(rs2.getString("학번"));
 							P2[i].setIsNew(true);
 							break;
@@ -497,10 +445,11 @@ public class AssignAlgorithm
 					{
 						if((P3[i].getSeat().equals("B") || P3[i].getSeat().equals("D"))&& P3[i].getRoomNumber().compareTo("500호") >= 0) // 탑층 자리이면 넣지마라는 뜻
 						{
+							break;
 						}
 						else if(rs2.getInt("지망") == 0)
 						{
-							P3[i].setCheckout(checkOutDate2);
+							P3[i].setCheckout(0);
 							P3[i].setStudentId(rs2.getString("학번"));
 							P3[i].setIsNew(true);
 							break;
@@ -508,7 +457,6 @@ public class AssignAlgorithm
 						}
 						else 
 						{
-							P3[i].setCheckout(checkOutDate1);
 							P3[i].setStudentId(rs2.getString("학번"));
 							P3[i].setIsNew(true);
 							break;
@@ -525,17 +473,17 @@ public class AssignAlgorithm
 					{
 						if((P4[i].getSeat().equals("B") || P4[i].getSeat().equals("D"))&& P4[i].getRoomNumber().compareTo("500호") >= 0) // 탑층 자리이면 넣지마라는 뜻
 						{
+							break;
 						}
 						else if(rs2.getInt("지망") == 0)
 						{
-							P4[i].setCheckout(checkOutDate2);
+							P4[i].setCheckout(0);
 							P4[i].setStudentId(rs2.getString("학번"));
 							P4[i].setIsNew(true);
 							break;
 						}
 						else 
 						{
-							P4[i].setCheckout(checkOutDate1);
 							P4[i].setStudentId(rs2.getString("학번"));
 							P4[i].setIsNew(true);
 							break;
@@ -555,14 +503,10 @@ public class AssignAlgorithm
 						SN[i].setIsNew(true);
 						if(rs2.getInt("지망") == 0)
 						{
-							SN[i].setCheckout(checkOutDate2);
+							SN[i].setCheckout(0);
 							break;
 						}
-						else 
-						{
-							SN[i].setCheckout(checkOutDate1);
-							break;
-						}
+						break;
 					}
 				}
 				break;
@@ -577,14 +521,10 @@ public class AssignAlgorithm
 						SY[i].setIsNew(true);
 						if(rs2.getInt("지망") == 0)
 						{
-							SY[i].setCheckout(checkOutDate2);
+							SY[i].setCheckout(0);
 							break;
 						}
-						else 
-						{
-							SY[i].setCheckout(checkOutDate1);
-							break;
-						}
+						break;
 					}
 				}
 				break;
@@ -601,18 +541,10 @@ public class AssignAlgorithm
 							P1[i].setIsNew(true);
 							if(rs2.getInt("지망") == 0)
 							{
-								P1[i].setCheckout(checkOutDate2);
+								P1[i].setCheckout(0);
 								break;
 							}
-							else
-							{
-								P1[i].setCheckout(checkOutDate1);
-								break;
-							}
-						}
-						else
-						{
-																									// 아니면 다시 빈자리로 냅두고 나오라는 뜻
+							break;
 						}
 					}
 				}
@@ -630,18 +562,10 @@ public class AssignAlgorithm
 							P2[i].setIsNew(true);
 							if(rs2.getInt("지망") == 0)
 							{
-								P2[i].setCheckout(checkOutDate2);
+								P2[i].setCheckout(0);
 								break;
 							}
-							else
-							{
-								P2[i].setCheckout(checkOutDate1);
-								break;
-							}
-						}
-						else
-						{
-																				// 아니면 다시 빈자리로 냅두고 나오라는 뜻
+							break;
 						}
 					}
 				}
@@ -659,18 +583,10 @@ public class AssignAlgorithm
 							P3[i].setIsNew(true);
 							if(rs2.getInt("지망") == 0)
 							{
-								P3[i].setCheckout(checkOutDate2);
+								P3[i].setCheckout(0);
 								break;
 							}
-							else
-							{
-								P3[i].setCheckout(checkOutDate1);
-								break;
-							}
-						}
-						else
-						{
-							P3[i].setStudentId("");													// 아니면 다시 빈자리로 냅두고 나오라는 뜻
+							break;
 						}
 					}
 				}
@@ -688,18 +604,10 @@ public class AssignAlgorithm
 							P4[i].setIsNew(true);
 							if(rs2.getInt("지망") == 0)
 							{
-								P4[i].setCheckout(checkOutDate2);
+								P4[i].setCheckout(0);
 								break;
 							}
-							else
-							{
-								P4[i].setCheckout(checkOutDate1);
-								break;
-							}
-						}
-						else
-						{
-															// 아니면 다시 빈자리로 냅두고 나오라는 뜻
+							break;
 						}
 					}
 				}
@@ -715,72 +623,145 @@ public class AssignAlgorithm
 		{
 			if(O1[i].getIsNew() != null && O1[i].getIsNew())
 			{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O1[i].getStudentId() + "', '" + O1[i].getRoomNumber() + "', '"+ O1[i].getSemesterCode() + "', '오름1', '" + O1[i].getSeat() + "', '" + O1[i].getCheckOut() +"')";
-			state3.executeUpdate(sql);
+				if(O1[i].getCheckOut() != 0)
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O1[i].getStudentId() + "', '" + O1[i].getRoomNumber() + "', '"+ O1[i].getSemesterCode() + "', '오름2', '" + O1[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
+					state3.executeUpdate(sql);
+				}
+				else
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O1[i].getStudentId() + "', '" + O1[i].getRoomNumber() + "', '"+ O1[i].getSemesterCode() + "', '오름1', '" + O1[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
+					state3.executeUpdate(sql);
+				}
 			}
 		}
 		for(int i = 0; i < O2.length; i++)
 		{
 			if(O2[i].getIsNew() != null && O2[i].getIsNew())
 			{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O2[i].getStudentId() + "', '" + O2[i].getRoomNumber() + "', '"+ O2[i].getSemesterCode() + "', '오름2', '" + O2[i].getSeat() + "', '" + O2[i].getCheckOut() +"')";
-			state3.executeUpdate(sql);
+				if(O2[i].getCheckOut() != 0)
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O2[i].getStudentId() + "', '" + O2[i].getRoomNumber() + "', '"+ O2[i].getSemesterCode() + "', '오름2', '" + O2[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
+					state3.executeUpdate(sql);
+				}
+				else
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O2[i].getStudentId() + "', '" + O2[i].getRoomNumber() + "', '"+ O2[i].getSemesterCode() + "', '오름2', '" + O2[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
+					state3.executeUpdate(sql);
+				}
 			}
 		}
 		for(int i = 0; i < O3.length; i++)
 		{
 			if(O3[i].getIsNew() != null && O3[i].getIsNew())
 			{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O3[i].getStudentId() + "', '" + O3[i].getRoomNumber() + "', '"+ O3[i].getSemesterCode() + "', '오름3', '" + O3[i].getSeat() + "', '" + O3[i].getCheckOut() +"')";
-			state3.executeUpdate(sql);
+				if(O3[i].getCheckOut() != 0)
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O3[i].getStudentId() + "', '" + O3[i].getRoomNumber() + "', '"+ O3[i].getSemesterCode() + "', '오름2', '" + O3[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
+					state3.executeUpdate(sql);
+				}
+				else
+				{
+					
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O3[i].getStudentId() + "', '" + O3[i].getRoomNumber() + "', '"+ O3[i].getSemesterCode() + "', '오름3', '" + O3[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
+					state3.executeUpdate(sql);
+				}
 			}
 		}
 		for(int i = 0; i < P1.length; i++)
 		{			
 			if(P1[i].getIsNew() != null && P1[i].getIsNew())
 			{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P1[i].getStudentId() + "', '" + P1[i].getRoomNumber() + "', '"+ P1[i].getSemesterCode() + "', '푸름1', '" + P1[i].getSeat() + "', '" + P1[i].getCheckOut() +"')";
-			state3.executeUpdate(sql);
+				if(P1[i].getCheckOut() != 0)
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P1[i].getStudentId() + "', '" + P1[i].getRoomNumber() + "', '"+ P1[i].getSemesterCode() + "', '오름2', '" + P1[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
+					state3.executeUpdate(sql);
+				}
+				else
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P1[i].getStudentId() + "', '" + P1[i].getRoomNumber() + "', '"+ P1[i].getSemesterCode() + "', '푸름1', '" + P1[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
+					state3.executeUpdate(sql);
+				}
 			}
 		}
 		for(int i = 0; i < P2.length; i++)
 		{
 			if(P2[i].getIsNew() != null && P2[i].getIsNew())
 			{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P2[i].getStudentId() + "', '" + P2[i].getRoomNumber() + "', '"+ P2[i].getSemesterCode() + "', '푸름2', '" + P2[i].getSeat() + "', '" + P2[i].getCheckOut() +"')";
-			state3.executeUpdate(sql);
+				if(P2[i].getCheckOut() != 0)
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P2[i].getStudentId() + "', '" + P2[i].getRoomNumber() + "', '"+ P2[i].getSemesterCode() + "', '오름2', '" + P2[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
+					state3.executeUpdate(sql);
+				}
+				else
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P2[i].getStudentId() + "', '" + P2[i].getRoomNumber() + "', '"+ P2[i].getSemesterCode() + "', '푸름2', '" + P2[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
+					state3.executeUpdate(sql);
+				}
 			}
 		}
 		for(int i = 0; i < P3.length; i++)
 		{
 			if(P3[i].getIsNew() != null && P3[i].getIsNew())
 			{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P3[i].getStudentId() + "', '" + P3[i].getRoomNumber() + "', '"+ P3[i].getSemesterCode() + "', '푸름3', '" + P3[i].getSeat() + "', '" + P3[i].getCheckOut() +"')";
-			state3.executeUpdate(sql);
+				if(P3[i].getCheckOut() != 0)
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P3[i].getStudentId() + "', '" + P3[i].getRoomNumber() + "', '"+ P3[i].getSemesterCode() + "', '오름2', '" + P3[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
+					state3.executeUpdate(sql);
+				}
+				else
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P3[i].getStudentId() + "', '" + P3[i].getRoomNumber() + "', '"+ P3[i].getSemesterCode() + "', '푸름3', '" + P3[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
+					state3.executeUpdate(sql);
+				}
 			}
 		}
 		for(int i = 0; i < P4.length; i++)
 		{
 			if(P4[i].getIsNew() != null && P4[i].getIsNew())
 			{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P4[i].getStudentId() + "', '" + P4[i].getRoomNumber() + "', '"+ P4[i].getSemesterCode() + "', '푸름4', '" + P4[i].getSeat() + "', '" + P4[i].getCheckOut() +"')";
-			state3.executeUpdate(sql);
+				if(P4[i].getCheckOut() != 0)
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P4[i].getStudentId() + "', '" + P4[i].getRoomNumber() + "', '"+ P4[i].getSemesterCode() + "', '오름2', '" + P4[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
+					state3.executeUpdate(sql);
+				}
+				else
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P4[i].getStudentId() + "', '" + P4[i].getRoomNumber() + "', '"+ P4[i].getSemesterCode() + "', '푸름4', '" + P4[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
+					state3.executeUpdate(sql);
+				}
 			}
 		}
 		for(int i = 0; i < SN.length; i++)
 		{
 			if(SN[i].getIsNew() != null && SN[i].getIsNew())
 			{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + SN[i].getStudentId() + "', '" + SN[i].getRoomNumber() + "', '"+ SN[i].getSemesterCode() + "', '신평남', '" + SN[i].getSeat() + "', '" + SN[i].getCheckOut() +"')";
-			state3.executeUpdate(sql);
+				if(SN[i].getCheckOut() != 0)
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + SN[i].getStudentId() + "', '" + SN[i].getRoomNumber() + "', '"+ SN[i].getSemesterCode() + "', '오름2', '" + SN[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
+					state3.executeUpdate(sql);
+				}
+				else
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + SN[i].getStudentId() + "', '" + SN[i].getRoomNumber() + "', '"+ SN[i].getSemesterCode() + "', '신평남', '" + SN[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
+					state3.executeUpdate(sql);
+				}
 			}
 		}
 		for(int i = 0; i < SY.length; i++)
 		{
 			if(SY[i].getIsNew() != null && SY[i].getIsNew())
 			{
-			sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + SY[i].getStudentId() + "', '" + SY[i].getRoomNumber() + "', '"+ SY[i].getSemesterCode() + "', '신평여', '" + SY[i].getSeat() + "', '" + SY[i].getCheckOut() +"')";
-			state3.executeUpdate(sql);
+				if(SY[i].getCheckOut() != 0)
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + SY[i].getStudentId() + "', '" + SY[i].getRoomNumber() + "', '"+ SY[i].getSemesterCode() + "', '오름2', '" + SY[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
+					state3.executeUpdate(sql);
+				}
+				else
+				{
+					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + SY[i].getStudentId() + "', '" + SY[i].getRoomNumber() + "', '"+ SY[i].getSemesterCode() + "', '신평여', '" + SY[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
+					state3.executeUpdate(sql);
+				}
 			}
 		}
 		state.close();
@@ -793,8 +774,6 @@ public class AssignAlgorithm
 	{
 		lastPassUpdate();
 		setCurrentSemester();
-		setAvailablePeriod();
-		setCheckOutPeriod();
 		residenceUpdate();
 	}
 }
