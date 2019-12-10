@@ -987,7 +987,27 @@ public class Responser
 			return;
 		}
 		
-		//누가좀 해줘
+		boolean isSucceed = false;
+		try
+		{
+			//누가좀 해줘. 기숙사 삭제하는 SQL임
+//			isSucceed = DormParser.insertDormitory(dormitory);	
+		}
+		catch (Exception e)
+		{
+			System.out.println("생활관 등록 도중 오류 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "생활관 등록 도중 오류가 발생하였습니다."));
+			return;
+		}
+		
+		if(!isSucceed)
+		{
+			System.out.println("생활관 등록에 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "생활관 등록에 실패하였습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.TRUE, "생활관 등록에 성공하였습니다."));
 	}
 	
 	//-------------------------------------------------------------------------
@@ -1070,36 +1090,33 @@ public class Responser
 	//관리자 - 입사 선발자 조회 및 관리 - 삭제 버튼 클릭 시
 	public static void admin_selecteesManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
-		Bool isSucceed = Bool.TRUE;
 		//1. 클라이언트로부터 받은 학번, 생활관명, 학기, 지망으로 신청 테이블에서 조회한다.
-		Application temp;
-		try {
-			temp = (Application) ProtocolHelper.deserialization(protocol.getBody());
-			DB.ApplicationParser.deleteApplication(temp);
-		} catch (ClassNotFoundException | IOException | SQLException e1) {
-			// TODO Auto-generated catch block
-			isSucceed = Bool.FALSE;
-			e1.printStackTrace();
+		Application receivedApp;
+		try 
+		{
+			receivedApp = (Application) ProtocolHelper.deserialization(protocol.getBody());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("클라이언트에서 받아온 삭제 신청 읽기 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 삭제 신청을 읽는데 실패하였습니다."));
+			return;
 		}
 		
-		Tuple<Bool,String> result;
-		if(isSucceed == Bool.TRUE)
-			result = new Tuple<Bool,String>(Bool.TRUE, "성공했습니다");
-		else
-			result = new Tuple<Bool,String>(Bool.FALSE, "실패했습니다");
-		
-		try {
-			socketHelper.write(new Protocol.Builder(
-					ProtocolType.EVENT, 
-					Direction.TO_CLIENT, 
-					Code1.NULL, 
-					Code2.NULL
-					).body(ProtocolHelper.serialization(result)).build());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		//DB에 삭제요청
+		try
+		{
+			DB.ApplicationParser.deleteApplication(receivedApp);
 		}
-		return;
+		catch(Exception e)
+		{
+			System.out.println("신청 삭제 도중 오류가 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청 삭제 도중 오류가 발생하였습니다."));
+			return;
+		}
+		
+
+		eventReply(socketHelper, createMessage(Bool.TRUE, "신청 삭제에 성공하였습니다."));
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
@@ -1126,9 +1143,18 @@ public class Responser
 		// 4.그 정보에 맞게 DB에 업데이트
 		
 		//이걸 batchStart로 묶어놨으니 그냥 이것만 실행하면 됨
-		AssignAlgorithm.batchStart();
+		try
+		{
+			AssignAlgorithm.batchStart();
+		}
+		catch(Exception e)
+		{
+			System.out.println("입사자 등록(배정) 도중 오류가 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록(배정) 도중 오류가 발생하였습니다."));
+			return;
+		}
 		
-		//3. 결과를 클라이언트에게 알려준다(성공/실패?)
+		eventReply(socketHelper, createMessage(Bool.TRUE, "입사자 등록(배정)에 성공하였습니다."));
 	}
 	
 	//관리자 - 입사자 조회 및 관리 - 조회 버튼 클릭 시
@@ -1413,11 +1439,14 @@ public class Responser
 			Code1.FileType filetype = docu.documentType;
 			Date date = docu.submissionDate;
 			//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
-			try {
+			try 
+			{
 				DocumentParser.deleteDocument(id, filetype, date);
 				//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
 				eventReply(socketHelper, createMessage(Bool.TRUE, "서류 삭제 성공"));
-			} catch (SQLException e) {
+			} 
+			catch (SQLException e)
+			{
 				System.out.println("서류 조회 및 제출 - delete문 쿼리 실패");
 				eventReply(socketHelper, createMessage(Bool.FALSE, "서류 삭제 실패"));
 			}
