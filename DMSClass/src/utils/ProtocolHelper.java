@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import enums.Bool;
@@ -87,6 +88,19 @@ public final class ProtocolHelper {
         return result;
     }
 
+    static List<Protocol> bytesToProtocols(byte[] bytes) {
+        List<Protocol> tmp = new ArrayList<>();
+
+        int chunk_size = 0;
+        int cursor = 0;
+        for (cursor = 0; cursor < bytes.length; cursor = cursor + chunk_size) {
+            chunk_size = bytesToInt(Arrays.copyOfRange(bytes, cursor, cursor + 4));
+            tmp.add(new Protocol.Builder(Arrays.copyOfRange(bytes, cursor, cursor + chunk_size)).build());
+        }
+
+        return tmp;
+    }
+
     static Protocol merge(List<Protocol> protocols) {
         if (protocols.size() == 0)
             return null;
@@ -98,7 +112,7 @@ public final class ProtocolHelper {
             try {
                 output.write(protocol.getBody());
             } catch (IOException e) {
-                // ByteArrayOutputStream는 예외 안던진다.
+                // ByteArrayOutputStream 는 예외 안던진다.
                 e.printStackTrace();
             }
         }
