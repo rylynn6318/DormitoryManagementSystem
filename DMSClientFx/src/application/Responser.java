@@ -373,8 +373,9 @@ public class Responser
 		//4. 클라이언트는 받은 배열을 tableView에 표시한다
 		
 		Protocol protocol = eventProtocolBuilder(Code1.Page.생활관관리, Code2.Event.CHECK, null);
-		ArrayList<Dormitory> result = (ArrayList<Dormitory>) sendAndReceive(protocol);
-		return result;
+		Tuple<Bool, ArrayList<Dormitory>> result = (Tuple<Bool, ArrayList<Dormitory>>) sendAndReceive(protocol);
+		
+		return result.obj2;
 	}
 	
 	//관리자 - 생활관 조회 및 관리 - 삭제 버튼 클릭 시
