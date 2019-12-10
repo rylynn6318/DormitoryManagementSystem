@@ -215,19 +215,19 @@ public class DormParser {
 		PreparedStatement state =null;	
 		int result;
 		try
-		{
+		{		
 			connection = DBHandler.INSTANCE.getConnection();
 			System.out.println(sql);
 			state = connection.prepareStatement(sql);
 			result = state.executeUpdate(sql);
 			if(result>0)
-			{
+			{				
 				state.close();
 				DBHandler.INSTANCE.returnConnection(connection);
 				return true;
 			}
 			else
-			{
+			{				
 				state.close();
 				DBHandler.INSTANCE.returnConnection(connection);
 				System.out.println("해당생활관없음");
@@ -235,7 +235,7 @@ public class DormParser {
 			}
 		}
 		catch(SQLException e)
-		{
+		{		
 			System.out.println("생활관 삭제 쿼리문 실패");
 			return false;
 		}	
