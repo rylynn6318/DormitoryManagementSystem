@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
 import application.IOHandler;
 import application.Responser;
 import controller.InnerPageController;
-import enums.Bool;
+import enums.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,9 +16,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import models.PlacementHistory;
-import models.Tuple;
-import tableViewModel.PlacementHistoryViewModel;
+import models.*;
+import tableViewModel.ApplicationViewModel;
+import tableViewModel.StudentViewModel;
 
 public class StudentCheckTabController extends InnerPageController
 {
@@ -27,34 +27,34 @@ public class StudentCheckTabController extends InnerPageController
     private Button check_button;
 
     @FXML
-    private TableView<?> check_student_tableview;
+    private TableView<StudentViewModel> check_student_tableview;
 
     @FXML
-    private TableColumn<?, ?> check_student_column_studentId;
+    private TableColumn<StudentViewModel, String> check_student_column_studentId;
 
     @FXML
-    private TableColumn<?, ?> check_student_column_name;
+    private TableColumn<StudentViewModel, String> check_student_column_name;
 
     @FXML
-    private TableColumn<?, ?> check_student_column_gender;
+    private TableColumn<StudentViewModel, String> check_student_column_gender;
 
     @FXML
-    private TableColumn<?, ?> check_student_column_departmentName;
+    private TableColumn<StudentViewModel, String> check_student_column_departmentName;
 
     @FXML
-    private TableColumn<?, ?> check_student_column_year;
+    private TableColumn<StudentViewModel, String> check_student_column_year;
 
     @FXML
-    private TableColumn<?, ?> check_student_column_rrn;
+    private TableColumn<StudentViewModel, String> check_student_column_rrn;
 
     @FXML
-    private TableColumn<?, ?> check_student_column_contact;
+    private TableColumn<StudentViewModel, String> check_student_column_contact;
 
     @FXML
-    private TableColumn<?, ?> check_student_column_parentZipCode;
+    private TableColumn<StudentViewModel, String> check_student_column_parentZipCode;
 
     @FXML
-    private TableColumn<?, ?> check_student_column_parentAddress;
+    private TableColumn<StudentViewModel, String> check_student_column_parentAddress;
     
     @Override
 	public void initialize(URL location, ResourceBundle resources)
@@ -92,20 +92,35 @@ public class StudentCheckTabController extends InnerPageController
         	return;
         }
         
-        Tuple<Bool, ArrayList<PlacementHistory>> resultTuple = (Tuple<Bool, ArrayList<PlacementHistory>>) result;
-        ArrayList<PlacementHistory> historyList = resultTuple.obj2;
-        if(historyList != null)
+        Tuple<Bool, ArrayList<Student>> resultTuple = (Tuple<Bool, ArrayList<Student>>) result;
+        ArrayList<Student> studentList = resultTuple.obj2;
+        if(studentList != null)
         {
         	//객체를 테이블뷰 모델로 변환
-        	ObservableList<PlacementHistoryViewModel> historyModels = FXCollections.observableArrayList();
+        	ObservableList<StudentViewModel> studentModels = FXCollections.observableArrayList();
         	
-        	for(PlacementHistory history : historyList)
+        	for(Student stu : studentList)
         	{
-        		historyModels.add(placementHistoryToViewModel(history));
+        		studentModels.add(studentToViewModel(stu));
         	}
         	
             //테이블뷰에 추가
-//            setPlacementHistoryTableView(historyModels);
+            setStudentTableView(studentModels);
         }
+    }
+    
+    private void setStudentTableView(ObservableList<StudentViewModel> studentModels)
+    {
+    	//서버에서 받아온거 표시하게 만듬.
+    	check_student_column_studentId.setCellValueFactory(cellData -> cellData.getValue().idProperty());
+    	check_student_column_name.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+    	check_student_column_gender.setCellValueFactory(cellData -> cellData.getValue().genderProperty());
+    	check_student_column_departmentName.setCellValueFactory(cellData -> cellData.getValue().departmentProperty());
+    	check_student_column_year.setCellValueFactory(cellData -> cellData.getValue().yearProperty());
+    	check_student_column_rrn.setCellValueFactory(cellData -> cellData.getValue().rrnProperty());
+    	check_student_column_contact.setCellValueFactory(cellData -> cellData.getValue().contactProperty());
+    	check_student_column_parentZipCode.setCellValueFactory(cellData -> cellData.getValue().parentZipCodeProperty());
+    	check_student_column_parentAddress.setCellValueFactory(cellData -> cellData.getValue().parentAddressProperty());
+    	check_student_tableview.setItems(studentModels);
     }
 }
