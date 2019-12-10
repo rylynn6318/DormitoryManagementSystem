@@ -1636,6 +1636,20 @@ public class Responser
 		
 		eventReply(socketHelper, createMessage(Bool.TRUE, "서류 갱신에 성공하였습니다."));
 	}
+	
+	//-------------------------------------------------------------------------
+	
+	//관리자 - 학생 조회 - 조회 버튼 클릭 시
+	public static void admin_studentCheckPage_onCheck(Protocol protocol, SocketHelper socketHelper)
+	{
+		//1. 클라이언트로부터 받은 학번, 서류유형, 제출일, 진단일로 서류 테이블에서 조회한다.
+		//2-1. 해당되는 데이터가 있으면 DB에 UPDATE쿼리를 쏜다.
+		//	   (유효여부를 클라이언트에게서 받은 T/F로 UPDATE한다)
+		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
+		//3. UPDATE 쿼리 결과를 클라이언트에게 알려준다.
+//			Protocol protocol = eventProtocolBuilder(Code1.Page.학생조회, Code2.Event.CHECK, null);
+//			Tuple<Bool, String> result = (Tuple<Bool, String>) sendAndReceive(protocol);
+	}
 }
 
 //변경 로그

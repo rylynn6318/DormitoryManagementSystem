@@ -19,7 +19,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -66,9 +65,6 @@ public class DocumentManageTabController extends InnerPageController
 
     @FXML
     private ComboBox<String> delete_documentType_combobox;
-
-    @FXML
-    private DatePicker delete_date_datepicker;
 
     @FXML
     private Button select_file_button;
@@ -265,7 +261,6 @@ public class DocumentManageTabController extends InnerPageController
     {
     	String id = delete_id_textfield.getText();
     	String documentType = delete_documentType_combobox.getSelectionModel().getSelectedItem();
-    	LocalDate submitDate_l = delete_date_datepicker.getValue();
     	
     	if(id == null || id.isEmpty())
     	{
@@ -279,18 +274,9 @@ public class DocumentManageTabController extends InnerPageController
     		IOHandler.getInstance().showAlert("서류유형이 비어있습니다.");
     		return;
     	}
-    	else if(submitDate_l == null || submitDate_l.toString().equals(""))
-    	{
-    		//제출일이 없음
-    		IOHandler.getInstance().showAlert("제출일이 비어있습니다.");
-    		return;
-    	}
-    	
-    	//LocalDate를 Date타입으로 변형
-    	Date submitDate = localDateToDate(submitDate_l);
     	
     	//서버에 삭제 쿼리 요청 후 성공/실패여부 메시지로 알려주자.
-    	Document data = new Document(id, stringToFileType(documentType), submitDate);
+    	Document data = new Document(id, stringToFileType(documentType), null);
     	Tuple<Bool, String> resultTuple = Responser.admin_documentManagePage_onDelete(data);
     	
     	//서버랑 통신이 됬는가?
@@ -318,7 +304,6 @@ public class DocumentManageTabController extends InnerPageController
 		//선택한 항목들 클리어
 		delete_id_textfield.setText(null);
 		delete_documentType_combobox.getSelectionModel().select(-1);
-		delete_date_datepicker.setValue(null);
     }
     
     //-----------------------------------------------------------------
