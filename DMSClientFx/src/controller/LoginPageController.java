@@ -29,6 +29,9 @@ public class LoginPageController implements Initializable {
 
     @FXML
     private PasswordField PWField;
+    
+    @FXML
+    private TextField ServerAddressField;
 
     @FXML
     private Button LoginBtn;
@@ -73,6 +76,8 @@ public class LoginPageController implements Initializable {
         //사용자가 입력한 아이디, 비밀번호를 가져온다.
         String inputUserId = IDField.getText();
         String inputUserPw = PWField.getText();
+        String serverAddress = ServerAddressField.getText();
+        SocketHandler.INSTANCE.ip = serverAddress;
 
         if (inputUserId.isEmpty()) {
             IOHandler.getInstance().showAlert("아이디가 비어있습니다");

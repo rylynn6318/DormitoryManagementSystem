@@ -10,8 +10,7 @@ public enum SocketHandler {
 	
     INSTANCE;
 	
-	//String ip = SocketHelper.localhost;		//localhost
-	String ip = "192.168.208.31";				//ip
+	public String ip = SocketHelper.localhost;
 
     public Protocol request(Protocol protocol) throws Exception {
         Socket socket = new Socket(ip,SocketHelper.port);
