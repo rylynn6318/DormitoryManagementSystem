@@ -1,5 +1,7 @@
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1551,6 +1553,23 @@ public class Responser
 			System.out.println("삭제된 서류 없음.");
 			eventReply(socketHelper, createMessage(Bool.FALSE, "삭제된 서류가 없습니다."));
 			return;
+		}
+		
+		try
+		{
+			Path filePath = Paths.get(doc.documentStoragePath);
+			boolean isSucceed = IOHandler.INSTANCE.delete(filePath);
+			if(!isSucceed)
+			{
+				System.out.println("DB에서는 삭제 완료, 로컬 서류 파일 삭제 실패.");
+				//실패메시지는 딱히 반환하지 않겠음.
+				//return;
+			}
+		}
+		catch(Exception e)
+		{
+			//이것도 딱히 클라이언트에게 알려주지 않음.
+			System.out.println("DB에서는 삭제 완료, 로컬 서류 파일 존재하지 않음.");
 		}
 		
 		eventReply(socketHelper, createMessage(Bool.FALSE, "서류가 삭제되었습니다."));

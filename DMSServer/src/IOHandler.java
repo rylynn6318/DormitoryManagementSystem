@@ -27,4 +27,27 @@ public enum IOHandler {
         int nowSemester = CurrentSemesterParser.getCurrentSemester();
         return Paths.get(type.name(), String.valueOf(nowSemester), id + type.extension);
     }
+    
+    public boolean delete(Path path) throws IOException
+    {
+    	File file = path.toFile();
+        if(!file.exists())
+        {
+        	if(file.delete())
+        	{
+        		//file delete successful
+        		return true;
+        	}
+        	else
+        	{
+        		//file delete fail
+        		return false;
+        	}
+        }
+        else
+        {
+        	//no file
+        	throw new IOException("파일이 존재하지 않음");
+        }
+    }
 }
