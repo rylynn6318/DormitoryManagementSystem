@@ -42,6 +42,7 @@ public class ResidentSelecter
 		passerSelection("푸름2", 0);
 		passerSelection("푸름2_탑층", 0);
 		passerSelection("푸름3", 0);
+		passerSelection("푸름3_탑층", 0);
 		for(int choice = 1; choice < 4; choice++)
 		{
 			passerSelection("푸름1", choice);
@@ -49,7 +50,9 @@ public class ResidentSelecter
 			passerSelection("푸름2", choice);
 			passerSelection("푸름2_탑층", choice);
 			passerSelection("푸름3", choice);
+			passerSelection("푸름3_탑층", choice);
 			passerSelection("푸름4", choice);
+			passerSelection("푸름4_탑층", choice);
 			passerSelection("오름1", choice);
 			passerSelection("오름2", choice);
 			passerSelection("오름3", choice);
