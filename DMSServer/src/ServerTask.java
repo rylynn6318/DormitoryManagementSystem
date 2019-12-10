@@ -1,10 +1,12 @@
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 
 import DB.CurrentSemesterParser;
+import DB.DocumentParser;
 import enums.*;
 import logic.*;
 import models.*;
@@ -65,10 +67,12 @@ public class ServerTask implements Runnable {
                                     String id = body.obj1;
 
                                     int nowSemester = CurrentSemesterParser.getCurrentSemester();
+                                    Path path = Paths.get(fileType.name(), String.valueOf(nowSemester), id + fileType.extension);
 
-                                    IOHandler.INSTANCE.write(Paths.get(fileType.name(), nowSemester + "_" + id, fileType.extension), body.obj2);
+                                    IOHandler.INSTANCE.write(path, body.obj2);
 
-                                    // TODO 여기에 DB에 서류 관련 정보 저장하는 로직 추가해야함
+                                    Document doc = new Document(id, fileType, new java.util.Date(), null, path.toString(), Bool.FALSE);
+                                    DocumentParser.renewDocument(doc);
 
                                     isSuccess = Code2.FileCode.SUCCESS;
                                 } catch (ClassNotFoundException | IOException | SQLException e) {
@@ -89,7 +93,7 @@ public class ServerTask implements Runnable {
                                 //  결과가 있다면 관련 정보를 다 알수 있다.
                                 //  해당 파일을 리턴
                                 //  body = byte[]
-                                //  없다면 실패 리턴
+                                //  없다면 Code2.FAil + null 리턴
                                 //  body = null
                                 //  클라이언트에서는 널체크 이후
                                 //  로직 수행
@@ -98,17 +102,14 @@ public class ServerTask implements Runnable {
                                 try {
                                     String id = (String) ProtocolHelper.deserialization(protocol.getBody());
 
-                                    // TODO id를 이용해 해당 사용자의 현재학기 서류 저장 경로를 가져온다
-                                    String path = null;
-                                    filebytes = Files.readAllBytes(Paths.get(path));
-
-                                    isSuccess = Code2.FileCode.SUCCESS;
-                                } catch (ClassNotFoundException | IOException e) {
+                                    Document doc = DocumentParser.findDocument(id, fileType);
+                                    if (doc != null) {
+                                        filebytes = Files.readAllBytes(Paths.get(doc.documentStoragePath));
+                                        isSuccess = Code2.FileCode.SUCCESS;
+                                    }
+                                } catch (ClassNotFoundException | IOException | SQLException e) {
                                     e.printStackTrace();
                                 }
-
-                                String path = null;
-                                File file = Paths.get(path).toFile();
 
                                 result = new Protocol
                                         .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)

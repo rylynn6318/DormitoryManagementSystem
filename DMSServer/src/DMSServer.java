@@ -37,18 +37,21 @@ public class DMSServer {
         try {
             sSocket = new ServerSocket(SocketHelper.port);
         } catch (IOException e) {
+            Logger.INSTANCE.print("서버 소켓 생성 실패!! 서버를 종료합니다.");
             e.printStackTrace();
+            return;
         }
         try {
             DBHandler.INSTANCE.init();
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SQLException e) {
+            Logger.INSTANCE.print("DB 연결 실패!! 서버를 종료합니다.");
             e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return;
         }
 
         Logger.INSTANCE.print("서버 초기화 완료");
 
+        // 현재 running 을 멈추는 기능 없음.
         while (running) {
             Socket socket = null;
             try {

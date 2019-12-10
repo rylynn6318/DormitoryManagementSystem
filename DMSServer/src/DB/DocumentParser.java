@@ -88,6 +88,36 @@ public class DocumentParser
 		preparedStatement.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
+
+	// 문서가 없을경우 insert 하고 중복되는 키값의 레코드가 있을경우 받은 정보를 바탕으로 update 수행함
+	public static void renewDocument(Document doc) throws SQLException
+	{
+		String query =
+				"INSERT INTO 서류 (학번, 서류유형, 제출일, 진단일, 서류저장경로, 유효여부) " +
+					"VALUES (?, ?, ?, ?, ?, ?) " +
+				"ON DUPLICATE KEY UPDATE " +
+					"학번 = VALUES(학번), " +
+					"서류유형 = VALUES(서류유형), " +
+					"제출일 = VALUES(제출일), " +
+					"진단일 = VALUES(진단일), " +
+					"서류저장경로 = VALUES(서류저장경로), " +
+					"유효여부 = VALUES(유효여부)";
+
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+		// TODO : 작업중
+		preparedStatement.setString(1, doc.studentId);
+		preparedStatement.setString(2, doc.documentType.name());
+		preparedStatement.setString(3, doc.studentId);
+		preparedStatement.setString(4, doc.studentId);
+		preparedStatement.setString(5, doc.studentId);
+
+		preparedStatement.executeUpdate(query);
+
+		preparedStatement.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+	}
 	
 	public static void updateDocument(Bool isValid, Date submissionSqlDate, Date diagnosisSqlDate, Code1.FileType type) throws SQLException
 	{

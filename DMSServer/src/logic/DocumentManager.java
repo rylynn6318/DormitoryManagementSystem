@@ -3,6 +3,7 @@ package logic;
 import java.sql.SQLException;
 
 import DB.DocumentParser;
+import enums.Bool;
 
 public class DocumentManager {
 	public static void uploadDocument(String studentId, int documentType, String filePath)    //파일 업로드는 어케 해야하지??
@@ -10,14 +11,8 @@ public class DocumentManager {
 
     }
 
-    public static void updateDocument(String studentId, int documentType, java.util.Date submissionDate, java.util.Date diagnosisDate, boolean isValid) throws SQLException 
+    public static void updateDocument(String studentId, int documentType, java.util.Date submissionDate, java.util.Date diagnosisDate, Bool isValid)
     {
-        String sIsValid;
-        if (isValid)
-            sIsValid = "T";
-        else
-            sIsValid = "F";
-
         @SuppressWarnings("deprecation")
         java.sql.Date submissionSqlDate = new java.sql.Date(submissionDate.getYear(), submissionDate.getMonth(), submissionDate.getDay());
         @SuppressWarnings("deprecation")

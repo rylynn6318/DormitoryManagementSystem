@@ -873,7 +873,10 @@ public class Responser
 	}
 	
 	//-------------------------------------------------------------------------
-	
+
+	public static void admin_dormitoryManagePage_onEnter(Protocol protocol, SocketHelper socketHelper) {
+	}
+
 	//관리자 - 생활관 조회 및 관리 - 조회 버튼 클릭 시
 	public static void admin_dormitoryManagePage_onCheck(Protocol protocol, SocketHelper socketHelper)
 	{

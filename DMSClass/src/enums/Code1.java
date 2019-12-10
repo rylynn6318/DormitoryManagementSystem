@@ -35,7 +35,7 @@ public class Code1 {
     }
 
     public static enum FileType implements ICode1 {
-        MEDICAL_REPORT((byte) 0x01, "jpg"), OATH((byte) 0x02, "jpg"), CSV((byte) 0x03, "csv");
+        MEDICAL_REPORT((byte) 0x01, ".jpg"), OATH((byte) 0x02, ".jpg"), CSV((byte) 0x03, ".csv");
 
         private final byte code;
         public final String extension;
