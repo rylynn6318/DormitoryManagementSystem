@@ -33,6 +33,35 @@ public class ApplicationParser {
 		return isNext;
 	}
 	
+	public static ArrayList<String> getDormList() throws SQLException
+	{
+		ArrayList<String> dormList = new ArrayList<String>();
+		
+		String sql = "SELECT 생활관명 FROM " + DBHandler.DB_NAME + ".생활관정보 WHERE 학기='" + CurrentSemesterParser.getCurrentSemester() + "'";
+		
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement passedState = connection.prepareStatement(sql);
+
+
+		ResultSet dorms;
+		try
+		{
+			dorms = passedState.executeQuery();
+		} catch (SQLException e)
+		{
+			System.out.println("기숙사 이름 목록 가져오는 도중 에러 발생");
+			System.out.println(sql);
+			return null;
+		}
+		
+		while(dorms.next())
+		{
+			dormList.add(dorms.getString("생활관명"));
+		}
+		
+		return dormList;
+	}
+	
 	public static boolean deleteApplication(Application app) throws SQLException
 	{
 		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번='" + app.getStudentId() + "' AND 생활관정보_생활관명='" + app.getDormitoryName() + "' AND 생활관정보_학기='" + app.getSemesterCode() + "' AND 지망='" + app.getChoice()+"'";
