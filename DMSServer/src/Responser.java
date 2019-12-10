@@ -988,8 +988,7 @@ public class Responser
 		boolean isSucceed = false;
 		try
 		{
-			//누가좀 해줘. 기숙사 삭제하는 SQL임
-//			isSucceed = DormParser.insertDormitory(dormitory);	
+			isSucceed = DormParser.insertDormitory(dormitory);	
 		}
 		catch (Exception e)
 		{

@@ -39,6 +39,56 @@ public class DormParser {
 		return dlist;
 	}
 	
+	public static boolean insertDormitory(Dormitory dormitory)
+	{
+		String sql = "INSERT INTO " + DBHandler.DB_NAME + ".생활관정보(생활관명, 성별, 학기, 수용인원, 식사의무, 5일식_식비, 7일식_식비, 기숙사비) VALUES (" + dormitory.dormitoryName + ", " + dormitory.gender + ", " + dormitory.semesterCode + ", " + dormitory.capacity + ", " + dormitory.isMealDuty + ", " + dormitory.mealCost5 + ", " + dormitory.mealCost7 + ", " + dormitory.boardingFees + ")";
+		System.out.println(sql);
+		Connection connection;
+
+		try 
+		{
+			connection = DBHandler.INSTANCE.getConnection();
+		} 
+		catch (SQLException e1) 
+		{
+			System.out.println("getConnection Error");
+			return false;
+		}
+		PreparedStatement state;
+		try 
+		{
+			state = connection.prepareStatement(sql);
+		} 
+		catch (SQLException e1) 
+		{
+			System.out.println("prepareStatement Error");
+			return false;
+		}
+		
+		try
+		{
+			state.execute();
+		}
+		catch (SQLException e)
+		{
+			System.out.println("sql Execute Error");
+			return false;
+		}
+		
+		try 
+		{
+			state.close();
+		} 
+		catch (SQLException e) 
+		{
+			System.out.println("state close Error");
+			return false;
+		}
+		DBHandler.INSTANCE.returnConnection(connection);
+		
+		return true;
+	}
+	
 	public static ArrayList<Dormitory> getAllDormitories() throws SQLException
 	{
 		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".생활관정보";
