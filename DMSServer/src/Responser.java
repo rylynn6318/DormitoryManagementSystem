@@ -1488,26 +1488,63 @@ public class Responser
 	public static void admin_documentManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
 		Document doc;
-		try	{
+		try	
+		{
 			doc = (Document) ProtocolHelper.deserialization(protocol.getBody());
-		} catch (ClassNotFoundException | IOException e) {
-			System.out.println("역직렬화 실패");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 데이터가 없습니다."));
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("클라이언트에서 온 요청 분석 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 요청 분석에 실패했습니다."));
 			return;
 		}
 
 		String id = doc.studentId;
 		Code1.FileType filetype = doc.documentType;
-		Date date = doc.submissionDate;
+		
+		boolean isExist = false;
+		
+		try
+		{
+			//이거 누가 짜줘
+//			isExist = DocumentParser.isExist(id, fileType);
+		}
+		catch(Exception e)
+		{
+			System.out.println("서류 존재 조회 도중 오류 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 존재 조회 도중 오류가 발생했습니다."));
+			return;
+		}
+		
+		if(!isExist)
+		{
+			System.out.println("해당되는 서류가 없음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 서류가 없습니다."));
+			return;
+		}
+		
 		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
-		int result = DocumentParser.deleteDocument(filetype, id);
+		int result = -1;
+		try
+		{
+			result = DocumentParser.deleteDocument(filetype, id);
+		}
+		catch(Exception e)
+		{
+			System.out.println("서류 삭제 도중 오류 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 삭제 도중 오류가 발생하였습니다."));
+			return;
+		}
+		
 		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
-		if (result > 0)
-			eventReply(socketHelper, createMessage(Bool.TRUE, "서류 삭제 성공"));
-		else if (result == 0)
-			eventReply(socketHelper, createMessage(Bool.TRUE, "삭제된 서류 없음"));
-		else
-			eventReply(socketHelper, createMessage(Bool.FALSE, "오류 발생"));
+		if(result == 0)
+		{
+			System.out.println("삭제된 서류 없음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "삭제된 서류가 없습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.FALSE, "서류가 삭제되었습니다."));
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 업로드 버튼 클릭 시
