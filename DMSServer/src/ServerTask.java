@@ -88,7 +88,7 @@ public class ServerTask implements Runnable {
 
                             case REQUEST:
                                 //다운로드 요청 받았을때
-                                //  일단 body를 통해 id만 온 상황
+                                //  일단 body 를 통해 id만 온 상황
                                 //  해당 id와 헤더에 있는 타입, 현재 학기로 서류 테이블 쿼리 수행한다.
                                 //  결과가 있다면 관련 정보를 다 알수 있다.
                                 //  해당 파일을 리턴
@@ -97,7 +97,7 @@ public class ServerTask implements Runnable {
                                 //  body = null
                                 //  클라이언트에서는 널체크 이후
                                 //  로직 수행
-                                byte[] filebytes = null;
+                                byte[] filebytes = {(byte)0};
 
                                 try {
                                     String id = (String) ProtocolHelper.deserialization(protocol.getBody());
