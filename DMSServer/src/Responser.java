@@ -1437,17 +1437,9 @@ public class Responser
 		//1. 서류 테이블에서 이번 학기 서류제출내역 목록을 가져와 객체화한다. (학번, 서류유형, 제출일, 진단일, 서류저장경로, 유효여부)
 		//2. 배열화한다.
 		int semester = CurrentSemesterParser.getCurrentSemester();
-		ArrayList<Document> dList = null;
-		try
-		{
-			 dList = DocumentParser.getAllDocuments(semester);
-		}
-		catch(Exception e)
-		{
-			System.out.println("서류 조회에 실패했습니다.");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "납부여부 조회에 실패했습니다."));
-			return;
-		}
+		ArrayList<Document> dList;
+
+		dList = (ArrayList<Document>) DocumentParser.getAllDocuments();
 		
 		if(dList.isEmpty())
 		{
@@ -1455,44 +1447,37 @@ public class Responser
 			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 테이블이 비어있습니다."));
 			return;
 		}
+
 		//3. 직렬화해서 클라이언트에 전송한다.
 		eventReply(socketHelper, new Tuple<Bool, ArrayList<Document>>(Bool.TRUE, dList));		
 		
-		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
+		//(4. 클라이언트는 받은 배열을 tableView 에 표시한다)
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 삭제 버튼 클릭 시
 	public static void admin_documentManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
-		//1. 클라이언트로부터 받은 학번, 서류유형, 제출일로 서류 테이블에서 조회한다.
-		Document docu = null;
-		try 
-		{
-			docu = (Document) ProtocolHelper.deserialization(protocol.getBody());
-			String id = docu.studentId;
-			Code1.FileType filetype = docu.documentType;
-			Date date = docu.submissionDate;
-			//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
-			try 
-			{
-				DocumentParser.deleteDocument(id, filetype, date);
-				//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
-				eventReply(socketHelper, createMessage(Bool.TRUE, "서류 삭제 성공"));
-			} 
-			catch (SQLException e)
-			{
-				System.out.println("서류 조회 및 제출 - delete문 쿼리 실패");
-				eventReply(socketHelper, createMessage(Bool.FALSE, "서류 삭제 실패"));
-			}
-		}
-		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
-		catch (ClassNotFoundException | IOException e) 
-		{
+		Document doc;
+		try	{
+			doc = (Document) ProtocolHelper.deserialization(protocol.getBody());
+		} catch (ClassNotFoundException | IOException e) {
 			System.out.println("역직렬화 실패");
 			eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 데이터가 없습니다."));
 			return;
-		}		
-		
+		}
+
+		String id = doc.studentId;
+		Code1.FileType filetype = doc.documentType;
+		Date date = doc.submissionDate;
+		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
+		int result = DocumentParser.deleteDocument(filetype, id);
+		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
+		if (result > 0)
+			eventReply(socketHelper, createMessage(Bool.TRUE, "서류 삭제 성공"));
+		else if (result == 0)
+			eventReply(socketHelper, createMessage(Bool.TRUE, "삭제된 서류 없음"));
+		else
+			eventReply(socketHelper, createMessage(Bool.FALSE, "오류 발생"));
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 업로드 버튼 클릭 시
