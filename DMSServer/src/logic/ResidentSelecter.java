@@ -67,9 +67,19 @@ public class ResidentSelecter
 		
 		for(int i = 0; i < leftCapacity; i++)
 		{
-			Application temp = iterator.next();
-			ApplicationParser.updatePasser(temp);
+			if(iterator.hasNext())
+			{
+				Application temp = iterator.next();
+				ApplicationParser.updatePasser(temp);
+			}
+			else
+			{
+				System.out.println("완료 - 생활관 수용인원보다 신청의 수가 더 적음");
+				break;
+			}
 		}
+		
+		System.out.println("완료");
 	}
 	
 }
