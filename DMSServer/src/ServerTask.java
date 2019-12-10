@@ -5,8 +5,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 
+import DB.AccountParser;
 import DB.CurrentSemesterParser;
 import DB.DocumentParser;
+import DB.StudentParser;
 import enums.*;
 import logic.*;
 import models.*;
@@ -62,9 +64,24 @@ public class ServerTask implements Runnable {
                                 //  이름규칙은 [/파일종류/학기_학번.jpg]
                                 //  id를 이용해 디비에 관련 정보 저장
                                 //  성공 유무만 되돌려준다
+                            	
                                 try {
                                     Tuple<String, byte[]> body = (Tuple<String, byte[]>) ProtocolHelper.deserialization(protocol.getBody());
                                     String id = body.obj1;
+                                    
+                                    //학번이 존재하는지 체크함.
+                                    boolean isExist = false;
+                                	try
+                                	{
+                                		isExist = StudentParser.isExist(id);
+                                	}
+                                	catch(Exception e)
+                                	{
+                                		e.printStackTrace();
+                                	}
+                                	
+                                	if(isExist == false)
+                                		throw new ClassNotFoundException("학생이 조회되지 않음.");
 
                                     int nowSemester = CurrentSemesterParser.getCurrentSemester();
                                     Path path = IOHandler.getFilePath(fileType, id);

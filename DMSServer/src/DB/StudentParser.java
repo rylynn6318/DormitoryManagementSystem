@@ -69,4 +69,23 @@ public class StudentParser {
 		
 		return students;
     }
+    
+    public static boolean isExist(String id) throws Exception 
+    {
+        String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME + ".학생 WHERE 학번 = '" + id+"'";
+        Connection connection = DBHandler.INSTANCE.getConnection();
+        PreparedStatement state = connection.prepareStatement(sql);
+        ResultSet resultSet = state.executeQuery();
+        
+        boolean isExist = false;
+        if(resultSet.next())
+        {
+        	isExist = true;
+        }
+
+        state.close();
+        DBHandler.INSTANCE.returnConnection(connection);
+        
+        return isExist;
+    }
 }
