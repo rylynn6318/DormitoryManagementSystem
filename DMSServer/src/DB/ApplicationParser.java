@@ -15,7 +15,7 @@ import models.Score;
 public class ApplicationParser {
 	public static boolean isExist(String studentID) throws SQLException
 	{
-		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ studentID;
+		String sql = "SELECT 학번 FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = '"+ studentID + "'";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
 		ResultSet rs = state.executeQuery();
@@ -122,8 +122,8 @@ public class ApplicationParser {
 	
 	public static int getNumOfLeftSeat(String dormName, int semester) throws SQLException
 	{
-		String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + semester + " AND 합격여부=Y)";
-		String getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명=" + dormName + "AND 학기=" + semester;
+		String getNumOfPassedAppsQuery = "SELECT COUNT(*) FROM (SELECT * FROM" + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명='" + dormName + "' AND 학기=" + semester + " AND 합격여부='Y')";
+		String getCapacityQuery = "SELECT 수용인원 FROM 생활관정보 WHERE 생활관명='" + dormName + "' AND 학기=" + semester;
 
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement passedState = connection.prepareStatement(getNumOfPassedAppsQuery);
@@ -140,7 +140,7 @@ public class ApplicationParser {
 		if((semester%10) != 01)		//0지망 처리 구문
 		{
 			int firstSemester = (semester / 10) * 10 + 1;
-			String getNumOfZeroChoiceQuery = "SELECT COUNT(*) FROM (SELECT * FROM " + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명=" + dormName + " AND 학기=" + firstSemester + " AND 합격여부=Y AND 지망=0)";
+			String getNumOfZeroChoiceQuery = "SELECT COUNT(*) FROM (SELECT * FROM " + DBHandler.DB_NAME + ".배정내역 WHERE 생활관명='" + dormName + "' AND 학기=" + firstSemester + " AND 합격여부='Y' AND 지망=0)";
 			PreparedStatement passedZeroState = connection.prepareStatement(getNumOfZeroChoiceQuery);
 			ResultSet passedZero = passedZeroState.executeQuery();
 			passedZero.next();
@@ -158,7 +158,7 @@ public class ApplicationParser {
 	{
 		TreeSet<Application> sortedApps = new TreeSet<Application>();
 		
-		String getUnsortedAppsQuery = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 생활관명=" + dormName + " AND 지망=" + choice + "학기=201901 AND 합격여부=N";
+		String getUnsortedAppsQuery = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 생활관명='" + dormName + "' AND 지망=" + choice + "학기=201901 AND 합격여부='N'";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(getUnsortedAppsQuery);
 		ResultSet apps = preparedStatement.executeQuery();
@@ -169,7 +169,7 @@ public class ApplicationParser {
 			
 //			if(choice != 01)		//최소 지망일 때는 스킵하게 하고싶은데 어떤건 0지망이 제일 낮고 어떤건 1지망이 제일 낮아서 생각중임
 //			{
-				String havePassedApp = "SELECT COUNT(*) FROM (SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 합격여부=Y AND 학기=" + temp.getSemesterCode();
+				String havePassedApp = "SELECT COUNT(*) FROM (SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 합격여부='Y' AND 학기=" + temp.getSemesterCode();
 				PreparedStatement havePassedAppState = connection.prepareStatement(havePassedApp);
 				ResultSet numOfPassed = havePassedAppState.executeQuery();
 				numOfPassed.next();
@@ -295,7 +295,7 @@ public class ApplicationParser {
 	
 	public static TreeSet<Score> getScores(String studentId, int twoSemesterBefore, int lastSemester) throws SQLException
 	{
-		String getScoresQuery = "SELECT 학점,등급 FROM " + DBHandler.DB_NAME + ".점수 WHERE 학번=" + studentId + "AND 학기 BETWEEN '" + twoSemesterBefore + "' AND '" + lastSemester + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
+		String getScoresQuery = "SELECT 학점,등급 FROM " + DBHandler.DB_NAME + ".점수 WHERE 학번='" + studentId + "' AND 학기 BETWEEN '" + twoSemesterBefore + "' AND '" + lastSemester + "'";	//직전 2학기 점수 테이블 가져오는 쿼리
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(getScoresQuery);
 		ResultSet scores = preparedStatement.executeQuery();
@@ -331,7 +331,7 @@ public class ApplicationParser {
 
 	public static void updatePasser(Application temp) throws SQLException 
 	{
-		String setPassed = "UPDATE " + DBHandler.DB_NAME + ".신청 SET 합격여부=Y WHERE 학번=" + temp.getStudentId() + "지망=" + temp.getChoice() + "학기=" + temp.getSemesterCode();
+		String setPassed = "UPDATE " + DBHandler.DB_NAME + ".신청 SET 합격여부='Y' WHERE 학번='" + temp.getStudentId() + "' AND 지망=" + temp.getChoice() + " AND 학기=" + temp.getSemesterCode();
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement preparedStatement = connection.prepareStatement(setPassed);
 		preparedStatement.executeUpdate();
