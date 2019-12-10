@@ -1128,7 +1128,7 @@ public class Responser
 	public static void admin_boarderManagePage_onAllocate(Protocol protocol, SocketHelper socketHelper) throws ClassNotFoundException, SQLException
 	{
 		//입사자 등록(배정) 버튼은 신청 목록에서 합격여부를 Y, 납부내역 Y, 결핵진단서 Y인 신청의 최종합격여부를 Y로 바꾼다.
-		
+	
 		//이거 AssignAlgorithm.passUpdate(); 하시면 위 내용대로 동작합니다.
 		//그리고나서 배정내역에 최종합격여부가 Y인 학생들을 배정한다.
 		
@@ -1143,8 +1143,11 @@ public class Responser
 		// 4.그 정보에 맞게 DB에 업데이트
 		
 		//이걸 batchStart로 묶어놨으니 그냥 이것만 실행하면 됨
+		
+		//(명근, 2019-12-10 14:57, 그래서 passUpdate야 아니면 batchStart야? 일단 batchStart가 주석해제되있어서 batchStart로 해둠
 		try
 		{
+			//입사다 등록(배정) 실행
 			AssignAlgorithm.batchStart();
 		}
 		catch(Exception e)
@@ -1162,28 +1165,28 @@ public class Responser
 	{
 		//1. 배정내역 테이블에서 이번 학기 배정내역 목록을 가져와 객체화한다. (학번, 호, 학기, 생활관명, 자리, 퇴사예정일)
 		//2. 배열화한다.
-		ArrayList<PlacementHistory> ph = new ArrayList<PlacementHistory>();
+		ArrayList<PlacementHistory> history = null;
 		try 
 		{
-			ph = PlacementHistoryParser.getAllResidence();
+			history = PlacementHistoryParser.getAllResidence();
 		} 
-		catch (ClassNotFoundException | SQLException e) 
+		catch (Exception e) 
 		{
-			System.out.println("배정내역 조회에 실패했습니다.");
+			System.out.println("배정내역 조회에 실패.");
 			eventReply(socketHelper, createMessage(Bool.FALSE, "배정내역 조회에 실패했습니다."));
 			return;
 		}
 		
-		if(ph.isEmpty())
+		if(history.isEmpty())
 		{
-			System.out.println("배정내역이 비어있습니다.");
+			System.out.println("배정내역이 비어있음.");
 			eventReply(socketHelper, createMessage(Bool.FALSE, "배정내역이 비어있습니다."));
 			return;
 		}
 		
 		//3. 직렬화해서 클라이언트에 전송한다.
 		
-		eventReply(socketHelper, new Tuple<Bool, ArrayList<PlacementHistory>>(Bool.TRUE, ph));
+		eventReply(socketHelper, new Tuple<Bool, ArrayList<PlacementHistory>>(Bool.TRUE, history));
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 	}
 	

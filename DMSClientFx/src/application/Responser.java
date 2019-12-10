@@ -482,7 +482,7 @@ public class Responser
 	}
 	
 	//관리자 - 입사 선발자 조회 및 관리 - 조회 버튼 클릭 시
-	public static ArrayList<PlacementHistory> admin_boarderManagePage_onCheck()
+	public static Serializable admin_boarderManagePage_onCheck()
 	{
 		//1. 배정내역 테이블에서 이번 학기 배정내역 목록을 가져와 객체화한다. (학번, 호, 학기, 생활관명, 자리, 퇴사예정일)
 		//2. 배열화한다.
@@ -490,7 +490,7 @@ public class Responser
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 		
 		Protocol protocol = eventProtocolBuilder(Code1.Page.입사자관리, Code2.Event.CHECK, null);
-		ArrayList<PlacementHistory> result = (ArrayList<PlacementHistory>) sendAndReceive(protocol);
+		Serializable result = sendAndReceive(protocol);
 		return result;
 	}
 	
