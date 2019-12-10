@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.Socket;
+import java.nio.file.DirectoryIteratorException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
@@ -538,8 +539,7 @@ public class Responser
 	}
 	
 	//관리자 - 납부 여부 조회 및 관리 - CSV 업로드 버튼 클릭 시
-	public static void admin_paymentManagePage_onUpload()
-	{
+	public static String admin_paymentManagePage_onUpload(File file) throws Exception {
 		//클라이언트로부터 CSV파일을 다운로드 받고, 이 CSV 파일로 신청 테이블에 납부여부를 Y로 바꾸기 위함.
 		
 		//(1. 클라이언트가 파일을 업로드 시도한다.)
@@ -549,6 +549,18 @@ public class Responser
 		//5. 신청 테이블에서 이번 학기에, CSV파일 내 학번이 존재하면 납부내역을 T로 UPDATE한다.
 		//6. 만약 CSV파일 내에 학번이 존재하는데, 신청 테이블에 없는 경우 로그로 남기거나, 클라이언트에게 알려주면 좋겠다.
 		//7. 결과를 클라이언트에게 알려준다. (학번 + 성공여부 String으로 보내줘도될듯, ex) 20191234 성공, 20191235 성공, 20191236 실패)
+
+		byte[] filebytes = Files.readAllBytes(file.toPath());
+		Protocol protocol = new Protocol.Builder(
+				ProtocolType.FILE, Direction.TO_SERVER, Code1.FileType.CSV, FileCode.UPLOAD)
+				.body(filebytes)
+				.build();
+		protocol = SocketHandler.INSTANCE.request(protocol);
+
+		String result = null;
+		if (protocol.code2 == FileCode.SUCCESS)
+			result = (String) ProtocolHelper.deserialization(protocol.getBody());
+		return result;
 	}
 	
 	//-------------------------------------------------------------------------
