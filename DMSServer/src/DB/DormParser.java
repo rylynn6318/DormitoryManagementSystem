@@ -180,25 +180,62 @@ public class DormParser {
 		return capacity;
 	}
 
-	public static boolean isExist(String dormName, String semester) throws SQLException {
+	public static boolean isExist(String dormName, String semester) throws SQLException  {
 		String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".생활관정보 WHERE `학기` = '"+ semester+"' AND `생활관명` = '" + dormName + "'";
-		Connection connection = DBHandler.INSTANCE.getConnection();
-		PreparedStatement state = connection.prepareStatement(sql);
-		ResultSet rs = state.executeQuery();
-		System.out.println(sql);
-		boolean empty;
-		empty = rs.next();
+		boolean empty = false;	
+		Connection connection =null;
+		PreparedStatement state =null;
+		ResultSet rs =null;
+		try
+		{
+			connection = DBHandler.INSTANCE.getConnection();
+			System.out.println(sql);
+			state = connection.prepareStatement(sql);
+			rs = state.executeQuery();			
+			empty = rs.next();
+		}
+		catch(SQLException e)
+		{
+			System.out.println("생활관 isExist 쿼리문 실패");
+		}				
 		
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
 		if(empty)
 		{
 			return true;
 		}
 		return false;
 	}
-// 테스트용 메인문
-//	public static void main(String args[]) throws SQLException
-//	{
-//		Boolean b = isExist("오름1", "201903");
-//		System.out.println(b);
-//	}
+
+
+	public static boolean deleteDormitory(String dormName, String semester) {
+		String sql = "DELETE FROM " + DBHandler.DB_NAME + ".생활관정보 WHERE `학기` = '"+ semester+"' AND `생활관명` = '" + dormName + "'";
+		Connection connection =null;
+		PreparedStatement state =null;		
+		try
+		{
+			connection = DBHandler.INSTANCE.getConnection();
+			System.out.println(sql);
+			state = connection.prepareStatement(sql);
+			if(state.executeUpdate()>0)
+				return true;
+			else
+			{
+				System.out.println("해당생활관없음");
+				return false;
+			}
+		}
+		catch(SQLException e)
+		{
+			System.out.println("생활관 삭제 쿼리문 실패");
+			return false;
+		}	
+	}
+//		 테스트용 메인문
+//		public static void main(String args[]) throws SQLException
+//		{
+//			Boolean b = deleteDormitory("푸름5", "201902");
+//			System.out.println(b);
+//		}
 }
