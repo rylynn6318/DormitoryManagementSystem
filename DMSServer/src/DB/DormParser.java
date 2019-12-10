@@ -179,4 +179,26 @@ public class DormParser {
 		DBHandler.INSTANCE.returnConnection(connection);
 		return capacity;
 	}
+
+	public static boolean isExist(String dormName, String semester) throws SQLException {
+		String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".생활관정보 WHERE `학기` = '"+ semester+"' AND `생활관명` = '" + dormName + "'";
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+		System.out.println(sql);
+		boolean empty;
+		empty = rs.next();
+		
+		if(empty)
+		{
+			return true;
+		}
+		return false;
+	}
+// 테스트용 메인문
+//	public static void main(String args[]) throws SQLException
+//	{
+//		Boolean b = isExist("오름1", "201903");
+//		System.out.println(b);
+//	}
 }
