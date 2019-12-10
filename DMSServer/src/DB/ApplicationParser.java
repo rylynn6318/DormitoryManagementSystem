@@ -472,7 +472,7 @@ public class ApplicationParser {
 	
 	public static Boolean isExistLastPass(String id) throws SQLException, ClassNotFoundException
 	{
-		String sql = "SELECT 최종합격여부" + DBHandler.DB_NAME + ".신청 WHERE 학번 = "+ id + "생활관정보_학기 = " + CurrentSemesterParser.getCurrentSemester();
+		String sql = "SELECT 최종합격여부" + DBHandler.DB_NAME + ".신청 WHERE 학번 = '"+ id + "' AND 생활관정보_학기 = '" + CurrentSemesterParser.getCurrentSemester() + "'";
 		System.out.println(sql);
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
@@ -490,9 +490,25 @@ public class ApplicationParser {
 		return isExist;
 	}
 
-	public static boolean isExist(String studentId, String dormitoryName, int semesterCode) {
-		// TODO Auto-generated method stub
-		return false;
+	public static boolean isExist(String studentId, String dormitoryName, int semesterCode) throws SQLException 
+	{
+		String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".신청 WHERE 학번 = '"+ studentId + "' AND 생활관정보_생활관명 = '" + dormitoryName + "' AND 생활관정보_학기 = '" + semesterCode + "'";
+		System.out.println(sql);
+		Connection connection = DBHandler.INSTANCE.getConnection();
+		PreparedStatement state = connection.prepareStatement(sql);
+		ResultSet rs = state.executeQuery();
+
+		boolean isExist = false;
+		
+		if(rs.next())
+		{
+			isExist = true;
+		}
+		
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		
+		return isExist;
 	}
 
 }

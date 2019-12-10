@@ -95,15 +95,15 @@
          </rowConstraints>
          <children>
             <Label text="학번" />
-            <TextField fx:id="update_id_textfield" promptText="ID를 입력해주세요." GridPane.rowIndex="1" />
             <Label text="납부여부" GridPane.columnIndex="4" />
-            <ComboBox fx:id="update_isPaid_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="4" GridPane.rowIndex="1" />
             <Label text="생활관명" GridPane.columnIndex="1" />
             <Label text="학기" GridPane.columnIndex="3" />
-            <TextField fx:id="update_dormName_textfield" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="update_semester_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             <Label text="성별" GridPane.columnIndex="2" />
+            <TextField fx:id="update_id_textfield" promptText="ID를 입력해주세요." GridPane.rowIndex="1" />
+            <TextField fx:id="update_dormName_textfield" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="update_gender_textfield" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="update_semester_textfield" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <ComboBox fx:id="update_isPaid_combobox" prefWidth="150.0" promptText="선택" GridPane.columnIndex="4" GridPane.rowIndex="1" />
          </children>
          <VBox.margin>
             <Insets />
