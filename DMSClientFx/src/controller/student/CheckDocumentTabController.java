@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
@@ -196,7 +197,9 @@ public class CheckDocumentTabController extends InnerPageController
 			}
 		}else{
 			Code1.FileType type = (Code1.FileType) result.code1;
-    		IOHandler.getInstance().write(Paths.get(type.name() + type.extension), result.getBody());
+			Path downloadpath = Paths.get(IOHandler.downloadDirectoryName,type.name() + type.extension);
+    		IOHandler.getInstance().write(downloadpath, result.getBody());
+			IOHandler.getInstance().showAlert(downloadpath.toFile().getAbsolutePath() + "\n위 위치에 저장되었습니다.");
 		}
     }
 }

@@ -20,6 +20,7 @@ public class IOHandler
 {
 	private static IOHandler _instance;
 	private final long MAXFILESIZE = 10485760;	//10MB = 10485760 byte(in 바이너리)
+	public final static String downloadDirectoryName = "다운받은파일";
 	
 	public static IOHandler getInstance()
 	{
