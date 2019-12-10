@@ -988,7 +988,7 @@ public class Responser
 			eventReply(socketHelper, createMessage(Bool.FALSE, "입사 선발자 목록이 조회되지 않았습니다."));
 			return;
 		}
-		
+
 		Tuple<Bool, ArrayList<Application>> resultTuple = new Tuple<Bool, ArrayList<Application>>(Bool.TRUE, appList);
 		eventReply(socketHelper, resultTuple);
 		
