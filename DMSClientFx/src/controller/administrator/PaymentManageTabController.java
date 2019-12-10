@@ -306,11 +306,17 @@ public class PaymentManageTabController extends InnerPageController
 			boolean isSucceed = true;
 			if(isSucceed)
 			{
-				IOHandler.getInstance().showAlert("은행 파일이 업로드 되었습니다.");
 				
 				//TODO 여기서 전송해라!
-				Responser.admin_paymentManagePage_onUpload();
-				
+				String msg = null;
+				try {
+					msg = Responser.admin_paymentManagePage_onUpload(file);
+					IOHandler.getInstance().showAlert(msg);
+				} catch (Exception e) {
+					e.printStackTrace();
+					IOHandler.getInstance().showAlert("CSV 파일 전송중 오류 발생!");
+				}
+
 				file_directory_label.setText("N/A");
 				checkApplications();
 			}
