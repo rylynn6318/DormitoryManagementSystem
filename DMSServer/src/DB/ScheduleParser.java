@@ -94,7 +94,7 @@ public class ScheduleParser
 		return result;
 	}
 	
-	//만들긴했는데 당장 쓰진 않지만 혹시 라도 필요하면 사용하세요,,, 스케줄객체 생성하는 함수입니다 ㅠㅡㅠ........-서희- <- 이거 java.sql.Date를 java.util.Date에 바로 집어넣으면 안됨 일단 주석처리 해두겠음
+	//만들긴했는데 당장 쓰진 않지만 혹시 라도 필요하면 사용하세요,,, 스케줄객체 생성하는 함수입니다 ㅠㅡㅠ........-서희- <- 이거 java.sql.Date를 java.utils.Date에 바로 집어넣으면 안됨 일단 주석처리 해두겠음
 //	public static Schedule[] getAllSchedule() throws Exception
 //	{
 //		String sql = "SELECT * FROM " + DBHandler.INSTANCE.DB_NAME +";";

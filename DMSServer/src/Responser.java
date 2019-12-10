@@ -1569,23 +1569,6 @@ public class Responser
 			return;
 		}
 		
-		try
-		{
-			Path path = IOHandler.INSTANCE.getFilePath(fileType, id);
-			boolean isSucceed = IOHandler.INSTANCE.delete(path);
-			if(!isSucceed)
-			{
-				System.out.println("DB에서는 삭제 완료, 로컬 서류 파일 삭제 실패.");
-				//실패메시지는 딱히 반환하지 않겠음.
-				//return;
-			}
-		}
-		catch(Exception e)
-		{
-			//이것도 딱히 클라이언트에게 알려주지 않음.
-			System.out.println("DB에서는 삭제 완료, 로컬 서류 파일 존재하지 않음.");
-		}
-		
 		eventReply(socketHelper, createMessage(Bool.TRUE, "서류가 삭제되었습니다."));
 	}
 	
@@ -1654,7 +1637,7 @@ public class Responser
 		try
 		{
 			//누가짜줘
-			isSucceed = DocumentParser.renewDocument(document) != -2 ? true : false;
+			isSucceed = DocumentParser.updateCheck(document) != -2;
 		}
 		catch(Exception e)
 		{

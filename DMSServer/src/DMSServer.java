@@ -1,5 +1,6 @@
 
 import DB.DBHandler;
+import utils.Logger;
 import utils.SocketHelper;
 
 import java.io.IOException;

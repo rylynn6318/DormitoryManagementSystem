@@ -1,5 +1,6 @@
 package DB;
 
+import java.nio.file.Path;
 import java.sql.*;
 
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import enums.Bool;
 import enums.Code1;
 import enums.Code1.FileType;
 import models.Document;
+import utils.IOHandler;
+import utils.Logger;
 
 public class DocumentParser {
 
@@ -128,10 +131,21 @@ public class DocumentParser {
         }
 
         DBHandler.INSTANCE.returnConnection(connection);
+
+        try {
+            Path path = IOHandler.INSTANCE.getFilePath(documentType, studentId);
+            boolean isSucceed = IOHandler.INSTANCE.delete(path);
+            if(!isSucceed) {
+                Logger.INSTANCE.print("DB에서는 삭제 완료, 로컬 서류 파일 삭제 실패.");
+            }
+        } catch(Exception e) {
+            Logger.INSTANCE.print("DB에서는 삭제 완료, 로컬 서류 파일 존재하지 않음.");
+            e.printStackTrace();
+        }
         return result;
     }
 
-    // 문서가 없을경우 insert 하고 중복되는 키값의 레코드가 있을경우 받은 정보를 바탕으로 update 수행함
+    // insert 수행, 이미 레코드가 있으면 Update
     // 반환값으로 영향을 받은 레코드 갯수를 반환, 에러 발생시 -2 반환.
     public static int renewDocument(Document doc) {
         int result = -2;
@@ -139,11 +153,11 @@ public class DocumentParser {
         // 제출일은 서버 기본값 사용
         String query =
                 "INSERT INTO 서류 (학번, 서류유형, 진단일, 서류저장경로, 유효여부) " +
-                        "VALUES (?, ?, ?, ?, ?) " +
-                        "ON DUPLICATE KEY UPDATE " +
+                        "VALUES (?, ?, Now(), ?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE " +
                         "학번 = VALUES(학번), " +
                         "서류유형 = VALUES(서류유형), " +
-                        //"제출일 = VALUES(제출일), " +
+                        "제출일 = VALUES(제출일), " +
                         "진단일 = VALUES(진단일), " +
                         "서류저장경로 = VALUES(서류저장경로), " +
                         "유효여부 = VALUES(유효여부)";
@@ -164,6 +178,41 @@ public class DocumentParser {
             preparedStatement.setDate(3, ScheduleParser.utilDateToSqlDate(doc.diagnosisDate));
             preparedStatement.setString(4, doc.documentStoragePath);
             preparedStatement.setString(5, doc.isValid.yn);
+
+            result = preparedStatement.executeUpdate();
+
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        DBHandler.INSTANCE.returnConnection(connection);
+        return result;
+    }
+
+    // doc에서 일부 정보만 사용한다.
+    public static int updateCheck(Document doc) {
+        int result = -2;
+
+        String query =
+                "Update 서류 Set 유효여부 = ? " +
+                        "Where 학번 = ? " +
+                        "And 서류유형 = ?";
+
+        Connection connection;
+        try {
+            connection = DBHandler.INSTANCE.getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return result;
+        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            preparedStatement.setString(1, doc.isValid.yn);
+            preparedStatement.setString(3, doc.studentId);
+            preparedStatement.setString(3, doc.documentType.name());
 
             result = preparedStatement.executeUpdate();
 

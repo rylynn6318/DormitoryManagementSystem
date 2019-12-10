@@ -1,3 +1,5 @@
+package utils;
+
 import enums.ProtocolType;
 
 import java.net.InetAddress;

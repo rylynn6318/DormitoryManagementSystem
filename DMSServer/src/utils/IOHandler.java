@@ -1,3 +1,5 @@
+package utils;
+
 import DB.CurrentSemesterParser;
 import enums.Code1;
 

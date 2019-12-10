@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,7 +9,6 @@ import DB.*;
 import enums.*;
 import logic.*;
 import models.*;
-import sun.rmi.runtime.Log;
 import utils.*;
 
 public class ServerTask implements Runnable {
@@ -143,13 +141,11 @@ public class ServerTask implements Runnable {
                         break;
                     case CSV:
                         // CSV 파일의 경우 일방적인 전송밖에 없다
-                        // body에는 csv 파일 바이트만 있는 상황
-                        // 적당한곳에 csv파일 저장하고 로직 수행
+                        // body 에는 csv 파일 바이트만 있는 상황
+                        // 적당한곳에 csv 파일 저장하고 로직 수행
                         String msg = "납부내역 갱신 실패!";
                         try {
                             IOHandler.INSTANCE.write(IOHandler.csvFilePath, protocol.getBody());
-                            Responser.admin_paymentManagePage_onUpload(protocol, socketHelper);
-
                             Collection<String> list = IOHandler.INSTANCE.readCsv(IOHandler.csvFilePath);
                             int effected_raw = ApplicationParser.updatePayCheck(list);
 
