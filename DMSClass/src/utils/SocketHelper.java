@@ -15,7 +15,7 @@ import enums.Bool;
 public final class SocketHelper implements Closeable {
     public final static String localhost = "127.0.0.1";
     public final static int port = 4444;
-    public final static short send_buffer_size = 8192;
+    public final static int send_buffer_size = 1024*1024*10;
     public final static int timeout = 15000; // 15초, 아직 안씀
 
     private Socket socket = null;
@@ -45,22 +45,24 @@ public final class SocketHelper implements Closeable {
             int bytesRead = socket.getInputStream().read(buffer, 0, buffer.length);
             int packet_length = ProtocolHelper.bytesToInt(Arrays.copyOfRange(buffer, 0, 4));
             int current = bytesRead;
-            baos.write(buffer);
+            //baos.write(buffer);
 
             while (current < packet_length) {
-                bytesRead = socket.getInputStream().read(buffer);
-                if (bytesRead > 0) {
-                    baos.write(buffer);
+                bytesRead = socket.getInputStream().read(buffer,current,packet_length - current);
+                if (bytesRead >= 0) {
+                    //baos.write(buffer);
                     current += bytesRead;
                 }
             }
+
+            buffer = Arrays.copyOfRange(buffer,0,current);
         }catch (Exception e) {
             System.out.println("----프로토콜 read 중 오류 발생 여기부터----");
             e.printStackTrace();
             System.out.println("----프로토콜 read 중 오류 발생 여기까지----");
         }
 
-        return new Protocol.Builder(baos.toByteArray()).build();
+        return new Protocol.Builder(buffer).build();
     }
 
     public InetAddress getInetAddress(){
