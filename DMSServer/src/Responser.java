@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -1404,9 +1405,31 @@ public class Responser
 	public static void admin_documentManagePage_onDelete(Protocol protocol, SocketHelper socketHelper)
 	{
 		//1. 클라이언트로부터 받은 학번, 서류유형, 제출일로 서류 테이블에서 조회한다.
-		//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
+		Document docu = null;
+		try 
+		{
+			docu = (Document) ProtocolHelper.deserialization(protocol.getBody());
+			String id = docu.studentId;
+			Code1.FileType filetype = docu.documentType;
+			Date date = docu.submissionDate;
+			//2-1. 해당되는 데이터가 있으면 DB에 DELETE 쿼리를 쏜다.
+			try {
+				DocumentParser.deleteDocument(id, filetype, date);
+				//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
+				eventReply(socketHelper, createMessage(Bool.TRUE, "서류 삭제 성공"));
+			} catch (SQLException e) {
+				System.out.println("서류 조회 및 제출 - delete문 쿼리 실패");
+				eventReply(socketHelper, createMessage(Bool.FALSE, "서류 삭제 실패"));
+			}
+		}
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
-		//3. DELETE 쿼리 결과를 클라이언트에게 알려준다.
+		catch (ClassNotFoundException | IOException e) 
+		{
+			System.out.println("역직렬화 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 데이터가 없습니다."));
+			return;
+		}		
+		
 	}
 	
 	//관리자 - 서류 조회 및 제출 - 업로드 버튼 클릭 시
