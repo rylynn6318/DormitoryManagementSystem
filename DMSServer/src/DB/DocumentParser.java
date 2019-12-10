@@ -211,7 +211,7 @@ public class DocumentParser {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
             preparedStatement.setString(1, doc.isValid.yn);
-            preparedStatement.setString(3, doc.studentId);
+            preparedStatement.setString(2, doc.studentId);
             preparedStatement.setString(3, doc.documentType.name());
 
             result = preparedStatement.executeUpdate();
