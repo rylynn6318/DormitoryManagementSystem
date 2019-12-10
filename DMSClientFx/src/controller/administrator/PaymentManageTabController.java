@@ -1,6 +1,7 @@
 package controller.administrator;
 
 import java.io.File;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -140,29 +141,38 @@ public class PaymentManageTabController extends InnerPageController
     private void checkApplications()
     {
     	//서버에서 신청테이블->이번학기->객체 배열 쫙 긁어와서 tableview에 보여줌
-    	ArrayList<Application> resultList = Responser.admin_paymentManagePage_onCheck();
+    	Serializable result = Responser.admin_paymentManagePage_onCheck();
     	
     	//서버랑 통신이 됬는가?
-        if(resultList == null)
+        if(result == null)
         {
         	IOHandler.getInstance().showAlert("서버에 연결할 수 없습니다.");
         	return;
         }
         
-        if(resultList != null)
+        Tuple<Bool, String> checkTuple = (Tuple<Bool, String>) result;
+        
+        if(checkTuple.obj1 == Bool.FALSE)
+        {
+        	IOHandler.getInstance().showAlert(checkTuple.obj2);
+        	return;
+        }
+        
+        Tuple<Bool, ArrayList<Application>> resultTuple = (Tuple<Bool, ArrayList<Application>>) result;
+        ArrayList<Application> applicationList = resultTuple.obj2;
+        
+        if(applicationList != null)
         {
         	//객체를 테이블뷰 모델로 변환
-        	ObservableList<ApplicationViewModel> applicationList = FXCollections.observableArrayList();
+        	ObservableList<ApplicationViewModel> applicationModels = FXCollections.observableArrayList();
         	
-        	for(Application application : resultList)
+        	for(Application application : applicationList)
         	{
-        		applicationList.add(applicationToViewModel(application));
+        		applicationModels.add(applicationToViewModel(application));
         	}
-        	//
-        	applicationList = FXCollections.observableArrayList();
         	
             //테이블뷰에 추가
-        	setApplicationTableView(applicationList);
+        	setApplicationTableView(applicationModels);
         }
     }
     

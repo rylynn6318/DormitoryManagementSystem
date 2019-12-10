@@ -1,8 +1,12 @@
+import DB.CurrentSemesterParser;
+import enums.Code1;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 
 public enum IOHandler {
     INSTANCE;
@@ -14,5 +18,10 @@ public enum IOHandler {
         FileOutputStream fos = new FileOutputStream(file);
         fos.write(bytes);
         fos.close();
+    }
+
+    public static Path getFilePath(Code1.FileType type, String id) throws SQLException, ClassNotFoundException {
+        int nowSemester = CurrentSemesterParser.getCurrentSemester();
+        return Paths.get(type.name(), String.valueOf(nowSemester), id + type.extension);
     }
 }

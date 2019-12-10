@@ -22,7 +22,7 @@ public enum DBHandler {
                     USER_NAME + "&password=" +
                     PASSWORD;
 
-    private static final int INITIAL_CAPACITY = 5;
+    private static final int INITIAL_CAPACITY = 10;
     ConcurrentLinkedQueue<Connection> pool = new ConcurrentLinkedQueue<>();
 
     public void init() throws ClassNotFoundException, SQLException {
