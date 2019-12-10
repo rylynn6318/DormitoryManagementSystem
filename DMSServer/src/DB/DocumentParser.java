@@ -52,6 +52,50 @@ public class DocumentParser {
         DBHandler.INSTANCE.returnConnection(connection);
         return documentList;
     }
+    
+    public static boolean isExist(String id, Code1.FileType documentType) throws SQLException
+    {
+    	int fileType;
+    	if(documentType == Code1.FileType.MEDICAL_REPORT)
+    		fileType = 1;
+    	else if(documentType == Code1.FileType.OATH)
+    		fileType = 2;
+    	else
+    		fileType = 3;
+    	
+    	String sql = "SELECT * FROM " + DBHandler.DB_NAME + ".서류 WHERE 학번='" + id + "' AND 서류유형=" + fileType;
+    	
+    	Connection connection;
+		connection = DBHandler.INSTANCE.getConnection();
+    	
+    	PreparedStatement state;
+		state = connection.prepareStatement(sql);
+		
+		ResultSet rs;
+		try
+		{
+			rs = state.executeQuery();
+		}
+		catch (SQLException e)
+		{
+			System.out.println("sql Execute Error");
+			state.close();
+			DBHandler.INSTANCE.returnConnection(connection);
+			return false;
+		}
+    	
+		if(!rs.next())
+		{
+			state.close();
+			DBHandler.INSTANCE.returnConnection(connection);
+			return false;
+		}
+		
+		state.close();
+		DBHandler.INSTANCE.returnConnection(connection);
+		
+    	return true;
+    }
 
     // 해당 키값을 가지는 서류 레코드와 파일을 삭제함.
     // 반환값으로 영향을 받은 레코드 갯수를 반환함. 에러 발생시 -2 반환.
