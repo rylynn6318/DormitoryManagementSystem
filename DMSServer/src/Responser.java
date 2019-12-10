@@ -1572,6 +1572,61 @@ public class Responser
 		//	   (유효여부를 클라이언트에게서 받은 T/F로 UPDATE한다)
 		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
 		//3. UPDATE 쿼리 결과를 클라이언트에게 알려준다.
+		
+		Document document;
+		try	
+		{
+			document = (Document) ProtocolHelper.deserialization(protocol.getBody());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("클라이언트에서 온 요청 분석 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 요청 분석에 실패했습니다."));
+			return;
+		}
+		
+		boolean isExist = false;
+		
+		try
+		{
+			//이거 누가 짜줘(이거 위에서 호출한번 됬었는데, 똑같은거임. 예승이가 짜러감)
+//			isExist = DocumentParser.isExist(id, fileType);
+		}
+		catch(Exception e)
+		{
+			System.out.println("서류 존재 조회 도중 오류 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 존재 조회 도중 오류가 발생했습니다."));
+			return;
+		}
+		
+		if(!isExist)
+		{
+			System.out.println("해당되는 서류가 없음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 서류가 없습니다."));
+			return;
+		}
+		
+		boolean isSucceed = false;
+		try
+		{
+			//누가짜줘
+//			isSucceed = DocumentParser.updateDocument(document);
+		}
+		catch(Exception e)
+		{
+			System.out.println("서류 갱신 도중 오류 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 갱신 도중 오류가 발생했습니다."));
+			return;
+		}
+		
+		if(!isSucceed)
+		{
+			System.out.println("서류 갱신 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서류 갱신에 실패하였습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.TRUE, "서류 갱신에 성공하였습니다."));
 	}
 }
 
