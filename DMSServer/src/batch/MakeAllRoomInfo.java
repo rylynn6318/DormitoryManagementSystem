@@ -11,7 +11,7 @@ public class MakeAllRoomInfo {
 		{
 			O1[i] = new AssignRoomInfo();
 			O1[i].setDormitoryName("오름1");
-			if(i % 2 == 1)
+			if(i % 2 == 0)
 			{
 				O1[i].setSeat("A");
 			}
@@ -30,7 +30,7 @@ public class MakeAllRoomInfo {
 		{
 			O2[i] = new AssignRoomInfo();
 			O2[i].setDormitoryName("오름2");
-			if(i % 2 == 1)
+			if(i % 2 == 0)
 			{
 				O2[i].setSeat("A");
 			}
@@ -49,7 +49,7 @@ public class MakeAllRoomInfo {
 		{
 			O3[i] = new AssignRoomInfo();
 			O3[i].setDormitoryName("오름3");
-			if(i % 2 == 1)
+			if(i % 2 == 0)
 			{
 				O3[i].setSeat("A");
 			}
@@ -68,7 +68,7 @@ public class MakeAllRoomInfo {
 		{
 			P1[i] = new AssignRoomInfo();
 			P1[i].setDormitoryName("푸름1");
-			if(i % 2 == 1)
+			if(i % 2 == 0)
 			{
 				P1[i].setSeat("A");
 			}
@@ -87,7 +87,7 @@ public class MakeAllRoomInfo {
 		{
 			P2[i] = new AssignRoomInfo();
 			P2[i].setDormitoryName("푸름2");
-			if(i % 2 == 1)
+			if(i % 2 == 0)
 			{
 				P2[i].setSeat("A");
 			}
@@ -106,19 +106,19 @@ public class MakeAllRoomInfo {
 		{
 			P3[i] = new AssignRoomInfo();
 			P3[i].setDormitoryName("푸름3");
-			if(i % 4 == 1)
+			if(i % 4 == 0)
 			{
 				P3[i].setSeat("A");
 			}
-			else if(i % 4 == 2)
+			else if(i % 4 == 1)
 			{
 				P3[i].setSeat("B");
 			}
-			else if(i % 4 == 3)
+			else if(i % 4 == 2)
 			{
 				P3[i].setSeat("C");
 			}
-			else if(i % 4 == 0)
+			else if(i % 4 == 3)
 			{
 				P3[i].setSeat("D");
 			}
@@ -133,19 +133,19 @@ public class MakeAllRoomInfo {
 		{
 			P4[i] = new AssignRoomInfo();
 			P4[i].setDormitoryName("푸름4");
-			if(i % 4 == 1)
+			if(i % 4 == 0)
 			{
 				P4[i].setSeat("A");
 			}
-			else if(i % 4 == 2)
+			else if(i % 4 == 1)
 			{
 				P4[i].setSeat("B");
 			}
-			else if(i % 4 == 3)
+			else if(i % 4 == 2)
 			{
 				P4[i].setSeat("C");
 			}
-			else if(i % 4 == 0)
+			else if(i % 4 == 3)
 			{
 				P4[i].setSeat("D");
 			}
@@ -160,7 +160,7 @@ public class MakeAllRoomInfo {
 		{
 			SN[i] = new AssignRoomInfo();
 			SN[i].setDormitoryName("신평남");
-			if(i % 2 == 1)
+			if(i % 2 == 0)
 			{
 				SN[i].setSeat("A");
 			}
@@ -179,7 +179,7 @@ public class MakeAllRoomInfo {
 		{
 			SY[i] = new AssignRoomInfo();
 			SY[i].setDormitoryName("신평여");
-			if(i % 2 == 1)
+			if(i % 2 == 0)
 			{
 				SY[i].setSeat("A");
 			}
