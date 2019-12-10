@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 
 import application.IOHandler;
 import application.Responser;
+import application.UserInfo;
 import controller.InnerPageController;
 import enums.Bool;
 import enums.Code1;
@@ -24,6 +25,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import models.Account;
 import models.Document;
 import models.Tuple;
 import utils.Protocol;
@@ -177,9 +179,11 @@ public class CheckDocumentTabController extends InnerPageController
     		return;
     	}
 
+    	Document doc = new Document(UserInfo.account.accountId, selectedFileType, null);
+
 		Protocol result = null;
 		try {
-			result = Responser.student_checkDocumentPage_onDownlaod(selectedFileType);
+			result = Responser.student_checkDocumentPage_onDownlaod(doc);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
