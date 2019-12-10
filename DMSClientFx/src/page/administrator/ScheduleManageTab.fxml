@@ -39,7 +39,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </VBox.margin>
       </HBox>
-      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="150.0" prefWidth="200.0" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="150.0" prefWidth="200.0" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
          <content>
             <TableView fx:id="check_schedule_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
               <columns>

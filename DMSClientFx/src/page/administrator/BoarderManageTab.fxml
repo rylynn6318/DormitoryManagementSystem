@@ -56,7 +56,7 @@
             </Button>
          </children>
       </HBox>
-      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="150.0" prefWidth="200.0" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="150.0" prefWidth="200.0" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
          <content>
             <TableView fx:id="check_placementHistory_tableview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
               <columns>
