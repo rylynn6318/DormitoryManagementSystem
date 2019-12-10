@@ -60,7 +60,7 @@ public class MainPageController implements Initializable
 		initializeWelcomeLabel();
 		
 		//환영합니다 페이지 추가
-		//addWelcomeTab();
+		addWelcomeTab();
 	}
 	
 	@FXML

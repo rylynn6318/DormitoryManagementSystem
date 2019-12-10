@@ -15,10 +15,24 @@ public class AssignAlgorithm
 	
 	public static void lastPassUpdate() throws SQLException
 	{
-		String sql = "UPDATE Prototype.신청 A  INNER JOIN Prototype.서류 B ON A.학번 = B.학번 SET A.최종결과 = 'Y' WHERE B.유효여부 = 'Y' AND A.납부여부 = 'Y' AND A.합격여부 = 'Y'";
+		String sql = "SELECT A.학번 FROM Prototype.신청 A  INNER JOIN Prototype.서류 B ON A.학번 = B.학번 WHERE A.납부여부 = 'Y' AND A.합격여부 = 'Y' AND (B.서류유형 = 'MEDICAL_REPORT' AND B.유효여부 = 'Y')";
 		Connection connection = DBHandler.INSTANCE.getConnection();
 		PreparedStatement state = connection.prepareStatement(sql);
-		state.executeUpdate(sql);
+		ResultSet rs = state.executeQuery(sql);
+		ArrayList<String> as = new ArrayList<String>();
+		if(rs.next())
+		{
+			rs.previous();
+		while(rs.next())
+		{
+			as.add(rs.getString("학번"));
+		}
+		for(int i = 0; i < as.size(); i++)
+		{
+		String sql1 = "UPDATE Prototype.신청 SET `최종결과` = 'Y' WHERE 학번 = '" + as.get(i) + "' AND 합격여부 = 'Y'";
+		state.executeUpdate(sql1);
+		}
+		}
 		state.close();
 		DBHandler.INSTANCE.returnConnection(connection);
 	}
@@ -67,134 +81,160 @@ public class AssignAlgorithm
 			{
 			case "오름1" :
 			{
-				for(int i = 0; i < O1.length; i += 2)
+				for(int i = 0; i < O1.length; i+=2)
 				{
 					if(O1[i].getRoomNumber() == null)
 					{
-						for(int j = i; j < P2.length; j++)
-						{
-							O1[j].setRoomNumber(rs.getString("호"));
-							O1[j].setSemesterCode(rs.getInt("학기"));
-						}
+							O1[i].setRoomNumber(rs.getString("호"));
+							O1[i].setSemesterCode(rs.getInt("학기"));
+							O1[i+1].setRoomNumber(rs.getString("호"));
+							O1[i+1].setSemesterCode(rs.getInt("학기"));
+							
+						
+						break;
 					}
 				}
 				break;
 			}
 			case "오름2" :
 			{
-				for(int i = 0; i < O2.length; i += 2)
+				for(int i = 0; i < O2.length; i+=2)
 				{
 					if(O2[i].getRoomNumber() == null)
 					{
-						for(int j = i; j < P2.length; j++)
-						{
-							O2[j].setRoomNumber(rs.getString("호"));
-							O2[j].setSemesterCode(rs.getInt("학기"));
-						}
+			
+						O2[i].setRoomNumber(rs.getString("호"));
+						O2[i].setSemesterCode(rs.getInt("학기"));
+						O2[i+1].setRoomNumber(rs.getString("호"));
+						O2[i+1].setSemesterCode(rs.getInt("학기"));
+						break;
 					}
 				}
 				break;
 			}
 			case "오름3" :
 			{
-				for(int i = 0; i < O3.length; i += 2)
+				for(int i = 0; i < O3.length; i+=2)
 				{
 					if(O3[i].getRoomNumber() == null)
 					{
-						for(int j = i; j < P2.length; j++)
-						{
-							O3[j].setRoomNumber(rs.getString("호"));
-							O3[j].setSemesterCode(rs.getInt("학기"));
-						}
+						O3[i].setRoomNumber(rs.getString("호"));
+						O3[i].setSemesterCode(rs.getInt("학기"));
+						O3[i+1].setRoomNumber(rs.getString("호"));
+						O3[i+1].setSemesterCode(rs.getInt("학기"));
+						break;
 					}
 				}
 				break;
 			}
 			case "푸름1" :
 			{
-				for(int i = 0; i < P1.length; i += 2)
+				for(int i = 0; i < P1.length; i+=2)
 				{
 					if(P1[i].getRoomNumber() == null)
 					{
-						for(int j = i; j < P1.length; j++)
-						{
-							P1[j].setRoomNumber(rs.getString("호"));
-							P1[j].setSemesterCode(rs.getInt("학기"));
-						}
+						
+						P1[i].setRoomNumber(rs.getString("호"));
+						P1[i].setSemesterCode(rs.getInt("학기"));
+						P1[i+1].setRoomNumber(rs.getString("호"));
+						P1[i+1].setSemesterCode(rs.getInt("학기"));
+						break;
 					}
 				}
 			}
 			case "푸름2" :
 			{
-				for(int i = 0; i < P2.length; i += 2)
+				for(int i = 0; i < P2.length; i+=2)
 				{
 					if(P2[i].getRoomNumber() == null)
 					{
-						for(int j = i; j < P2.length; j++)
-						{
-							P2[j].setRoomNumber(rs.getString("호"));
-							P2[j].setSemesterCode(rs.getInt("학기"));
-						}
+						
+						
+							P2[i].setRoomNumber(rs.getString("호"));
+							P2[i].setSemesterCode(rs.getInt("학기"));
+							P2[i+1].setRoomNumber(rs.getString("호"));
+							P2[i+1].setSemesterCode(rs.getInt("학기"));
+						
+						break;
 					}
 				}
 				break;
 			}
 			case "푸름3" :
 			{
-				for(int i = 0; i < P3.length; i += 4)
+				for(int i = 0; i < P3.length; i+=4)
 				{
 					if(P3[i].getRoomNumber() == null)
 					{
-						for(int j = i; j < P3.length; j++)
+						
+						P3[i].setRoomNumber(rs.getString("호"));
+						P3[i].setSemesterCode(rs.getInt("학기"));
+						P3[i+1].setRoomNumber(rs.getString("호"));
+						P3[i+1].setSemesterCode(rs.getInt("학기"));
+						if(i+2<P4.length)
 						{
-							P3[j].setRoomNumber(rs.getString("호"));
-							P3[j].setSemesterCode(rs.getInt("학기"));
+						P3[i+2].setRoomNumber(rs.getString("호"));
+						P3[i+2].setSemesterCode(rs.getInt("학기"));
+						P3[i+3].setRoomNumber(rs.getString("호"));
+						P3[i+3].setSemesterCode(rs.getInt("학기"));
 						}
+						break;
 					}
 				}
 				break;
 			}
 			case "푸름4" :
 			{
-				for(int i = 0; i < P4.length; i += 4)
+				for(int i = 0; i < P4.length; i+=4)
 				{
 					if(P4[i].getRoomNumber() == null)
 					{
-						for(int j = i; j < P4.length; j++)
-						{
-							P4[j].setRoomNumber(rs.getString("호"));
-							P4[j].setSemesterCode(rs.getInt("학기"));
-						}
+						
+							P4[i].setRoomNumber(rs.getString("호"));
+							P4[i].setSemesterCode(rs.getInt("학기"));
+							P4[i+1].setRoomNumber(rs.getString("호"));
+							P4[i+1].setSemesterCode(rs.getInt("학기"));
+							if(i+2<P4.length)
+							{
+							P4[i+2].setRoomNumber(rs.getString("호"));
+							P4[i+2].setSemesterCode(rs.getInt("학기"));
+							P4[i+3].setRoomNumber(rs.getString("호"));
+							P4[i+3].setSemesterCode(rs.getInt("학기"));
+							}
+						
+						break;
 					}
 				}
 				break;
 			}
 			case "신평남" :
 			{
-				for(int i = 0; i < SN.length; i += 2)
+				for(int i = 0; i < SN.length; i+=2)
 				{
 					if(SN[i].getRoomNumber() == null)
 					{
-						for(int j = i; j < SN.length; j++)
-						{
-							SN[j].setRoomNumber(rs.getString("호"));
-							SN[j].setSemesterCode(rs.getInt("학기"));
-						}
+						
+						SN[i].setRoomNumber(rs.getString("호"));
+						SN[i].setSemesterCode(rs.getInt("학기"));
+						SN[i+1].setRoomNumber(rs.getString("호"));
+						SN[i+1].setSemesterCode(rs.getInt("학기"));
+						break;
 					}
 				}
 				break;
 			}
 			case "신평여" :
 			{
-				for(int i = 0; i < SY.length; i += 2)
+				for(int i = 0; i < SY.length; i+=2)
 				{
 					if(SY[i].getRoomNumber() == null)
 					{
-						for(int j = i; j < SY.length; j++)
-						{
-							SY[j].setRoomNumber(rs.getString("호"));
-							SY[j].setSemesterCode(rs.getInt("학기"));
-						}
+						
+						SY[i].setRoomNumber(rs.getString("호"));
+						SY[i].setSemesterCode(rs.getInt("학기"));
+						SY[i+1].setRoomNumber(rs.getString("호"));
+						SY[i+1].setSemesterCode(rs.getInt("학기"));
+						break;
 					}
 				}
 				break;
@@ -659,14 +699,12 @@ public class AssignAlgorithm
 				if(O3[i].getCheckOut() != 0)
 				{
 					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O3[i].getStudentId() + "', '" + O3[i].getRoomNumber() + "', '"+ O3[i].getSemesterCode() + "', '오름3', '" + O3[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
-					System.out.println(sql);
 					state3.executeUpdate(sql);
 				}
 				else
 				{
 					
 					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + O3[i].getStudentId() + "', '" + O3[i].getRoomNumber() + "', '"+ O3[i].getSemesterCode() + "', '오름3', '" + O3[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
-					System.out.println(sql);
 					state3.executeUpdate(sql);
 				}
 			}
@@ -678,13 +716,11 @@ public class AssignAlgorithm
 				if(P1[i].getCheckOut() != 0)
 				{
 					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P1[i].getStudentId() + "', '" + P1[i].getRoomNumber() + "', '"+ P1[i].getSemesterCode() + "', '푸름1', '" + P1[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
-					System.out.println(sql);
 					state3.executeUpdate(sql);
 				}
 				else
 				{
 					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P1[i].getStudentId() + "', '" + P1[i].getRoomNumber() + "', '"+ P1[i].getSemesterCode() + "', '푸름1', '" + P1[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
-					System.out.println(sql);
 					state3.executeUpdate(sql);
 				}
 			}
@@ -696,13 +732,11 @@ public class AssignAlgorithm
 				if(P2[i].getCheckOut() != 0)
 				{
 					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P2[i].getStudentId() + "', '" + P2[i].getRoomNumber() + "', '"+ P2[i].getSemesterCode() + "', '푸름2', '" + P2[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
-					System.out.println(sql);
 					state3.executeUpdate(sql);
 				}
 				else
 				{
 					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P2[i].getStudentId() + "', '" + P2[i].getRoomNumber() + "', '"+ P2[i].getSemesterCode() + "', '푸름2', '" + P2[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
-					System.out.println(sql);
 					state3.executeUpdate(sql);
 				}
 			}
@@ -714,13 +748,11 @@ public class AssignAlgorithm
 				if(P3[i].getCheckOut() != 0)
 				{
 					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P3[i].getStudentId() + "', '" + P3[i].getRoomNumber() + "', '"+ P3[i].getSemesterCode() + "', '푸름3', '" + P3[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
-					System.out.println(sql);
 					state3.executeUpdate(sql);
 				}
 				else
 				{
 					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P3[i].getStudentId() + "', '" + P3[i].getRoomNumber() + "', '"+ P3[i].getSemesterCode() + "', '푸름3', '" + P3[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
-					System.out.println(sql);
 					state3.executeUpdate(sql);
 				}
 			}
@@ -732,13 +764,11 @@ public class AssignAlgorithm
 				if(P4[i].getCheckOut() != 0)
 				{
 					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P4[i].getStudentId() + "', '" + P4[i].getRoomNumber() + "', '"+ P4[i].getSemesterCode() + "', '푸름4', '" + P4[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ currentSemester + "'))";
-					System.out.println(sql);
 					state3.executeUpdate(sql);
 				}
 				else
 				{
 					sql = "INSERT INTO " + DBHandler.DB_NAME + ".배정내역 (`학생_학번`, `호실정보_호`, `호실정보_학기`, `호실정보_생활관명`, `자리`, `퇴사예정일`) VALUES ('" + P4[i].getStudentId() + "', '" + P4[i].getRoomNumber() + "', '"+ P4[i].getSemesterCode() + "', '푸름4', '" + P4[i].getSeat() + "', (SELECT DATE_SUB(종료일, INTERVAL 5 day)FROM "+DBHandler.DB_NAME+".스케쥴 WHERE `비고` = '"+ ((currentSemester / 10) * 10 + 4) + "'))";
-					System.out.println(sql);
 					state3.executeUpdate(sql);
 				}
 			}
