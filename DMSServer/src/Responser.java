@@ -988,8 +988,7 @@ public class Responser
 		boolean isSucceed = false;
 		try
 		{
-			//누가좀 해줘. 기숙사 삭제하는 SQL임
-//			isSucceed = DormParser.insertDormitory(dormitory);	
+			isSucceed = DormParser.insertDormitory(dormitory);	
 		}
 		catch (Exception e)
 		{
@@ -1323,8 +1322,8 @@ public class Responser
 		}
 		catch (SQLException e)
 		{
-			System.out.println("입사자 등록 도중 오류 발생(배정내역 테이블)");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록 도중 오류가 발생했습니다.(배정내역 테이블)"));
+			System.out.println("입사자 등록 도중 오류 발생(배정내역 테이블) 신청테이블에 값 들어갔으니 지워주세요.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "입사자 등록 도중 오류가 발생했습니다.(배정내역 테이블) 신청테이블에 값 들어갔으니 지워주세요."));
 			return;
 		}
 		
@@ -1345,62 +1344,85 @@ public class Responser
 		//1. 신청 테이블에서 이번 학기 신청 목록을 가져와 객체화한다. (학번, 생활관명, 학기, 지망, 몇일식, 납부여부, 합격여부, 최종결과, 코골이여부)
 		//   (합격여부 Y 인 학생만 가져온다)
 		//2. 배열화한다.
-		ArrayList<Application> apps = new ArrayList<Application>();
+		ArrayList<Application> appList = null;
 
 		try
 		{
-			apps = ApplicationParser.getPassedApplication();
+			appList = ApplicationParser.getPassedApplication();
 		}
 		catch(Exception e)
 		{
-			System.out.println("납부여부 조회에 실패했습니다.");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "납부여부 조회에 실패했습니다."));
+			System.out.println("납부여부 조회 도중 오류가 발생");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "납부여부 조회 도중 오류가 발생했습니다.."));
 			return;
 		}
 		
-		if(apps.isEmpty())
+		if(appList.isEmpty())
 		{
-			System.out.println("신청 테이블이 비어있습니다.");
-			eventReply(socketHelper, createMessage(Bool.FALSE, "신청 테이블이 비어있습니다."));
+			System.out.println("납부여부 목록이 비어있음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "납부여부 목록이 비어있습니다."));
 			return;
 		}
 		
-		eventReply(socketHelper, apps);
+		Tuple<Bool, ArrayList<Application>> resultTuple = new Tuple<Bool, ArrayList<Application>>(Bool.TRUE, appList);
+		eventReply(socketHelper, resultTuple);
 		//3. 직렬화해서 클라이언트에 전송한다.
 		//(4. 클라이언트는 받은 배열을 tableView에 표시한다)
 	}
 	
 	//관리자 - 납부 여부 조회 및 관리 - 업데이트 버튼 클릭 시
-		public static void admin_paymentManagePage_onUpdate(Protocol protocol, SocketHelper socketHelper) throws SQLException
+	public static void admin_paymentManagePage_onUpdate(Protocol protocol, SocketHelper socketHelper) throws SQLException
+	{
+		//1. 클라이언트로부터 받은 학번, 생활관명, 학기로 납부여부 테이블에서 조회한다.
+		
+		//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
+		Application application = null;
+		try 
 		{
-			//1. 클라이언트로부터 받은 학번, 생활관명, 학기로 납부여부 테이블에서 조회한다.
-			
-			//2-2. 해당되는 데이터가 없으면 없다고 클라이언트에 알려준다.
-			Application ap = null;
-			try 
-			{
-				ap = (Application) ProtocolHelper.deserialization(protocol.getBody());				
-			}
-			catch (ClassNotFoundException | IOException e) 
-			{
-				System.out.println("역직렬화 실패");
-				eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 데이터가 없습니다."));
-				return;
-			}
-			//2-1. 해당되는 데이터가 있으면 DB에 UPDATE쿼리를 쏜다.
-			//(납부여부를 클라이언트에게서 받은 T/F로 UPDATE한다)	
-			
-			try {				
-				ApplicationParser.updatePayCheck(ap);
-				eventReply(socketHelper, createMessage(Bool.TRUE, "납부 여부 업데이트 성공"));
-			} 
-			catch(Exception e) {
-				System.out.println("납부 여부 갱신 실패");
-				eventReply(socketHelper, createMessage(Bool.FALSE, "납부 여부 갱신에 실패했습니다."));
-				return;
-			}
-			
+			application = (Application) ProtocolHelper.deserialization(protocol.getBody());				
 		}
+		catch (Exception e) 
+		{
+			System.out.println("클라이언트가 보낸 요청 분석 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "서버가 요청 분석에 실패하였습니다."));
+			return;
+		}
+		
+		boolean isExist = false;
+		
+		try
+		{
+			isExist = ApplicationParser.isExist(application.getStudentId(), application.getDormitoryName(), application.getSemesterCode());
+		}
+		catch (Exception e)
+		{
+			System.out.println("신청내역 조회 도중 오류 발생.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "신청내역 조회 도중 오류가 발생하였습니다."));
+			return;
+		}
+		
+		if(!isExist)
+		{
+			System.out.println("신청내역이 없음.");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "해당되는 신청내역이 없습니다."));
+			return;
+		}
+		
+		//2-1. 해당되는 데이터가 있으면 DB에 UPDATE쿼리를 쏜다.
+		//(납부여부를 클라이언트에게서 받은 T/F로 UPDATE한다)	
+		try 
+		{
+			ApplicationParser.updatePayCheck(application);
+		} 
+		catch(Exception e) 
+		{
+			System.out.println("납부 여부 갱신 실패");
+			eventReply(socketHelper, createMessage(Bool.FALSE, "납부 여부 갱신 도중 오류가 발생했습니다."));
+			return;
+		}
+		
+		eventReply(socketHelper, createMessage(Bool.TRUE, "납부 여부 갱신에 성공했습니다."));
+	}
 	
 	//관리자 - 납부 여부 조회 및 관리 - CSV 업로드 버튼 클릭 시
 	public static void admin_paymentManagePage_onUpload(Protocol protocol, SocketHelper socketHelper)
