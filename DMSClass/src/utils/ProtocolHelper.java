@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,11 +33,18 @@ public final class ProtocolHelper {
         }
     }
 
-    static byte[] shortToByte(short input) {
+    static byte[] shortToBytes(short input) {
         byte[] result = new byte[2];
         result[0] = (byte) ((input >> 8) & 0xFF);
         result[1] = (byte) (input & 0xFF);
         return result;
+    }
+
+    static byte[] intToBytes(int x) {
+        ByteBuffer buffer = ByteBuffer.allocate(Integer.SIZE / 8);
+        buffer.putInt(x);
+        buffer.order(ByteOrder.BIG_ENDIAN);
+        return buffer.array();
     }
 
     static short bytesToShort(byte[] input) {
@@ -46,6 +55,11 @@ public final class ProtocolHelper {
         return (short) (a << 8 | (b & 0xFF));
     }
 
+    static int bytesToInt(byte[] bytes) {
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        return buffer.getInt();
+    }
+
     static List<byte[]> splitBySize(final byte[] bytes, final int chunk_size) {
         final List<byte[]> result = new ArrayList<>();
         for (int i = 0; i < bytes.length; i += chunk_size) {
@@ -54,10 +68,10 @@ public final class ProtocolHelper {
         return result;
     }
 
-    static List<Protocol> split(final Protocol protocol, final int size_to_split) {
+    static List<Protocol> split(final Protocol protocol) {
         List<Protocol> result = new ArrayList<>();
         byte[] tmp = protocol.getBody();
-        List<byte[]> body_chunks = splitBySize(tmp, size_to_split - Protocol.HEADER_LENGTH);
+        List<byte[]> body_chunks = splitBySize(tmp, (int) SocketHelper.send_buffer_size - Protocol.HEADER_LENGTH);
 
         int body_chunks_size = body_chunks.size();
         short seq = 0;
@@ -74,7 +88,7 @@ public final class ProtocolHelper {
     }
 
     static Protocol merge(List<Protocol> protocols) {
-        if(protocols.size() == 0)
+        if (protocols.size() == 0)
             return null;
 
         protocols.sort(null);

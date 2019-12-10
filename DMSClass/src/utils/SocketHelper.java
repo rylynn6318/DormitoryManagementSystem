@@ -13,7 +13,7 @@ import enums.Bool;
 public final class SocketHelper implements Closeable {
     public final static String localhost = "127.0.0.1";
     public final static int port = 4444;
-    public final static int sendbuffer_size = 8192;
+    public final static short send_buffer_size = 8192;
     public final static int timeout = 15000; // 15초, 아직 안씀
 
     private Socket socket = null;
@@ -23,7 +23,7 @@ public final class SocketHelper implements Closeable {
     }
 
     public void write(Protocol p) {
-        List<Protocol> protocols = ProtocolHelper.split(p, sendbuffer_size);
+        List<Protocol> protocols = ProtocolHelper.split(p);
         for (Protocol protocol : protocols) {
             byte[] packet = protocol.getPacket();
             try {
@@ -36,7 +36,7 @@ public final class SocketHelper implements Closeable {
 
     public Protocol read() {
         List<Protocol> protocols = new ArrayList<>();
-        byte[] buffer = new byte[sendbuffer_size];
+        byte[] buffer = new byte[send_buffer_size];
 
         Bool isLast = Bool.FALSE;
         while (!isLast.bool) {

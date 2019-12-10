@@ -113,3 +113,7 @@ shared-class update log
 2019-12-10 13:55 v2.17
 	sendbuffer_size 1024(1kb) -> 8192(8kb)로 변경
 	Shared Class Export해서 적용함.
+
+2019-12-10 13:55 v2.18
+	프로토콜 시퀀스 넘버 타입 int로 변경
+	Shared Class Export해서 적용함.
