@@ -10,7 +10,7 @@ import java.util.Date;
 public class CurrentSemesterParser 
 {
 	@SuppressWarnings("deprecation")
-	public static int getCurrentSemester() throws ClassNotFoundException, SQLException
+	public static int getCurrentSemester() throws SQLException
 	{
 		Date time = new Date();
 		SimpleDateFormat format1 = new SimpleDateFormat ("yyyy-MM-dd");					
