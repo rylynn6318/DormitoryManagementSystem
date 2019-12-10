@@ -295,36 +295,23 @@ public class PaymentManageTabController extends InnerPageController
     		IOHandler.getInstance().showAlert("파일을 선택해주세요.");
     		return;
     	}
-    	
     	//전송
-		
 		//전송하기전에 파일이 존재하는지 체크
 		File file = new File(fileDirectory);
 		if(file.exists())
 		{
 			//파일전송하는 프로토콜
-			boolean isSucceed = true;
-			if(isSucceed)
-			{
-				
-				//TODO 여기서 전송해라!
-				String msg = null;
-				try {
-					msg = Responser.admin_paymentManagePage_onUpload(file);
-					IOHandler.getInstance().showAlert(msg);
-				} catch (Exception e) {
-					e.printStackTrace();
-					IOHandler.getInstance().showAlert("CSV 파일 전송중 오류 발생!");
-				}
+			String msg = null;
+			try {
+				msg = Responser.admin_paymentManagePage_onUpload(file);
+			} catch (Exception e) {
+				e.printStackTrace();
+				msg = "알수 없는 예외 발생!";
+			}
+			IOHandler.getInstance().showAlert(msg);
 
-				file_directory_label.setText("N/A");
-				checkApplications();
-			}
-			else
-			{
-				IOHandler.getInstance().showAlert("은행 파일 업로드에 실패하였습니다.");
-			}
-			    			
+			file_directory_label.setText("N/A");
+			checkApplications();
 		}
 		else
 		{

@@ -160,6 +160,7 @@ public class ServerTask implements Runnable {
                             Logger.INSTANCE.print("CSV 파일 분석 및 납부 내역 갱신 실패!");
                             e.printStackTrace();
                         }
+                        Logger.INSTANCE.print(msg);
 
                         result = new Protocol
                                 .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
