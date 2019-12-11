@@ -568,7 +568,7 @@ public class Responser
 			return "통신 중 예외 발생!";
 		}
 
-		String result = null;
+		String result = "목록 갱신 실패";
 		if (protocol.code2 == FileCode.SUCCESS) {
 			try {
 				result = (String) ProtocolHelper.deserialization(protocol.getBody());

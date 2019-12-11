@@ -158,13 +158,12 @@ public class ServerTask implements Runnable {
                             isSuccess = Code2.FileCode.SUCCESS;
                         } catch (IOException e) {
                             Logger.INSTANCE.print("CSV 파일 분석 및 납부 내역 갱신 실패!");
+                            result = new Protocol
+                                    .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
+                                    .build();
                             e.printStackTrace();
                         }
                         Logger.INSTANCE.print(msg);
-
-                        result = new Protocol
-                                .Builder(ProtocolType.FILE, Direction.TO_CLIENT, fileType, isSuccess)
-                                .build();
 
                         socketHelper.write(result);
                         break;
