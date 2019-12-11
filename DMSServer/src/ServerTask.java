@@ -151,11 +151,11 @@ public class ServerTask implements Runnable {
 
                             msg = "리스트에 담긴 " + list.size() + "명 중 " + effected_raw + "명에 대해 update 성공했습니다.";
 
+                            isSuccess = Code2.FileCode.SUCCESS;
                             result = new Protocol
                                     .Builder(ProtocolType.EVENT, Direction.TO_CLIENT, Code1.FileType.CSV, Code2.FileCode.SUCCESS)
                                     .body(ProtocolHelper.serialization(msg))
                                     .build();
-                            isSuccess = Code2.FileCode.SUCCESS;
                         } catch (IOException e) {
                             Logger.INSTANCE.print("CSV 파일 분석 및 납부 내역 갱신 실패!");
                             result = new Protocol
